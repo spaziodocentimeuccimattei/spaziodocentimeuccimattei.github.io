@@ -1,41 +1,41 @@
 situazione,azione,testo,persone,organizzazione,risorse,dati,progetto,comunicazione,territorio
-atrio,atrio-1,Chiederei a chi lo usa che cosa manca e che cosa vorrebbe conservare.,2,1,0,0,0,0,1
-atrio,atrio-2,"Disegnerei due modi diversi di sistemare tavoli, sedie e passaggi.",1,0,1,0,2,0,0
-atrio,atrio-3,Confronterei ciò che serve con i materiali e i soldi disponibili.,0,1,2,1,0,0,0
-atrio,atrio-4,Raccoglierei le preferenze in un piccolo sondaggio e le metterei in ordine.,1,0,0,2,0,1,0
-atrio,atrio-5,Preparerei un’immagine e poche parole per spiegare l’idea agli altri.,0,0,0,0,1,2,1
-quartiere,quartiere-1,Cercherei un luogo o una storia del quartiere da far conoscere.,1,0,0,0,0,1,2
-quartiere,quartiere-2,Preparerei i passaggi del lavoro e concorderei chi fa che cosa.,0,2,1,0,0,0,1
-quartiere,quartiere-3,Metterei a confronto i costi delle attività e gli oggetti già disponibili.,0,1,2,1,0,0,0
-quartiere,quartiere-4,"Organizzerei le informazioni su spazi, orari e materiali in una tabella.",0,1,0,2,1,0,0
-quartiere,quartiere-5,Penserei a un invito comprensibile anche a chi conosce poco l’italiano.,1,0,0,0,0,2,1
-gruppo,gruppo-1,"Le chiederei che cosa le interessa, senza scegliere al suo posto.",2,1,0,0,0,1,0
-gruppo,gruppo-2,"Proporrei piccoli ruoli a turno, così tutti possono provare attività diverse.",1,2,0,1,0,0,0
-gruppo,gruppo-3,"Preparerei un’attività da costruire insieme, usando disegni e materiali.",1,0,0,0,2,1,0
-gruppo,gruppo-4,"Cercherei modi diversi per spiegare il progetto: parole, immagini o altre lingue.",1,0,0,0,0,2,1
-gruppo,gruppo-5,Le farei conoscere i luoghi vicini e le attività aperte ai ragazzi.,1,0,1,0,0,0,2
-scambio,scambio-1,Confronterei l’acquisto di oggetti nuovi con il riuso di quelli disponibili.,0,1,2,0,0,0,1
-scambio,scambio-2,"Creerei un elenco degli oggetti, evitando doppioni e informazioni mancanti.",0,0,1,2,0,1,0
-scambio,scambio-3,Proverei una disposizione che faccia trovare facilmente gli oggetti.,0,0,1,1,2,0,0
-scambio,scambio-4,Cercherei associazioni o luoghi del paese interessati a partecipare.,1,0,1,0,0,0,2
-scambio,scambio-5,Concorderei regole semplici e turni per accogliere chi arriva.,0,2,0,1,0,1,0
-visita,visita-1,"Cercherei un luogo e la sua storia, controllando come raggiungerlo.",1,0,0,1,0,0,2
-visita,visita-2,Disegnerei una piccola mappa con tappe e punti di riferimento.,0,0,0,1,2,0,1
-visita,visita-3,"Penserei a come raccontare il luogo con poche parole, anche in un’altra lingua.",1,0,0,0,0,2,1
-visita,visita-4,"Confronterei tempi, spostamenti e costi di due percorsi possibili.",0,1,2,1,0,0,0
-visita,visita-5,Chiederei che cosa le piace e se ha bisogno di pause o percorsi più comodi.,2,0,0,0,0,1,1
-prestito,prestito-1,Costruirei una tabella con un codice per ogni oggetto e il suo stato.,0,1,1,2,0,0,0
-prestito,prestito-2,Concorderei una procedura breve per prestare e restituire gli oggetti.,1,2,0,1,0,0,0
-prestito,prestito-3,Preparerei istruzioni con parole e simboli facili da capire.,1,0,0,0,1,2,0
-prestito,prestito-4,Disegnerei uno scaffale con posti riconoscibili per i diversi oggetti.,0,0,1,1,2,0,0
-prestito,prestito-5,"Capirei quali oggetti conviene riparare, sostituire o condividere di più.",0,1,2,0,0,0,1
-racconto,racconto-1,Sceglierei poche parole e immagini per spiegare ciò che avete fatto.,1,0,0,0,1,2,0
-racconto,racconto-2,Proverei due modi diversi di impaginare il racconto.,0,0,0,0,2,1,1
-racconto,racconto-3,"Controllerei date, informazioni e autorizzazioni prima di usarle.",0,0,1,2,0,1,0
-racconto,racconto-4,"Raccoglierei i punti di vista di chi ha partecipato, anche quelli diversi.",2,1,0,0,0,0,1
-racconto,racconto-5,Organizzerei i materiali e i passaggi per completare il lavoro insieme.,0,2,1,0,0,1,0
-giardino,giardino-1,"Come può diventare utile a chi vive vicino, rispettando l’ambiente?",0,0,0,1,1,0,2
-giardino,giardino-2,Quali materiali possiamo recuperare e quanta acqua servirà?,0,1,2,0,0,0,1
-giardino,giardino-3,Chi lo userà e quali bisogni dobbiamo ascoltare prima di decidere?,2,0,0,0,0,1,1
-giardino,giardino-4,"Quali informazioni su sole, pioggia e consumi aiutano a scegliere?",0,0,1,2,0,0,1
-giardino,giardino-5,Come possiamo dividerci il lavoro e mantenere lo spazio nel tempo?,1,2,0,0,1,0,0
+curiosita,curiosita-1,Capire come si sentono le persone e che cosa può aiutarle nella vita di tutti i giorni.,2,1,0,0,0,0,1
+curiosita,curiosita-2,Disegnare una stanza o un edificio e capire come vengono realizzati.,1,0,1,0,2,0,0
+curiosita,curiosita-3,Capire come si usano i soldi e come si confrontano prezzi e spese.,0,1,2,1,0,0,0
+curiosita,curiosita-4,Scoprire come funzionano app e programmi e come si usano le informazioni.,1,0,0,2,0,1,0
+curiosita,curiosita-5,Parlare altre lingue e raccontare luoghi attraverso parole e immagini.,0,0,0,0,1,2,1
+video,video-1,La storia di un luogo e delle persone che ci vivono.,1,0,0,0,0,1,2
+video,video-2,Come lavora un’azienda e come arrivano i suoi prodotti nei negozi.,0,2,1,0,0,0,1
+video,video-3,Perché lo stesso prodotto può avere prezzi diversi.,0,1,2,1,0,0,0
+video,video-4,Come si costruisce un programma che risolve un piccolo problema.,0,1,0,2,1,0,0
+video,video-5,Come si salutano e si raccontano le cose in lingue e culture diverse.,1,0,0,0,0,2,1
+imparare,imparare-1,Capire i comportamenti delle persone e imparare ad ascoltarle.,2,1,0,0,0,1,0
+imparare,imparare-2,Scoprire i diversi lavori di un’azienda e come le persone collaborano.,1,2,0,1,0,0,0
+imparare,imparare-3,Usare il disegno per rappresentare oggetti e spazi pensati per le persone.,1,0,0,0,2,1,0
+imparare,imparare-4,"Comunicare con persone di altri paesi, anche usando immagini e altre lingue.",1,0,0,0,0,2,1
+imparare,imparare-5,"Conoscere luoghi, servizi e opportunità del territorio in cui vivi.",1,0,1,0,0,0,2
+domande,domande-1,Quando conviene comprare un oggetto nuovo e quando ripararlo?,0,1,2,0,0,0,1
+domande,domande-2,Come fa un’app a trovare le informazioni che cerco?,0,0,1,2,0,1,0
+domande,domande-3,Come si passa dalle misure di un oggetto al suo disegno?,0,0,1,1,2,0,0
+domande,domande-4,Quali servizi ci sono in un paese e a chi possono essere utili?,1,0,1,0,0,0,2
+domande,domande-5,"Come funziona un acquisto, dall’ordine alla consegna?",0,2,0,1,0,1,0
+visita-interessi,visita-interessi-1,La storia del luogo e il modo in cui vivono le persone.,1,0,0,1,0,0,2
+visita-interessi,visita-interessi-2,"Come sono fatti gli edifici, le strade e le mappe.",0,0,0,1,2,0,1
+visita-interessi,visita-interessi-3,Come raccontare quel luogo a una persona che parla un’altra lingua.,1,0,0,0,0,2,1
+visita-interessi,visita-interessi-4,"Come si confrontano prezzi, tempi e mezzi di trasporto per raggiungerlo.",0,1,2,1,0,0,0
+visita-interessi,visita-interessi-5,Come rendere la visita piacevole anche per chi ha esigenze diverse.,2,0,0,0,0,1,1
+computer,computer-1,Mettere in ordine informazioni e numeri per trovare una risposta.,0,1,1,2,0,0,0
+computer,computer-2,Capire i passaggi con cui un programma esegue un compito.,1,2,0,1,0,0,0
+computer,computer-3,"Creare una spiegazione chiara con parole, immagini e simboli.",1,0,0,0,1,2,0
+computer,computer-4,Rappresentare in tre dimensioni un oggetto o una stanza.,0,0,1,1,2,0,0
+computer,computer-5,Confrontare il costo e le caratteristiche di prodotti diversi.,0,1,2,0,0,0,1
+libro,libro-1,Un racconto che ti fa conoscere persone e modi di vivere diversi.,1,0,0,0,1,2,0
+libro,libro-2,Un disegno che spiega come è fatto un edificio o un paesaggio.,0,0,0,0,2,1,1
+libro,libro-3,Un grafico che confronta dati e caratteristiche di alcuni prodotti.,0,0,1,2,0,1,0
+libro,libro-4,Una spiegazione di come cambiano i bisogni delle persone con l’età.,2,1,0,0,0,0,1
+libro,libro-5,La storia di un’azienda: che cosa produce e come lavora.,0,2,1,0,0,1,0
+futuro,futuro-1,"Il territorio, l’ambiente e il modo in cui cambiano i luoghi.",0,0,0,1,1,0,2
+futuro,futuro-2,Il valore delle risorse e le scelte per usarle senza sprecarle.,0,1,2,0,0,0,1
+futuro,futuro-3,Il benessere delle persone e i modi per sostenerle nelle difficoltà.,2,0,0,0,0,1,1
+futuro,futuro-4,I dati e gli strumenti digitali per capire ciò che succede intorno a noi.,0,0,1,2,0,0,1
+futuro,futuro-5,I diversi ruoli di un lavoro e il modo in cui collaborano le persone.,1,2,0,0,1,0,0

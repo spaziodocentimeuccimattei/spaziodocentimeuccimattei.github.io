@@ -165,5 +165,100 @@
   "skipAllDoesNotForceProfile": true,
   "resetClearsPreviousAnswers": true,
   "skipLinkFocusesMain": true,
-  "consoleWarningsErrors": []
+  "consoleWarningsErrors": [],
+  "nota_verifiche_precedenti": "Le verifiche Chrome precedono la revisione grafica e la versione 2 delle domande. Le verifiche successive sono elencate separatamente.",
+  "revisione_grafica_2026_10_04": {
+    "browser": "Codex In-app Browser su macOS",
+    "contentVersion": 2,
+    "questionsCompleted": 8,
+    "coursesVisible": 5,
+    "missionsCompleted": [
+      "afm",
+      "sia",
+      "turismo",
+      "cat",
+      "ssas"
+    ],
+    "budgetChecks": [
+      "135/120: eccedenza 15",
+      "135/90: eccedenza 45",
+      "65/90: residuo 25",
+      "125/120: eccedenza 5"
+    ],
+    "itineraryCheck": "75/60: eccedenza 15 e scala segnalata",
+    "catPlansVisible": 2,
+    "siaChecks": [
+      "codice G02 duplicato",
+      "stato mancante"
+    ],
+    "ssasCheck": "osservazione distinta da interpretazione",
+    "resultExamples": "Mostrate solo risposte collegate direttamente al tema, peso 2",
+    "resumeAfterReload": true,
+    "consoleWarningsErrors": [],
+    "responsive": [
+      {
+        "page": "risultati",
+        "width": 320,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "risultati",
+        "width": 390,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "risultati",
+        "width": 768,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "risultati",
+        "width": 1366,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "catalogo",
+        "width": 320,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "catalogo",
+        "width": 390,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "catalogo",
+        "width": 768,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "catalogo",
+        "width": 1366,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "CAT",
+        "width": 320,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "CAT",
+        "width": 390,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "CAT",
+        "width": 768,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "CAT",
+        "width": 1366,
+        "horizontalOverflow": false
+      }
+    ],
+    "staticLocalReferences": 75,
+    "originalLinksPreserved": true,
+    "physicalDevicesTested": false
+  }
 }

@@ -1,9 +1,14 @@
+import { courseArt } from './bussola-visuals.mjs';
 import { readState, summarize, clearState } from './bussola-core.mjs';
 import { el, button, link, storage, loadData } from './bussola-ui.mjs';
 
 async function initialize() {
   try {
     const [b, d, c] = await loadData(['bussola', 'dimensioni', 'indirizzi']);
+    for (const course of c.courses) {
+      const target=document.querySelector(`#${course.id} .card-title`);
+      if (target && !target.querySelector('.course-art')) target.prepend(courseArt(course.id));
+    }
     const state = readState(storage(), b.situations, ['afm','sia','turismo','ssas','cat']);
     const actions = document.getElementById('contextActions');
     if (!state || state.stage !== 'results') {

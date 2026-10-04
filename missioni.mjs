@@ -1,6 +1,8 @@
 import { readState, freshState, totals, clearState } from './bussola-core.mjs';
 import { el, button, link, choice, storage, persist, loadData, focusHeading, setJourney, contactsPanel, showError } from './bussola-ui.mjs';
 
+import { courseArt, amountVisual, routeVisual } from './bussola-visuals.mjs';
+
 const catalog = document.getElementById('missionCatalog');
 const cards = document.getElementById('catalogCards');
 const panel = document.getElementById('missionPanel');
@@ -50,6 +52,8 @@ function planSvg(layout, suffix) {
 
 function firstFeedback(target, alteredBudget = false) {
   target.replaceChildren();
+  if (current.type === 'budget') target.append(amountVisual(totals(current.options, selected, 'cost'), alteredBudget ? current.newBudget : current.budget, '€', 'La tua spesa'));
+  if (current.type === 'itinerary') target.append(amountVisual(totals(current.options, selected, 'minutes'), current.limit, 'min', 'Il tempo della visita'), routeVisual(current.options,selected));
   if (!selected.length) {
     target.append(el('p', 'Scegli almeno una carta per osservare che cosa cambia.'));
     return;
@@ -57,13 +61,11 @@ function firstFeedback(target, alteredBudget = false) {
   if (current.type === 'budget') {
     const budget = alteredBudget ? current.newBudget : current.budget;
     const cost = totals(current.options, selected, 'cost');
-    target.append(el('p', `Hai previsto ${cost} euro su ${budget} disponibili.`));
-    target.append(el('p', cost <= budget ? `Restano ${budget-cost} euro. Che cosa sarebbe utile verificare prima di spendere?` : `Servono ${cost-budget} euro in più. Puoi rivedere le scelte o cercare altre risorse.`, cost > budget ? 'constraint-note' : ''));
-    if (selected.includes('cartelli') && selected.includes('stampa')) target.append(el('p', 'Hai scelto due modi di preparare i cartelli. Vuoi usarli entrambi o confrontarli come alternative?', 'constraint-note'));
+    target.append(el('p', cost <= budget ? 'Che cosa sarebbe utile verificare prima di spendere?' : 'Quale acquisto potresti rimandare per restare nel budget?', cost > budget ? 'constraint-note' : ''));
+    if (selected.includes('custodia') && selected.includes('zaino')) target.append(el('p', 'Hai scelto sia la custodia sia lo zaino. Ti servono entrambi o vuoi confrontarli?', 'constraint-note'));
   } else if (current.type === 'itinerary') {
     const minutes = totals(current.options, selected, 'minutes');
-    target.append(el('p', `Le tappe scelte richiedono ${minutes} minuti su ${current.limit} disponibili.`));
-    if (minutes > current.limit) target.append(el('p', `Occorrono ${minutes-current.limit} minuti in più. Puoi ridurre le tappe o rivedere il tempo disponibile.`, 'constraint-note'));
+    if (minutes > current.limit) target.append(el('p', 'Quale tappa potresti togliere per rispettare il tempo disponibile?', 'constraint-note'));
     if (current.options.some(o => selected.includes(o.id) && o.stairs)) target.append(el('p', 'La torre richiede una scala. Per rispettare la richiesta della visitatrice occorre cambiare tappa o verificare un accesso alternativo.', 'constraint-note'));
     else target.append(el('p', 'Le descrizioni delle tappe scelte indicano accessi senza scale. Prima di una visita reale le condizioni vanno verificate.'));
   } else if (current.type === 'records') {
@@ -74,7 +76,7 @@ function firstFeedback(target, alteredBudget = false) {
         : row.status === 'Stato mancante' ? `${row.item}: senza lo stato non sappiamo se l’oggetto è disponibile.`
         : `${row.item}: la riga ha un codice e uno stato. È utile anche sapere quando è stata aggiornata.`));
     }
-    target.append(el('p', 'Puoi selezionare altre righe e confrontare gli indizi. Nessun dato è una risposta su di te.'));
+    target.append(el('p', 'Puoi selezionare altre righe e confrontare gli indizi.'));
   } else if (current.type === 'layout') {
     const layout = current.layouts.find(o => selected.includes(o.id));
     if (layout) target.append(el('p', layout.feedback), planSvg(layout, 'selected'));
@@ -105,11 +107,13 @@ function firstStep(alteredBudget = false) {
       else selected = event.target.checked ? [...selected,option.id] : selected.filter(id => id!==option.id);
       firstFeedback(feedback, alteredBudget); next.disabled = !selected.length;
     });
+    if (current.type === 'layout') item.append(planSvg(current.layouts.find(l=>l.id===option.id), `option-${option.id}`));
     list.append(item);
   }
   fieldset.append(list);
   firstFeedback(feedback, alteredBudget);
-  panel.append(fieldset, feedback);
+  const activity = el('div',null,`activity-workspace workspace-${current.type}`);
+  activity.append(fieldset,feedback); panel.append(activity);
   footer(next);
 }
 
@@ -144,7 +148,7 @@ function conclusion() {
   for (const item of choices.filter(o=>selected.includes(o.id))) ul.append(el('li',item.label || item.item));
   recap.append(ul);
   if (followup) recap.append(el('p',current.choices.find(o=>o.id===followup).feedback));
-  panel.append(recap,el('h3','Che cosa puoi osservare'),el('p',current.reflection),el('h3','Un collegamento con i percorsi'),el('p',current.bridge));
+  panel.append(recap,el('h3','Che cosa puoi osservare'),el('p',current.reflection),el('h3','In quale materia ritrovi questa attività?'),el('p',current.bridge));
   const course=courses.find(c=>c.id===current.id);
   const row=el('div',null,'action-row');
   row.append(link(`Esplora ${course.code}`,`indirizzi.html#${course.id}`),button('Prova un’altra esperienza',()=>openCatalog(),'explore-button secondary'),button('Riprova questa esperienza',()=>openMission(current.id),'explore-button secondary'),link('Tutti gli indirizzi','indirizzi.html#diurni','explore-button secondary'));
@@ -158,7 +162,10 @@ function renderMission() {
   const course=courses.find(c=>c.id===current.id);
   const progress=el('p',`${course.code} · ${step+1} di 3 passaggi`,'explore-kicker');
   const title=el('h2',current.title); title.id='missionTitle';
-  panel.replaceChildren(progress,title);
+  panel.dataset.course=current.id;
+  const heading=el('div',null,'activity-heading'); const copy=el('div');
+  copy.append(progress,title,el('p',course.name,'activity-course-name')); heading.append(copy,courseArt(current.id));
+  panel.replaceChildren(heading);
   if (step===0) firstStep();
   else if (step===1) current.type==='budget' ? firstStep(true) : followupStep();
   else conclusion();
@@ -172,8 +179,8 @@ async function initialize() {
     cards.replaceChildren();
     for (const course of courses) {
       const mission=missions.find(m=>m.id===course.id);
-      const card=el('article',null,'mission-card');
-      card.append(el('p',course.code,'explore-kicker'),el('h2',mission.title),el('p',course.face),button(`Prova l’esperienza ${course.code}`,()=>openMission(course.id)));
+      const card=el('article',null,'mission-card'); card.dataset.course=course.id; card.append(courseArt(course.id));
+      card.append(el('p',course.code,'explore-kicker'),el('h2',mission.title),el('p',course.name,'activity-course-name'),el('p',mission.subject),button(`Prova ${course.code}`,()=>openMission(course.id)));
       cards.append(card);
     }
     contactsMount.replaceChildren(contactsPanel(contacts,()=>{

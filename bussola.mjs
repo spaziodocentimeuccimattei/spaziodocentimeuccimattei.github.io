@@ -1,3 +1,4 @@
+import { courseArt } from './bussola-visuals.mjs';
 import { freshState, readState, clearState, summarize, validateContent } from './bussola-core.mjs';
 import { el, button, link, storage, persist, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs';
 
@@ -48,7 +49,7 @@ function renderQuestion() {
   const situation = situations[state.index];
   const progressBox = el('div', null, 'question-progress');
   const progressHeading = el('div', null, 'progress-heading');
-  progressHeading.append(el('span', `Situazione ${state.index + 1} di ${situations.length}`), button('Ricomincia', resetToIntro, 'skip-button'));
+  progressHeading.append(el('span', `Domanda ${state.index + 1} di ${situations.length}`), button('Ricomincia', resetToIntro, 'skip-button'));
   const track = el('div', null, 'progress-track');
   track.setAttribute('role', 'progressbar'); track.setAttribute('aria-label', 'Avanzamento delle situazioni');
   track.setAttribute('aria-valuemin', '0'); track.setAttribute('aria-valuemax', String(situations.length)); track.setAttribute('aria-valuenow', String(state.index));
@@ -59,7 +60,7 @@ function renderQuestion() {
   const fieldset = el('fieldset', null, 'choices');
   fieldset.append(el('legend', situation.question));
   const list = el('div', null, 'choice-list');
-  const next = button(state.index === situations.length-1 ? 'Scopri gli indirizzi del Mattei' : 'Continua', () => advance(state.answers[situation.id]));
+  const next = button(state.index === situations.length-1 ? 'Scopri gli indirizzi dell’IIS Meucci - Mattei di Decimomannu' : 'Continua', () => advance(state.answers[situation.id]));
   next.disabled = !situation.options.some(o => o.id === state.answers[situation.id]);
   for (const option of situation.options) {
     list.append(choice(option, 'radio', 'scenario-choice', state.answers[situation.id] === option.id, () => {
@@ -73,8 +74,8 @@ function renderQuestion() {
     state.index -= 1; persist(state); renderQuestion();
   }, 'explore-button secondary');
   back.disabled = state.index === 0;
-  footer.append(back, button('Passo questa situazione', () => advance(null), 'skip-button'), next);
-  questions.replaceChildren(progressBox, heading, scenario, el('p', 'Scegli l’azione che ti incuriosisce adesso. Puoi cambiare idea.', 'plain-note'), fieldset, footer);
+  footer.append(back, button('Passo questa domanda', () => advance(null), 'skip-button'), next);
+  questions.replaceChildren(progressBox, heading, scenario, el('p', 'Scegli ciò che ti interessa di più in questo momento. Puoi cambiare idea.', 'plain-note'), fieldset, footer);
   focusHeading(questions);
 }
 
@@ -82,16 +83,16 @@ function renderResults() {
   hidePanels(); results.hidden = false; contactsMount.hidden = false;
   setJourney(1);
   const summary = summarize(situations, dimensions, state.answers);
-  const title = el('h2', 'Dalle tue curiosità agli indirizzi del Mattei'); title.id = 'resultTitle';
+  const title = el('h2', 'Dalle tue curiosità agli indirizzi dell’IIS Meucci - Mattei di Decimomannu'); title.id = 'resultTitle';
   results.replaceChildren(el('p', 'Scopri che cosa potresti imparare', 'explore-kicker'), title,
     el('p', 'Le tue scelte sono un punto di partenza per conoscere la scuola. Una stessa curiosità può trovare spazio in corsi diversi: guarda che cosa si studia in ciascuno e prova un’attività.'));
   if (summary.selected.length) {
     const grid = el('div', null, 'result-grid');
     for (const item of summary.selected) {
       const card = el('article', null, 'result-card');
-      card.append(el('p', 'Nel percorso hai scelto di…', 'plain-note'), el('h3', item.action));
+      card.append(el('p', 'Ti ha incuriosito…', 'plain-note'), el('h3', item.action));
       const evidence = el('ul');
-      for (const trace of item.evidence.slice(0,2)) {
+      for (const trace of item.evidence.filter(trace => trace.weight === 2).slice(0,2)) {
         const li = el('li'); li.append(el('strong', trace.title), el('span', trace.action)); evidence.append(li);
       }
       card.append(evidence); grid.append(card);
@@ -110,18 +111,33 @@ function renderResults() {
     const li = el('li'); li.append(el('strong', situation.title), el('span', selected?.text || 'Hai passato questa situazione.')); list.append(li);
   }
   recap.append(list); results.append(recap);
+  const relevant={persone:['ssas','turismo'],organizzazione:['afm','sia','turismo'],risorse:['afm','cat'],dati:['sia','afm','cat'],progetto:['cat','sia'],comunicazione:['turismo','ssas','afm'],territorio:['turismo','cat','ssas']};
+  const bridges=el('div',null,'interest-bridges');
+  for (const theme of summary.selected) {
+    const bridge=el('article',null,'interest-bridge');
+    bridge.append(el('h3',theme.name),el('p','Ecco dove puoi approfondire questa curiosità.'));
+    const connections=el('div',null,'bridge-courses');
+    for (const id of relevant[theme.id]) {
+      const course=courses.find(c=>c.id===id); const box=el('div');
+      box.append(link(course.code,`indirizzi.html#${id}`,'bridge-link'),el('p',course.lenses[theme.id])); connections.append(box);
+    }
+    bridge.append(connections); bridges.append(bridge);
+  }
+  if (summary.selected.length) results.insertBefore(bridges,results.children[3]||null);
   const courseHeading = el('h3', 'Cinque indirizzi, diversi modi di imparare');
-  const curiosityStart = results.children[3] || null;
+  const curiosityStart = results.querySelector('.result-grid') || recap;
   const courseGrid = el('div', null, 'discovery-courses');
   for (const course of courses) {
     const card = el('article', null, 'discovery-course');
+    card.dataset.course=course.id; card.append(courseArt(course.id));
     card.append(el('p', course.code, 'explore-kicker'), el('h3', course.name),
       el('p', course.face), el('h4', 'Che cosa si studia'), el('p', course.learn));
     if (summary.selected.length) {
-      card.append(el('h4', 'Come ritrovi le tue curiosità'));
+      const connections=el('details',null,'course-connections');
+      connections.append(el('summary', 'Collegamenti con le tue curiosità'));
       const links = el('ul');
       for (const theme of summary.selected) links.append(el('li', course.lenses[theme.id]));
-      card.append(links);
+      connections.append(links); card.append(connections);
     }
     const actions = el('div', null, 'action-row');
     actions.append(link('Conosci questo indirizzo', `indirizzi.html#${course.id}`),
@@ -133,7 +149,7 @@ function renderResults() {
   results.insertBefore(el('p', 'Puoi partire dal corso che ti incuriosisce di più e poi confrontarlo con gli altri. La Bussola non sceglie al posto tuo.', 'plain-note'), curiosityStart);
   if (summary.selected.length) results.insertBefore(el('h3', 'Le curiosità da cui sei partito'), curiosityStart);
   const row = el('div', null, 'action-row');
-  row.append(button('Rivedi le situazioni', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
+  row.append(button('Rivedi le domande', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
   results.append(row);
   contactsMount.replaceChildren(contactsPanel(contacts, resetToIntro));
   focusHeading(results);

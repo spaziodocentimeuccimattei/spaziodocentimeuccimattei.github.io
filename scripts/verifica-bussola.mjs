@@ -10,7 +10,7 @@ const [b,d,c,m,contacts]=await Promise.all(['bussola','dimensioni','indirizzi','
 const {situations}=b,{dimensions}=d,{courses}=c,{missions}=m;
 const check=validateContent(situations,dimensions,courses,missions);
 assert.deepEqual(check.errors,[]);
-for (const file of [b,d,c,m,contacts]) assert.equal(file.version,1);
+for (const file of [b,d,c,m,contacts]) assert.equal(file.version,2);
 assert.equal(new Set(missions.map(m=>m.type)).size,5);
 
 // Invalid, outdated, blocked and unrelated storage must never leak into a new path.
@@ -35,7 +35,7 @@ assert.equal(summarize(situations,dimensions,{}).selected.length,0);
 assert.equal(summarize(situations,dimensions,{[situations[0].id]:situations[0].options[0].id}).selected.length,0);
 assert.equal(summarize(situations,dimensions,Object.fromEntries(situations.map(s=>[s.id,null]))).selected.length,0);
 const budget=missions.find(m=>m.type==='budget');
-assert.equal(totals(budget.options,['ospite','materiali','acqua'],'cost'),125);
+assert.equal(totals(budget.options,['tastiera','mouse','cuffie'],'cost'),125);
 const itinerary=missions.find(m=>m.type==='itinerary');
 assert.equal(totals(itinerary.options,['piazza','museo'],'minutes'),50);
 

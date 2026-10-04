@@ -162,3 +162,58 @@
 .discovery-course ul { padding-left: 22px; }
 .discovery-course .action-row { align-items: stretch; flex-direction: column; }
 @media (max-width: 760px) { .discovery-courses { grid-template-columns: 1fr; } }
+/* Course accents echo the original campaign logo; text stays dark and readable. */
+[data-course="afm"] { --course-color:#006b63; --art-fill:#daf2e9; }
+[data-course="sia"] { --course-color:#477b00; --art-fill:#edf8d9; }
+[data-course="turismo"] { --course-color:#b30b47; --art-fill:#fce5ed; }
+[data-course="cat"] { --course-color:#12667e; --art-fill:#e1f2f7; }
+[data-course="ssas"] { --course-color:#7a397d; --art-fill:#f3e6f5; }
+.compass-intro { padding:0; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:0; overflow:hidden; }
+.compass-intro > div { padding:clamp(26px,4vw,48px); }
+.compass-intro #introTitle { font-size:clamp(2.5rem,4vw,4rem); }
+.school-photo { align-self:stretch; margin:0; background:#e3eee9; position:relative; }
+.school-photo img { width:100%; height:100%; min-height:420px; object-fit:cover; display:block; }
+.school-photo figcaption { position:absolute; bottom:20px; left:20px; right:20px; width:fit-content; padding:8px 14px; background:#123c57; color:white; border-radius:9px; font-size:.875rem; }
+.discovery-course,.mission-card { border-top:5px solid var(--course-color,#006b63); background:white; }
+.course-art { display:block; width:100%; max-width:310px; height:160px; color:var(--course-color,#006b63); margin:0 auto 18px; }
+.activity-heading { display:grid; grid-template-columns:minmax(0,1fr) 190px; align-items:center; gap:24px; }
+.activity-heading .course-art { height:145px; margin:0; }
+.activity-course-name { font-weight:700; color:var(--course-color,#123c57); }
+.activity-workspace { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:24px; align-items:start; }
+.activity-workspace .choices { min-width:0; }
+.activity-workspace .mission-feedback { margin:0; }
+.amount-visual { padding:22px; margin-bottom:20px; background:#123c57; color:white; border-radius:16px; }
+.amount-visual .amount-label { margin:0 0 10px; font-weight:700; }
+.amount-visual .amount-numbers { margin:0 0 18px; }
+.amount-numbers strong { font-size:2.1rem; }
+.amount-visual progress { accent-color:#58bba9; display:block; width:100%; height:16px; }
+.amount-visual.over-limit { border:3px solid #d10a4f; }
+.route-visual { padding:0; list-style:none; display:grid; gap:10px; }
+.route-visual li { padding:12px 16px; border-left:4px solid #b30b47; background:#fff; border-radius:0 12px 12px 0; }
+.route-visual strong,.route-visual span { display:block; }
+.workspace-records,.workspace-layout { grid-template-columns:1fr; }
+.workspace-layout .choice-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media (max-width:760px) {
+ .compass-intro,.activity-workspace { grid-template-columns:1fr; }
+ .school-photo { grid-row:1; }
+ .school-photo img { height:220px; min-height:0; object-position:center; }
+ .activity-heading { grid-template-columns:1fr; gap:0; }
+ .activity-heading .course-art { grid-row:1; height:100px; width:160px; margin:0 0 16px; }
+ .workspace-layout .choice-list { grid-template-columns:1fr; }
+}
+.workspace-layout .choice { display:grid; grid-template-columns:24px minmax(0,1fr); }
+.workspace-layout .choice .room-plan { grid-column:1/-1; margin:14px 0 0; }
+.course-connections summary { padding:12px 0; min-height:44px; color:#006b63; font-weight:700; cursor:pointer; }
+.interest-bridges { display:grid; gap:16px; margin:22px 0; }
+.interest-bridge { padding:24px; border:1px solid #b9cbd1; border-radius:18px; background:#f3f8f7; }
+.interest-bridge h3 { margin:0; }
+.bridge-courses { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; }
+.bridge-courses > div { padding:16px; background:white; border-radius:12px; border-top:3px solid #006b63; }
+.bridge-courses p { margin:8px 0 0; font-size:1rem; }
+.bridge-link { display:inline-flex; align-items:center; min-height:44px; color:#006b63; font-weight:800; }
+.study-card .course-art { height:110px; margin:0 0 16px; }
+.art-afm { color:#006b63; --art-fill:#daf2e9; }
+.art-sia { color:#477b00; --art-fill:#edf8d9; }
+.art-turismo { color:#b30b47; --art-fill:#fce5ed; }
+.art-cat { color:#12667e; --art-fill:#e1f2f7; }
+.art-ssas { color:#7a397d; --art-fill:#f3e6f5; }

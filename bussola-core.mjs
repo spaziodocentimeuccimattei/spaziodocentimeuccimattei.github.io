@@ -1,6 +1,6 @@
 // Content and scoring are independent of the browser and shared with development checks.
 export const SESSION_KEY = 'mattei-bussola-v1';
-export const CONTENT_VERSION = 1;
+export const CONTENT_VERSION = 2;
 
 export function freshState() {
   return { version: CONTENT_VERSION, stage: 'question', index: 0, answers: {}, missions: {} };

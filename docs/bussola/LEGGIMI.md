@@ -23,6 +23,14 @@ Ogni azione contribuisce a più dimensioni. I pesi sono centrati e scalati rispe
 
 Verifica ripetibile: `node scripts/verifica-bussola.mjs 50000`. La simulazione uniforme rileva sbilanciamenti strutturali, non rappresenta le preferenze degli studenti e non valida scientificamente il percorso. Ogni cambiamento di situazioni/pesi richiede una nuova esecuzione e una nuova revisione editoriale.
 
+## Revisione grafica e contenuti — versione 2
+
+Foto originale della sede in formato responsive fino a 1440 pixel, logo invariato, colori dei cinque corsi ispirati al logo e illustrazioni vettoriali nitide. Nessuna fotografia inventata di studenti o laboratori. `bussola-visuals.mjs` contiene le illustrazioni, i misuratori di spesa/tempo e le tappe. Le due piante CAT sono visibili prima della scelta. Le otto domande riguardano gli interessi personali; i precedenti scenari organizzativi sono sostituiti. La versione 2 ignora lo stato della vecchia versione.
+
+Ogni corso ha una propria attività e un collegamento esplicito alle materie: AFM/economia aziendale, SIA/informatica, Turismo/geografia turistica e lingue, CAT/progettazione e topografia, SSAS/psicologia e metodologie operative. La restituzione mostra come esempi solo le risposte con collegamento diretto al tema (peso 2). I testi e i segnaposto del piano grafico restano nella tavola per il committente; non sono inseriti nelle pagine degli studenti.
+
+Verifica della revisione nell’In-app Browser: otto domande complete, ripresa, cinque attività complete, riscontri dei vincoli, due piante CAT e console senza errori osservati. Restituzione, catalogo e CAT controllati a 320, 390, 768 e 1366 pixel senza scorrimento orizzontale. Le prove Chrome descritte sotto appartengono alla precedente versione; non sostituiscono le prove della revisione.
+
 ## Stato e privacy tecnica
 
 Solo `sessionStorage`, chiave `mattei-bussola-v1`, nella scheda del browser. Nessun nome, scuola o account richiesto; nessun invio delle risposte. I dettagli delle scelte nelle missioni restano in memoria; viene salvato soltanto il completamento. Stato corrotto o versione sconosciuta sono ignorati. Se lo storage è bloccato, il percorso continua in memoria. I comandi di cancellazione toccano soltanto la chiave Bussola, senza modificare lo stato dell'area docenti. Alla riapertura dello stato salvato si chiede di continuare o iniziare per un'altra persona prima di mostrare le risposte.
@@ -31,7 +39,7 @@ Mailto, telefono e sito sono normali collegamenti: l'eventuale messaggio e-mail 
 
 ## Verifiche e limiti
 
-Eseguiti: simulazione deterministica di 50.000 percorsi; struttura dei contenuti; stato valido/corrotto/vecchio/bloccato; cancellazione limitata; esempi coerenti con le risposte; calcoli budget/tempi; sintassi dei moduli; 74 riferimenti locali e conservazione dei collegamenti originali. In Chrome su macOS: percorso completo, ripresa, collegamenti contestuali per tutti i corsi, cinque missioni complete, tastiera, indietro, tutte saltate, reset, focus del collegamento al contenuto, console senza errori rilevati. Quattro pagine a 320, 390, 768 e 1366 pixel senza scorrimento orizzontale.
+Eseguiti: simulazione deterministica di 50.000 percorsi; struttura dei contenuti; stato valido/corrotto/vecchio/bloccato; cancellazione limitata; esempi coerenti con le risposte; calcoli budget/tempi; sintassi dei moduli; 75 riferimenti locali e conservazione dei collegamenti originali. In Chrome su macOS: percorso completo, ripresa, collegamenti contestuali per tutti i corsi, cinque missioni complete, tastiera, indietro, tutte saltate, reset, focus del collegamento al contenuto, console senza errori rilevati. Quattro pagine a 320, 390, 768 e 1366 pixel senza scorrimento orizzontale.
 
 La struttura semantica è stata controllata nell'albero di accessibilità. Sono presenti etichette native, focus visibile e riduzione delle animazioni tramite `prefers-reduced-motion`. Non eseguiti: uso effettivo con lettore di schermo, Chromebook fisico, smartphone/tablet fisici, rete scolastica, carico di una classe e pilotaggio. Non dichiarare conformità WCAG completa o validazione didattica sulla base di queste verifiche.
 

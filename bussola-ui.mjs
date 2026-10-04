@@ -37,8 +37,7 @@ export function focusHeading(container) {
   if (!heading) return;
   heading.tabIndex = -1;
   heading.focus({ preventScroll: true });
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  container.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+  container.scrollIntoView({ block: 'start', behavior: 'instant' });
 }
 
 export async function loadData(names) {
@@ -74,7 +73,7 @@ export function contactsPanel(contacts, onReset) {
   address.append(el('h3', contacts.name));
   const email = el('p'); email.append('Orientamento: ', link(contacts.orientationEmail, `mailto:${contacts.orientationEmail}?subject=Orientamento`, ''));
   const office = el('p'); office.append('Segreteria: ', link(contacts.email, `mailto:${contacts.email}`, ''));
-  const phone = el('p'); phone.append('Sede Mattei: ', link(contacts.phone, `tel:+39${contacts.phone}`, ''));
+  const phone = el('p'); phone.append('Sede di Decimomannu: ', link(contacts.phone, `tel:+39${contacts.phone}`, ''));
   address.append(email, office, phone, el('p', contacts.address));
   const figure = el('figure', null, 'qr-card');
   const qr = el('img'); qr.src = 'assets/qr-orientamento.svg'; qr.alt = 'QR code per aprire lo spazio di orientamento sul tuo dispositivo'; qr.width = 132; qr.height = 132;
