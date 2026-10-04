@@ -1,5 +1,5 @@
 import { courseArt } from './bussola-visuals.mjs';
-import { readState, summarize, clearState } from './bussola-core.mjs';
+import { readState, summarize, suggestCourses, clearState } from './bussola-core.mjs';
 import { el, button, link, storage, loadData } from './bussola-ui.mjs';
 
 async function initialize() {
@@ -21,15 +21,18 @@ async function initialize() {
     actions.append(button('Collega i percorsi alle mie scelte', () => {
       const summary = summarize(b.situations, d.dimensions, state.answers);
       const themes = summary.selected;
-      document.getElementById('exploreContext').textContent = themes.length
-        ? 'Ritrova le azioni scelte in tutti e cinque i percorsi. Nessun corso è consigliato o escluso.'
-        : 'Le scelte aprono più direzioni. Le cinque esperienze permettono di esplorarle senza assegnare un corso.';
+      const direction = suggestCourses(b.situations, c.courses, state.answers);
+      document.getElementById('exploreContext').textContent = direction.selected.length
+        ? `La tua Bussola suggerisce di approfondire ${direction.selected.map(item => item.course.code).join(', ')}. Qui puoi confrontare tutti i percorsi.`
+        : 'Le scelte aprono più direzioni. Confronta materie e attività per trovare un punto di partenza.';
       for (const course of c.courses) {
         const box = document.querySelector(`[data-course="${course.id}"]`);
-        if (!box || !themes.length) continue;
+        const item = direction.selected.find(item => item.course.id === course.id);
+        if (!box || (!themes.length && !item)) continue;
         box.replaceChildren(el('h4', 'Collegamenti con le tue scelte'));
         const ul = el('ul');
-        for (const theme of themes) ul.append(el('li', course.lenses[theme.id]));
+        if (item) for (const trace of item.evidence.slice(0,3)) ul.append(el('li', trace.reason));
+        else for (const theme of themes) ul.append(el('li', course.lenses[theme.id]));
         box.append(ul); box.hidden = false;
       }
       actions.firstElementChild.disabled = true;

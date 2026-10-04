@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-04",
+  "contentVersion": 3,
+  "seed": 20261004,
+  "paths": 50000,
+  "model": "Scelta uniforme e indipendente tra le azioni; non rappresenta le preferenze degli studenti.",
+  "normalization": "Pesi centrati e scalati sulle opportunità offerte dalle sole situazioni risposte.",
+  "table": [
+    {
+      "dimension": "persone",
+      "coverage": 12,
+      "leadingPct": 15.83,
+      "includedPct": 44.42
+    },
+    {
+      "dimension": "organizzazione",
+      "coverage": 12,
+      "leadingPct": 13.59,
+      "includedPct": 44.59
+    },
+    {
+      "dimension": "risorse",
+      "coverage": 12,
+      "leadingPct": 12.73,
+      "includedPct": 45.76
+    },
+    {
+      "dimension": "dati",
+      "coverage": 12,
+      "leadingPct": 16.35,
+      "includedPct": 44.95
+    },
+    {
+      "dimension": "progetto",
+      "coverage": 12,
+      "leadingPct": 14.15,
+      "includedPct": 46.73
+    },
+    {
+      "dimension": "comunicazione",
+      "coverage": 12,
+      "leadingPct": 14.02,
+      "includedPct": 47.38
+    },
+    {
+      "dimension": "territorio",
+      "coverage": 12,
+      "leadingPct": 13.33,
+      "includedPct": 40.38
+    }
+  ],
+  "reasons": {
+    "selected": 48653,
+    "open": 1328,
+    "few": 19
+  },
+  "sizes": {
+    "0": 1347,
+    "3": 37513,
+    "4": 11140
+  },
+  "topTies": 0,
+  "cutoffTies": 578,
+  "courseTable": [
+    {
+      "course": "afm",
+      "leadingPct": 20.39,
+      "suggestedPct": 38.72
+    },
+    {
+      "course": "sia",
+      "leadingPct": 19.27,
+      "suggestedPct": 34.94
+    },
+    {
+      "course": "turismo",
+      "leadingPct": 20.15,
+      "suggestedPct": 36.27
+    },
+    {
+      "course": "ssas",
+      "leadingPct": 18.01,
+      "suggestedPct": 33.63
+    },
+    {
+      "course": "cat",
+      "leadingPct": 22.18,
+      "suggestedPct": 37.51
+    }
+  ],
+  "courseReasons": {
+    "few": 0,
+    "mixed": 2711,
+    "tentative": 0,
+    "suggested": 47289
+  },
+  "courseVisibility": {
+    "afm": "Sempre disponibile; indicazioni motivate dalle scelte, nessun punteggio pubblico.",
+    "sia": "Sempre disponibile; indicazioni motivate dalle scelte, nessun punteggio pubblico.",
+    "turismo": "Sempre disponibile; indicazioni motivate dalle scelte, nessun punteggio pubblico.",
+    "ssas": "Sempre disponibile; indicazioni motivate dalle scelte, nessun punteggio pubblico.",
+    "cat": "Sempre disponibile; indicazioni motivate dalle scelte, nessun punteggio pubblico."
+  },
+  "warnings": [],
+  "scientificValidation": false
+}

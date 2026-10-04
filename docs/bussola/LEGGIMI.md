@@ -1,6 +1,6 @@
-# La tua Bussola — consegna tecnica, 4 ottobre 2026
+# La tua Bussola — revisione locale, 4 ottobre 2026
 
-Versione funzionante per il pilotaggio del percorso di orientamento IIS Meucci - Mattei | Decimomannu. Sito statico, senza framework, registrazione, analytics o backend aggiuntivi. Non è uno strumento psicometrico e non assegna un indirizzo agli studenti.
+Versione 3 locale, non ancora pubblicata, preparata per il pilotaggio del percorso di orientamento IIS Meucci - Mattei | Decimomannu. Sito statico, senza framework, registrazione, analytics o backend aggiuntivi. Non è uno strumento psicometrico e non assegna un indirizzo agli studenti.
 
 ## Avvio
 
@@ -8,20 +8,38 @@ Dalla radice del sito: `python3 -m http.server 8767 --bind 127.0.0.1`, poi aprir
 
 ## File e manutenzione
 
-- `bussola.html`, `bussola.mjs`: ingresso rivolto alla terza media, ripresa esplicita, otto situazioni, revisione e salto; conclusione con tutti e cinque gli indirizzi direttamente visibili, materie, collegamenti alle curiosità scelte e accesso alle attività. Restituzione delle scelte e contatti seguono le schede dei corsi.
+- `bussola.html`, `bussola.mjs`: ingresso rivolto alla terza media, ripresa esplicita, dodici situazioni, revisione e salto; conclusione con indicazioni motivate sugli indirizzi da approfondire. Gli altri percorsi sono disponibili nel confronto richiudibile; materie e attività restano accessibili per tutti.
 - `bussola-core.mjs`: stato, validazione, restituzione, calcoli delle attività.
 - `bussola-ui.mjs`, `bussola.css`: controlli, caricamento, focus, contatti e stile condiviso.
 - `data/bussola.json`, `data/dimensioni.json`: situazioni e matrice delle sette dimensioni.
-- `data/indirizzi.json`, `indirizzi-esplora.mjs`: sette possibili collegamenti per ciascun corso, attivati solo su richiesta; nessun ordinamento personalizzato dei corsi.
+- `data/indirizzi.json`, `indirizzi-esplora.mjs`: sette possibili collegamenti per ciascun corso, attivati solo su richiesta; collegamenti personalizzati mostrati solo dopo richiesta esplicita dello studente.
 - `missioni.html`, `missioni.mjs`, `data/missioni.json`: budget AFM, archivio SIA, itinerario Turismo, pianta CAT, osservazioni SSAS. Situazioni dichiaratamente immaginate; contenuti proposti da validare con i docenti.
 - `data/contatti.json`, `documenti/contatti-mattei.vcf`, `assets/qr-orientamento.svg`: contatti pubblici, fonti e data di verifica. Il QR porta alla home pubblica esistente; non contiene risposte o un profilo.
 - `index.html`, `indirizzi.html`, `indirizzi.css`: ingresso dalla home, approfondimenti dei corsi, contrasto SIA/CAT. Collegamenti preesistenti conservati.
 
-## Restituzione e pareggi
+## Restituzione e pareggi — versione 3
 
-Ogni azione contribuisce a più dimensioni. I pesi sono centrati e scalati rispetto alle opportunità delle sole situazioni risposte. Non vengono trasformati in un punteggio del corso. La restituzione richiede almeno quattro situazioni risposte, tre dimensioni con sostegno in almeno tre situazioni e almeno un'azione primaria. Mostra tre temi o quattro quando il quarto è vicino alla soglia; se il quinto è altrettanto vicino oppure la distribuzione è troppo uniforme, lascia aperta l'esplorazione. I temi sono mostrati nell'ordine editoriale, con esempi delle azioni effettivamente scelte. Con poche risposte o tutte saltate non si forza un profilo.
+Ogni risposta ha collegamenti editoriali espliciti con uno o più indirizzi (`courseLinks`): diretto con peso 2, trasversale con peso 1. Ogni collegamento include una ragione legata alle materie o alle attività del corso. Il CSV `collegamenti-indirizzi.csv` rende questa matrice rivedibile dai docenti; le fonti delle materie sono le cinque pagine ufficiali della scuola, consultate il 4 ottobre 2026. La relazione risposta-indirizzo è una proposta editoriale, non una misura validata delle capacità.
 
-Verifica ripetibile: `node scripts/verifica-bussola.mjs 50000`. La simulazione uniforme rileva sbilanciamenti strutturali, non rappresenta le preferenze degli studenti e non valida scientificamente il percorso. Ogni cambiamento di situazioni/pesi richiede una nuova esecuzione e una nuova revisione editoriale.
+Per non favorire un corso solo perché compare in più opzioni, i valori vengono centrati e scalati sulle opportunità delle sole domande effettivamente risposte. Con meno di quattro risposte non si produce un’indicazione. Occorrono almeno due collegamenti diretti, in domande diverse, per mettere in evidenza un corso. Tra quattro e cinque risposte l’indicazione è dichiarata preliminare. Gli indirizzi entro 0,75 unità dal valore interno maggiore vengono mostrati insieme, in ordine editoriale: tutti i pareggi rimangono visibili. Con quattro o più direzioni vicine, o segnali complessivamente deboli, il testo dichiara interessi misti. Le soglie sono scelte di progettazione, da riesaminare nel pilotaggio; nessun punteggio o percentuale di attitudine è mostrato agli studenti.
+
+Le schede in primo piano citano risposte realmente scelte e ne spiegano il collegamento con materie e attività. Tutti gli altri indirizzi restano nel confronto. La sintesi delle sette curiosità è un approfondimento facoltativo e non condiziona l’indicazione sui corsi.
+
+Verifica ripetibile: `BUSSOLA_REPORT=docs/bussola/verifica-bilanciamento-v3.json node scripts/verifica-bussola.mjs 50000`. Include percorsi coerenti con ciascuno dei cinque corsi, interessi misti, risposte saltate, motivazioni corrispondenti alle scelte e migrazione dello stato. La simulazione uniforme rileva sbilanciamenti strutturali; non rappresenta gli studenti e non valida scientificamente il percorso.
+
+## Domande e grafica — versione 3
+
+Le otto risposte preesistenti conservano frasi, ID e ordine; ora hanno titoli brevi che aiutano a confrontarle. Quattro nuove situazioni riguardano materie, predisposizioni da coltivare, sogni e aspirazioni. Le predisposizioni sono modi di lavorare riconosciuti dalla persona, non abilità inferite né requisiti di ingresso. Nessun riferimento a voti.
+
+Domande su due colonne desktop e una mobile, selezione visibile anche attraverso il controllo radio, contesto illustrato compatto. La restituzione ha prima un’indicazione esplicita, poi le schede motivate e infine confronto con gli altri corsi, rilettura e contatti. Logo e foto della sede originali. Stili nuovi limitati alla pagina Bussola.
+
+Lo stato versione 2 viene migrato conservando le otto risposte e i completamenti delle attività. Chi aveva concluso riparte dalla prima domanda nuova, senza dover rispondere di nuovo alle precedenti. La versione 3 usa la stessa chiave in `sessionStorage`, senza trasmettere risposte.
+
+## Verifiche della revisione locale — versione 3
+
+Verificati: struttura dei dati, sintassi dei moduli, simulazione deterministica di 50.000 percorsi senza avvisi, ciascun corso che emerge su risposte coerenti, interessi misti e salto; nessuna motivazione proviene da risposte non selezionate. Nel browser: percorso SIA completo con due domande saltate, confronto degli altri quattro indirizzi, domande su materie e aspirazioni, ripresa/revisione/reset e navigazione alle pagine collegate. Restituzione e domande a 320, 390, 768 e 1366 pixel senza scorrimento orizzontale. Le prove con docenti, studenti e dispositivi scolastici restano da svolgere.
+
+Le sezioni seguenti descrivono la versione 2 pubblicata e le sue verifiche storiche; non sono una pubblicazione della revisione 3.
 
 ## Revisione grafica e contenuti — versione 2
 

@@ -17,7 +17,14 @@
         "progetto": "Trasformare un’idea in un piano di attività.",
         "comunicazione": "Spiegare informazioni e decisioni a persone diverse.",
         "territorio": "Osservare imprese e servizi nel loro contesto."
-      }
+      },
+      "subjects": [
+        "Economia aziendale",
+        "Diritto",
+        "Economia politica",
+        "Informatica",
+        "Lingue"
+      ]
     },
     {
       "id": "sia",
@@ -35,7 +42,13 @@
         "progetto": "Progettare una soluzione e provarne il funzionamento.",
         "comunicazione": "Rendere informazioni e istruzioni comprensibili.",
         "territorio": "Osservare come imprese e servizi usano le tecnologie."
-      }
+      },
+      "subjects": [
+        "Informatica",
+        "Economia aziendale",
+        "Diritto",
+        "Economia politica"
+      ]
     },
     {
       "id": "turismo",
@@ -53,7 +66,13 @@
         "progetto": "Costruire un itinerario e rappresentarlo.",
         "comunicazione": "Usare lingue e linguaggi per incontrare culture diverse.",
         "territorio": "Conoscere e valorizzare luoghi e patrimonio."
-      }
+      },
+      "subjects": [
+        "Lingue straniere",
+        "Geografia turistica",
+        "Arte e territorio",
+        "Discipline turistiche e aziendali"
+      ]
     },
     {
       "id": "ssas",
@@ -71,7 +90,13 @@
         "progetto": "Adattare attività e ambienti per favorire la partecipazione.",
         "comunicazione": "Ascoltare e comunicare in modo comprensibile.",
         "territorio": "Conoscere servizi e reti della comunità."
-      }
+      },
+      "subjects": [
+        "Metodologie operative",
+        "Psicologia generale e applicata",
+        "Igiene e cultura medico-sanitaria",
+        "Scienze umane e sociali"
+      ]
     },
     {
       "id": "cat",
@@ -89,7 +114,13 @@
         "progetto": "Disegnare e progettare spazi e costruzioni.",
         "comunicazione": "Spiegare un progetto attraverso disegni e relazioni.",
         "territorio": "Leggere il territorio e gli effetti di una trasformazione."
-      }
+      },
+      "subjects": [
+        "Progettazione e Costruzioni",
+        "Topografia",
+        "Estimo",
+        "Sicurezza"
+      ]
     }
   ]
 }

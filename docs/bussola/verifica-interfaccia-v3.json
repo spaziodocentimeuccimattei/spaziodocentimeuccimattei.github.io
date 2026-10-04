@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-04",
+  "contentVersion": 3,
+  "scope": "Solo revisione locale, non pubblicata",
+  "browser": "Codex In-app Browser",
+  "passed": [
+    "Percorso SIA con dieci risposte e due salti, indicazione esplicita e tre motivazioni coerenti",
+    "Confronto degli altri quattro indirizzi",
+    "Ripresa esplicita dopo ricaricamento, senza esposizione immediata delle risposte",
+    "Indietro conserva la scelta",
+    "Reset e percorso con dodici domande saltate: nessun indirizzo forzato",
+    "Percorso con quattro risposte AFM/SIA: entrambe le direzioni in forma preliminare",
+    "Pagina indirizzi: collegamento personale attivato su richiesta e coerente con il risultato",
+    "Domande e risultati a 320, 390, 768, 1366 pixel senza overflow orizzontale",
+    "Domanda sulle materie e risultato misto a 390 pixel, ispezione visiva",
+    "Console senza errori o avvisi osservati"
+  ],
+  "notPerformed": [
+    "Pilotaggio con studenti e docenti",
+    "Lettore di schermo reale",
+    "Dispositivi fisici e rete scolastica"
+  ],
+  "scientificValidation": false
+}

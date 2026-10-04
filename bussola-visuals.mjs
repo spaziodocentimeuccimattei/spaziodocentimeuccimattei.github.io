@@ -29,6 +29,10 @@ export function routeVisual(options,selected){
 }
 
 const questionScenes={
+ materie:scenes.afm,
+ predisposizioni:'<path d="M44 172h222M62 149l42-43 42 30 86-91M190 45h42v42"/><circle cx="104" cy="106" r="9"/><circle cx="146" cy="136" r="9"/>',
+ sogni:'<path d="m155 26 26 56 62 8-46 43 12 63-54-30-54 30 12-63-46-43 62-8z"/>',
+ aspirazioni:'<path d="M155 205V30M155 30l98 25-98 29M51 194h38v-33h40v-34h40v-34"/>',
  curiosita:'<path d="M75 141q-38-55 6-87t80 12q37-48 73-13t-5 81l-69 54z"/><path d="M143 76q33-21 38 7t-25 31v12"/><circle cx="156" cy="149" r="3"/>',
  video:'<rect x="37" y="38" width="236" height="145" rx="17"/><path d="m127 75 56 35-56 35zM63 162h184"/>',
  imparare:'<path d="M34 51q64-22 121 5 57-27 121-5v128q-64-22-121 5-57-27-121-5zM155 56v128M55 82h66M55 106h66M189 82h60M189 106h60"/>',

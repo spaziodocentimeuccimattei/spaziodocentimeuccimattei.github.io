@@ -39,3 +39,23 @@ futuro,futuro-2,Il valore delle risorse e le scelte per usarle senza sprecarle.,
 futuro,futuro-3,Il benessere delle persone e i modi per sostenerle nelle difficoltà.,2,0,0,0,0,1,1
 futuro,futuro-4,I dati e gli strumenti digitali per capire ciò che succede intorno a noi.,0,0,1,2,0,0,1
 futuro,futuro-5,I diversi ruoli di un lavoro e il modo in cui collaborano le persone.,1,2,0,0,1,0,0
+materie,materie-1,"Economia aziendale e Diritto: capire come funziona un’impresa, come si gestiscono le spese e quali regole si rispettano.",0,1,2,0,0,0,0
+materie,materie-2,"Informatica ed Economia aziendale: costruire programmi, organizzare dati e rendere più semplice un’attività.",0,1,0,2,0,0,0
+materie,materie-3,"Lingue straniere, Arte e territorio e Geografia turistica: conoscere culture e progettare esperienze di visita.",0,0,0,0,0,2,1
+materie,materie-4,"Psicologia, Igiene e Metodologie operative: capire bisogni, relazioni e benessere, e progettare attività per le persone.",2,0,0,0,0,1,0
+materie,materie-5,"Progettazione e Topografia: misurare un luogo, disegnare spazi e capire come si costruisce.",0,0,0,1,2,0,0
+predisposizioni,predisposizioni-1,"Quando devo scegliere, metto in ordine le spese e confronto vantaggi e svantaggi.",0,1,2,0,0,0,0
+predisposizioni,predisposizioni-2,"Quando qualcosa sul computer non funziona, provo un passaggio alla volta per capire dove si blocca.",0,0,0,2,1,0,0
+predisposizioni,predisposizioni-3,"Mi piace trovare parole, immagini o espressioni in un’altra lingua per raccontare qualcosa a chi non lo conosce.",0,0,0,0,0,2,1
+predisposizioni,predisposizioni-4,Mi accorgo quando qualcuno resta fuori da un’attività e cerco di capire come coinvolgerlo.,2,0,0,0,0,1,0
+predisposizioni,predisposizioni-5,"Quando immagino un cambiamento, faccio uno schizzo e controllo misure e disposizione degli spazi.",0,0,0,1,2,0,0
+sogni,sogni-1,"Far partire una piccola attività con un gruppo: capire a chi serve, organizzare le risorse e renderla sostenibile.",0,2,1,0,0,0,0
+sogni,sogni-2,Inventare un’app che risolva un problema concreto e vedere qualcuno usarla davvero.,0,0,0,2,1,0,0
+sogni,sogni-3,"Accogliere persone di altri paesi e far scoprire loro un luogo a cui tengo, parlando anche altre lingue.",0,0,0,0,0,2,1
+sogni,sogni-4,"Ideare un’attività che aiuti bambini, anziani o persone in difficoltà a stare bene e partecipare.",2,1,0,0,0,0,0
+sogni,sogni-5,"Ridisegnare uno spazio poco usato e immaginare come renderlo sicuro, accessibile e piacevole.",0,0,0,0,2,0,1
+aspirazioni,aspirazioni-1,"Capire numeri, costi e regole per gestire bene un progetto o un’attività.",0,1,2,0,0,0,0
+aspirazioni,aspirazioni-2,"Creare uno strumento digitale affidabile, controllando che dati e istruzioni funzionino.",0,0,0,2,1,0,0
+aspirazioni,aspirazioni-3,Usare più lingue e organizzare una visita che faccia conoscere bene un territorio.,0,0,0,0,0,2,1
+aspirazioni,aspirazioni-4,"Capire meglio le persone, comunicare con attenzione e progettare attività adatte ai loro bisogni.",2,0,0,0,0,1,0
+aspirazioni,aspirazioni-5,Leggere un territorio e trasformare un’idea in un disegno tecnico con misure e vincoli.,0,0,0,0,2,0,1
