@@ -11,7 +11,7 @@ let selected = [], followup = '', firstSelection = [];
 function openCatalog(updateUrl = true) {
   if (updateUrl) history.replaceState(null, '', 'missioni.html');
   panel.hidden = true; catalog.hidden = false; contactsMount.hidden = false;
-  current = null; setJourney(1); focusHeading(catalog);
+  current = null; setJourney(2); focusHeading(catalog);
 }
 
 function openMission(id, updateUrl = true) {
@@ -20,7 +20,7 @@ function openMission(id, updateUrl = true) {
   if (updateUrl) history.replaceState(null, '', `missioni.html?corso=${encodeURIComponent(id)}`);
   step = 0; selected = []; followup = ''; firstSelection = [];
   catalog.hidden = true; contactsMount.hidden = true; panel.hidden = false;
-  setJourney(3); renderMission();
+  setJourney(2); renderMission();
 }
 
 function planSvg(layout, suffix) {
@@ -182,7 +182,7 @@ async function initialize() {
     }));
     const id=new URLSearchParams(location.search).get('corso');
     if (id && missions.some(m=>m.id===id)) openMission(id,false);
-    else setJourney(1);
+    else setJourney(2);
   } catch { showError(cards,initialize); }
 }
 window.addEventListener('popstate',()=>{

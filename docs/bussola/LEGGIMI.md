@@ -8,7 +8,7 @@ Dalla radice del sito: `python3 -m http.server 8767 --bind 127.0.0.1`, poi aprir
 
 ## File e manutenzione
 
-- `bussola.html`, `bussola.mjs`: avvio, ripresa esplicita, otto situazioni, revisione, salto, restituzione e contatti.
+- `bussola.html`, `bussola.mjs`: ingresso rivolto alla terza media, ripresa esplicita, otto situazioni, revisione e salto; conclusione con tutti e cinque gli indirizzi direttamente visibili, materie, collegamenti alle curiosità scelte e accesso alle attività. Restituzione delle scelte e contatti seguono le schede dei corsi.
 - `bussola-core.mjs`: stato, validazione, restituzione, calcoli delle attività.
 - `bussola-ui.mjs`, `bussola.css`: controlli, caricamento, focus, contatti e stile condiviso.
 - `data/bussola.json`, `data/dimensioni.json`: situazioni e matrice delle sette dimensioni.

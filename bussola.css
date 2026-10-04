@@ -155,3 +155,10 @@
  .explore-header { flex-wrap: wrap; }
  .explore-header .page-nav { max-width: 100%; flex-wrap: wrap; }
 }
+
+.discovery-courses { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 22px; margin: 24px 0; }
+.discovery-course { min-width: 0; padding: 24px; border: 1px solid #b9cbd1; border-radius: 18px; background: #f8fbfb; }
+.discovery-course h4 { margin-bottom: 6px; color: #123c57; }
+.discovery-course ul { padding-left: 22px; }
+.discovery-course .action-row { align-items: stretch; flex-direction: column; }
+@media (max-width: 760px) { .discovery-courses { grid-template-columns: 1fr; } }

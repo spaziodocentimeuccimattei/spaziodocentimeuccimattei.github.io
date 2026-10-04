@@ -10,7 +10,7 @@ const status = document.getElementById('loadStatus');
 const start = document.getElementById('startPath');
 const announcements = document.getElementById('announcements');
 const missionIds = ['afm', 'sia', 'turismo', 'ssas', 'cat'];
-let situations, dimensions, contacts, state;
+let situations, dimensions, courses, contacts, state;
 
 function hidePanels() {
   for (const panel of [intro, resume, questions, results, contactsMount]) panel.hidden = true;
@@ -44,7 +44,7 @@ function advance(answer) {
 function renderQuestion() {
   state.stage = 'question';
   hidePanels(); questions.hidden = false;
-  setJourney(1);
+  setJourney(0);
   const situation = situations[state.index];
   const progressBox = el('div', null, 'question-progress');
   const progressHeading = el('div', null, 'progress-heading');
@@ -59,7 +59,7 @@ function renderQuestion() {
   const fieldset = el('fieldset', null, 'choices');
   fieldset.append(el('legend', situation.question));
   const list = el('div', null, 'choice-list');
-  const next = button(state.index === situations.length-1 ? 'Ritrova le tue scelte' : 'Continua', () => advance(state.answers[situation.id]));
+  const next = button(state.index === situations.length-1 ? 'Scopri gli indirizzi del Mattei' : 'Continua', () => advance(state.answers[situation.id]));
   next.disabled = !situation.options.some(o => o.id === state.answers[situation.id]);
   for (const option of situation.options) {
     list.append(choice(option, 'radio', 'scenario-choice', state.answers[situation.id] === option.id, () => {
@@ -80,11 +80,11 @@ function renderQuestion() {
 
 function renderResults() {
   hidePanels(); results.hidden = false; contactsMount.hidden = false;
-  setJourney(2);
+  setJourney(1);
   const summary = summarize(situations, dimensions, state.answers);
-  const title = el('h2', 'Ritrova alcune delle tue scelte'); title.id = 'resultTitle';
-  results.replaceChildren(el('p', 'Una prima esplorazione', 'explore-kicker'), title,
-    el('p', 'Queste parole riguardano soltanto le azioni che hai scelto nelle situazioni proposte. Non valutano le tue capacità e non dicono quale corso devi scegliere.', 'explore-note'));
+  const title = el('h2', 'Dalle tue curiosità agli indirizzi del Mattei'); title.id = 'resultTitle';
+  results.replaceChildren(el('p', 'Scopri che cosa potresti imparare', 'explore-kicker'), title,
+    el('p', 'Le tue scelte sono un punto di partenza per conoscere la scuola. Una stessa curiosità può trovare spazio in corsi diversi: guarda che cosa si studia in ciascuno e prova un’attività.'));
   if (summary.selected.length) {
     const grid = el('div', null, 'result-grid');
     for (const item of summary.selected) {
@@ -110,9 +110,30 @@ function renderResults() {
     const li = el('li'); li.append(el('strong', situation.title), el('span', selected?.text || 'Hai passato questa situazione.')); list.append(li);
   }
   recap.append(list); results.append(recap);
-  results.append(el('h3', 'Ora esploriamo'), el('p', 'Una stessa azione può essere utile in corsi diversi. Scopri dove compare e prova qualche attività: puoi esplorare tutti i percorsi.'));
+  const courseHeading = el('h3', 'Cinque indirizzi, diversi modi di imparare');
+  const curiosityStart = results.children[3] || null;
+  const courseGrid = el('div', null, 'discovery-courses');
+  for (const course of courses) {
+    const card = el('article', null, 'discovery-course');
+    card.append(el('p', course.code, 'explore-kicker'), el('h3', course.name),
+      el('p', course.face), el('h4', 'Che cosa si studia'), el('p', course.learn));
+    if (summary.selected.length) {
+      card.append(el('h4', 'Come ritrovi le tue curiosità'));
+      const links = el('ul');
+      for (const theme of summary.selected) links.append(el('li', course.lenses[theme.id]));
+      card.append(links);
+    }
+    const actions = el('div', null, 'action-row');
+    actions.append(link('Conosci questo indirizzo', `indirizzi.html#${course.id}`),
+      link('Prova un’attività di questo corso', `missioni.html?corso=${course.id}`, 'explore-button secondary'));
+    card.append(actions); courseGrid.append(card);
+  }
+  results.insertBefore(courseHeading, curiosityStart);
+  results.insertBefore(courseGrid, curiosityStart);
+  results.insertBefore(el('p', 'Puoi partire dal corso che ti incuriosisce di più e poi confrontarlo con gli altri. La Bussola non sceglie al posto tuo.', 'plain-note'), curiosityStart);
+  if (summary.selected.length) results.insertBefore(el('h3', 'Le curiosità da cui sei partito'), curiosityStart);
   const row = el('div', null, 'action-row');
-  row.append(link('Esplora tutti i percorsi', 'indirizzi.html?da=bussola#diurni'), link('Prova le cinque esperienze', 'missioni.html', 'explore-button secondary'), button('Rivedi le situazioni', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
+  row.append(button('Rivedi le situazioni', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
   results.append(row);
   contactsMount.replaceChildren(contactsPanel(contacts, resetToIntro));
   focusHeading(results);
@@ -124,7 +145,7 @@ async function initialize() {
     const [b, d, c, m, contactData] = await loadData(['bussola', 'dimensioni', 'indirizzi', 'missioni', 'contatti']);
     const check = validateContent(b.situations, d.dimensions, c.courses, m.missions);
     if (check.errors.length) throw new Error(check.errors.join(' '));
-    situations = b.situations; dimensions = d.dimensions; contacts = contactData;
+    situations = b.situations; dimensions = d.dimensions; courses = c.courses; contacts = contactData;
     state = readState(storage(), situations, missionIds);
     status.textContent = 'Le scelte restano in questa scheda del browser. Non chiediamo nome, scuola, e-mail o account.';
     start.disabled = false;
