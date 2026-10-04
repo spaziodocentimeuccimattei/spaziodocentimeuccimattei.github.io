@@ -260,5 +260,59 @@
     "staticLocalReferences": 75,
     "originalLinksPreserved": true,
     "physicalDevicesTested": false
+  },
+  "completamento_grafico": {
+    "illustrazioniDomande": 8,
+    "diagrammi": [
+      "SIA: dati, controlli, aggiornamento e due righe G02 evidenziate",
+      "Turismo: mappa aggiornata con tappa Torre e scala",
+      "SSAS: carte selezionate nelle categorie fatto e ipotesi"
+    ],
+    "responsive": [
+      {
+        "page": "domanda",
+        "width": 320,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "domanda",
+        "width": 390,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "domanda",
+        "width": 768,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "domanda",
+        "width": 1366,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "SSAS",
+        "width": 320,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "SSAS",
+        "width": 390,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "SSAS",
+        "width": 768,
+        "horizontalOverflow": false
+      },
+      {
+        "page": "SSAS",
+        "width": 1366,
+        "horizontalOverflow": false
+      }
+    ],
+    "consoleWarningsErrors": [],
+    "photosOfCourseActivitiesAvailable": false,
+    "photosOfCourseActivitiesReplacedByIllustrations": true,
+    "studentPilotCompleted": false
   }
 }

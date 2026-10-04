@@ -43,11 +43,15 @@ Eseguiti: simulazione deterministica di 50.000 percorsi; struttura dei contenuti
 
 La struttura semantica è stata controllata nell'albero di accessibilità. Sono presenti etichette native, focus visibile e riduzione delle animazioni tramite `prefers-reduced-motion`. Non eseguiti: uso effettivo con lettore di schermo, Chromebook fisico, smartphone/tablet fisici, rete scolastica, carico di una classe e pilotaggio. Non dichiarare conformità WCAG completa o validazione didattica sulla base di queste verifiche.
 
-## Prima del rilascio definitivo
+## Verifiche successive alla pubblicazione
 
 1. Un docente di ciascun indirizzo verifica la propria missione, terminologia, vincoli ed esiti; verifica anche le formulazioni dei possibili sbocchi nelle schede.
 2. Prova con 6–10 studenti della fascia destinataria, senza spiegazioni preventive e senza dati personali: annotare difficoltà, esitazioni, tempi, interpretazioni della restituzione, esplorazione dei corsi e scoperta dei contatti.
 3. Prova con una classe, Chromebook e connessione scolastica; verificare contemporaneità, riavvio/reset tra studenti, lettore di schermo e riduzione animazioni nelle impostazioni reali.
-4. Correggere le criticità osservate e ripetere i controlli pertinenti. Registrare l'approvazione e autorizzare il rilascio definitivo su main/Pages.
+4. Correggere le criticità osservate e ripetere i controlli pertinenti.
 
-Questa consegna non modifica main remoto né il sito pubblico.
+Salvatore ha autorizzato il completamento e la pubblicazione il 4 ottobre 2026, rinviando le prove con la scuola. Le fotografie delle attività non sono disponibili: sono sostituite da illustrazioni vettoriali. La verifica tecnica della pubblicazione è registrata in stato-consegna.json.
+
+## Completamento visivo per il rilascio
+
+Otto illustrazioni del contesto delle domande, schema SIA con evidenziazione dei codici correlati, mappa Turismo che segue le selezioni, tre categorie SSAS aggiornate dalle carte scelte e foto della sede nei contatti. Questi elementi completano budget AFM e piante CAT già realizzati. Nessun segnaposto fotografico né foto artificiale di attività della scuola. Le pagine pubbliche non includono spiegazioni di progettazione.

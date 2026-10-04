@@ -27,3 +27,41 @@ export function routeVisual(options,selected){
  const route=el('ol',null,'route-visual');route.setAttribute('aria-label','Le tappe che hai scelto');
  options.filter(o=>selected.includes(o.id)).forEach(o=>{const li=el('li');li.append(el('strong',o.label),el('span',`${o.minutes} minuti · ${o.stairs?'con scale':'senza scale'}`));route.append(li)});return route;
 }
+
+const questionScenes={
+ curiosita:'<path d="M75 141q-38-55 6-87t80 12q37-48 73-13t-5 81l-69 54z"/><path d="M143 76q33-21 38 7t-25 31v12"/><circle cx="156" cy="149" r="3"/>',
+ video:'<rect x="37" y="38" width="236" height="145" rx="17"/><path d="m127 75 56 35-56 35zM63 162h184"/>',
+ imparare:'<path d="M34 51q64-22 121 5 57-27 121-5v128q-64-22-121 5-57-27-121-5zM155 56v128M55 82h66M55 106h66M189 82h60M189 106h60"/>',
+ domande:'<circle cx="133" cy="92" r="59"/><path d="m175 135 70 63M114 73q25-21 38 3t-20 32v8"/><circle cx="132" cy="137" r="3"/>',
+ 'visita-interessi':'<path d="m34 54 77-22 88 27 75-24v142l-75 23-88-27-77 21zM111 32v141M199 59v141"/><circle cx="153" cy="87" r="14"/><path d="m142 97 11 29 11-29"/>',
+ computer:'<rect x="41" y="35" width="228" height="135" rx="12"/><path d="M155 170v28M103 198h104"/><rect x="63" y="58" width="48" height="36" rx="4"/><path d="M135 68h111M135 89h72M64 119h182M64 141h132"/>',
+ libro:'<path d="M42 41h180q40 0 40 29v125H69q-27 0-27-26zM42 169q0-22 27-22h193M77 63h133M77 88h133M77 112h82"/>',
+ futuro:'<path d="M155 28v177M55 46h164l38 28-38 28H55zM257 121H89l-36 28 36 28h168z"/>'
+};
+export function questionArt(id){
+ const svg=courseArt('sia');svg.setAttribute('class','question-art');
+ svg.innerHTML=`<g fill="#e7f3f1" stroke="#123c57" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">${questionScenes[id]||questionScenes.curiosita}</g>`;
+ return svg;
+}
+export function dataFlow(){
+ const flow=el('ol',null,'data-flow');flow.setAttribute('aria-label','Come rendere utile un elenco');
+ for(const text of ['Leggi i dati','Controlla codici e informazioni','Aggiorna l’elenco'])flow.append(el('li',text));
+ return flow;
+}
+export function observationVisual(options,selected){
+ const grid=el('div',null,'observation-visual');
+ for(const [kind,title,hint] of [['observation','Quello che vedi','Un fatto da cui partire.'],['interpretation','Quello che immagini','Un’ipotesi da verificare.'],['question','Quello che puoi chiedere','Una domanda per capire meglio.']]){
+  const box=el('section',null,`observation-kind kind-${kind}`);box.append(el('h3',title),el('p',hint));
+  const list=el('ul');for(const option of options.filter(o=>selected.includes(o.id)&&o.kind===kind))list.append(el('li',option.label));
+  if(list.children.length)box.append(list);else box.append(el('p','Nessuna carta scelta qui.','plain-note'));grid.append(box);
+ }
+ return grid;
+}
+export function itineraryMap(options,selected){
+ const ns='http://www.w3.org/2000/svg';const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 440 240');svg.setAttribute('class','itinerary-map');svg.setAttribute('role','img');svg.setAttribute('aria-label','Schema del paese immaginario. Le tappe selezionate sono indicate anche nella lista.');
+ const positions=[[78,65],[330,65],[78,175],[330,175]];
+ const node=(tag,attrs,text)=>{const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(text)n.textContent=text;svg.append(n);return n;};
+ node('rect',{x:8,y:8,width:424,height:224,rx:20,fill:'#fff'});node('path',{d:'M78 65H330V175H78V65',fill:'none',stroke:'#c4d2d6','stroke-width':8,'stroke-dasharray':'8 10'});
+ options.forEach((o,i)=>{const [x,y]=positions[i];const picked=selected.includes(o.id);node('circle',{cx:x,cy:y,r:20,fill:picked?'#b30b47':'#edf2f3',stroke:'#b30b47','stroke-width':2});node('text',{x,y:y+6,'text-anchor':'middle',fill:picked?'#fff':'#123c57','font-size':18,'font-weight':700},picked?'✓':String(i+1));node('text',{x,y:y+39,'text-anchor':'middle',fill:'#123c57','font-size':15},['Piazza','Museo','Torre · scale','Giardino'][i]);});
+ return svg;
+}

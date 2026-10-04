@@ -1,4 +1,4 @@
-import { courseArt } from './bussola-visuals.mjs';
+import { courseArt, questionArt } from './bussola-visuals.mjs';
 import { freshState, readState, clearState, summarize, validateContent } from './bussola-core.mjs';
 import { el, button, link, storage, persist, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs';
 
@@ -75,7 +75,8 @@ function renderQuestion() {
   }, 'explore-button secondary');
   back.disabled = state.index === 0;
   footer.append(back, button('Passo questa domanda', () => advance(null), 'skip-button'), next);
-  questions.replaceChildren(progressBox, heading, scenario, el('p', 'Scegli ciò che ti interessa di più in questo momento. Puoi cambiare idea.', 'plain-note'), fieldset, footer);
+  const context = el('div', null, 'question-context'); const copy = el('div'); copy.append(heading, scenario); context.append(copy, questionArt(situation.id));
+  questions.replaceChildren(progressBox, context, el('p', 'Scegli ciò che ti interessa di più in questo momento. Puoi cambiare idea.', 'plain-note'), fieldset, footer);
   focusHeading(questions);
 }
 

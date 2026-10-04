@@ -80,6 +80,7 @@ export function contactsPanel(contacts, onReset) {
   figure.append(qr, el('figcaption', 'Ritrova questo spazio'));
   grid.append(address, figure);
   section.append(grid);
+  const photo = el('img', null, 'contact-school-photo'); photo.src = 'assets/sede-decimomannu-900.webp'; photo.alt = 'La sede di Decimomannu dell’IIS Meucci - Mattei'; photo.width = 900; photo.height = 300; photo.loading = 'lazy'; section.append(photo);
   const actions = el('div', null, 'action-row');
   const vcard = link('Salva i contatti', 'documenti/contatti-mattei.vcf'); vcard.download = 'contatti-mattei.vcf';
   actions.append(vcard, link('Scrivici', `mailto:${contacts.orientationEmail}?subject=Orientamento`, 'explore-button secondary'), link('Visita il sito ufficiale', contacts.website, 'explore-button secondary'), link('Tutti gli indirizzi', 'indirizzi.html#diurni', 'explore-button secondary'), link('Chiedi dei prossimi incontri', `mailto:${contacts.orientationEmail}?subject=Incontri%20di%20orientamento`, 'explore-button secondary'));

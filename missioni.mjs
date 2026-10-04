@@ -1,7 +1,7 @@
 import { readState, freshState, totals, clearState } from './bussola-core.mjs';
 import { el, button, link, choice, storage, persist, loadData, focusHeading, setJourney, contactsPanel, showError } from './bussola-ui.mjs';
 
-import { courseArt, amountVisual, routeVisual } from './bussola-visuals.mjs';
+import { courseArt, amountVisual, routeVisual, dataFlow, observationVisual, itineraryMap } from './bussola-visuals.mjs';
 
 const catalog = document.getElementById('missionCatalog');
 const cards = document.getElementById('catalogCards');
@@ -53,7 +53,16 @@ function planSvg(layout, suffix) {
 function firstFeedback(target, alteredBudget = false) {
   target.replaceChildren();
   if (current.type === 'budget') target.append(amountVisual(totals(current.options, selected, 'cost'), alteredBudget ? current.newBudget : current.budget, '€', 'La tua spesa'));
-  if (current.type === 'itinerary') target.append(amountVisual(totals(current.options, selected, 'minutes'), current.limit, 'min', 'Il tempo della visita'), routeVisual(current.options,selected));
+  if (current.type === 'itinerary') target.append(amountVisual(totals(current.options, selected, 'minutes'), current.limit, 'min', 'Il tempo della visita'), itineraryMap(current.options,selected), routeVisual(current.options,selected));
+  if (current.type === 'records') {
+    target.append(dataFlow());
+    const codes = current.records.filter(r => selected.includes(r.id)).map(r => r.code);
+    panel.querySelectorAll('.records-grid .choice').forEach(label => {
+      const record = current.records.find(r => r.id === label.querySelector('input').value);
+      label.classList.toggle('related-record', codes.includes(record.code) && current.records.filter(r => r.code === record.code).length > 1);
+    });
+  }
+  if (current.type === 'observations') target.append(observationVisual(current.options,selected));
   if (!selected.length) {
     target.append(el('p', 'Scegli almeno una carta per osservare che cosa cambia.'));
     return;
@@ -111,9 +120,9 @@ function firstStep(alteredBudget = false) {
     list.append(item);
   }
   fieldset.append(list);
-  firstFeedback(feedback, alteredBudget);
   const activity = el('div',null,`activity-workspace workspace-${current.type}`);
   activity.append(fieldset,feedback); panel.append(activity);
+  firstFeedback(feedback, alteredBudget);
   footer(next);
 }
 
