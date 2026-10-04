@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "courses": [
+    {
+      "id": "afm",
+      "code": "AFM",
+      "name": "Amministrazione, Finanza e Marketing",
+      "face": "Che cosa serve per realizzare un’idea? Come si organizzano risorse e attività?",
+      "learn": "Economia, diritto, informatica e lingue aiutano a leggere dati, costi, organizzazioni e decisioni.",
+      "destination": "Puoi proseguire negli studi universitari o nei percorsi degli Istituti Tecnologici Superiori (ITS Academy), oppure cercare opportunità in attività amministrative e aziendali. Mansioni e requisiti dipendono dal ruolo.",
+      "source": "https://www.iismeuccimattei.edu.it/indirizzo-di-studio/amministrazione-finanza-e-marketing/",
+      "lenses": {
+        "persone": "Comprendere i bisogni di clienti e collaboratori.",
+        "organizzazione": "Pianificare attività e responsabilità in un’organizzazione.",
+        "risorse": "Confrontare costi, risorse e possibilità.",
+        "dati": "Leggere e organizzare dati economici.",
+        "progetto": "Trasformare un’idea in un piano di attività.",
+        "comunicazione": "Spiegare informazioni e decisioni a persone diverse.",
+        "territorio": "Osservare imprese e servizi nel loro contesto."
+      }
+    },
+    {
+      "id": "sia",
+      "code": "SIA",
+      "name": "Sistemi Informativi Aziendali",
+      "face": "Come si organizzano le informazioni? Quale strumento digitale può rendere più semplice un’attività?",
+      "learn": "Informatica ed economia si incontrano nel lavoro su dati, programmi e processi aziendali.",
+      "destination": "Puoi continuare con studi universitari o ITS Academy, oppure esplorare attività legate a sistemi informativi e processi aziendali. Gli incarichi specifici richiedono competenze e requisiti propri.",
+      "source": "https://www.iismeuccimattei.edu.it/indirizzo-di-studio/sistemi-informativi-aziendali/",
+      "lenses": {
+        "persone": "Capire di quali informazioni hanno bisogno le persone che usano un sistema.",
+        "organizzazione": "Descrivere i passaggi di un processo.",
+        "risorse": "Valutare risorse e strumenti per un’attività aziendale.",
+        "dati": "Organizzare dati e progettare strumenti digitali.",
+        "progetto": "Progettare una soluzione e provarne il funzionamento.",
+        "comunicazione": "Rendere informazioni e istruzioni comprensibili.",
+        "territorio": "Osservare come imprese e servizi usano le tecnologie."
+      }
+    },
+    {
+      "id": "turismo",
+      "code": "TUR",
+      "name": "Turismo",
+      "face": "Come si prepara un’esperienza di visita? Come si racconta un luogo a persone con lingue e interessi diversi?",
+      "learn": "Lingue, geografia, arte e territorio, diritto e discipline turistiche aiutano a progettare e comunicare esperienze di accoglienza.",
+      "destination": "Puoi proseguire con università o ITS Academy, oppure esplorare attività di accoglienza, organizzazione e servizi turistici. Per alcune professioni occorrono ulteriori titoli o abilitazioni.",
+      "source": "https://www.iismeuccimattei.edu.it/indirizzo-di-studio/turismo/",
+      "lenses": {
+        "persone": "Ascoltare le esigenze di chi visita un luogo.",
+        "organizzazione": "Organizzare tappe, tempi e servizi.",
+        "risorse": "Confrontare costi e risorse di un’esperienza.",
+        "dati": "Verificare orari, informazioni e disponibilità.",
+        "progetto": "Costruire un itinerario e rappresentarlo.",
+        "comunicazione": "Usare lingue e linguaggi per incontrare culture diverse.",
+        "territorio": "Conoscere e valorizzare luoghi e patrimonio."
+      }
+    },
+    {
+      "id": "ssas",
+      "code": "SSAS",
+      "name": "Servizi per la Sanità e l’Assistenza Sociale",
+      "face": "Quali bisogni si possono osservare in una situazione? Come si progetta un’attività che favorisca benessere e partecipazione?",
+      "learn": "Metodologie operative, psicologia, scienze umane, igiene e diritto aiutano a comprendere persone e contesti e a progettare attività.",
+      "destination": "Puoi continuare negli studi universitari o in altri percorsi formativi, oppure esplorare attività nei servizi sociali e sociosanitari secondo i requisiti previsti. Il diploma non attribuisce automaticamente qualifiche come OSS, infermiere o assistente sociale.",
+      "source": "https://www.iismeuccimattei.edu.it/indirizzo-di-studio/servizi-per-la-sanita-e-lassistenza-sociale/",
+      "lenses": {
+        "persone": "Osservare bisogni, relazioni e contesti di vita.",
+        "organizzazione": "Progettare attività e collaborare con altre figure.",
+        "risorse": "Individuare risorse utili per un’attività o un servizio.",
+        "dati": "Raccogliere informazioni e distinguere osservazioni da supposizioni.",
+        "progetto": "Adattare attività e ambienti per favorire la partecipazione.",
+        "comunicazione": "Ascoltare e comunicare in modo comprensibile.",
+        "territorio": "Conoscere servizi e reti della comunità."
+      }
+    },
+    {
+      "id": "cat",
+      "code": "CAT",
+      "name": "Costruzioni, Ambiente e Territorio",
+      "face": "Come si misura e si rappresenta uno spazio? Come si progetta una trasformazione tenendo conto dei vincoli?",
+      "learn": "Progettazione, costruzioni, topografia, estimo e sicurezza collegano misure, rappresentazioni e problemi del territorio.",
+      "destination": "Puoi proseguire con università o ITS Academy, oppure esplorare attività tecniche legate a costruzioni e territorio. L’esercizio di professioni regolamentate richiede i requisiti e le abilitazioni previsti.",
+      "source": "https://www.iismeuccimattei.edu.it/indirizzo-di-studio/costruzioni-ambiente-e-territorio/",
+      "lenses": {
+        "persone": "Considerare come le persone useranno uno spazio.",
+        "organizzazione": "Organizzare le fasi di un lavoro tecnico.",
+        "risorse": "Valutare materiali, costi e risorse.",
+        "dati": "Usare misure, rilievi e strumenti digitali.",
+        "progetto": "Disegnare e progettare spazi e costruzioni.",
+        "comunicazione": "Spiegare un progetto attraverso disegni e relazioni.",
+        "territorio": "Leggere il territorio e gli effetti di una trasformazione."
+      }
+    }
+  ]
+}

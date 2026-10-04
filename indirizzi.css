@@ -192,10 +192,10 @@
 .study-card.cat { grid-column: 1 / -1; min-height: 430px; }
 
 .study-card.afm { --accent: #123c57; }
-.study-card.sia { --accent: #6cb800; }
+.study-card.sia { --accent: #477b00; }
 .study-card.turismo { --accent: #00823f; }
 .study-card.ssas { --accent: #d7085a; }
-.study-card.cat { --accent: #258f91; }
+.study-card.cat { --accent: #006b63; }
 
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .card-number { color: #9aabb4; font-size: .7rem; font-weight: 950; letter-spacing: .14em; }

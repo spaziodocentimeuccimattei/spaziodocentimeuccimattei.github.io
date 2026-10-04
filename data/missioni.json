@@ -1,0 +1,291 @@
+{
+  "version": 1,
+  "duration": "2–4 minuti, da verificare nelle prove",
+  "missions": [
+    {
+      "id": "afm",
+      "title": "Un’attività, risorse limitate",
+      "intro": "Immagina un pomeriggio di scambio di libri. Il gruppo ha 120 euro e alcuni materiali già disponibili. Le cifre sono inventate per questa esperienza.",
+      "type": "budget",
+      "prompt": "Scegli che cosa preparare. Osserva che cosa cambia nel budget.",
+      "budget": 120,
+      "options": [
+        {
+          "id": "cartelli",
+          "label": "Cartelli fatti a mano",
+          "cost": 10,
+          "detail": "Servono materiali per indicare tavoli e regole."
+        },
+        {
+          "id": "stampa",
+          "label": "Cartelli stampati",
+          "cost": 35,
+          "detail": "Sono un’alternativa ai cartelli fatti a mano."
+        },
+        {
+          "id": "tavoli",
+          "label": "Tavoli già disponibili",
+          "cost": 0,
+          "detail": "Prima dell’uso bisogna verificarne disponibilità e condizioni."
+        },
+        {
+          "id": "acqua",
+          "label": "Acqua per i partecipanti",
+          "cost": 25,
+          "detail": "Considera anche come ridurre i rifiuti."
+        },
+        {
+          "id": "materiali",
+          "label": "Materiali per sistemare i libri",
+          "cost": 30,
+          "detail": "Servono per rendere gli oggetti utilizzabili."
+        },
+        {
+          "id": "ospite",
+          "label": "Un’attività con un ospite",
+          "cost": 70,
+          "detail": "Va concordata prima: qui il costo è solo un’ipotesi."
+        }
+      ],
+      "followup": "Ora immagina che il budget scenda a 90 euro. Quale scelta potresti rivedere?",
+      "newBudget": 90,
+      "reflection": "Un budget collega desideri, priorità e risorse. Non decide da solo ciò che conta: bisogna discutere quali attività servono davvero.",
+      "bridge": "In AFM ritrovi il lavoro su costi, organizzazione e decisioni. Puoi confrontarlo con il lavoro sui dati di SIA e sui bisogni delle persone di SSAS."
+    },
+    {
+      "id": "sia",
+      "title": "Informazioni che aiutano a decidere",
+      "intro": "Un piccolo gruppo presta giochi. Questo elenco contiene informazioni incomplete e due righe con lo stesso codice. I dati sono interamente inventati.",
+      "type": "records",
+      "prompt": "Tocca le righe su cui vorresti fare una verifica prima di aggiornare l’elenco.",
+      "records": [
+        {
+          "id": "r1",
+          "code": "G01",
+          "item": "Scacchi",
+          "status": "Disponibile"
+        },
+        {
+          "id": "r2",
+          "code": "G02",
+          "item": "Carte",
+          "status": "In prestito"
+        },
+        {
+          "id": "r3",
+          "code": "G02",
+          "item": "Puzzle",
+          "status": "Disponibile"
+        },
+        {
+          "id": "r4",
+          "code": "G04",
+          "item": "Dama",
+          "status": "Stato mancante"
+        }
+      ],
+      "followup": "Quale informazione aggiungeresti per rendere più chiaro l’elenco?",
+      "choices": [
+        {
+          "id": "data",
+          "text": "La data dell’ultimo aggiornamento",
+          "feedback": "Aiuta a capire se uno stato è recente. Non risolve da sola il doppione del codice."
+        },
+        {
+          "id": "codice",
+          "text": "Un codice diverso per ogni oggetto",
+          "feedback": "Aiuta a distinguere gli oggetti. Serve comunque verificare lo stato mancante."
+        },
+        {
+          "id": "procedura",
+          "text": "Una procedura condivisa per aggiornare i prestiti",
+          "feedback": "Aiuta il gruppo a mantenere l’elenco affidabile. Occorre anche correggere le righe già ambigue."
+        }
+      ],
+      "reflection": "Prima di automatizzare un’attività, occorre capire che cosa significano i dati e quali controlli servono. Una tabella ordinata può contenere informazioni sbagliate.",
+      "bridge": "In SIA ritrovi dati, processi e strumenti digitali. Anche AFM, Turismo, CAT e SSAS usano informazioni da verificare."
+    },
+    {
+      "id": "turismo",
+      "title": "Una visita che tiene conto delle persone",
+      "intro": "Una ragazza visita un paese immaginario. Le interessano storia e fotografie, ha 60 minuti e chiede un percorso senza scale. I tempi includono gli spostamenti.",
+      "type": "itinerary",
+      "prompt": "Scegli le tappe e osserva tempo e accessibilità. Puoi cambiare idea.",
+      "limit": 60,
+      "options": [
+        {
+          "id": "piazza",
+          "label": "Piazza e racconto del paese",
+          "minutes": 20,
+          "stairs": false,
+          "detail": "Spazio aperto; accesso senza scale."
+        },
+        {
+          "id": "museo",
+          "label": "Piccolo museo",
+          "minutes": 30,
+          "stairs": false,
+          "detail": "Ingresso senza scale; apertura da verificare."
+        },
+        {
+          "id": "torre",
+          "label": "Terrazza della torre",
+          "minutes": 25,
+          "stairs": true,
+          "detail": "Accesso soltanto tramite una scala."
+        },
+        {
+          "id": "giardino",
+          "label": "Giardino e fotografie",
+          "minutes": 20,
+          "stairs": false,
+          "detail": "Percorso pianeggiante; condizioni da verificare."
+        }
+      ],
+      "followup": "Prima di proporre davvero la visita, che cosa controlleresti?",
+      "choices": [
+        {
+          "id": "orari",
+          "text": "Orari e condizioni di accesso",
+          "feedback": "Una tappa interessante può essere chiusa o non accessibile. Le informazioni vanno confermate."
+        },
+        {
+          "id": "interessi",
+          "text": "Interessi e necessità della persona",
+          "feedback": "Ascoltare aiuta a costruire un’esperienza adatta. Servono anche verifiche su luoghi e tempi."
+        },
+        {
+          "id": "racconto",
+          "text": "Come raccontare i luoghi in modo comprensibile",
+          "feedback": "Il racconto dà significato alla visita. Deve essere accurato e collegato alle persone che partecipano."
+        }
+      ],
+      "reflection": "Un itinerario mette insieme luoghi, informazioni, tempi e persone. Non basta scegliere le tappe più famose.",
+      "bridge": "In Turismo ritrovi territorio, lingue e accoglienza. Puoi collegare questa esperienza all’ascolto di SSAS, alle risorse di AFM e agli spazi di CAT."
+    },
+    {
+      "id": "cat",
+      "title": "Uno spazio da osservare e disegnare",
+      "intro": "Immagina una stanza di 4 × 3 metri. Vuoi inserire un tavolo e uno scaffale, lasciando libero il passaggio alla porta. È un esercizio semplificato, non un progetto tecnico.",
+      "type": "layout",
+      "prompt": "Confronta le due proposte. Quali vincoli vorresti verificare?",
+      "layouts": [
+        {
+          "id": "centro",
+          "label": "Tavolo al centro",
+          "description": "Tavolo 2 × 1 m al centro; scaffale 1 × 0,4 m vicino alla porta.",
+          "feedback": "Il tavolo centrale permette di lavorare da più lati. La posizione dello scaffale richiede di verificare apertura della porta e spazio di passaggio.",
+          "table": [
+            1,
+            1,
+            2,
+            1
+          ],
+          "shelf": [
+            3.6,
+            0,
+            0.4,
+            1
+          ]
+        },
+        {
+          "id": "parete",
+          "label": "Tavolo lungo la parete",
+          "description": "Tavolo 2 × 1 m lungo una parete; scaffale 1 × 0,4 m sulla parete opposta.",
+          "feedback": "Questa disposizione lascia più spazio al centro. Bisogna verificare l’uso delle sedie, l’accesso agli arredi e le esigenze delle persone.",
+          "table": [
+            0,
+            2,
+            2,
+            1
+          ],
+          "shelf": [
+            3.6,
+            1,
+            0.4,
+            1
+          ]
+        }
+      ],
+      "followup": "Prima di scegliere una disposizione, che cosa misureresti o osserveresti?",
+      "choices": [
+        {
+          "id": "porta",
+          "text": "Porta, passaggi e ingombro degli arredi",
+          "feedback": "Le misure servono a confrontare la proposta con i vincoli dello spazio."
+        },
+        {
+          "id": "persone",
+          "text": "Come le persone useranno lo spazio",
+          "feedback": "Un disegno deve essere confrontato con l’uso reale: muoversi, sedersi e raggiungere gli oggetti."
+        },
+        {
+          "id": "luce",
+          "text": "Luce, prese e condizioni della stanza",
+          "feedback": "Anche elementi che non si vedono in una pianta semplificata possono cambiare la disposizione."
+        }
+      ],
+      "reflection": "Una pianta aiuta a ragionare, ma non contiene tutti i vincoli. Le scelte reali richiedono rilievi e verifiche tecniche di sicurezza e accessibilità.",
+      "bridge": "In CAT ritrovi misure, rappresentazione e progettazione. Puoi confrontare questa esperienza con risorse e costi di AFM e con i bisogni delle persone di SSAS."
+    },
+    {
+      "id": "ssas",
+      "title": "Osservare prima di interpretare",
+      "intro": "Durante un’attività di gruppo, una persona resta in silenzio, guarda il materiale e non prende ancora parte al lavoro. Non sai il motivo.",
+      "type": "observations",
+      "prompt": "Quali elementi useresti per capire meglio la situazione? Puoi scegliere più carte.",
+      "options": [
+        {
+          "id": "silenzio",
+          "label": "La persona non ha ancora parlato.",
+          "kind": "observation",
+          "detail": "È un’osservazione della situazione. Non spiega perché accade."
+        },
+        {
+          "id": "disinteresse",
+          "label": "Non le interessa l’attività.",
+          "kind": "interpretation",
+          "detail": "È una possibile interpretazione. Il comportamento osservato non basta per confermarla."
+        },
+        {
+          "id": "domanda",
+          "label": "Chiedere se le istruzioni sono chiare.",
+          "kind": "question",
+          "detail": "Una domanda può far emergere un bisogno senza dare per certo il motivo del silenzio."
+        },
+        {
+          "id": "timidezza",
+          "label": "È una persona timida.",
+          "kind": "interpretation",
+          "detail": "È un’etichetta sulla persona. Una sola situazione non permette di definirla."
+        },
+        {
+          "id": "materiale",
+          "label": "Guarda il materiale e non lo usa ancora.",
+          "kind": "observation",
+          "detail": "È un’osservazione. Può essere utile chiedere che cosa servirebbe per iniziare."
+        }
+      ],
+      "followup": "Quale piccolo passo potresti proporre, lasciando alla persona la possibilità di scegliere?",
+      "choices": [
+        {
+          "id": "insieme",
+          "text": "Provare insieme un primo passaggio",
+          "feedback": "Può rendere l’attività più accessibile. Prima chiedi se la persona desidera questo aiuto."
+        },
+        {
+          "id": "alternative",
+          "text": "Offrire due modi diversi di partecipare",
+          "feedback": "Può aprire possibilità senza imporre un ruolo. Ascolta quale opzione preferisce."
+        },
+        {
+          "id": "ascolto",
+          "text": "Chiedere che cosa le servirebbe per iniziare",
+          "feedback": "Parte dal suo punto di vista. Evita di trasformare la domanda in una pressione a parlare davanti a tutti."
+        }
+      ],
+      "reflection": "Osservare, chiedere e distinguere i fatti dalle interpretazioni aiuta a comprendere una situazione. Il silenzio non è una diagnosi e non definisce una persona.",
+      "bridge": "In SSAS ritrovi osservazione, relazione e progettazione di attività. L’ascolto serve anche in Turismo, nei gruppi di lavoro di AFM e SIA e nella progettazione degli spazi di CAT."
+    }
+  ]
+}

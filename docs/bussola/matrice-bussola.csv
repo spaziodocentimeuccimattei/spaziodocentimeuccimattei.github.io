@@ -1,0 +1,41 @@
+situazione,azione,testo,persone,organizzazione,risorse,dati,progetto,comunicazione,territorio
+atrio,atrio-1,Chiederei a chi lo usa che cosa manca e che cosa vorrebbe conservare.,2,1,0,0,0,0,1
+atrio,atrio-2,"Disegnerei due modi diversi di sistemare tavoli, sedie e passaggi.",1,0,1,0,2,0,0
+atrio,atrio-3,Confronterei ciò che serve con i materiali e i soldi disponibili.,0,1,2,1,0,0,0
+atrio,atrio-4,Raccoglierei le preferenze in un piccolo sondaggio e le metterei in ordine.,1,0,0,2,0,1,0
+atrio,atrio-5,Preparerei un’immagine e poche parole per spiegare l’idea agli altri.,0,0,0,0,1,2,1
+quartiere,quartiere-1,Cercherei un luogo o una storia del quartiere da far conoscere.,1,0,0,0,0,1,2
+quartiere,quartiere-2,Preparerei i passaggi del lavoro e concorderei chi fa che cosa.,0,2,1,0,0,0,1
+quartiere,quartiere-3,Metterei a confronto i costi delle attività e gli oggetti già disponibili.,0,1,2,1,0,0,0
+quartiere,quartiere-4,"Organizzerei le informazioni su spazi, orari e materiali in una tabella.",0,1,0,2,1,0,0
+quartiere,quartiere-5,Penserei a un invito comprensibile anche a chi conosce poco l’italiano.,1,0,0,0,0,2,1
+gruppo,gruppo-1,"Le chiederei che cosa le interessa, senza scegliere al suo posto.",2,1,0,0,0,1,0
+gruppo,gruppo-2,"Proporrei piccoli ruoli a turno, così tutti possono provare attività diverse.",1,2,0,1,0,0,0
+gruppo,gruppo-3,"Preparerei un’attività da costruire insieme, usando disegni e materiali.",1,0,0,0,2,1,0
+gruppo,gruppo-4,"Cercherei modi diversi per spiegare il progetto: parole, immagini o altre lingue.",1,0,0,0,0,2,1
+gruppo,gruppo-5,Le farei conoscere i luoghi vicini e le attività aperte ai ragazzi.,1,0,1,0,0,0,2
+scambio,scambio-1,Confronterei l’acquisto di oggetti nuovi con il riuso di quelli disponibili.,0,1,2,0,0,0,1
+scambio,scambio-2,"Creerei un elenco degli oggetti, evitando doppioni e informazioni mancanti.",0,0,1,2,0,1,0
+scambio,scambio-3,Proverei una disposizione che faccia trovare facilmente gli oggetti.,0,0,1,1,2,0,0
+scambio,scambio-4,Cercherei associazioni o luoghi del paese interessati a partecipare.,1,0,1,0,0,0,2
+scambio,scambio-5,Concorderei regole semplici e turni per accogliere chi arriva.,0,2,0,1,0,1,0
+visita,visita-1,"Cercherei un luogo e la sua storia, controllando come raggiungerlo.",1,0,0,1,0,0,2
+visita,visita-2,Disegnerei una piccola mappa con tappe e punti di riferimento.,0,0,0,1,2,0,1
+visita,visita-3,"Penserei a come raccontare il luogo con poche parole, anche in un’altra lingua.",1,0,0,0,0,2,1
+visita,visita-4,"Confronterei tempi, spostamenti e costi di due percorsi possibili.",0,1,2,1,0,0,0
+visita,visita-5,Chiederei che cosa le piace e se ha bisogno di pause o percorsi più comodi.,2,0,0,0,0,1,1
+prestito,prestito-1,Costruirei una tabella con un codice per ogni oggetto e il suo stato.,0,1,1,2,0,0,0
+prestito,prestito-2,Concorderei una procedura breve per prestare e restituire gli oggetti.,1,2,0,1,0,0,0
+prestito,prestito-3,Preparerei istruzioni con parole e simboli facili da capire.,1,0,0,0,1,2,0
+prestito,prestito-4,Disegnerei uno scaffale con posti riconoscibili per i diversi oggetti.,0,0,1,1,2,0,0
+prestito,prestito-5,"Capirei quali oggetti conviene riparare, sostituire o condividere di più.",0,1,2,0,0,0,1
+racconto,racconto-1,Sceglierei poche parole e immagini per spiegare ciò che avete fatto.,1,0,0,0,1,2,0
+racconto,racconto-2,Proverei due modi diversi di impaginare il racconto.,0,0,0,0,2,1,1
+racconto,racconto-3,"Controllerei date, informazioni e autorizzazioni prima di usarle.",0,0,1,2,0,1,0
+racconto,racconto-4,"Raccoglierei i punti di vista di chi ha partecipato, anche quelli diversi.",2,1,0,0,0,0,1
+racconto,racconto-5,Organizzerei i materiali e i passaggi per completare il lavoro insieme.,0,2,1,0,0,1,0
+giardino,giardino-1,"Come può diventare utile a chi vive vicino, rispettando l’ambiente?",0,0,0,1,1,0,2
+giardino,giardino-2,Quali materiali possiamo recuperare e quanta acqua servirà?,0,1,2,0,0,0,1
+giardino,giardino-3,Chi lo userà e quali bisogni dobbiamo ascoltare prima di decidere?,2,0,0,0,0,1,1
+giardino,giardino-4,"Quali informazioni su sole, pioggia e consumi aiutano a scegliere?",0,0,1,2,0,0,1
+giardino,giardino-5,Come possiamo dividerci il lavoro e mantenere lo spazio nel tempo?,1,2,0,0,1,0,0

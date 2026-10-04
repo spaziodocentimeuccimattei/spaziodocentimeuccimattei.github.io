@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-04",
+  "seed": 20261004,
+  "paths": 50000,
+  "model": "Scelta uniforme e indipendente tra le azioni; non rappresenta le preferenze degli studenti.",
+  "normalization": "Pesi centrati e scalati sulle opportunità offerte dalle sole situazioni risposte.",
+  "table": [
+    {
+      "dimension": "persone",
+      "coverage": 8,
+      "leadingPct": 12.13,
+      "includedPct": 39.51
+    },
+    {
+      "dimension": "organizzazione",
+      "coverage": 8,
+      "leadingPct": 13.69,
+      "includedPct": 45.42
+    },
+    {
+      "dimension": "risorse",
+      "coverage": 8,
+      "leadingPct": 17.54,
+      "includedPct": 45.66
+    },
+    {
+      "dimension": "dati",
+      "coverage": 8,
+      "leadingPct": 14.47,
+      "includedPct": 45.8
+    },
+    {
+      "dimension": "progetto",
+      "coverage": 8,
+      "leadingPct": 13.47,
+      "includedPct": 37.99
+    },
+    {
+      "dimension": "comunicazione",
+      "coverage": 8,
+      "leadingPct": 17.45,
+      "includedPct": 45.51
+    },
+    {
+      "dimension": "territorio",
+      "coverage": 8,
+      "leadingPct": 11.25,
+      "includedPct": 40.17
+    }
+  ],
+  "reasons": {
+    "selected": 47340,
+    "open": 1183,
+    "few": 1477
+  },
+  "sizes": {
+    "0": 2660,
+    "3": 39326,
+    "4": 8014
+  },
+  "topTies": 1382,
+  "cutoffTies": 2813,
+  "courseVisibility": {
+    "afm": "Sempre disponibile; nessun punteggio o ordinamento per corso.",
+    "sia": "Sempre disponibile; nessun punteggio o ordinamento per corso.",
+    "turismo": "Sempre disponibile; nessun punteggio o ordinamento per corso.",
+    "ssas": "Sempre disponibile; nessun punteggio o ordinamento per corso.",
+    "cat": "Sempre disponibile; nessun punteggio o ordinamento per corso."
+  },
+  "warnings": [],
+  "scientificValidation": false
+}

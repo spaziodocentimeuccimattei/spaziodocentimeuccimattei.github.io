@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "dimensions": [
+    {
+      "id": "persone",
+      "name": "Persone e relazioni",
+      "action": "ascoltare le persone e osservare i loro bisogni",
+      "description": "Hai scelto azioni che partono da ciò che le persone vivono, chiedono o sentono."
+    },
+    {
+      "id": "organizzazione",
+      "name": "Organizzazione e iniziativa",
+      "action": "organizzare il lavoro e far partire un’idea",
+      "description": "Hai scelto di mettere in ordine attività, responsabilità e passaggi."
+    },
+    {
+      "id": "risorse",
+      "name": "Risorse ed economia",
+      "action": "ragionare su risorse, costi e possibilità",
+      "description": "Hai scelto di confrontare ciò che serve con ciò che è disponibile."
+    },
+    {
+      "id": "dati",
+      "name": "Tecnologia e informazioni",
+      "action": "usare informazioni e strumenti per capire un problema",
+      "description": "Hai scelto di raccogliere, verificare o organizzare informazioni utili."
+    },
+    {
+      "id": "progetto",
+      "name": "Spazi e progettazione",
+      "action": "immaginare e dare forma a una soluzione",
+      "description": "Hai scelto di rappresentare un’idea, provare una forma o ripensare uno spazio."
+    },
+    {
+      "id": "comunicazione",
+      "name": "Comunicazione e culture",
+      "action": "rendere un’idea comprensibile a persone diverse",
+      "description": "Hai scelto di spiegare, raccontare o collegare punti di vista e linguaggi."
+    },
+    {
+      "id": "territorio",
+      "name": "Territorio e comunità",
+      "action": "collegare un’attività ai luoghi e alla comunità",
+      "description": "Hai scelto di guardare ciò che un progetto può cambiare nei luoghi e per chi li vive."
+    }
+  ]
+}

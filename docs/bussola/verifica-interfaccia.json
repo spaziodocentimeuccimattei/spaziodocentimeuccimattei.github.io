@@ -1,0 +1,169 @@
+{
+  "date": "2026-10-04",
+  "browser": "Chrome su macOS",
+  "responsive": [
+    {
+      "width": 320,
+      "page": "index.html",
+      "scroll": 320,
+      "viewport": 320
+    },
+    {
+      "width": 320,
+      "page": "bussola.html",
+      "scroll": 320,
+      "viewport": 320
+    },
+    {
+      "width": 320,
+      "page": "indirizzi.html",
+      "scroll": 320,
+      "viewport": 320
+    },
+    {
+      "width": 320,
+      "page": "missioni.html?corso=CAT",
+      "scroll": 320,
+      "viewport": 320
+    },
+    {
+      "width": 390,
+      "page": "index.html",
+      "scroll": 390,
+      "viewport": 390
+    },
+    {
+      "width": 390,
+      "page": "bussola.html",
+      "scroll": 390,
+      "viewport": 390
+    },
+    {
+      "width": 390,
+      "page": "indirizzi.html",
+      "scroll": 390,
+      "viewport": 390
+    },
+    {
+      "width": 390,
+      "page": "missioni.html?corso=CAT",
+      "scroll": 390,
+      "viewport": 390
+    },
+    {
+      "width": 768,
+      "page": "index.html",
+      "scroll": 768,
+      "viewport": 768
+    },
+    {
+      "width": 768,
+      "page": "bussola.html",
+      "scroll": 768,
+      "viewport": 768
+    },
+    {
+      "width": 768,
+      "page": "indirizzi.html",
+      "scroll": 768,
+      "viewport": 768
+    },
+    {
+      "width": 768,
+      "page": "missioni.html?corso=CAT",
+      "scroll": 768,
+      "viewport": 768
+    },
+    {
+      "width": 1366,
+      "page": "index.html",
+      "scroll": 1366,
+      "viewport": 1366
+    },
+    {
+      "width": 1366,
+      "page": "bussola.html",
+      "scroll": 1366,
+      "viewport": 1366
+    },
+    {
+      "width": 1366,
+      "page": "indirizzi.html",
+      "scroll": 1366,
+      "viewport": 1366
+    },
+    {
+      "width": 1366,
+      "page": "missioni.html?corso=CAT",
+      "scroll": 1366,
+      "viewport": 1366
+    }
+  ],
+  "questions": [
+    {
+      "step": 1,
+      "nextVisible": true
+    },
+    {
+      "step": 2,
+      "nextVisible": true
+    },
+    {
+      "step": 3,
+      "nextVisible": true
+    },
+    {
+      "step": 4,
+      "nextVisible": true
+    },
+    {
+      "step": 5,
+      "nextVisible": true
+    },
+    {
+      "step": 6,
+      "nextVisible": true
+    },
+    {
+      "step": 7,
+      "nextVisible": true
+    },
+    {
+      "step": 8,
+      "nextVisible": true
+    }
+  ],
+  "missions": [
+    {
+      "course": "AFM",
+      "completed": true,
+      "contextFeedback": true
+    },
+    {
+      "course": "SIA",
+      "completed": true,
+      "contextFeedback": true
+    },
+    {
+      "course": "TUR",
+      "completed": true,
+      "contextFeedback": true
+    },
+    {
+      "course": "SSAS",
+      "completed": true,
+      "contextFeedback": true
+    },
+    {
+      "course": "CAT",
+      "completed": true,
+      "contextFeedback": true
+    }
+  ],
+  "keyboardSelection": true,
+  "backPreservesChoice": true,
+  "skipAllDoesNotForceProfile": true,
+  "resetClearsPreviousAnswers": true,
+  "skipLinkFocusesMain": true,
+  "consoleWarningsErrors": []
+}
