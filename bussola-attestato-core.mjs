@@ -19,14 +19,28 @@ export function certificateModel(item, direction, situations, contacts) {
   });
   const others = direction.selected.filter(other => other !== item).map(other => other.course.code === 'TUR' ? 'Turismo' : other.course.code);
   const context = direction.answeredCount < 6
-    ? `Un primo indizio: ho risposto a ${direction.answeredCount} domande su ${situations.length}. Posso continuare a esplorare.`
-    : 'Un punto di partenza: i miei interessi possono crescere e cambiare.';
+    ? `Esito preliminare: ho risposto a ${direction.answeredCount} domande su ${situations.length}. L’indicazione è ancora preliminare.`
+    : `Esito basato su ${direction.answeredCount} risposte su ${situations.length}.`;
+  const portraits = {
+    afm: { subjects: ['Economia aziendale', 'Diritto'] },
+    sia: { subjects: ['Informatica', 'Economia aziendale'] },
+    turismo: { subjects: ['Lingue straniere', 'Geografia turistica'] },
+    ssas: { subjects: ['Psicologia generale e applicata', 'Metodologie operative'] },
+    cat: { subjects: ['Progettazione e Costruzioni', 'Topografia'] },
+  };
+  const portrait = portraits[item.course.id];
+  // Short display names retain a direct link to the actual subjects in the course data.
+  const subjects = portrait.subjects.filter(subject => item.course.subjects.includes(subject)).map(subject =>
+    subject.replace(' generale e applicata', '').replace('Progettazione e Costruzioni', 'Progettazione'));
+  const shortContext = [
+    `${direction.answeredCount < 6 ? 'Esito preliminare · ' : ''}${direction.answeredCount}/${situations.length} risposte`,
+    others.length ? `Anche ${others.join(' · ')}` : '',
+  ].filter(Boolean).join(' · ');
   return {
     course: item.course, traces, others, context,
+    subjects, shortContext,
     school: contacts.name, email: contacts.orientationEmail,
-    invitation: 'Vieni a conoscere la tua prossima scuola.',
-    nextStep: 'Incontra i docenti, scopri gli indirizzi e come iscriverti.',
-    disclaimer: 'Attestato di esplorazione: racconta interessi, non certifica capacità.',
+    disclaimer: 'Esito orientativo: interessi espressi, senza valutazione delle capacità.',
     answeredCount: direction.answeredCount,
   };
 }

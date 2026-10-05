@@ -12,6 +12,9 @@ for (const course of courses) {
   assert.equal(model.course.id, course.id);
   assert.equal(model.traces.length, 2);
   assert.equal(model.others.length, 0);
+  assert.equal(model.subjects.length, 2);
+  assert.ok(model.subjects.every(subject => course.subjects.some(actual =>
+    actual === subject || actual.startsWith(subject + ' '))));
   assert.ok(model.traces.every(trace => situations.some(s => s.options.some(option =>
     option.id === answers[s.id] && option.label === trace.label && option.courseLinks[course.id]?.reason === trace.reason))));
   assert.equal('name' in model, false);
@@ -27,6 +30,8 @@ for (const item of mixed.selected) {
   const model = certificateModel(item, mixed, situations, contacts);
   assert.match(model.context, /4 domande su 12/);
   assert.equal(model.others.length, 1);
+  assert.match(model.shortContext, /4\/12 risposte/);
+  assert.ok(model.shortContext.includes(model.others[0]));
 }
 assert.throws(() => certificateModel(mixed.items[0], { ...mixed, selected: [] }, situations, contacts));
 assert.equal(firstName('  Sofia  Maria  '), 'Sofia Maria');

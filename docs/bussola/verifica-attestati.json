@@ -34,8 +34,8 @@
       }
     },
     "downloadFilesInspected": 10,
-    "mixedPreliminaryResult": "AFM and SIA, 4 answers: each export retains other direction and preliminary context",
-    "optionalName": "with name, without name, accented compound first name, 40 characters, clear on close/reopen/reload",
+    "mixedPreliminaryResult": "model test: AFM and SIA, 4/12 responses; short context preserves preliminary status and the other course; earlier browser flow verification retained",
+    "optionalName": "new visuals tested with name, without name, accented compound name and 40 characters; dialog clearing unchanged and previously verified",
     "keyboard": "Escape closes dialog and returns focus to the course button",
     "responsive": [
       {
@@ -59,12 +59,16 @@
     ],
     "consoleErrorsOrWarnings": 0,
     "identityBoundary": "source and state sanitization verified: export module does not call storage/persist/fetch or add name to filename/URL",
-    "assets": "same original logo crop and public orientation QR as the site"
+    "assets": "original site logo and public QR; user-supplied shared-space representation, unchanged source file, visibly labelled Immagine illustrativa",
+    "visualLayout": "five newly downloaded PNGs and PDFs; first name / course / supplied image / two actual selected labels / two verified course subjects; no future slogans",
+    "subjectNames": "two subjects per course, verified as actual course subjects or direct short names",
+    "imageSourceSha256": "a944c6273b91fd3427b73ef75811a48acbfc3ef9e5b5a4179dbd72bf6dbcd190"
   },
   "limitations": [
     "PDF is a raster image, without selectable text or PDF tags; result and preview description remain in the HTML DOM",
     "Physical printer, Safari/iOS/Android, Chromebook and school pilots not tested",
     "No Instagram upload performed",
     "No push or deployment; public page remains unchanged"
-  ]
+  ],
+  "visualRevision": 3
 }

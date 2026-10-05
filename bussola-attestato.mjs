@@ -1,5 +1,4 @@
 import { el, button } from './bussola-ui.mjs';
-import { courseArt } from './bussola-visuals.mjs';
 import { firstName, certificateModel, imagePdf } from './bussola-attestato-core.mjs';
 
 const palettes = {
@@ -16,21 +15,16 @@ function loadImage(src) {
     image.src = src;
   });
 }
-async function artwork(id) {
+async function artwork() {
   if (!assets) {
-    assets = Promise.all([loadImage('assets/decimomannu-cresce-qui-contesto.png'), loadImage('assets/qr-orientamento.svg')]);
+    assets = Promise.all([
+      loadImage('assets/decimomannu-cresce-qui-contesto.png'),
+      loadImage('assets/qr-orientamento.svg'),
+      loadImage('assets/bussola-spazio-condiviso.jpeg'),
+    ]).then(([logo, qr, coverImage]) => ({ logo, qr, coverImage }));
     assets.catch(() => { assets = null; });
   }
-  const svg = courseArt(id), [color, fill] = palettes[id];
-  svg.setAttribute('width', '310'); svg.setAttribute('height', '220');
-  const group = svg.querySelector('g');
-  group.setAttribute('fill', fill); group.setAttribute('stroke', color);
-  const source = new XMLSerializer().serializeToString(svg);
-  const [logo, qr, icon] = await Promise.all([
-    assets.then(images => images[0]), assets.then(images => images[1]),
-    loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(source)}`),
-  ]);
-  return { logo, qr, icon };
+  return assets;
 }
 
 function font(ctx, size, weight = 400) { ctx.font = `${weight} ${size}px Arial, sans-serif`; }
@@ -54,6 +48,12 @@ function box(ctx, x, y, width, height, fill, radius = 20) {
   ctx.fillStyle = fill; ctx.beginPath(); ctx.roundRect(x, y, width, height, radius); ctx.fill();
 }
 
+function fittedLine(ctx, text, x, y, width, size, weight, color) {
+  font(ctx, size, weight);
+  while (ctx.measureText(text).width > width && size > 15) { size--; font(ctx, size, weight); }
+  ctx.fillStyle = color; ctx.fillText(text, x, y);
+}
+
 export function drawCertificate(canvas, model, name, format, images, scale = 1) {
   const [width, height] = formats[format];
   canvas.width = width * scale; canvas.height = height * scale;
@@ -61,52 +61,54 @@ export function drawCertificate(canvas, model, name, format, images, scale = 1) 
   if (!ctx) throw new Error('Anteprima non disponibile.');
   ctx.scale(scale, scale); ctx.textBaseline = 'alphabetic';
   const [color, fill] = palettes[model.course.id];
-  ctx.fillStyle = '#f7f9f6'; ctx.fillRect(0, 0, width, height);
-  box(ctx, 32, 28, 1016, height - 56, '#ffffff', 28);
-  box(ctx, 52, 48, 976, 126, '#123c57', 16);
-  // Same unchanged logo crop as the site header (610 x 150 inside the campaign artwork).
-  ctx.drawImage(images.logo, 220, 0, 610, 150, 64, 53, 472, 116);
-  textBlock(ctx, 'LA TUA BUSSOLA', 680, 100, 300, 22, 700, '#ffffff');
-  textBlock(ctx, 'IIS Meucci - Mattei', 680, 133, 300, 20, 400, '#d7ece9');
-  textBlock(ctx, 'ATTESTATO DI ESPLORAZIONE', 64, 226, 940, 23, 700, color);
-  textBlock(ctx, 'La mia Bussola', 60, 307, 960, 76, 700);
-  const greeting = firstName(name) ? `Il percorso di ${firstName(name)}` : 'Un punto di partenza per il mio futuro.';
-  let nameSize = 30;
-  font(ctx, nameSize);
-  while (ctx.measureText(greeting).width > 940 && nameSize > 21) { nameSize--; font(ctx, nameSize); }
-  textBlock(ctx, greeting, 64, 350, 940, nameSize);
-  box(ctx, 52, 387, 976, 187, fill, 22);
-  textBlock(ctx, 'UNA DIREZIONE DA ESPLORARE', 80, 414, 710, 18, 700, color);
-  textBlock(ctx, model.course.code === 'TUR' ? 'TURISMO' : model.course.code, 80, 468, 680, 47, 700, color);
-  let courseSize = 35;
-  font(ctx, courseSize, 700);
-  while (lines(ctx, model.course.name, 710).length > 2 && courseSize > 28) { courseSize--; font(ctx, courseSize, 700); }
-  textBlock(ctx, model.course.name, 80, 513, 710, courseSize, 700, '#17314a', 1.16);
-  ctx.drawImage(images.icon, 808, 412, 192, 136);
-  let y = 621;
-  y = textBlock(ctx, 'Le scelte che mi raccontano', 64, y, 940, 29, 700) + 11;
-  for (const trace of model.traces) {
-    y = textBlock(ctx, `“${trace.label}”`, 64, y, 940, 25, 700, color, 1.2);
-    y = textBlock(ctx, trace.reason, 64, y + 3, 940, 24, 400, '#17314a', 1.26) + 17;
-  }
-  y += 2;
-  y = textBlock(ctx, 'Materie da scoprire', 64, y, 940, 27, 700) + 3;
-  y = textBlock(ctx, model.course.subjects.join(' · '), 64, y, 940, 24, 400, '#17314a', 1.3) + 17;
-  if (model.others.length) y = textBlock(ctx, `Altre direzioni emerse: ${model.others.join(', ')}.`, 64, y, 940, 21, 700, '#566d78', 1.2) + 8;
-  y = textBlock(ctx, model.context, 64, y, 940, 21, 400, '#566d78', 1.2);
-  const footerY = height - 237;
-  if (y > footerY - 13) throw new Error('Il testo dell’attestato supera lo spazio disponibile.');
-  box(ctx, 52, footerY, 976, 167, '#123c57', 20);
-  textBlock(ctx, model.invitation, 78, footerY + 43, 728, 31, 700, '#ffffff', 1.12);
-  textBlock(ctx, model.school, 78, footerY + 80, 728, 24, 700, '#c9f981');
-  textBlock(ctx, model.nextStep, 78, footerY + 113, 728, 22, 400, '#ffffff');
-  textBlock(ctx, model.email, 78, footerY + 145, 728, 23, 700, '#ffffff');
-  box(ctx, 844, footerY + 13, 140, 140, '#ffffff', 8);
-  ctx.drawImage(images.qr, 850, footerY + 19, 128, 128);
-  textBlock(ctx, model.disclaimer, 64, height - 40, 940, 19, 400, '#566d78');
-  const description = [greeting, model.course.name, ...model.traces.map(t => `${t.label}. ${t.reason}`),
-    model.course.subjects.join(', '), model.others.length ? `Altre direzioni: ${model.others.join(', ')}.` : '',
-    model.context, model.invitation, model.school, model.nextStep, model.email, model.disclaimer].filter(Boolean).join(' ');
+  const extra = height - 1350;
+  const ink = '#123c57', paper = '#faf5ea';
+  ctx.fillStyle = paper; ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = ink; ctx.fillRect(0, 0, width, 144);
+  // Reuse the exact institutional logo crop already shown in the site header.
+  ctx.drawImage(images.logo, 220, 0, 610, 150, 40, 20, 410, 101);
+  textBlock(ctx, 'LA MIA BUSSOLA', 760, 62, 280, 24, 700, '#ffffff');
+  textBlock(ctx, 'Attestato di esplorazione', 760, 94, 280, 20, 400, '#c9f981');
+  const greeting = firstName(name) || 'La mia Bussola';
+  fittedLine(ctx, greeting, 48, 223 + extra * .12, 984, 58, 700, ink);
+  textBlock(ctx, 'INDIRIZZO DA APPROFONDIRE', 48, 279 + extra * .24, 984, 20, 700, color);
+  textBlock(ctx, model.course.code, 48, 372 + extra * .30, 260, 96, 800, color);
+  let courseSize = 36; font(ctx, courseSize, 700);
+  while (lines(ctx, model.course.name, 646).length > 3 && courseSize > 28) { courseSize--; font(ctx, courseSize, 700); }
+  const titleRows = lines(ctx, model.course.name, 646).length;
+  textBlock(ctx, model.course.name, 354, 337 + extra * .30 - (titleRows - 1) * courseSize * .58,
+    646, courseSize, 700, ink, 1.16);
+  // Display the supplied image without distortion, keeping the people and shared space in view.
+  const photoY = 415 + extra * .35, photoHeight = 500;
+  const photoScale = Math.max(width / images.coverImage.naturalWidth, photoHeight / images.coverImage.naturalHeight);
+  const sourceHeight = photoHeight / photoScale;
+  const sourceTop = (images.coverImage.naturalHeight - sourceHeight) * .40;
+  ctx.drawImage(images.coverImage, 0, sourceTop, images.coverImage.naturalWidth, sourceHeight,
+    0, photoY, width, photoHeight);
+  box(ctx, 800, photoY + photoHeight - 34, 262, 26, 'rgba(18,60,87,.85)', 4);
+  textBlock(ctx, 'Immagine illustrativa', 812, photoY + photoHeight - 15, 238, 17, 400, '#ffffff');
+  textBlock(ctx, 'NELLE MIE RISPOSTE', 48, 956 + extra * .70, 984, 19, 700, color);
+  model.traces.forEach((trace, index) => {
+    const x = 48 + index * 500, y = 974 + extra * .70;
+    box(ctx, x, y, 484, 75, fill, 12);
+    let size = 25; font(ctx, size, 700);
+    while (lines(ctx, `“${trace.label}”`, 444).length > 2 && size > 18) { size--; font(ctx, size, 700); }
+    const rows = lines(ctx, `“${trace.label}”`, 444).length;
+    textBlock(ctx, `“${trace.label}”`, x + 20, y + (rows > 1 ? 29 : 46), 444, size, 700, color, 1.15);
+  });
+  fittedLine(ctx, `Da esplorare: ${model.subjects.join(' · ')}`, 48, 1085 + extra * .80, 984, 24, 400, ink);
+  fittedLine(ctx, model.shortContext, 48, 1119 + extra * .84, 984, 20, 400, '#566d78');
+  const footerY = height - 169;
+  box(ctx, 36, footerY, 1008, 126, ink, 16);
+  fittedLine(ctx, model.school, 60, footerY + 39, 820, 29, 700, '#ffffff');
+  textBlock(ctx, 'Indirizzi, attività e modalità d’iscrizione', 60, footerY + 75, 820, 25, 400, '#ffffff');
+  textBlock(ctx, 'Inquadra il QR per saperne di più.', 60, footerY + 105, 820, 21, 400, '#c9f981');
+  box(ctx, 922, footerY + 12, 102, 102, '#ffffff', 7);
+  ctx.drawImage(images.qr, 925, footerY + 15, 96, 96);
+  textBlock(ctx, model.disclaimer, 48, height - 18, 984, 17, 400, '#566d78');
+  const description = [greeting, 'Indirizzo da approfondire.', 'Rappresentazione illustrativa di uno spazio condiviso con ragazzi seduti ai tavoli e sui divani.',
+    model.course.name, ...model.traces.map(t => t.label), model.subjects.join(', '), model.shortContext,
+    model.school, 'Indirizzi, attività e modalità d’iscrizione. Inquadra il QR per saperne di più.', model.disclaimer].filter(Boolean).join(' ');
   canvas.setAttribute('aria-label', description);
 }
 
@@ -177,7 +179,7 @@ export function openCertificate(item, direction, situations, contacts, trigger) 
     document.body.classList.remove('certificate-open'); trigger?.focus({ preventScroll: true });
   }, { once: true });
   document.body.classList.add('certificate-open'); dialog.showModal();
-  artwork(model.course.id).then(loaded => { images = loaded; redraw(); }).catch(() => {
+  artwork().then(loaded => { images = loaded; redraw(); }).catch(() => {
     if (dialog.isConnected) status.textContent = 'Le immagini non si sono caricate. Controlla la connessione, chiudi e riprova.';
   });
 }
