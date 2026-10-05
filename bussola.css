@@ -329,3 +329,6 @@
  .direction-intro #resultTitle, .direction-intro .explore-kicker, .direction-intro .plain-note, .direction-note { color: #123c57; }
  .direction-card { break-inside: avoid; }
 }
+
+/* Illustrative shared space supplied for the orientation pages. */
+.bussola-page .compass-life-image img { aspect-ratio: 1 / 1; object-fit: cover; }

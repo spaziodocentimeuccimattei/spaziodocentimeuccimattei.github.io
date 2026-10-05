@@ -314,3 +314,35 @@ input::placeholder, textarea::placeholder { color: #718692; opacity: 1; }
 .group-medie .group-links li:first-child a { border-color: rgb(201 249 129 / 75%); box-shadow: inset 5px 0 0 #c9f981; }
 @media (max-width: 850px) { .group-jump { grid-template-columns: repeat(2, 1fr); } .group-grid { grid-template-columns: 1fr; } .group-card { grid-column: auto; } }
 @media (max-width: 420px) { .group-card { padding: 20px 16px; } .group-jump a { min-height: 56px; padding: 12px; } }
+
+/* Supplied campaign imagery, limited to the public home and branded footers. */
+.home-page .hero { grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); }
+.home-page .hero-campaign { min-height: 0; margin: 0; align-self: center; background: #0c344b; }
+.home-page .hero-campaign > a { display: block; }
+.home-page .hero-campaign img { width: 100%; height: auto; object-fit: contain; }
+.home-page .hero-campaign::after { content: none; }
+.home-page .hero-campaign figcaption { padding: 12px 16px; color: #dce8ec; font-size: .8rem; text-align: center; }
+.home-page .hero-campaign figcaption a { text-underline-offset: 3px; }
+.home-page .home-bussola-entry { padding: 0; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 0; overflow: hidden; }
+.home-life-image { margin: 0; position: relative; min-width: 0; }
+.home-life-image img { display: block; width: 100%; height: 100%; min-height: 350px; object-fit: cover; object-position: center 42%; }
+.home-bussola-copy { padding: clamp(26px, 4vw, 48px); align-self: center; min-width: 0; }
+.home-bussola-copy .explore-button { margin-top: 24px; }
+.visual-footer { align-items: center; }
+.visual-footer-brand { display: flex; align-items: center; gap: 24px; }
+.visual-footer-brand img { display: block; width: 140px; height: auto; border-radius: 10px; }
+.visual-footer-brand p { max-width: 27ch; font-size: .96rem; font-weight: 750; }
+.visual-footer > p { max-width: 48ch; font-size: .8rem; }
+@media (max-width: 900px) {
+  .home-page .hero { display: flex; flex-direction: column; }
+  .home-page .hero-copy { order: 1; }
+  .home-page .hero-campaign { order: 2; width: min(100%, 560px); max-height: none; }
+}
+@media (max-width: 760px) {
+  .home-page .home-bussola-entry { grid-template-columns: minmax(0, 1fr); }
+  .home-bussola-copy { grid-row: 1; }
+  .home-life-image img { height: auto; min-height: 0; max-height: 380px; aspect-ratio: 4 / 3; }
+  .visual-footer { align-items: flex-start; }
+  .visual-footer-brand { gap: 18px; }
+  .visual-footer-brand img { width: 112px; }
+}
