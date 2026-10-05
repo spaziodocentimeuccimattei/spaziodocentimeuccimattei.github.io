@@ -1,0 +1,28 @@
+.bussola-page .certificate-action { padding-top: 18px; margin-top: 14px; border-top: 1px solid var(--line); }
+.bussola-page .certificate-action p { margin: 9px 0 0; font-size: .86rem; color: #566d78; }
+.certificate-open { overflow: hidden; }
+.certificate-dialog { width: min(1020px, calc(100% - 32px)); max-width: none; max-height: calc(100dvh - 32px); padding: 24px; border: 1px solid #d9e2e6; border-radius: 24px; color: var(--ink); background: #fff; box-shadow: var(--shadow-lg); }
+.certificate-dialog::backdrop { background: rgb(10 30 48 / 72%); }
+.certificate-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; padding: 8px 0 14px; position: sticky; top: -24px; z-index: 1; background: #fff; }
+.certificate-dialog-header h2 { margin: 0; font-size: 1.65rem; }
+.certificate-layout { display: grid; grid-template-columns: minmax(240px, .8fr) minmax(0, 1fr); align-items: start; gap: 30px; }
+.certificate-course { margin-top: 0; font-weight: 750; }
+.certificate-controls label { display: block; margin: 16px 0 7px; font-weight: 750; }
+.certificate-controls input, .certificate-controls select { display: block; width: 100%; min-height: 48px; padding: 10px 12px; color: var(--ink); background: #fff; border: 1px solid #6c848e; border-radius: 10px; }
+.certificate-controls .explore-button { width: 100%; margin-top: 18px; }
+.certificate-controls .plain-note { font-size: .86rem; }
+.certificate-status { min-height: 1.5em; font-weight: 650; font-size: .88rem; }
+.certificate-preview-wrap { margin: 0; }
+.certificate-preview { display: block; width: 100%; height: auto; background: #f7f9f6; box-shadow: 0 6px 26px rgb(18 60 87 / 13%); }
+.certificate-preview-wrap figcaption { margin-top: 9px; text-align: center; font-size: .78rem; color: #566d78; }
+.certificate-dialog :focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+@media (min-width: 681px) {
+  .certificate-preview { width: auto; max-width: 100%; max-height: calc(100dvh - 190px); margin-inline: auto; }
+}
+@media (max-width: 680px) {
+  .certificate-dialog { width: calc(100% - 16px); max-height: calc(100dvh - 16px); padding: 16px; border-radius: 18px; }
+  .certificate-dialog-header h2 { font-size: 1.3rem; }
+  .certificate-dialog-header { top: -16px; }
+  .certificate-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .certificate-controls select { font-size: .84rem; }
+}

@@ -41,6 +41,18 @@ Verificati: struttura dei dati, sintassi dei moduli, simulazione deterministica 
 
 Le sezioni seguenti descrivono la versione 2 pubblicata e le sue verifiche storiche; non sono una pubblicazione della revisione 3.
 
+## Attestati della revisione locale — 5 ottobre 2026
+
+Ogni indirizzo suggerito nella restituzione offre «Crea il tuo attestato». Il dialogo mostra il risultato scelto, due motivazioni derivate dalle risposte, le materie, gli eventuali altri indirizzi emersi e la natura ancora preliminare di un percorso con poche risposte. Si tratta di un attestato di esplorazione, senza certificazioni di capacità, voti, percentuali, diplomi o promesse di ammissione.
+
+Il nome è facoltativo e richiesto solo qui, senza cognome: resta nell’input del dialogo e nel canvas dell’anteprima, viene cancellato alla chiusura, non entra in sessionStorage, URL, nome del file o richieste alla scuola. Se si scarica il file, il nome compare naturalmente al suo interno. La condivisione è una scelta successiva dello studente dal proprio dispositivo; la Bussola non pubblica su Instagram.
+
+Due formati generati nel browser senza servizi di esportazione esterni: PNG 1080 × 1350 e PDF A4 di una pagina, con immagine JPEG 1620 × 2292. Il PDF riproduce il disegno ed è stampabile; non contiene testo selezionabile né una struttura PDF per lettori di schermo. Il risultato della pagina e la descrizione testuale dell’anteprima restano accessibili nel DOM. Logo originale, QR pubblico già esistente e invito a conoscere l’IIS Meucci - Mattei di Decimomannu e le modalità d’iscrizione.
+
+Moduli `bussola-attestato-core.mjs` (contenuto, nome e struttura PDF) e `bussola-attestato.mjs` (anteprima ed esportazione), con stili separati. La generazione PDF incorpora il JPEG nella pagina A4 e calcola i riferimenti sui byte effettivi; non usa librerie remote. Questa aggiunta è locale e non modifica lo stato del rilascio pubblico.
+
+Verificati i download reali nei due formati per tutti e cinque gli indirizzi, riapertura del PDF con parser rigoroso e resa delle cinque pagine con Poppler, nomi facoltativi/accentati/lunghi, svuotamento del nome alla chiusura e alla riapertura, esiti misti e preliminari, chiusura con Escape e ritorno del focus. Finestra a 320, 390 e 768 pixel senza scorrimento orizzontale; console senza errori o avvisi rilevati. Comando `node scripts/verifica-attestati.mjs`; evidenze in `verifica-attestati.json`. Le prove con stampante fisica, dispositivi scolastici, Safari/iOS/Android e pubblicazione effettiva su Instagram restano da svolgere.
+
 ## Revisione grafica e contenuti — versione 2
 
 Foto originale della sede in formato responsive fino a 1440 pixel, logo invariato, colori dei cinque corsi ispirati al logo e illustrazioni vettoriali nitide. Nessuna fotografia inventata di studenti o laboratori. `bussola-visuals.mjs` contiene le illustrazioni, i misuratori di spesa/tempo e le tappe. Le due piante CAT sono visibili prima della scelta. Le otto domande riguardano gli interessi personali; i precedenti scenari organizzativi sono sostituiti. La versione 2 ignora lo stato della vecchia versione.
@@ -51,7 +63,7 @@ Verifica della revisione nell’In-app Browser: otto domande complete, ripresa, 
 
 ## Stato e privacy tecnica
 
-Solo `sessionStorage`, chiave `mattei-bussola-v1`, nella scheda del browser. Nessun nome, scuola o account richiesto; nessun invio delle risposte. I dettagli delle scelte nelle missioni restano in memoria; viene salvato soltanto il completamento. Stato corrotto o versione sconosciuta sono ignorati. Se lo storage è bloccato, il percorso continua in memoria. I comandi di cancellazione toccano soltanto la chiave Bussola, senza modificare lo stato dell'area docenti. Alla riapertura dello stato salvato si chiede di continuare o iniziare per un'altra persona prima di mostrare le risposte.
+Solo `sessionStorage`, chiave `mattei-bussola-v1`, nella scheda del browser. Nessun nome, scuola o account richiesto per svolgere il percorso; nessun invio delle risposte. Solo l’esportazione dell’attestato permette di inserire un nome facoltativo, senza salvarlo nello stato del browser. I dettagli delle scelte nelle missioni restano in memoria; viene salvato soltanto il completamento. Stato corrotto o versione sconosciuta sono ignorati. Se lo storage è bloccato, il percorso continua in memoria. I comandi di cancellazione toccano soltanto la chiave Bussola, senza modificare lo stato dell'area docenti. Alla riapertura dello stato salvato si chiede di continuare o iniziare per un'altra persona prima di mostrare le risposte.
 
 Mailto, telefono e sito sono normali collegamenti: l'eventuale messaggio e-mail è inviato volontariamente dallo studente tramite il suo programma di posta. Non inserire dati reali degli studenti nei file JSON o nelle osservazioni del pilotaggio.
 

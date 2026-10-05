@@ -1,6 +1,7 @@
 import { courseArt, questionArt } from './bussola-visuals.mjs';
 import { freshState, readState, clearState, summarize, suggestCourses, validateContent } from './bussola-core.mjs';
 import { el, button, link, storage, persist, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs';
+import { openCertificate } from './bussola-attestato.mjs';
 
 const intro = document.getElementById('introPanel');
 const resume = document.getElementById('resumePanel');
@@ -82,7 +83,7 @@ function renderQuestion() {
   focusHeading(questions);
 }
 
-function courseCard(item, highlighted = false) {
+function courseCard(item, highlighted = false, direction = null) {
   const course = item.course;
   const card = el('article', null, highlighted ? 'direction-card' : 'discovery-course');
   card.dataset.course = course.id;
@@ -115,6 +116,13 @@ function courseCard(item, highlighted = false) {
   actions.append(link('Esplora l’indirizzo', `indirizzi.html#${course.id}`),
     link('Prova un’attività', `missioni.html?corso=${course.id}`, 'explore-button secondary'));
   card.append(actions);
+  if (highlighted) {
+    const exportRow = el('div', null, 'certificate-action');
+    const exportButton = button('Crea il tuo attestato', () => openCertificate(item, direction, situations, contacts, exportButton), 'explore-button secondary');
+    exportButton.setAttribute('aria-label', `Crea il tuo attestato: ${course.name}`);
+    exportRow.append(exportButton, el('p', 'Conserva questa direzione in PDF o in un’immagine per Instagram.'));
+    card.append(exportRow);
+  }
   return card;
 }
 
@@ -146,7 +154,7 @@ function renderResults() {
   if (direction.selected.length) {
     const grid = el('div', null, 'direction-grid');
     if (direction.selected.length === 1) grid.classList.add('single-direction');
-    for (const item of direction.selected) grid.append(courseCard(item, true));
+    for (const item of direction.selected) grid.append(courseCard(item, true, direction));
     results.append(grid);
   }
   const other = direction.items.filter(item => !direction.selected.includes(item));
@@ -192,7 +200,7 @@ async function initialize() {
     if (check.errors.length) throw new Error(check.errors.join(' '));
     situations = b.situations; dimensions = d.dimensions; courses = c.courses; contacts = contactData;
     state = readState(storage(), situations, missionIds);
-    status.textContent = 'Le scelte restano in questa scheda del browser. Non chiediamo nome, scuola, e-mail o account.';
+    status.textContent = 'Per il percorso non serve registrarsi. Le risposte restano in questa scheda del browser. Alla fine puoi aggiungere solo il tuo nome a un attestato da scaricare.';
     start.disabled = false;
     if (state && Object.keys(state.answers).length) { intro.hidden = true; resume.hidden = false; }
     else state = freshState();

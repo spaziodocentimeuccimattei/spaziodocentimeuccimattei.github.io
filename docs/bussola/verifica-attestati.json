@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-05",
+  "state": "local-only",
+  "branch": "codex/bussola-orientamento-motivato",
+  "automated": "node scripts/verifica-attestati.mjs",
+  "browser": "Codex In-app Browser",
+  "verified": {
+    "coursesExported": [
+      "afm",
+      "sia",
+      "turismo",
+      "ssas",
+      "cat"
+    ],
+    "formats": {
+      "png": [
+        1080,
+        1350
+      ],
+      "pdf": {
+        "pages": 1,
+        "mediaBox": [
+          0,
+          0,
+          595.28,
+          841.89
+        ],
+        "image": [
+          1620,
+          2292
+        ],
+        "parser": "pypdf strict",
+        "render": "Poppler pdftoppm"
+      }
+    },
+    "downloadFilesInspected": 10,
+    "mixedPreliminaryResult": "AFM and SIA, 4 answers: each export retains other direction and preliminary context",
+    "optionalName": "with name, without name, accented compound first name, 40 characters, clear on close/reopen/reload",
+    "keyboard": "Escape closes dialog and returns focus to the course button",
+    "responsive": [
+      {
+        "width": 320,
+        "pageWidth": 320,
+        "dialogClientWidth": 302,
+        "dialogScrollWidth": 302
+      },
+      {
+        "width": 390,
+        "pageWidth": 390,
+        "dialogClientWidth": 372,
+        "dialogScrollWidth": 372
+      },
+      {
+        "width": 768,
+        "pageWidth": 768,
+        "dialogClientWidth": 734,
+        "dialogScrollWidth": 734
+      }
+    ],
+    "consoleErrorsOrWarnings": 0,
+    "identityBoundary": "source and state sanitization verified: export module does not call storage/persist/fetch or add name to filename/URL",
+    "assets": "same original logo crop and public orientation QR as the site"
+  },
+  "limitations": [
+    "PDF is a raster image, without selectable text or PDF tags; result and preview description remain in the HTML DOM",
+    "Physical printer, Safari/iOS/Android, Chromebook and school pilots not tested",
+    "No Instagram upload performed",
+    "No push or deployment; public page remains unchanged"
+  ]
+}
