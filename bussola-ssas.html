@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cinque laboratori · Bussola SSAS</title><meta name="description" content="Cinque laboratori di salute, relazione, cura e autonomia, creatività e progettazione."><link rel="stylesheet" href="ssas-labs.css"></head>
 <body><a href="#main" class="skip">Vai all’attività</a>
-<div class="preview-strip"><span>BUSSOLA · NUOVA ESPERIENZA SSAS</span><span>Anteprima da provare</span></div>
-<header class="site-head"><a class="brand" href="tavole-bussola.html#ssas"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" alt=""><span>Bussola<small>IIS Meucci - Mattei | Decimomannu</small></span></a><button type="button" id="openNotes" class="plain-button">Le mie note <span id="noteCount">0</span></button></header>
+<div class="preview-strip"><span>BUSSOLA · NUOVA ESPERIENZA SSAS</span><span>Cinque laboratori</span></div>
+<header class="site-head"><a class="brand" href="bussola.html"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" alt=""><span>Bussola<small>IIS Meucci - Mattei | Decimomannu</small></span></a><button type="button" id="openNotes" class="plain-button">Le mie note <span id="noteCount">0</span></button></header>
 <div class="save-bar"><span id="saveStatus" role="status" aria-live="polite">Il tuo progetto si conserva mentre lavori.</span><button type="button" id="retrySave" hidden>Riprova il salvataggio</button></div>
 <main id="main" tabindex="-1"><nav id="stepNav" aria-label="I cinque laboratori SSAS"></nav><div id="workspace"></div></main>
-<footer class="page-footer"><span>Situazioni e personaggi immaginari.</span><a href="tavole-bussola.html#ssas">Le cinque proposte</a><button type="button" id="newProject" class="text-button">Inizia un nuovo progetto</button></footer>
+<footer class="page-footer"><span>Situazioni e personaggi immaginari.</span><a href="missioni.html">Tutte le esperienze</a><button type="button" id="newProject" class="text-button">Inizia un nuovo progetto</button></footer>
 <dialog id="notesDialog" aria-labelledby="notesTitle"><div class="dialog-head"><div><p class="eyebrow">UN’IDEA PER MIGLIORARE</p><h2 id="notesTitle">Una nota su questo punto</h2></div><button type="button" id="closeNotes" class="plain-button">Chiudi</button></div>
 <p>Che cosa ti è piaciuto, non hai capito o cambieresti?</p><form id="noteForm">
 <div class="note-fields"><label>Sto provando come<select id="noteRole" name="note_role"><option value="alunno">Alunno</option><option value="docente">Docente</option></select></label><label>La mia nota riguarda<select id="noteType" name="note_type"><option value="chiarezza">Qualcosa non è chiaro</option><option value="problema">Un problema</option><option value="idea">Un’idea di modifica</option><option value="piaciuto">Qualcosa che mi è piaciuto</option></select></label></div>
@@ -14,7 +14,7 @@
 <button type="submit" class="primary">Salva la nota</button><p id="noteStatus" role="status" aria-live="polite"></p></form>
 <section class="saved-notes"><h3>Le tue note, una per una</h3><div id="notesList"></div></section></dialog>
 <dialog id="resetDialog" aria-labelledby="resetTitle"><h2 id="resetTitle">Un progetto nuovo</h2><p>Prima di cominciare, conserva una copia del progetto e delle note. Il nuovo percorso avrà un identificativo diverso.</p><div class="dialog-actions"><a id="backupBeforeReset" class="secondary" download="progetto-ssas.json">Scarica il lavoro attuale</a><button type="button" id="cancelReset" class="plain-button">Torna al progetto</button><button type="button" id="confirmReset" class="primary">Inizia il nuovo progetto</button></div></dialog>
-<noscript><p>Per svolgere i cinque laboratori occorre JavaScript. Puoi leggere la <a href="proposta-cinque-esperienze-bussola.md">proposta dell’esperienza</a>.</p></noscript><script>
+<noscript><p>Per svolgere i cinque laboratori occorre JavaScript. Puoi leggere la <a href="docs/bussola/progetto-ssas-cinque-laboratori.md">proposta dell’esperienza</a>.</p></noscript><script>
 if(location.protocol==='file:'){
  const p=document.createElement('p');p.textContent='Apri l’esperienza dal server locale per svolgere e salvare le attività. ';
  const a=document.createElement('a');a.href='http://127.0.0.1:8766/bussola-ssas.html';a.textContent='Apri i cinque laboratori';p.append(a);document.getElementById('workspace').append(p);
