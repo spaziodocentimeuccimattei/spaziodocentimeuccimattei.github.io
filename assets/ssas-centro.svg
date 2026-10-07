@@ -1,0 +1,36 @@
+<svg aria-label="Centro SSAS: laboratorio con materiali e partecipanti, diverse forme di contributo e una locandina del progetto." role="img" viewBox="0 0 900 540" xmlns="http://www.w3.org/2000/svg"><title>Centro SSAS: laboratorio con materiali e partecipanti, diverse forme di contributo e una locandina del progetto.</title><defs><pattern height="24" id="dots-Cen" patternUnits="userSpaceOnUse" width="24"><circle cx="2" cy="2" fill="#514761" opacity=".14" r="1"></circle></pattern></defs>
+<rect fill="#f2dfda" height="540" width="900"></rect>
+<path d="M30 113L394 27 634 131V369L294 508 30 359Z" fill="#f9ede2"></path>
+<path d="M30 359l364-107 240 117-340 139Z" fill="#dcbba4"></path>
+<path d="M394 27v225l240 117V131Z" fill="#ead1c2"></path>
+<path d="M394 252L30 359" stroke="#c7a98f" stroke-width="3"></path>
+<path d="M68 132l146-36v148L68 290Z" fill="#b7d6ce" stroke="#f7faf0" stroke-width="10"></path>
+<path d="M137 114v153M72 208l136-35" stroke="#f7faf0" stroke-width="6"></path>
+<path d="M279 294l197-56 89 50-196 71Z" fill="#b38358"></path>
+<path d="M289 300v79M466 251v61M370 353v73M550 293v71" stroke="#805e43" stroke-width="8"></path>
+<path d="M310 296l36-10 21 13-36 11Z" fill="#efe8d6"></path><path d="M373 282l46-13 23 14-46 15Z" fill="#baa2cd"></path><path d="M446 306l48-15 22 11-46 19Z" fill="#d9a575"></path>
+<g transform="translate(225 216)"><path d="M-22 95l11 73m22-74 3 68" stroke="#684b51" stroke-linecap="round" stroke-width="13"></path><path d="M-29 37q28-20 52 1l9 62-60 11Z" fill="#a96c72"></path>
+<circle cx="-2" cy="11" fill="#d4a077" r="26"></circle><path d="M-26 6q1-35 25-32t29 31l-20-9-9-10-7 14Z" fill="#4b3b34"></path>
+<path d="M14 50l36 31 33-15" fill="none" stroke="#d4a077" stroke-linecap="round" stroke-width="12"></path>
+<path d="M-24 48l-15 45" fill="none" stroke="#d4a077" stroke-linecap="round" stroke-width="12"></path></g>
+<g transform="translate(447 161)"><path d="M-17 100l5 43m20-47 2 51" stroke="#405667" stroke-linecap="round" stroke-width="13"></path><path d="M-31 40q29-17 52 1l7 62-61 7Z" fill="#5f8985"></path>
+<circle cx="-5" cy="13" fill="#e3b890" r="25"></circle><path d="M-30 8q1-35 25-33 29 1 27 31l-19-15-10 9Z" fill="#c5bbb3"></path>
+<path d="M-24 55l-28 48-28 0M12 59l28 31" fill="none" stroke="#e3b890" stroke-linecap="round" stroke-width="11"></path>
+<path d="M-35 108h60v50m-64-46v48" fill="none" stroke="#876a52" stroke-width="6"></path></g>
+<g transform="translate(538 284)"><path d="M-21 85l-9 57m29-48 14 50" stroke="#526543" stroke-linecap="round" stroke-width="13"></path><path d="M-35 31q25-15 45 4l10 62-49-1Z" fill="#d9ac4e"></path>
+<circle cx="-12" cy="8" fill="#b47952" r="23"></circle><path d="M-35 3q-4-28 22-26t23 25l-14-5-10-10-7 9Z" fill="#382d26"></path>
+<path d="M-29 47l-31-12-24-26" fill="none" stroke="#b47952" stroke-linecap="round" stroke-width="11"></path></g>
+<rect fill="#fffaf4" height="61" rx="9" width="158" x="269" y="90"></rect><text fill="#604548" font-size="15" font-weight="700" x="282" y="116">Nora</text><text fill="#604548" font-size="13" x="282" y="137">«Provo con le immagini.»</text>
+<rect fill="#fffaf4" height="66" rx="9" width="151" x="56" y="325"></rect><text fill="#604548" font-size="15" font-weight="700" x="69" y="351">Giulia</text><text fill="#604548" font-size="13" x="69" y="373">«Racconto senza foto.»</text>
+<g transform="rotate(-2 749 260)"><rect fill="#fffaf3" height="415" rx="8" width="215" x="655" y="61"></rect>
+<rect fill="#b66369" height="115" rx="4" width="179" x="673" y="79"></rect>
+<path d="M700 144l24-37 25 51 24-29 41 46H692Z" fill="#efb493"></path><circle cx="816" cy="104" fill="#f7d780" r="10"></circle>
+<text fill="#633c44" font-size="25" font-weight="800" x="674" y="230">Storie che</text><text fill="#633c44" font-size="25" font-weight="800" x="674" y="262">prendono forma</text>
+<text fill="#715760" font-size="14" x="674" y="293">Il mio laboratorio al centro</text>
+<path d="M674 309h173" stroke="#e8d7cb"></path>
+<circle cx="684" cy="337" fill="#b66369" r="6"></circle><text fill="#674a51" font-size="15" x="699" y="342">Porta una tua idea</text>
+<circle cx="684" cy="368" fill="#b66369" r="6"></circle><text fill="#674a51" font-size="15" x="699" y="373">Crea come preferisci</text>
+<circle cx="684" cy="399" fill="#b66369" r="6"></circle><text fill="#674a51" font-size="15" x="699" y="404">Scegli cosa condividere</text>
+<rect fill="#e6ebd7" height="31" rx="4" width="173" x="675" y="426"></rect><text fill="#40543d" font-size="13" text-anchor="middle" x="761" y="447">Un oggetto, una voce, una storia</text></g>
+<rect fill="#fffaf4" height="33" rx="16" width="227" x="35" y="29"></rect><text fill="#6b4850" font-size="14" text-anchor="middle" x="149" y="51">PERSONAGGI IMMAGINARI</text>
+</svg>
