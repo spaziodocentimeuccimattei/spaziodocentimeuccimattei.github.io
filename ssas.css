@@ -4,3 +4,5 @@
 .site-head{position:sticky;top:0;z-index:10;background:var(--paper)}.sheet h2{font-size:20px;margin-bottom:12px}.subject-bridges .curious-subject{border:2px solid #6d8460;background:#edf1e1;padding:19px}.complete h2{font-size:27px}.stage-heading h1{font-size:clamp(32px,3.4vw,46px)}
 
 #stepNav,#main{scroll-margin-top:100px}
+
+.listening-guide{border:1px solid #c4d0bc;border-radius:12px;padding:16px;background:#f1f2e5;margin-bottom:20px}.listening-guide strong{font-size:15px}.listening-guide p{font-size:14px;margin:7px 0 12px}.listening-guide[data-ready=true]{background:#e8efdf}.listening-guide button{font-size:13px;text-align:left;white-space:normal}.person-copy{display:grid;gap:3px}.person-progress{font-size:11px;font-weight:500;letter-spacing:0}
