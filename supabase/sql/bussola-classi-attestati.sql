@@ -41,7 +41,9 @@ create index bussola_v2_attestati_classe on public.bussola_v2_attestati(classe_i
 alter table public.bussola_v2_classi enable row level security;
 alter table public.bussola_v2_alunni enable row level security;
 alter table public.bussola_v2_attestati enable row level security;
-revoke all on public.bussola_v2_classi,public.bussola_v2_alunni,public.bussola_v2_attestati from public,anon,authenticated;
+-- Supabase attribuisce privilegi automatici anche a service_role sulle nuove
+-- tabelle: azzerarli prima di assegnare solo quelli richiesti dall'API.
+revoke all on public.bussola_v2_classi,public.bussola_v2_alunni,public.bussola_v2_attestati from public,anon,authenticated,service_role;
 grant select,insert,update on public.bussola_v2_classi,public.bussola_v2_alunni to service_role;
 grant select,insert on public.bussola_v2_attestati to service_role;
 comment on table public.bussola_v2_alunni is 'Nominativi privati per gli attestati: collegamento univoco al partecipante, omonimi distinti. Accesso tramite Edge Function con sessione Funzione Strumentale.';
