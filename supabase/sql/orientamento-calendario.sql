@@ -1,13 +1,14 @@
 -- Calendario dell'orientamento nelle scuole secondarie di primo grado.
--- Tre tipi di appuntamento: incontro nelle aule con gli studenti ('aule'), giornata con
--- gli stand delle scuole superiori in un locale grande ('stand'), open day della scuola
--- media ('open_day'). Una data è 'prevista' finché la scuola media non la conferma.
+-- Due tipi di appuntamento: incontro nelle aule con gli studenti ('aule') e open day della
+-- scuola media, dove il Mattei ha un proprio stand in un locale grande ('stand').
+-- Una data è 'prevista' finché la scuola media non la conferma. Data, tipo, orario, luogo e
+-- stato sono mostrati ai docenti nella pagina pubblica; la nota resta riservata.
 -- Non inserire nominativi o recapiti dei referenti scolastici, nemmeno nelle note.
 
 create table if not exists public.orientamento_appuntamenti (
   id uuid primary key default gen_random_uuid(),
   scuola_id text not null references public.orientamento_scuole (id),
-  tipo text not null check (tipo in ('aule', 'stand', 'open_day')),
+  tipo text not null check (tipo in ('aule', 'stand')),
   data date not null,
   ora_inizio time,
   ora_fine time,

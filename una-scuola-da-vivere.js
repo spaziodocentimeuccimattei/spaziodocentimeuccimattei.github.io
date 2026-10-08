@@ -15,6 +15,8 @@ const schoolResults = document.getElementById('schoolResults');
 const schoolFilterButtons = [...document.querySelectorAll('[data-school-filter]')];
 
 let schoolStates = new Map();
+let schoolDates = new Map();
+const DATE_TYPES = { aule: 'nelle aule', stand: 'open day con stand' };
 let schoolFilter = 'all';
 
 function setMessage(id, message, kind = '') {
@@ -62,6 +64,23 @@ function applySchoolStates() {
     option.dataset.state = state;
     const tag = option.querySelector('.school-tag');
     tag.textContent = state === 'visitata' ? 'Già visitata' : state === 'in_arrivo' ? 'Disponibilità presente' : 'Nessuna disponibilità';
+    // Date inserite dalla Funzione Strumentale: il docente le vede prima di candidarsi.
+    option.querySelector('.school-dates')?.remove();
+    const dates = schoolDates.get(option.dataset.school) || [];
+    if (dates.length) {
+      const list = document.createElement('span');
+      list.className = 'school-dates';
+      for (const item of dates) {
+        const day = new Intl.DateTimeFormat('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(`${item.data}T12:00:00`));
+        const start = (item.ora_inizio || '').slice(0, 5);
+        const end = (item.ora_fine || '').slice(0, 5);
+        const time = start && end ? `, ${start}–${end}` : start ? `, dalle ${start}` : '';
+        const row = document.createElement('b');
+        row.textContent = `${day}${time} · ${DATE_TYPES[item.tipo] || item.tipo}${item.luogo ? ` · ${item.luogo}` : ''}${item.stato === 'confermata' ? '' : ' (data prevista)'}`;
+        list.append(row);
+      }
+      tag.after(list);
+    }
   }
   filterSchoolChoices();
 }
@@ -225,6 +244,8 @@ async function loadOverview(schools) {
     if (previewCatalog) throw new Error();
     const data = await send('overview', {});
     schoolStates = new Map(data.scuole.map((school) => [school.id, school.stato]));
+    schoolDates = new Map();
+    for (const item of data.appuntamenti || []) schoolDates.set(item.scuola_id, [...(schoolDates.get(item.scuola_id) || []), item]);
     for (const [key, value] of Object.entries(data.totali)) setStat(key, value);
     renderMission(data.totali.scuole, data.totali.scuole_visitate, data.totali.scuole_con_disponibilita);
   } catch {

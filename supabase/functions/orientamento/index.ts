@@ -25,7 +25,7 @@ const MAX_PUBLIC_REQUESTS_PER_DAY = 40;
 const PROPOSAL_TYPES = new Set(["laboratorio", "lezione_aperta", "esperienza_pratica", "dimostrazione", "interdisciplinare", "altro"]);
 const PROPOSAL_DURATIONS = new Set([30, 45, 60, 90]);
 const ACTIVITY_TYPES = new Set(["visita", "mattinee"]);
-const APPOINTMENT_TYPES = new Set(["aule", "stand", "open_day"]);
+const APPOINTMENT_TYPES = new Set(["aule", "stand"]);
 const APPOINTMENT_STATES = new Set(["prevista", "confermata"]);
 const ALLOWED_ORIGINS = new Set([
   "https://spazio-docenti-matteucci.github.io",
@@ -298,6 +298,7 @@ async function overview(request: Request) {
     const visited = new Set(data.activities.filter((item) => item.tipo === "visita" && item.scuola_id).map((item) => item.scuola_id));
     const offered = new Set(data.supporters.filter((item) => item.stato !== "archiviata").flatMap((item) => item.scuole as string[]));
     const participants = new Set<string>();
+    const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date());
     for (const item of data.supporters as Supporter[]) if (item.stato !== "archiviata") participants.add(personKey(item.nome, item.cognome));
     for (const item of data.proposals as Proposal[]) if (item.stato !== "archiviata") participants.add(personKey(item.nome, item.cognome));
     for (const item of data.activities as Activity[]) participants.add(personKey(item.nome, item.cognome));
@@ -316,6 +317,11 @@ async function overview(request: Request) {
         comune: school.comune,
         etichetta: school.etichetta,
         stato: visited.has(school.id) ? "visitata" : offered.has(school.id) ? "in_arrivo" : "libera",
+      })),
+      // Date da oggi in poi, senza la nota: è ciò che i docenti vedono prima di candidarsi.
+      appuntamenti: data.appointments.filter((item) => item.data >= today).map((item) => ({
+        scuola_id: item.scuola_id, tipo: item.tipo, data: item.data,
+        ora_inizio: item.ora_inizio, ora_fine: item.ora_fine, luogo: item.luogo, stato: item.stato,
       })),
     });
   } catch {
@@ -414,7 +420,7 @@ function clockTime(value: unknown) {
   return value.slice(0, 5);
 }
 
-// Calendario di orientamento e open day nelle scuole medie: con "id" corregge una data esistente.
+// Calendario dell’orientamento nelle scuole medie (nelle aule o con lo stand all’open day): con "id" corregge una data esistente.
 async function saveAppointment(request: Request, payload: Record<string, unknown>) {
   try {
     const id = payload.id === undefined || payload.id === null || payload.id === "" ? null : payload.id;

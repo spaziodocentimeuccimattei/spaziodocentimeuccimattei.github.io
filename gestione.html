@@ -98,7 +98,7 @@
 
         <section class="tab-panel" data-panel="calendario" hidden>
           <div class="export-bar">
-            <p class="panel-help">Qui segni le date dell’orientamento in ciascuna scuola media e le date dei loro open day. Una data resta <b>prevista</b> finché la scuola non la conferma. Non scrivere nomi o recapiti dei referenti.</p>
+            <p class="panel-help">Qui inserisci le date dell’orientamento in ciascuna scuola media. I docenti le vedono subito nella loro pagina, accanto alla scuola, con orario e luogo; la nota la vedi solo tu. Una data resta <b>prevista</b> finché la scuola non la conferma.</p>
             <button type="button" class="act ok" id="exportCalendarButton">Scarica calendario CSV</button>
           </div>
           <form id="appointmentForm" class="activity-form appointment-form">
@@ -108,8 +108,7 @@
             <label class="activity-wide">Tipo di appuntamento
               <select name="tipo" required>
                 <option value="aule">Orientamento nelle aule, con gli studenti</option>
-                <option value="stand">Orientamento con gli stand delle scuole superiori</option>
-                <option value="open_day">Open day della scuola media</option>
+                <option value="stand">Open day della scuola media, con il nostro stand</option>
               </select>
             </label>
             <label>Stato della data
@@ -121,7 +120,7 @@
             <label>Dalle <span>facoltativo</span><input name="ora_inizio" type="time"></label>
             <label>Alle <span>facoltativo</span><input name="ora_fine" type="time"></label>
             <label>Luogo <span>facoltativo</span><input name="luogo" maxlength="160" placeholder="Es. palestra, aula magna"></label>
-            <label class="appointment-note">Nota <span>facoltativa</span><input name="nota" maxlength="600" placeholder="Es. classi terze, due turni, materiali da portare"></label>
+            <label class="appointment-note">Nota <span>facoltativa</span><input name="nota" maxlength="600" placeholder="Solo per te: es. classi terze, due turni, materiali da portare"></label>
             <div class="appointment-buttons">
               <button type="submit" id="appointmentSubmit">Aggiungi la data</button>
               <button type="button" class="act neutral" id="appointmentCancel" hidden>Annulla la modifica</button>
@@ -133,12 +132,6 @@
             <button data-filter="prossime" aria-pressed="true">In arrivo</button>
             <button data-filter="passate" aria-pressed="false">Già passate</button>
             <button data-filter="tutte" aria-pressed="false">Tutte</button>
-          </div>
-          <div class="filters" data-filter-for="calendarioTipo">
-            <button data-filter="tutti" aria-pressed="true">Tutti i tipi</button>
-            <button data-filter="aule" aria-pressed="false">Nelle aule</button>
-            <button data-filter="stand" aria-pressed="false">Con gli stand</button>
-            <button data-filter="open_day" aria-pressed="false">Open day</button>
           </div>
           <div id="appointmentList"></div>
         </section>

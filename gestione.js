@@ -15,13 +15,13 @@ const activityMessage = document.getElementById('activityMessage');
 
 const PROPOSAL_TYPES = { laboratorio: 'Laboratorio', lezione_aperta: 'Lezione aperta', esperienza_pratica: 'Esperienza pratica', dimostrazione: 'Dimostrazione', interdisciplinare: 'Attività interdisciplinare', altro: 'Altro' };
 const SUPPORTER_STATES = { ricevuta: 'Da contattare', assegnata: 'Confermata', archiviata: 'Archiviata' };
-const APPOINTMENT_TYPES = { aule: 'Orientamento nelle aule', stand: 'Orientamento con gli stand', open_day: 'Open day della scuola media' };
+const APPOINTMENT_TYPES = { aule: 'Orientamento nelle aule', stand: 'Open day con stand' };
 const APPOINTMENT_STATES = { prevista: 'Prevista', confermata: 'Confermata' };
 const PROPOSAL_STATES = { ricevuta: 'Da valutare', in_valutazione: 'In valutazione', approvata: 'Approvata', archiviata: 'Archiviata' };
 
 let sessionToken = sessionStorage.getItem(SESSION_KEY) || '';
 let data = null;
-const filters = { candidature: 'ricevuta', proposte: 'aperte', calendarioPeriodo: 'prossime', calendarioTipo: 'tutti' };
+const filters = { candidature: 'ricevuta', proposte: 'aperte', calendarioPeriodo: 'prossime' };
 const appointmentForm = document.getElementById('appointmentForm');
 const appointmentSchool = document.getElementById('appointmentSchool');
 const appointmentMessage = document.getElementById('appointmentMessage');
@@ -312,8 +312,7 @@ function renderAppointments(schoolNames) {
   list.replaceChildren();
   const now = today();
   const items = data.appuntamenti.filter((item) =>
-    (filters.calendarioPeriodo === 'tutte' || (filters.calendarioPeriodo === 'prossime' ? item.data >= now : item.data < now)) &&
-    (filters.calendarioTipo === 'tutti' || item.tipo === filters.calendarioTipo));
+    filters.calendarioPeriodo === 'tutte' || (filters.calendarioPeriodo === 'prossime' ? item.data >= now : item.data < now));
   if (filters.calendarioPeriodo === 'passate') items.reverse();
   if (!items.length) {
     list.append(el('p', 'empty', data.appuntamenti.length ? 'Nessuna data in questa sezione.' : 'Il calendario è vuoto: aggiungi la prima data con il modulo qui sopra.'));

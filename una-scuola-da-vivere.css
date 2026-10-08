@@ -222,3 +222,5 @@
   .progress span, .hero-actions a, .school-option, .summary-action b, .territory-link { transition: none; }
   html { scroll-behavior: auto; }
 }
+.school-dates { display: grid; gap: 3px; margin-top: 4px; padding-top: 6px; border-top: 1px dashed #cbd9dd; }
+.school-dates b { color: var(--navy); font-size: .68rem; font-weight: 800; line-height: 1.35; }

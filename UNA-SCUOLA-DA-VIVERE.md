@@ -68,19 +68,21 @@ poi distribuire la funzione `orientamento` aggiornata. Finché la funzione non �
 aggiornata la pagina mostra la classifica vuota e i moduli continuano a
 funzionare.
 
-## Calendario di orientamento e open day
+## Calendario dell’orientamento nelle scuole medie
 
-La scheda «Calendario» di `gestione.html` raccoglie le date previste in ciascuna scuola
-secondaria di primo grado. I tipi sono tre: orientamento nelle aule con gli studenti
-(`aule`), orientamento in un locale grande con gli stand delle scuole superiori (`stand`),
-open day della scuola media (`open_day`). Ogni data è `prevista` finché la scuola non la
-conferma; orario, luogo e nota sono facoltativi. Le date si correggono, si tolgono dal
-calendario (archiviazione, senza cancellare la riga) e si scaricano in CSV. Le prossime date
-compaiono anche nella scheda «Scuole».
+Nella scheda «Calendario» di `gestione.html` la Funzione Strumentale inserisce le date
+dell’orientamento in ciascuna scuola secondaria di primo grado. I tipi sono due: orientamento
+nelle aule con gli studenti (`aule`) e open day della scuola media, dove il Mattei ha un
+proprio stand in un locale grande come aula magna o palestra (`stand`). Ogni data è
+`prevista` finché la scuola non la conferma; orario, luogo e nota sono facoltativi.
 
-I dati stanno nella tabella `orientamento_appuntamenti` e passano dalle azioni
+I docenti vedono le date da oggi in poi in `una-scuola-da-vivere.html`, sotto ciascuna
+scuola dell’elenco, con tipo, orario, luogo e stato (azione pubblica `overview`). La nota
+resta riservata e non va usata per nomi o recapiti dei referenti.
+
+I dati stanno nella tabella `orientamento_appuntamenti` e si scrivono con le azioni
 `save_appointment` e `archive_appointment` della funzione Edge `orientamento`, riservate
-al livello `funzione_strumentale`. Nelle note non vanno nomi o recapiti dei referenti.
+al livello `funzione_strumentale`.
 
 Per attivarla: applicare `supabase/sql/orientamento-calendario.sql`, **poi** distribuire la
 funzione `orientamento` aggiornata (senza la tabella la funzione non carica più i dati),
