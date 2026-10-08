@@ -25,6 +25,8 @@ const MAX_PUBLIC_REQUESTS_PER_DAY = 40;
 const PROPOSAL_TYPES = new Set(["laboratorio", "lezione_aperta", "esperienza_pratica", "dimostrazione", "interdisciplinare", "altro"]);
 const PROPOSAL_DURATIONS = new Set([30, 45, 60, 90]);
 const ACTIVITY_TYPES = new Set(["visita", "mattinee"]);
+const APPOINTMENT_TYPES = new Set(["aule", "stand", "open_day"]);
+const APPOINTMENT_STATES = new Set(["prevista", "confermata"]);
 const ALLOWED_ORIGINS = new Set([
   "https://spazio-docenti-matteucci.github.io",
   "https://spaziodocentimeuccimattei.github.io",
@@ -272,19 +274,21 @@ function personKey(nome: string, cognome: string) {
 }
 
 async function loadParticipationData() {
-  const [schools, supporter, proposals, activities] = await Promise.all([
+  const [schools, supporter, proposals, activities, appointments] = await Promise.all([
     admin.from("orientamento_scuole").select("id,comune,etichetta,area,verificata").eq("attiva", true).order("ordine"),
     admin.from("orientamento_disponibilita").select("id,nome,cognome,scuole,nota,stato,created_at").order("created_at", { ascending: false }).limit(500),
     admin.from("orientamento_proposte").select("id,nome,cognome,titolo,area,tipologia,descrizione,durata_minuti,partecipanti,esigenze,nota,stato,created_at").order("created_at", { ascending: false }).limit(500),
     admin.from("orientamento_attivita").select("id,nome,cognome,tipo,scuola_id,titolo,data,nota,stato,created_at").eq("archiviata", false).order("data", { ascending: false }).limit(1000),
+    admin.from("orientamento_appuntamenti").select("id,scuola_id,tipo,data,ora_inizio,ora_fine,luogo,nota,stato,updated_at").eq("archiviata", false).order("data").order("ora_inizio", { nullsFirst: true }).limit(1000),
   ]);
-  if (schools.error || supporter.error || proposals.error || activities.error) throw new PublicServiceError();
+  if (schools.error || supporter.error || proposals.error || activities.error || appointments.error) throw new PublicServiceError();
   // Solo le attività confermate dalla Funzione Strumentale entrano nella mappa e nel riepilogo.
   const allActivities = activities.data ?? [];
   return {
     schools: schools.data ?? [], supporters: supporter.data ?? [], proposals: proposals.data ?? [],
     activities: allActivities.filter((item) => item.stato === "confermata"),
     pendingActivities: allActivities.filter((item) => item.stato === "da_confermare"),
+    appointments: appointments.data ?? [],
   };
 }
 
@@ -328,6 +332,7 @@ async function listContributions(request: Request) {
       proposte: data.proposals,
       attivita: data.activities,
       da_confermare: data.pendingActivities,
+      appuntamenti: data.appointments,
     });
   } catch {
     return json(request, { error: "Impossibile caricare le disponibilità." }, 500);
@@ -398,6 +403,53 @@ async function archiveActivity(request: Request, payload: Record<string, unknown
   const id = payload.id;
   if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) return json(request, { error: "Voce non valida." }, 400);
   const { data, error } = await admin.from("orientamento_attivita").update({ archiviata: true })
+    .eq("id", id).select("id").maybeSingle();
+  if (error || !data) return json(request, { error: "Eliminazione non riuscita." }, 500);
+  return json(request, { ok: true });
+}
+
+function clockTime(value: unknown) {
+  if (value === undefined || value === null || value === "") return null;
+  if (typeof value !== "string" || !/^([01]\d|2[0-3]):[0-5]\d(:00)?$/.test(value)) throw new Error("Orario non valido.");
+  return value.slice(0, 5);
+}
+
+// Calendario di orientamento e open day nelle scuole medie: con "id" corregge una data esistente.
+async function saveAppointment(request: Request, payload: Record<string, unknown>) {
+  try {
+    const id = payload.id === undefined || payload.id === null || payload.id === "" ? null : payload.id;
+    if (id !== null && (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id))) throw new Error("Voce non valida.");
+    const scuolaId = typeof payload.scuola_id === "string" && /^[a-z0-9-]{3,80}$/.test(payload.scuola_id) ? payload.scuola_id : "";
+    if (!scuolaId) throw new Error("Scegli la scuola.");
+    const tipo = typeof payload.tipo === "string" && APPOINTMENT_TYPES.has(payload.tipo) ? payload.tipo : "";
+    if (!tipo) throw new Error("Scegli il tipo di appuntamento.");
+    const data = typeof payload.data === "string" && /^\d{4}-\d{2}-\d{2}$/.test(payload.data) ? payload.data : "";
+    if (!data || Number.isNaN(Date.parse(data))) throw new Error("Indica la data.");
+    const oraInizio = clockTime(payload.ora_inizio);
+    const oraFine = clockTime(payload.ora_fine);
+    if (oraInizio && oraFine && oraFine <= oraInizio) throw new Error("L’orario di fine deve seguire quello di inizio.");
+    const stato = typeof payload.stato === "string" && APPOINTMENT_STATES.has(payload.stato) ? payload.stato : "prevista";
+    const luogo = publicText(payload.luogo ?? "", 0, 160);
+    const nota = publicText(payload.nota ?? "", 0, 600);
+    const { data: school, error: schoolError } = await admin.from("orientamento_scuole").select("id").eq("id", scuolaId).eq("attiva", true).maybeSingle();
+    if (schoolError) throw new PublicServiceError();
+    if (!school) throw new Error("Scuola non valida.");
+    const fields = { scuola_id: scuolaId, tipo, data, ora_inizio: oraInizio, ora_fine: oraFine, luogo, nota, stato, updated_at: new Date().toISOString() };
+    const query = id === null
+      ? admin.from("orientamento_appuntamenti").insert(fields)
+      : admin.from("orientamento_appuntamenti").update(fields).eq("id", id).eq("archiviata", false);
+    const { data: row, error } = await query.select("id").maybeSingle();
+    if (error || !row) throw new Error("Salvataggio non riuscito.");
+    return json(request, { ok: true, id: row.id }, id === null ? 201 : 200);
+  } catch (error) {
+    return json(request, { error: error instanceof Error ? error.message : "Salvataggio non riuscito." }, error instanceof PublicServiceError ? 503 : 400);
+  }
+}
+
+async function archiveAppointment(request: Request, payload: Record<string, unknown>) {
+  const id = payload.id;
+  if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) return json(request, { error: "Voce non valida." }, 400);
+  const { data, error } = await admin.from("orientamento_appuntamenti").update({ archiviata: true, updated_at: new Date().toISOString() })
     .eq("id", id).select("id").maybeSingle();
   if (error || !data) return json(request, { error: "Eliminazione non riuscita." }, 500);
   return json(request, { ok: true });
@@ -677,8 +729,8 @@ Deno.serve(async (request: Request) => {
   if (action === "session") return json(request, { ok: true, access_level: session.accessLevel });
   if (action === "list") return await listDocuments(request, session.accessLevel);
   if (action === "view_presentation") return await viewPresentation(request, payload, session.accessLevel);
-  // La gestione di candidature, proposte e attività è riservata alla password personale della Funzione Strumentale.
-  if (["list_contributions", "update_contribution", "register_activity", "archive_activity", "confirm_activity"].includes(action) && session.accessLevel !== "funzione_strumentale") {
+  // La gestione di candidature, proposte, attività e calendario è riservata alla password personale della Funzione Strumentale.
+  if (["list_contributions", "update_contribution", "register_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment"].includes(action) && session.accessLevel !== "funzione_strumentale") {
     return json(request, { error: "Accesso riservato alla Funzione Strumentale." }, 403);
   }
   if (action === "list_contributions") return await listContributions(request);
@@ -686,6 +738,8 @@ Deno.serve(async (request: Request) => {
   if (action === "register_activity") return await registerActivity(request, payload);
   if (action === "archive_activity") return await archiveActivity(request, payload);
   if (action === "confirm_activity") return await confirmActivity(request, payload);
+  if (action === "save_appointment") return await saveAppointment(request, payload);
+  if (action === "archive_appointment") return await archiveAppointment(request, payload);
   if (["upload", "replace", "upload_presentation", "replace_presentation", "update", "archive"].includes(action) && session.accessLevel === "supporter") {
     return json(request, { error: "Questa password consente soltanto la consultazione." }, 403);
   }

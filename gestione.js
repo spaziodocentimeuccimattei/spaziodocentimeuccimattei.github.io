@@ -15,11 +15,29 @@ const activityMessage = document.getElementById('activityMessage');
 
 const PROPOSAL_TYPES = { laboratorio: 'Laboratorio', lezione_aperta: 'Lezione aperta', esperienza_pratica: 'Esperienza pratica', dimostrazione: 'Dimostrazione', interdisciplinare: 'Attività interdisciplinare', altro: 'Altro' };
 const SUPPORTER_STATES = { ricevuta: 'Da contattare', assegnata: 'Confermata', archiviata: 'Archiviata' };
+const APPOINTMENT_TYPES = { aule: 'Orientamento nelle aule', stand: 'Orientamento con gli stand', open_day: 'Open day della scuola media' };
+const APPOINTMENT_STATES = { prevista: 'Prevista', confermata: 'Confermata' };
 const PROPOSAL_STATES = { ricevuta: 'Da valutare', in_valutazione: 'In valutazione', approvata: 'Approvata', archiviata: 'Archiviata' };
 
 let sessionToken = sessionStorage.getItem(SESSION_KEY) || '';
 let data = null;
-const filters = { candidature: 'ricevuta', proposte: 'aperte' };
+const filters = { candidature: 'ricevuta', proposte: 'aperte', calendarioPeriodo: 'prossime', calendarioTipo: 'tutti' };
+const appointmentForm = document.getElementById('appointmentForm');
+const appointmentSchool = document.getElementById('appointmentSchool');
+const appointmentMessage = document.getElementById('appointmentMessage');
+const appointmentSubmit = document.getElementById('appointmentSubmit');
+const appointmentCancel = document.getElementById('appointmentCancel');
+
+// Data di oggi in Italia, nel formato delle date salvate (AAAA-MM-GG).
+function today() {
+  return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Rome' }).format(new Date());
+}
+
+function timeRange(item) {
+  const start = (item.ora_inizio || '').slice(0, 5);
+  const end = (item.ora_fine || '').slice(0, 5);
+  return start && end ? `${start}–${end}` : start ? `dalle ${start}` : end ? `fino alle ${end}` : '';
+}
 
 async function api(action, payload = {}) {
   const headers = { 'Content-Type': 'application/json' };
@@ -104,11 +122,15 @@ function renderSummary() {
   const pendingProposals = data.proposte.filter((item) => ['ricevuta', 'in_valutazione'].includes(item.stato)).length;
   const pendingActivities = data.da_confermare.length;
   const visited = new Set(data.attivita.filter((item) => item.tipo === 'visita').map((item) => item.scuola_id));
+  const upcoming = data.appuntamenti.filter((item) => item.data >= today());
+  const toConfirm = upcoming.filter((item) => item.stato === 'prevista').length;
+  document.getElementById('countCalendario').textContent = toConfirm ? String(toConfirm) : '';
   for (const [value, label, hot] of [
     [pendingActivities, 'visite da confermare', pendingActivities > 0],
     [pendingSupporters, 'disponibilità da contattare', pendingSupporters > 0],
     [pendingProposals, 'proposte da valutare', pendingProposals > 0],
     [`${visited.size}/${data.scuole.length}`, 'scuole visitate', false],
+    [upcoming.length, 'date in arrivo', false],
     [data.attivita.length, 'attività confermate', false],
   ]) {
     const box = el('div', hot ? 'hot' : '');
@@ -184,6 +206,13 @@ function renderSchools() {
     const names = el('ul');
     for (const item of candidates) names.append(el('li', item.stato === 'assegnata' ? 'accepted' : '', `${item.nome} ${item.cognome}${item.stato === 'assegnata' ? ' ✓' : ''}`));
     if (candidates.length) card.append(names);
+    const dates = data.appuntamenti.filter((item) => item.scuola_id === school.id && item.data >= today());
+    const calendar = el('ul', 'school-dates');
+    for (const item of dates) {
+      calendar.append(el('li', item.stato === 'confermata' ? 'accepted' : '',
+        `${formatDate(`${item.data}T12:00:00`, false)} · ${APPOINTMENT_TYPES[item.tipo]}${item.stato === 'confermata' ? ' ✓' : ' (prevista)'}`));
+    }
+    card.append(dates.length ? calendar : el('p', 'school-nodate', 'Nessuna data in calendario'));
     board.append(card);
   }
 }
@@ -233,6 +262,121 @@ function renderActivities(schoolNames) {
     card.append(actions);
     list.append(card);
   }
+}
+
+function resetAppointmentForm() {
+  const school = appointmentSchool.value;
+  appointmentForm.reset();
+  appointmentForm.elements.id.value = '';
+  appointmentSchool.value = school;
+  appointmentSubmit.textContent = 'Aggiungi la data';
+  appointmentCancel.hidden = true;
+}
+
+function editAppointment(item) {
+  for (const name of ['id', 'scuola_id', 'tipo', 'data', 'stato', 'luogo', 'nota']) appointmentForm.elements[name].value = item[name] || '';
+  appointmentForm.elements.ora_inizio.value = (item.ora_inizio || '').slice(0, 5);
+  appointmentForm.elements.ora_fine.value = (item.ora_fine || '').slice(0, 5);
+  appointmentSubmit.textContent = 'Salva le modifiche';
+  appointmentCancel.hidden = false;
+  appointmentMessage.textContent = 'Stai modificando una data già in calendario.';
+  appointmentForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  appointmentForm.elements.data.focus({ preventScroll: true });
+}
+
+async function appointmentAction(button, action, payload, message) {
+  button.disabled = true;
+  appointmentMessage.textContent = 'Salvataggio…';
+  try {
+    await api(action, payload);
+    appointmentMessage.textContent = message;
+    await load();
+  } catch (error) {
+    button.disabled = false;
+    handleError(error, appointmentMessage);
+  }
+}
+
+function renderAppointments(schoolNames) {
+  const current = appointmentSchool.value;
+  appointmentSchool.replaceChildren();
+  for (const school of data.scuole) {
+    const option = document.createElement('option');
+    option.value = school.id;
+    option.textContent = `${school.comune} · ${school.etichetta}`;
+    appointmentSchool.append(option);
+  }
+  if (current) appointmentSchool.value = current;
+
+  const list = document.getElementById('appointmentList');
+  list.replaceChildren();
+  const now = today();
+  const items = data.appuntamenti.filter((item) =>
+    (filters.calendarioPeriodo === 'tutte' || (filters.calendarioPeriodo === 'prossime' ? item.data >= now : item.data < now)) &&
+    (filters.calendarioTipo === 'tutti' || item.tipo === filters.calendarioTipo));
+  if (filters.calendarioPeriodo === 'passate') items.reverse();
+  if (!items.length) {
+    list.append(el('p', 'empty', data.appuntamenti.length ? 'Nessuna data in questa sezione.' : 'Il calendario è vuoto: aggiungi la prima data con il modulo qui sopra.'));
+    return;
+  }
+  let month = '';
+  let group = null;
+  for (const item of items) {
+    const label = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(new Date(`${item.data}T12:00:00`));
+    if (label !== month) {
+      month = label;
+      list.append(el('h4', 'month-title', label));
+      group = el('div', 'review-list');
+      list.append(group);
+    }
+    const card = el('article', `review-card appointment appointment-${item.tipo}${item.stato === 'prevista' ? ' pending' : ''}`);
+    const head = el('div', 'review-head');
+    const weekday = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(`${item.data}T12:00:00`));
+    head.append(el('h4', '', weekday), stateTag(APPOINTMENT_STATES[item.stato], item.stato === 'confermata' ? 'assegnata' : 'ricevuta'));
+    card.append(head, el('span', `type-tag type-${item.tipo}`, APPOINTMENT_TYPES[item.tipo]),
+      line('Scuola', schoolNames.get(item.scuola_id) || item.scuola_id));
+    if (timeRange(item)) card.append(line('Orario', timeRange(item)));
+    if (item.luogo) card.append(line('Luogo', item.luogo));
+    if (item.nota) card.append(line('Nota', item.nota));
+    const actions = el('div', 'review-actions');
+    const payload = { id: item.id, scuola_id: item.scuola_id, tipo: item.tipo, data: item.data, ora_inizio: item.ora_inizio, ora_fine: item.ora_fine, luogo: item.luogo, nota: item.nota };
+    if (item.stato === 'prevista') actions.append(actionButton('Segna come confermata', 'ok', (b) => appointmentAction(b, 'save_appointment', { ...payload, stato: 'confermata' }, 'Data confermata.')));
+    else actions.append(actionButton('Riporta a prevista', 'neutral', (b) => appointmentAction(b, 'save_appointment', { ...payload, stato: 'prevista' }, 'Data riportata a prevista.')));
+    actions.append(actionButton('Modifica', 'neutral', () => editAppointment(item)));
+    actions.append(actionButton('Togli dal calendario', 'no', (b) => {
+      if (!window.confirm('Togliere questa data dal calendario?')) return;
+      if (appointmentForm.elements.id.value === item.id) resetAppointmentForm();
+      appointmentAction(b, 'archive_appointment', { id: item.id }, 'Data tolta dal calendario.');
+    }));
+    card.append(actions);
+    group.append(card);
+  }
+}
+
+// Calendario per la Commissione: stesso formato CSV dell’elenco per la Dirigente.
+function exportCalendar() {
+  if (!data) return;
+  const schools = new Map(data.scuole.map((school) => [school.id, school]));
+  const rows = data.appuntamenti.map((item) => [
+    item.data.split('-').reverse().join('/'),
+    (item.ora_inizio || '').slice(0, 5),
+    (item.ora_fine || '').slice(0, 5),
+    schools.get(item.scuola_id)?.comune || '',
+    schools.get(item.scuola_id)?.etichetta || item.scuola_id,
+    APPOINTMENT_TYPES[item.tipo],
+    APPOINTMENT_STATES[item.stato],
+    item.luogo || '',
+    item.nota || '',
+  ]);
+  const cell = (value) => `"${String(value).replaceAll('"', '""')}"`;
+  const csv = [['Data', 'Dalle', 'Alle', 'Comune', 'Scuola', 'Tipo', 'Stato', 'Luogo', 'Note'], ...rows]
+    .map((row) => row.map(cell).join(';')).join('\r\n');
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' }));
+  link.download = `calendario-orientamento-${today()}.csv`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  appointmentMessage.textContent = rows.length ? `Scaricato il calendario: ${rows.length} ${rows.length === 1 ? 'data' : 'date'}.` : 'Il calendario è vuoto.';
 }
 
 function activityCard(item, schoolNames, className = 'review-card') {
@@ -314,13 +458,14 @@ function render() {
   renderProposals();
   renderSchools();
   renderActivities(schoolNames);
+  renderAppointments(schoolNames);
 }
 
 async function load() {
   refreshButton.disabled = true;
   try {
     const result = await api('list_contributions');
-    data = { ...result, attivita: result.attivita || [], da_confermare: result.da_confermare || [] };
+    data = { ...result, attivita: result.attivita || [], da_confermare: result.da_confermare || [], appuntamenti: result.appuntamenti || [] };
     render();
     if (globalMessage.textContent === 'Caricamento…') globalMessage.textContent = '';
   } catch (error) {
@@ -358,8 +503,10 @@ for (const group of document.querySelectorAll('.filters')) {
     for (const other of group.querySelectorAll('button')) other.setAttribute('aria-pressed', String(other === button));
     filters[group.dataset.filterFor] = button.dataset.filter;
     if (!data) return;
-    if (group.dataset.filterFor === 'candidature') renderSupporters(new Map(data.scuole.map((s) => [s.id, `${s.comune} · ${s.etichetta}`])));
-    else renderProposals();
+    const schoolNames = new Map(data.scuole.map((s) => [s.id, `${s.comune} · ${s.etichetta}`]));
+    if (group.dataset.filterFor === 'candidature') renderSupporters(schoolNames);
+    else if (group.dataset.filterFor === 'proposte') renderProposals();
+    else renderAppointments(schoolNames);
   });
 }
 
@@ -392,6 +539,31 @@ activityForm.addEventListener('submit', async (event) => {
     button.disabled = false;
   }
 });
+
+appointmentForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!appointmentForm.reportValidity()) return;
+  const payload = Object.fromEntries(new FormData(appointmentForm).entries());
+  if (payload.ora_inizio && payload.ora_fine && payload.ora_fine <= payload.ora_inizio) {
+    appointmentMessage.textContent = 'L’orario di fine deve seguire quello di inizio.';
+    return;
+  }
+  const editing = Boolean(payload.id);
+  appointmentSubmit.disabled = true;
+  appointmentMessage.textContent = 'Salvataggio…';
+  try {
+    await api('save_appointment', payload);
+    appointmentMessage.textContent = editing ? 'Data aggiornata.' : `Data aggiunta: ${payload.data.split('-').reverse().join('/')}.`;
+    resetAppointmentForm();
+    await load();
+  } catch (error) {
+    handleError(error, appointmentMessage);
+  } finally {
+    appointmentSubmit.disabled = false;
+  }
+});
+appointmentCancel.addEventListener('click', () => { resetAppointmentForm(); appointmentMessage.textContent = ''; });
+document.getElementById('exportCalendarButton').addEventListener('click', exportCalendar);
 
 passwordForm.addEventListener('submit', async (event) => {
   event.preventDefault();
