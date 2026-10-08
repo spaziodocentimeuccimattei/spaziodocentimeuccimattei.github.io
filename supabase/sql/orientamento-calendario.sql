@@ -5,6 +5,7 @@
 -- stato sono mostrati ai docenti nella pagina pubblica; la nota resta riservata.
 -- Non inserire nominativi o recapiti dei referenti scolastici, nemmeno nelle note.
 
+begin;
 create table if not exists public.orientamento_appuntamenti (
   id uuid primary key default gen_random_uuid(),
   scuola_id text not null references public.orientamento_scuole (id),
@@ -23,6 +24,12 @@ create table if not exists public.orientamento_appuntamenti (
 
 create index if not exists orientamento_appuntamenti_data_idx on public.orientamento_appuntamenti (data, ora_inizio);
 
+comment on table public.orientamento_appuntamenti is
+  'Calendario dell orientamento nelle scuole medie: date inserite dalla Funzione Strumentale tramite la funzione Edge. Le date non si cancellano, si archiviano.';
+
+-- Stesso criterio delle tabelle degli attestati: nessun accesso diretto e, anche per la
+-- funzione Edge, solo lettura, inserimento e modifica. Cancellare una riga non è possibile.
 alter table public.orientamento_appuntamenti enable row level security;
-revoke all on public.orientamento_appuntamenti from public, anon, authenticated;
+revoke all on public.orientamento_appuntamenti from public, anon, authenticated, service_role;
 grant select, insert, update on public.orientamento_appuntamenti to service_role;
+commit;
