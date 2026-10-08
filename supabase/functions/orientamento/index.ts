@@ -295,10 +295,12 @@ async function loadParticipationData() {
 async function overview(request: Request) {
   try {
     const data = await loadParticipationData();
-    const visited = new Set(data.activities.filter((item) => item.tipo === "visita" && item.scuola_id).map((item) => item.scuola_id));
+    const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date());
+    // Una visita a registro con data futura è in programma: conta come svolta solo dal suo giorno.
+    const done = data.activities.filter((item) => item.data <= today);
+    const visited = new Set(done.filter((item) => item.tipo === "visita" && item.scuola_id).map((item) => item.scuola_id));
     const offered = new Set(data.supporters.filter((item) => item.stato !== "archiviata").flatMap((item) => item.scuole as string[]));
     const participants = new Set<string>();
-    const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date());
     for (const item of data.supporters as Supporter[]) if (item.stato !== "archiviata") participants.add(personKey(item.nome, item.cognome));
     for (const item of data.proposals as Proposal[]) if (item.stato !== "archiviata") participants.add(personKey(item.nome, item.cognome));
     for (const item of data.activities as Activity[]) participants.add(personKey(item.nome, item.cognome));
@@ -308,9 +310,9 @@ async function overview(request: Request) {
         scuole: data.schools.length,
         scuole_visitate: visited.size,
         scuole_con_disponibilita: data.schools.filter((school) => offered.has(school.id)).length,
-        visite: data.activities.filter((item) => item.tipo === "visita").length,
+        visite: done.filter((item) => item.tipo === "visita").length,
         mattinee_proposte: data.proposals.filter((item) => item.stato !== "archiviata").length,
-        mattinee_svolte: data.activities.filter((item) => item.tipo === "mattinee").length,
+        mattinee_svolte: done.filter((item) => item.tipo === "mattinee").length,
       },
       scuole: data.schools.map((school) => ({
         id: school.id,
@@ -345,7 +347,7 @@ async function listContributions(request: Request) {
   }
 }
 
-async function activityFields(payload: Record<string, unknown>) {
+async function activityFields(payload: Record<string, unknown>, allowFuture = false) {
   const nome = publicName(payload.nome);
   const cognome = publicName(payload.cognome);
   const tipo = typeof payload.tipo === "string" && ACTIVITY_TYPES.has(payload.tipo) ? payload.tipo : "";
@@ -353,7 +355,7 @@ async function activityFields(payload: Record<string, unknown>) {
   const data = typeof payload.data === "string" && /^\d{4}-\d{2}-\d{2}$/.test(payload.data) ? payload.data : "";
   if (!data || Number.isNaN(Date.parse(data))) throw new Error("Indica la data dell’attività.");
   const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  if (data > tomorrow) throw new Error("La data non può essere nel futuro: registra l’attività dopo averla svolta.");
+  if (!allowFuture && data > tomorrow) throw new Error("La data non può essere nel futuro: registra l’attività dopo averla svolta.");
   const titolo = publicText(payload.titolo ?? "", 0, 160);
   const nota = publicText(payload.nota ?? "", 0, 600);
   let scuolaId: string | null = null;
@@ -369,7 +371,8 @@ async function activityFields(payload: Record<string, unknown>) {
 
 async function registerActivity(request: Request, payload: Record<string, unknown>) {
   try {
-    const fields = await activityFields(payload);
+    // La Funzione Strumentale mette a registro anche una visita concordata per una data futura.
+    const fields = await activityFields(payload, true);
     const { data: row, error } = await admin.from("orientamento_attivita")
       .insert({ ...fields, stato: "confermata" })
       .select("id").single();
@@ -377,6 +380,21 @@ async function registerActivity(request: Request, payload: Record<string, unknow
     return json(request, { ok: true, id: row.id }, 201);
   } catch (error) {
     return json(request, { error: error instanceof Error ? error.message : "Registrazione non riuscita." }, 400);
+  }
+}
+
+// Correzione di una riga del registro: cambia data o scuola, oppure sostituisce il docente.
+async function updateActivity(request: Request, payload: Record<string, unknown>) {
+  try {
+    const id = payload.id;
+    if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Voce non valida.");
+    const fields = await activityFields(payload, true);
+    const { data: row, error } = await admin.from("orientamento_attivita").update(fields)
+      .eq("id", id).eq("archiviata", false).select("id").maybeSingle();
+    if (error || !row) throw new Error("Modifica non riuscita.");
+    return json(request, { ok: true, id: row.id });
+  } catch (error) {
+    return json(request, { error: error instanceof Error ? error.message : "Modifica non riuscita." }, 400);
   }
 }
 
@@ -736,12 +754,13 @@ Deno.serve(async (request: Request) => {
   if (action === "list") return await listDocuments(request, session.accessLevel);
   if (action === "view_presentation") return await viewPresentation(request, payload, session.accessLevel);
   // La gestione di candidature, proposte, attività e calendario è riservata alla password personale della Funzione Strumentale.
-  if (["list_contributions", "update_contribution", "register_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment"].includes(action) && session.accessLevel !== "funzione_strumentale") {
+  if (["list_contributions", "update_contribution", "register_activity", "update_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment"].includes(action) && session.accessLevel !== "funzione_strumentale") {
     return json(request, { error: "Accesso riservato alla Funzione Strumentale." }, 403);
   }
   if (action === "list_contributions") return await listContributions(request);
   if (action === "update_contribution") return await updateContribution(request, payload);
   if (action === "register_activity") return await registerActivity(request, payload);
+  if (action === "update_activity") return await updateActivity(request, payload);
   if (action === "archive_activity") return await archiveActivity(request, payload);
   if (action === "confirm_activity") return await confirmActivity(request, payload);
   if (action === "save_appointment") return await saveAppointment(request, payload);

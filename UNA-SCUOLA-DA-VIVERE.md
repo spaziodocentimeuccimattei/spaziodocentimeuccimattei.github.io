@@ -87,3 +87,13 @@ al livello `funzione_strumentale`.
 Per attivarla: applicare `supabase/sql/orientamento-calendario.sql`, **poi** distribuire la
 funzione `orientamento` aggiornata (senza la tabella la funzione non carica più i dati),
 infine pubblicare i file statici.
+
+## Dalla disponibilità al registro
+
+In «Disponibilità docenti» la Funzione Strumentale conferma ogni docente scuola per scuola,
+scegliendo la data (proposta dal calendario): la conferma crea una riga nel registro
+(`orientamento_attivita`, stato `confermata`), anche con data futura. Nella stessa scuola si
+possono confermare più docenti. Una visita a registro conta come svolta solo dal suo giorno.
+Se il docente non va, la riga si corregge o si sostituisce il docente con «Modifica o
+sostituisci» (azione `update_activity`) oppure si annulla. Il registro, ordinato per
+docente, è l’elenco che si consegna alla Dirigente.

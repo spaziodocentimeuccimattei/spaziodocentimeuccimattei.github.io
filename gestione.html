@@ -8,7 +8,7 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261005-intestazione">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261008-calendario3">
+  <link rel="stylesheet" href="gestione.css?v=20261008-registro">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261008">
 </head>
 <body>
@@ -70,9 +70,9 @@
         </section>
 
         <section class="tab-panel" data-panel="candidature" hidden>
-          <p class="panel-help">Docenti che hanno dato la disponibilità per le visite nelle scuole secondarie di primo grado. <b>Conferma</b> le disponibilità concordate; <b>archivia</b> quelle non più valide.</p>
+          <p class="panel-help">Docenti che hanno dato la disponibilità per le visite nelle scuole secondarie di primo grado. Per ciascuna scuola scegli la data e <b>conferma a registro</b>: da quel momento il docente risulta nel registro per quella scuola. Più docenti possono essere confermati nella stessa scuola. Se poi qualcuno non va, lo correggi o lo sostituisci in «Attività confermate».</p>
           <div class="filters" data-filter-for="candidature">
-            <button data-filter="ricevuta" aria-pressed="true">Da contattare</button>
+            <button data-filter="ricevuta" aria-pressed="true">Da confermare</button>
             <button data-filter="assegnata" aria-pressed="false">Confermate</button>
             <button data-filter="archiviata" aria-pressed="false">Archiviate</button>
             <button data-filter="tutte" aria-pressed="false">Tutte</button>
@@ -141,8 +141,9 @@
             <p class="panel-help">Qui registri e ritrovi, per ogni docente, quando e dove è andato a fare orientamento. Il pulsante scarica l’elenco per la Dirigente (docente, attività, scuola, data e, se la data è in calendario, tipo di orientamento e orario), da aprire con Excel.</p>
             <button type="button" class="act ok" id="exportButton">Scarica elenco CSV</button>
           </div>
-          <p class="panel-help">Se un docente non ha registrato un’attività, puoi inserirla tu: risulterà subito confermata e sarà inclusa nell’elenco per la Dirigente.</p>
-          <form id="activityForm" class="activity-form">
+          <p class="panel-help">Puoi inserire tu una riga, anche per una data futura già concordata. Con <b>Modifica o sostituisci</b> cambi data, scuola o docente di una riga; con <b>Annulla registrazione</b> la togli dal registro.</p>
+          <form id="activityForm" class="activity-form appointment-form">
+            <input type="hidden" name="id">
             <label>Nome <input name="nome" list="teacherNames" maxlength="80" required></label>
             <label>Cognome <input name="cognome" list="teacherSurnames" maxlength="80" required></label>
             <label>Attività
@@ -155,7 +156,10 @@
             <label id="activityTitleField" hidden>Titolo della Mattinée <input name="titolo" maxlength="160"></label>
             <label>Data <input name="data" type="date" required></label>
             <label class="activity-wide">Nota <span>facoltativa</span><input name="nota" maxlength="600"></label>
-            <button type="submit">Registra l’attività</button>
+            <div class="appointment-buttons">
+              <button type="submit">Registra l’attività</button>
+              <button type="button" class="act neutral" id="activityCancel" hidden>Annulla la modifica</button>
+            </div>
           </form>
           <datalist id="teacherNames"></datalist><datalist id="teacherSurnames"></datalist>
           <p id="activityMessage" class="global-message" role="status" aria-live="polite"></p>
@@ -171,7 +175,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script src="gestione.js?v=20261008-calendario3"></script>
+  <script src="gestione.js?v=20261008-registro"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261008"></script>
 </body>
 </html>

@@ -70,3 +70,8 @@
 .school-nodate { margin: 8px 0 0; color: var(--muted); font-size: .76rem; font-style: italic; }
 #activityList { display: block; }
 .teacher-title { text-transform: none; }
+.school-confirm { display: grid; gap: 8px; margin-top: 12px; }
+.school-confirm-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.school-confirm-row strong { flex: 1 1 160px; color: var(--navy); font-size: .82rem; }
+.school-confirm-row input { padding: 8px 10px; border: 1px solid #b9cbd1; border-radius: 9px; font: inherit; font-size: .8rem; }
+.school-confirm-row small { flex: 1 1 100%; }

@@ -14,7 +14,7 @@ const activitySchool = document.getElementById('activitySchool');
 const activityMessage = document.getElementById('activityMessage');
 
 const PROPOSAL_TYPES = { laboratorio: 'Laboratorio', lezione_aperta: 'Lezione aperta', esperienza_pratica: 'Esperienza pratica', dimostrazione: 'Dimostrazione', interdisciplinare: 'Attività interdisciplinare', altro: 'Altro' };
-const SUPPORTER_STATES = { ricevuta: 'Da contattare', assegnata: 'Confermata', archiviata: 'Archiviata' };
+const SUPPORTER_STATES = { ricevuta: 'Da confermare', assegnata: 'Confermata', archiviata: 'Archiviata' };
 const APPOINTMENT_TYPES = { aule: 'Orientamento nelle aule', stand: 'Open day con stand' };
 const APPOINTMENT_STATES = { prevista: 'Prevista', confermata: 'Confermata' };
 const PROPOSAL_STATES = { ricevuta: 'Da valutare', in_valutazione: 'In valutazione', approvata: 'Approvata', archiviata: 'Archiviata' };
@@ -121,17 +121,17 @@ function renderSummary() {
   const pendingSupporters = data.disponibilita.filter((item) => item.stato === 'ricevuta').length;
   const pendingProposals = data.proposte.filter((item) => ['ricevuta', 'in_valutazione'].includes(item.stato)).length;
   const pendingActivities = data.da_confermare.length;
-  const visited = new Set(data.attivita.filter((item) => item.tipo === 'visita').map((item) => item.scuola_id));
+  const visited = new Set(data.attivita.filter((item) => item.tipo === 'visita' && item.data <= today()).map((item) => item.scuola_id));
   const upcoming = data.appuntamenti.filter((item) => item.data >= today());
   const toConfirm = upcoming.filter((item) => item.stato === 'prevista').length;
   document.getElementById('countCalendario').textContent = toConfirm ? String(toConfirm) : '';
   for (const [value, label, hot] of [
     [pendingActivities, 'visite da confermare', pendingActivities > 0],
-    [pendingSupporters, 'disponibilità da contattare', pendingSupporters > 0],
+    [pendingSupporters, 'disponibilità da confermare', pendingSupporters > 0],
     [pendingProposals, 'proposte da valutare', pendingProposals > 0],
     [`${visited.size}/${data.scuole.length}`, 'scuole visitate', false],
     [upcoming.length, 'date in arrivo', false],
-    [data.attivita.length, 'attività confermate', false],
+    [data.attivita.length, 'righe a registro', false],
   ]) {
     const box = el('div', hot ? 'hot' : '');
     box.append(el('strong', '', String(value)), el('span', '', label));
@@ -152,16 +152,48 @@ function renderSupporters(schoolNames) {
     const head = el('div', 'review-head');
     head.append(el('h4', '', `${item.nome} ${item.cognome}`), stateTag(SUPPORTER_STATES[item.stato], item.stato));
     card.append(head, el('small', '', `${formatDate(item.created_at)} · Codice ${item.id.slice(0, 8).toUpperCase()}`));
-    const chips = el('div', 'chips');
-    for (const id of item.scuole) chips.append(el('span', '', schoolNames.get(id) || id));
-    card.append(chips);
     if (item.nota) card.append(line('Nota', item.nota));
+    // Una riga per scuola: la conferma mette il docente a registro per quella scuola e quella data.
+    const rows = el('div', 'school-confirm');
+    for (const id of item.scuole) {
+      const row = el('div', 'school-confirm-row');
+      row.append(el('strong', '', schoolNames.get(id) || id));
+      const booked = data.attivita.filter((visit) => visit.tipo === 'visita' && visit.scuola_id === id && personKey(visit) === personKey(item));
+      if (booked.length) {
+        row.append(el('span', 'state state-assegnata', `A registro: ${booked.map((visit) => visit.data.split('-').reverse().join('/')).sort().join(', ')}`));
+      } else if (item.stato !== 'archiviata') {
+        const dates = data.appuntamenti.filter((date) => date.scuola_id === id && date.data >= today());
+        const input = document.createElement('input');
+        input.type = 'date';
+        input.setAttribute('aria-label', `Data per ${schoolNames.get(id) || id}`);
+        if (dates.length) input.value = dates[0].data;
+        row.append(input, actionButton('Conferma a registro', 'ok', (button) => confirmSupporter(item, id, input, button)));
+        if (dates.length > 1) row.append(el('small', '', `Date in calendario: ${dates.map((date) => date.data.split('-').reverse().join('/')).join(', ')}`));
+        if (!dates.length) row.append(el('small', '', 'Nessuna data in calendario per questa scuola: indicala qui.'));
+      }
+      rows.append(row);
+    }
+    card.append(rows);
     const actions = el('div', 'review-actions');
-    if (item.stato !== 'assegnata') actions.append(actionButton('Conferma disponibilità', 'ok', (b) => setState('supporter', item, 'assegnata', b)));
     if (item.stato !== 'archiviata') actions.append(actionButton('Archivia', 'no', (b) => setState('supporter', item, 'archiviata', b)));
-    if (item.stato !== 'ricevuta') actions.append(actionButton('Riporta tra quelle da contattare', 'neutral', (b) => setState('supporter', item, 'ricevuta', b)));
+    if (item.stato !== 'ricevuta') actions.append(actionButton('Riporta tra quelle da confermare', 'neutral', (b) => setState('supporter', item, 'ricevuta', b)));
     card.append(actions);
     list.append(card);
+  }
+}
+
+async function confirmSupporter(item, schoolId, input, button) {
+  if (!input.value) { globalMessage.textContent = 'Indica la data prima di confermare.'; input.focus(); return; }
+  button.disabled = true;
+  globalMessage.textContent = 'Salvataggio…';
+  try {
+    await api('register_activity', { nome: item.nome, cognome: item.cognome, tipo: 'visita', scuola_id: schoolId, data: input.value });
+    if (item.stato !== 'assegnata') await api('update_contribution', { kind: 'supporter', id: item.id, stato: 'assegnata' });
+    globalMessage.textContent = `${item.nome} ${item.cognome} è a registro per il ${input.value.split('-').reverse().join('/')}.`;
+    await load();
+  } catch (error) {
+    button.disabled = false;
+    handleError(error);
   }
 }
 
@@ -197,15 +229,21 @@ function renderSchools() {
   board.replaceChildren();
   for (const school of data.scuole) {
     const candidates = data.disponibilita.filter((item) => item.stato !== 'archiviata' && item.scuole.includes(school.id));
-    const visits = data.attivita.filter((item) => item.tipo === 'visita' && item.scuola_id === school.id);
-    const accepted = candidates.filter((item) => item.stato === 'assegnata');
+    const register = data.attivita.filter((item) => item.tipo === 'visita' && item.scuola_id === school.id);
+    const visits = register.filter((item) => item.data <= today());
+    const accepted = register.filter((item) => item.data > today());
     const card = el('article', `school-card ${visits.length ? 'visited' : accepted.length ? 'accepted' : candidates.length ? 'offered' : ''}`);
     card.append(el('h4', '', school.comune), el('small', '', school.etichetta));
-    const status = visits.length ? `Visita svolta (${visits.length})` : accepted.length ? 'Disponibilità confermata' : candidates.length ? 'Disponibilità da contattare' : 'Nessuna disponibilità';
+    const status = visits.length ? `Visita svolta (${visits.length})` : accepted.length ? `Docenti a registro (${accepted.length})` : candidates.length ? 'Disponibilità da confermare' : 'Nessuna disponibilità';
     card.append(el('p', 'school-status', status));
     const names = el('ul');
     for (const item of candidates) names.append(el('li', item.stato === 'assegnata' ? 'accepted' : '', `${item.nome} ${item.cognome}${item.stato === 'assegnata' ? ' ✓' : ''}`));
     if (candidates.length) card.append(names);
+    const booked = el('ul', 'school-dates');
+    for (const item of [...register].sort((a, b) => a.data.localeCompare(b.data))) {
+      booked.append(el('li', 'accepted', `A registro: ${item.cognome} ${item.nome} · ${formatDate(`${item.data}T12:00:00`, false)}`));
+    }
+    if (register.length) card.append(booked);
     const dates = data.appuntamenti.filter((item) => item.scuola_id === school.id && item.data >= today());
     const calendar = el('ul', 'school-dates');
     for (const item of dates) {
@@ -266,6 +304,7 @@ function renderActivities(schoolNames) {
     }
     const card = activityCard(item, schoolNames);
     const actions = el('div', 'review-actions');
+    actions.append(actionButton('Modifica o sostituisci', 'neutral', () => editActivity(item)));
     actions.append(actionButton('Annulla registrazione', 'no', async (button) => {
       if (!window.confirm('Annullare questa registrazione? Non comparirà più nell’elenco delle attività confermate.')) return;
       button.disabled = true;
@@ -397,10 +436,27 @@ function exportCalendar() {
   appointmentMessage.textContent = rows.length ? `Scaricato il calendario: ${rows.length} ${rows.length === 1 ? 'data' : 'date'}.` : 'Il calendario è vuoto.';
 }
 
+function resetActivityForm() {
+  for (const name of ['id', 'nome', 'cognome', 'nota', 'titolo']) activityForm.elements[name].value = '';
+  activityForm.querySelector('button[type="submit"]').textContent = 'Registra l’attività';
+  document.getElementById('activityCancel').hidden = true;
+}
+
+function editActivity(item) {
+  for (const name of ['id', 'nome', 'cognome', 'tipo', 'data', 'nota', 'titolo']) activityForm.elements[name].value = item[name] || '';
+  syncActivityType();
+  if (item.scuola_id) activitySchool.value = item.scuola_id;
+  activityForm.querySelector('button[type="submit"]').textContent = 'Salva le modifiche';
+  document.getElementById('activityCancel').hidden = false;
+  activityMessage.textContent = 'Stai modificando una riga del registro: puoi cambiare data, scuola o docente.';
+  activityForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  activityForm.elements.nome.focus({ preventScroll: true });
+}
+
 function activityCard(item, schoolNames, className = 'review-card') {
   const card = el('article', className);
     card.append(el('h4', '', `${item.tipo === 'visita' ? 'Visita' : 'Mattinée'} · ${item.nome} ${item.cognome}`),
-    el('small', '', `Svolta il ${formatDate(`${item.data}T12:00:00`, false)} · registrata il ${formatDate(item.created_at)}`));
+    el('small', '', `${item.data > today() ? 'In programma il' : 'Svolta il'} ${formatDate(`${item.data}T12:00:00`, false)} · registrata il ${formatDate(item.created_at)}`));
   if (item.tipo === 'visita') card.append(line('Scuola', schoolNames.get(item.scuola_id) || item.scuola_id));
   if (item.titolo) card.append(line('Titolo', item.titolo));
   if (item.nota) card.append(line('Nota', item.nota));
@@ -547,13 +603,15 @@ activityForm.addEventListener('submit', async (event) => {
   if (!activityForm.reportValidity()) return;
   const payload = Object.fromEntries(new FormData(activityForm).entries());
   if (payload.tipo !== 'visita') delete payload.scuola_id;
+  const editing = Boolean(payload.id);
+  if (!editing) delete payload.id;
   const button = activityForm.querySelector('button[type="submit"]');
   button.disabled = true;
   activityMessage.textContent = 'Registrazione in corso…';
   try {
-    await api('register_activity', payload);
-    activityMessage.textContent = `Attività registrata per ${payload.nome} ${payload.cognome}.`;
-    for (const name of ['nome', 'cognome', 'nota', 'titolo']) activityForm.elements[name].value = '';
+    await api(editing ? 'update_activity' : 'register_activity', payload);
+    activityMessage.textContent = editing ? `Registro aggiornato: ${payload.nome} ${payload.cognome}.` : `Attività registrata per ${payload.nome} ${payload.cognome}.`;
+    resetActivityForm();
     await load();
   } catch (error) {
     handleError(error, activityMessage);
@@ -608,6 +666,7 @@ passwordForm.addEventListener('submit', async (event) => {
   }
 });
 
+document.getElementById('activityCancel').addEventListener('click', () => { resetActivityForm(); activityMessage.textContent = ''; });
 refreshButton.addEventListener('click', load);
 document.getElementById('exportButton').addEventListener('click', exportActivities);
 document.getElementById('logoutButton').addEventListener('click', async () => {
