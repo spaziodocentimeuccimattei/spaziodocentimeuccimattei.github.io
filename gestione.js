@@ -428,6 +428,8 @@ function renderPending(schoolNames) {
 function exportActivities() {
   if (!data) return;
   const schoolNames = new Map(data.scuole.map((school) => [school.id, `${school.comune} · ${school.etichetta}`]));
+  // Tipo e orario arrivano dal calendario, quando c’è una data per la stessa scuola nello stesso giorno.
+  const planned = (item) => item.tipo === 'visita' ? data.appuntamenti.filter((date) => date.scuola_id === item.scuola_id && date.data === item.data) : [];
   const rows = [...data.attivita]
     .sort((a, b) => a.data.localeCompare(b.data) || a.cognome.localeCompare(b.cognome, 'it'))
     .map((item) => [
@@ -436,10 +438,12 @@ function exportActivities() {
       item.nome,
       item.tipo === 'visita' ? 'Visita' : 'Mattinée diffusa',
       item.tipo === 'visita' ? (schoolNames.get(item.scuola_id) || item.scuola_id) : (item.titolo || ''),
+      planned(item).map((date) => APPOINTMENT_TYPES[date.tipo]).join(' + '),
+      planned(item).map(timeRange).filter(Boolean).join(' + '),
       item.nota || '',
     ]);
   const cell = (value) => `"${String(value).replaceAll('"', '""')}"`;
-  const csv = [['Data', 'Cognome', 'Nome', 'Attività', 'Scuola o titolo', 'Note'], ...rows]
+  const csv = [['Data', 'Cognome', 'Nome', 'Attività', 'Scuola o titolo', 'Tipo di orientamento', 'Orario in calendario', 'Note'], ...rows]
     .map((row) => row.map(cell).join(';')).join('\r\n');
   const link = document.createElement('a');
   link.href = URL.createObjectURL(new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' }));
