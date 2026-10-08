@@ -1,6 +1,6 @@
 # SSAS: nuova guida e gestione degli attestati
 
-**Stato: pronta in locale, da autorizzare prima della pubblicazione e dell’attivazione su Supabase.** La versione integrale del 7 ottobre resta conservata separatamente; il sito pubblico continua a servire quella versione.
+La revisione è stata autorizzata per la pubblicazione l’8 ottobre 2026. La versione integrale del 7 ottobre resta conservata separatamente. Questo documento descrive struttura, prove locali e procedura di attivazione; lo stato verificato della pubblicazione viene registrato nel resoconto di rilascio.
 
 ## Provare la nuova guida
 
@@ -35,15 +35,18 @@ Il documento attesta partecipazione, cinque laboratori completati e curiosità d
 
 Queste sono prove tecniche con dati fittizi, non una sperimentazione con tredicenni né una prova dell’accesso reale della Funzione Strumentale alla nuova funzione pubblicata.
 
-## Attivazione successiva, dopo autorizzazione
+## Attivazione e verifica in produzione
 
 Applicare la migrazione additiva `supabase/sql/bussola-classi-attestati.sql` sul progetto già usato dalla Bussola, distribuire la nuova funzione `bussola-gestione` con verifica JWT della piattaforma disabilitata (usa token proprietario per il singolo lavoro e sessione ordinaria con ruolo controllato sul server per la gestione), poi pubblicare i nuovi file GitHub Pages. La chiave di servizio resta nella funzione, mai nel browser. La funzione esistente `bussola-esperienze` e le sue tabelle non vengono sostituite.
 
-Verificare in produzione la sessione ordinaria della Funzione Strumentale e un’intera prova con dati fittizi: associazione, nota, riapertura, verifica nome, selezione, emissione e download. Non creare sessioni privilegiate via SQL. Non registrare dati reali prima della verifica operativa. Il salvataggio pubblico di progetti e note già presente resta distinto dalla nuova gestione nominativa, che in questa revisione non è stata ancora attivata sul database pubblico.
+Verificare in produzione la sessione ordinaria della Funzione Strumentale e un’intera prova con dati fittizi: associazione, nota, riapertura, verifica nome, selezione, emissione e download. Non creare sessioni privilegiate via SQL. Non registrare dati reali prima della verifica operativa. Il salvataggio di progetti e note e la gestione nominativa sono due componenti distinte, collegate dal proprietario del lavoro.
 
 L’archivio conserva codice, progettazione e storia Git; non è un’esportazione dei dati di Supabase. Per ripristinare l’applicativo ricco si usa il commit 238a5561e7daaac26bf2611b785d01d8d0331c93 o lo ZIP originale. Non si cancellano le tabelle né i lavori per ripristinare la grafica.
 
-## Prova con ragazzi di terza media
+## Prove con gli alunni
+
+Salvatore svolgerà la prima prova con i propri alunni dell’indirizzo SSAS. Questa prova serve a raccogliere osservazioni su funzionamento, contenuti e interesse. Non dimostra l’immediatezza per tredicenni; la verifica con ragazzi di terza media resta un passaggio successivo.
+
 
 Far provare individualmente la guida a un piccolo gruppo di ragazzi di terza media, anche con diversa familiarità con il computer. Osservare senza spiegare prima le azioni; annotare dove si fermano, quale pulsante cercano, quando chiedono aiuto e se notano le conseguenze delle scelte. Le note possono essere aperte nel punto preciso. Chiedere poi «Che cosa hai creato?», «Quale parte vorresti continuare?» e «Dove non era chiaro cosa fare?». Se lo stesso passaggio blocca più ragazzi, rivederlo prima di estendere il test. Il tempo necessario e l’adeguatezza all’età restano da verificare.
 
