@@ -68,3 +68,5 @@
 .school-card .school-dates { padding-left: 0; list-style: none; color: var(--navy); }
 .school-card .school-dates li { margin-top: 4px; }
 .school-nodate { margin: 8px 0 0; color: var(--muted); font-size: .76rem; font-style: italic; }
+#activityList { display: block; }
+.teacher-title { text-transform: none; }

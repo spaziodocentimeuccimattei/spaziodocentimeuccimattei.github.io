@@ -8,7 +8,7 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261005-intestazione">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261008-calendario">
+  <link rel="stylesheet" href="gestione.css?v=20261008-calendario3">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261008">
 </head>
 <body>
@@ -138,7 +138,7 @@
 
         <section class="tab-panel" data-panel="attivita" hidden>
           <div class="export-bar">
-            <p class="panel-help">Qui trovi tutte le attività confermate. Il pulsante scarica l’elenco per la Dirigente (docente, attività, scuola, data e, se la data è in calendario, tipo di orientamento e orario), da aprire con Excel.</p>
+            <p class="panel-help">Qui registri e ritrovi, per ogni docente, quando e dove è andato a fare orientamento. Il pulsante scarica l’elenco per la Dirigente (docente, attività, scuola, data e, se la data è in calendario, tipo di orientamento e orario), da aprire con Excel.</p>
             <button type="button" class="act ok" id="exportButton">Scarica elenco CSV</button>
           </div>
           <p class="panel-help">Se un docente non ha registrato un’attività, puoi inserirla tu: risulterà subito confermata e sarà inclusa nell’elenco per la Dirigente.</p>
@@ -159,7 +159,7 @@
           </form>
           <datalist id="teacherNames"></datalist><datalist id="teacherSurnames"></datalist>
           <p id="activityMessage" class="global-message" role="status" aria-live="polite"></p>
-          <h3 class="sub-title">Attività confermate</h3>
+          <h3 class="sub-title">Attività confermate, docente per docente</h3>
           <div class="review-list" id="activityList"></div>
         </section>
 
@@ -171,7 +171,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script src="gestione.js?v=20261008-calendario2"></script>
+  <script src="gestione.js?v=20261008-calendario3"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261008"></script>
 </body>
 </html>

@@ -217,6 +217,15 @@ function renderSchools() {
   }
 }
 
+// Stesso docente anche se scritto con maiuscole o accenti diversi.
+function personKey(item) {
+  return `${item.cognome} ${item.nome}`.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function byTeacher(a, b) {
+  return personKey(a).localeCompare(personKey(b), 'it') || a.data.localeCompare(b.data);
+}
+
 function fillDatalist(id, values) {
   const list = document.getElementById(id);
   list.replaceChildren();
@@ -244,7 +253,17 @@ function renderActivities(schoolNames) {
   const list = document.getElementById('activityList');
   list.replaceChildren();
   if (!data.attivita.length) list.append(el('p', 'empty', 'Nessuna attività confermata.'));
-  for (const item of data.attivita) {
+  // Un blocco per docente: quando e dove è andato, dalla data più vecchia alla più recente.
+  let teacher = '';
+  let group = null;
+  for (const item of [...data.attivita].sort(byTeacher)) {
+    if (personKey(item) !== teacher) {
+      teacher = personKey(item);
+      const count = data.attivita.filter((other) => personKey(other) === teacher).length;
+      list.append(el('h4', 'month-title teacher-title', `${item.cognome} ${item.nome} · ${count} ${count === 1 ? 'attività' : 'attività svolte'}`));
+      group = el('div', 'review-list');
+      list.append(group);
+    }
     const card = activityCard(item, schoolNames);
     const actions = el('div', 'review-actions');
     actions.append(actionButton('Annulla registrazione', 'no', async (button) => {
@@ -260,7 +279,7 @@ function renderActivities(schoolNames) {
       }
     }));
     card.append(actions);
-    list.append(card);
+    group.append(card);
   }
 }
 
@@ -431,11 +450,11 @@ function exportActivities() {
   // Tipo e orario arrivano dal calendario, quando c’è una data per la stessa scuola nello stesso giorno.
   const planned = (item) => item.tipo === 'visita' ? data.appuntamenti.filter((date) => date.scuola_id === item.scuola_id && date.data === item.data) : [];
   const rows = [...data.attivita]
-    .sort((a, b) => a.data.localeCompare(b.data) || a.cognome.localeCompare(b.cognome, 'it'))
+    .sort(byTeacher)
     .map((item) => [
-      item.data.split('-').reverse().join('/'),
       item.cognome,
       item.nome,
+      item.data.split('-').reverse().join('/'),
       item.tipo === 'visita' ? 'Visita' : 'Mattinée diffusa',
       item.tipo === 'visita' ? (schoolNames.get(item.scuola_id) || item.scuola_id) : (item.titolo || ''),
       planned(item).map((date) => APPOINTMENT_TYPES[date.tipo]).join(' + '),
@@ -443,7 +462,7 @@ function exportActivities() {
       item.nota || '',
     ]);
   const cell = (value) => `"${String(value).replaceAll('"', '""')}"`;
-  const csv = [['Data', 'Cognome', 'Nome', 'Attività', 'Scuola o titolo', 'Tipo di orientamento', 'Orario in calendario', 'Note'], ...rows]
+  const csv = [['Cognome', 'Nome', 'Data', 'Attività', 'Scuola o titolo', 'Tipo di orientamento', 'Orario in calendario', 'Note'], ...rows]
     .map((row) => row.map(cell).join(';')).join('\r\n');
   const link = document.createElement('a');
   link.href = URL.createObjectURL(new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' }));
