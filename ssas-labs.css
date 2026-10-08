@@ -21,3 +21,9 @@ fieldset.choices{padding:0;margin:0;border:0;min-width:0}.guide-progress{display
  body.print-certificate #certificateSheet canvas{width:210mm;height:297mm}
  @page{size:A4 portrait;margin:0}
 }
+
+/* Ingresso della classe: codice leggibile e conferma prima di lavorare. */
+#classCode{font-size:1.35rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+#classIdentity[data-recognized="true"]{padding:14px 18px;border-radius:12px;background:#e2ebdd;color:#244f3f;font-weight:700}
+#classGuest{display:block;margin:18px auto 0}
+#classGuest[hidden]{display:none}

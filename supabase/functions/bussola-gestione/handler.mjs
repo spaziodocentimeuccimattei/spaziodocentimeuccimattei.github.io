@@ -1,4 +1,5 @@
 import {completion,certificateSnapshot} from './bussola-records-core.mjs';
+import {classCode,isShortCode} from './bussola-codice.mjs';
 const TOKEN=/^[A-Za-z0-9_-]{43}$/;
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ORIGINS=new Set(['https://spaziodocentimeuccimattei.github.io','http://127.0.0.1:8766','http://localhost:8766','http://127.0.0.1:8765','http://localhost:8765','http://127.0.0.1:8768','http://localhost:8768']);
@@ -23,7 +24,17 @@ export function makeHandler(admin){
    const publicActions=['class_info','identity','enroll'];
    let participant=null;
    if(publicActions.includes(p.action)){
-    const classInfo=async()=>{const c=await data(admin.from('bussola_v2_classi').select('*').eq('codice',secret(p.classe)).eq('attiva',true).maybeSingle());if(!c)throw fail('Questo link della classe non è disponibile.',404);return c;};
+    const classInfo=async()=>{
+     const code=classCode(p.classe);if(!code)throw fail('Controlla il codice della classe.',404);
+     if(isShortCode(code)){
+      const address=(req.headers.get('x-forwarded-for')||req.headers.get('x-real-ip')||'rete-condivisa').split(',')[0].trim();
+      const quota=await admin.rpc('bussola_v2_quota_ingresso',{p_fingerprint:await sha256('bussola-ingresso:'+address)});
+      if(quota.error)throw fail('Ingresso non disponibile. Riprova.',503);
+      if(quota.data!==true)throw fail('Troppi tentativi. Riprova più tardi.',429);
+     }
+     const c=await data(admin.from('bussola_v2_classi').select('*').eq(isShortCode(code)?'codice_breve':'codice',code).eq('attiva',true).maybeSingle());
+     if(!c)throw fail('Il codice non è disponibile. Controllalo con il docente.',404);return c;
+    };
     if(p.action==='class_info'){
      const c=await classInfo();return reply({classe:{scuola:c.scuola,comune:c.comune,classe:c.classe,anno:c.anno,modalita:c.modalita}});
     }
@@ -32,7 +43,7 @@ export function makeHandler(admin){
     if(!participant)throw fail('L’accesso al tuo percorso non è disponibile.',401);
     if(p.action==='identity'){
      const a=await data(admin.from('bussola_v2_alunni').select('id,classe_id,nome,cognome,verificato').eq('partecipante_id',participant.id).maybeSingle());
-     if(!a)return reply({alunno:null});const c=await data(admin.from('bussola_v2_classi').select('scuola,comune,classe,anno,codice').eq('id',a.classe_id).single());return reply({alunno:a,classe:c});
+     if(!a)return reply({alunno:null});const c=await data(admin.from('bussola_v2_classi').select('scuola,comune,classe,anno,codice,codice_breve').eq('id',a.classe_id).single());return reply({alunno:a,classe:c});
     }
     const c=await classInfo();let code=null,nome='',cognome='';
     if(c.modalita==='elenco'){
@@ -53,7 +64,14 @@ export function makeHandler(admin){
    if(p.action==='create_class'){
     const row={id:id(p.id),scuola:value(p.scuola,140,2),comune:value(p.comune,80,2),classe:value(p.classe,20).toUpperCase(),anno:value(p.anno,9),modalita:p.modalita,codice:secret(p.codice)};
     if(!/^20\d{2}\/20\d{2}$/.test(row.anno)||Number(row.anno.slice(5))!==Number(row.anno.slice(0,4))+1||!['nomi','elenco'].includes(row.modalita))throw fail('Controlla anno scolastico e modalità.');
-    const r=await admin.from('bussola_v2_classi').insert(row).select('*').single();if(r.error){if(r.error.code==='23505')throw fail('La scuola e la classe sono già presenti. Usa la classe esistente.',409);throw fail('Classe non salvata. Riprova.',503);}return reply({classe:r.data});
+    for(let attempt=0;attempt<3;attempt++){
+     const r=await admin.from('bussola_v2_classi').insert(row).select('*').single();
+     if(!r.error)return reply({classe:r.data});
+     if(r.error.code==='23505'&&r.error.message?.includes('codice_breve'))continue;
+     if(r.error.code==='23505')throw fail('La scuola e la classe sono già presenti. Usa la classe esistente.',409);
+     throw fail('Classe non salvata. Riprova.',503);
+    }
+    throw fail('Non riesco a preparare il codice. Riprova.',503);
    }
    const getClass=async()=>{const c=await data(admin.from('bussola_v2_classi').select('*').eq('id',id(p.classe_id)).maybeSingle());if(!c)throw fail('Classe non trovata.',404);return c;};
    if(p.action==='update_class'){
