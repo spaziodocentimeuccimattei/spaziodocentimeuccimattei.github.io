@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {freshProject,restoreProject,LABS,CONDITIONS,GOALS} from '../ssas-labs-core.mjs';
+import {participantCertificate,certificateName} from '../bussola-attestato-alunno-core.mjs';
+const p=freshProject(),j=p.labJourney,options={id:'9a300661-430f-4df1-8f62-c5f4cf1b1ae2',date:'2026-10-08T08:00:00Z',name:'Alunno di prova'};
+assert.throws(()=>participantCertificate(p,options),/Concludi/);
+j.health={focus:'asma',title:'Asma',explanation:CONDITIONS[0].examples[0]};j.relation={opening:'giornata',participation:'biglietto',closing:'Ne riparliamo insieme.'};j.autonomy={person:'rosa',supports:['caratteri'],adaptation:'disponibile'};j.creative={goal:'collaborazione',setting:'spazio',title:'Luna',ending:GOALS[1].endings[0]};j.service={kind:'salute',activity:'incontro',name:'Punto salute',access:'telefono',check:'utile'};
+j.done=LABS.map(l=>l.id);j.finished=true;j.interests=['salute','progettazione'];
+const a=participantCertificate(p,options);assert.equal(a.snapshot.nome,'Alunno di prova');assert.equal(a.snapshot.classe,'');assert.equal(a.snapshot.lavori.length,5);
+const forged=structuredClone(p);forged.labJourney.health.explanation='';assert.throws(()=>participantCertificate(forged,options),/Concludi/);
+const identity={alunno:{id:crypto.randomUUID(),nome:'Nome',cognome:'Dichiarato',verificato:false},classe:{scuola:'Scuola di prova',comune:'Comune',classe:'2SA',anno:'2026/2027'}};
+const linked=participantCertificate(p,{...options,identity,name:'Altro nome'});assert.equal(linked.snapshot.nome,'Nome');assert.equal(linked.snapshot.cognome,'Dichiarato');assert.equal(linked.snapshot.classe,'2SA');assert.equal(identity.alunno.verificato,false);
+assert.equal(certificateName('  Anna   D’Angelo  '),'Anna D’Angelo');assert.throws(()=>certificateName('<script>'));assert.throws(()=>certificateName(' '));
+j.attestato={id:options.id,date:options.date,name:options.name};j.unknown='conservare';const restored=restoreProject(p);assert.deepEqual(restored.labJourney.attestato,j.attestato);assert.equal(restored.labJourney.unknown,'conservare');assert.equal(restored.labJourney.finished,true);
+console.log('Attestato alunno: completamento effettivo, nome, dati della classe, assenza di vincoli della gestione docente e ripresa verificati.');

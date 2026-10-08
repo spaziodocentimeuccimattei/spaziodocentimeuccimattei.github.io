@@ -11,3 +11,13 @@ fieldset.choices{padding:0;margin:0;border:0;min-width:0}.guide-progress{display
 @media print{.guide-progress,.optional-title,.stage-footer{display:none!important}}
 
 .head-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:end}.class-summary{max-width:1180px;margin:14px auto 0;padding:12px 18px;border:1px solid #b8c8ae;border-radius:12px;background:#eaf0df;font-size:13px}.class-summary[hidden]{display:none}#classForm label{display:grid;gap:7px;font-size:14px;margin:14px 0}#classForm button{margin-top:20px}@media(max-width:680px){.head-actions{gap:6px}.class-summary{margin:12px 16px 0}.site-head{align-items:start}.head-actions .plain-button{min-height:44px}}@media print{.class-summary{display:none}}
+#certificateDialog{width:min(820px,calc(100vw - 24px))}#certificateDialog [hidden]{display:none!important}#certificateForm .primary{margin-top:18px}.certificate-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}#certificateSheet{margin-top:20px;background:white;box-shadow:0 5px 24px #18372b20}#certificateSheet canvas{display:block;width:100%;height:auto}.complete>button,.complete>a{margin:10px 10px 0 0}.complete>button.primary{background:#fff7e7;color:#294f40;border-color:#fff7e7}.complete>a.secondary{background:transparent;color:#fff7e7;border-color:#aabb9b}#certificateHeading{scroll-margin-top:20px}
+@media print{
+ body.print-certificate>*{display:none!important}
+ body.print-certificate>#certificateDialog{display:block!important;position:static!important;inset:auto!important;width:210mm!important;max-width:none!important;height:auto!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:white!important;overflow:visible!important}
+ body.print-certificate #certificateDialog>*:not(#certificateResult),body.print-certificate .certificate-actions,body.print-certificate .certificate-save-help{display:none!important}
+ body.print-certificate #certificateResult{display:block!important}
+ body.print-certificate #certificateSheet{width:210mm;height:297mm;margin:0;box-shadow:none;break-inside:avoid;overflow:hidden}
+ body.print-certificate #certificateSheet canvas{width:210mm;height:297mm}
+ @page{size:A4 portrait;margin:0}
+}

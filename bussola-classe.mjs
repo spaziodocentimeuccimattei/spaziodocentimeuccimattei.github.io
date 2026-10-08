@@ -22,5 +22,5 @@ export function setupClass(ctx){
  document.addEventListener('bussola-progetto-nuovo',()=>{identity=null;show();});
  if(classCode){show();refresh().then(()=>{if(info&&!identity?.alunno)open($('openClass'));});}else if(ctx.token())refresh();
  window.addEventListener('hashchange',()=>{const next=classEntry();if(!next.classe)return;if(next.alunno&&next.alunno!==entry.alunno){location.reload();return;}entry=next;classCode=next.classe;info=null;refresh().then(()=>{if(info&&!identity?.alunno)open($('openClass'));});});
- return {refresh};
+ return {refresh,identity:async()=>{if(classCode&&!identity?.alunno)await refresh();return identity?.alunno?JSON.parse(JSON.stringify(identity)):null;}};
 }
