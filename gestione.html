@@ -4,11 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <meta name="description" content="Area di gestione dell’orientamento riservata alla Funzione Strumentale dell’IIS Meucci–Mattei, sede di Decimomannu.">
-  <title>Gestione orientamento | IIS Meucci–Mattei, sede di Decimomannu</title>
+  <meta name="description" content="Area di gestione dell’orientamento riservata alla Funzione Strumentale dell’IIS Meucci - Mattei | Decimomannu.">
+  <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261005-intestazione">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
   <link rel="stylesheet" href="gestione.css?v=20260927-1">
+  <link rel="stylesheet" href="bussola-gestione.css?v=20261008">
 </head>
 <body>
   <header class="site-header">
@@ -24,7 +25,7 @@
     <section class="orientation-hero">
       <p class="eyebrow">Una scuola da vivere · Area della Funzione Strumentale</p>
       <h1>Gestione<br>orientamento</h1>
-      <p>Consulta e gestisci disponibilità, proposte Mattinée, attività da confermare e scuole visitate.</p>
+      <p>Consulta le attività di orientamento e gestisci scuole, classi e attestati della Bussola.</p>
     </section>
 
     <section class="protected-shell" aria-labelledby="access-title">
@@ -56,8 +57,11 @@
           <button role="tab" data-tab="candidature" aria-selected="false">Disponibilità docenti <span class="count" id="countCandidature"></span></button>
           <button role="tab" data-tab="proposte" aria-selected="false">Proposte Mattinée <span class="count" id="countProposte"></span></button>
           <button role="tab" data-tab="scuole" aria-selected="false">Scuole</button>
+          <button role="tab" data-tab="bussola" aria-selected="false">Bussola e attestati</button>
           <button role="tab" data-tab="attivita" aria-selected="false">Attività confermate</button>
         </nav>
+
+        <section class="tab-panel" data-panel="bussola" hidden><div id="bussolaManagement"></div></section>
 
         <section class="tab-panel" data-panel="confermare">
           <p class="panel-help">Visite e Mattinée registrate dai docenti. <b>Conferma l’attività</b> se si è svolta: entrerà nell’elenco per la Dirigente. <b>Scarta la registrazione</b> se è un errore o un doppione.</p>
@@ -123,9 +127,10 @@
   </main>
 
   <footer class="site-footer">
-    <p>IIS Meucci–Mattei, sede di Decimomannu</p>
+    <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script src="gestione.js?v=20260927-1"></script>
+  <script src="gestione.js?v=20261008"></script>
+<script type="module" src="bussola-gestione.mjs?v=20261008"></script>
 </body>
 </html>
