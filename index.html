@@ -3,104 +3,277 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Spazio di accoglienza, partecipazione e orientamento curato dai docenti dell’IIS Meucci - Mattei di Decimomannu.">
-  <title>Uno spazio per conoscere e partecipare | IIS Meucci - Mattei | Decimomannu</title>
-  <link rel="stylesheet" href="portal.css?v=20261009-telefoni">
-  <link rel="stylesheet" href="bussola.css?v=20261005-immagini">
+  <meta name="description" content="La sede di Decimomannu dell’IIS Meucci - Mattei: gli indirizzi di studio, la Bussola per scegliere, il modo di fare scuola, l’iscrizione. Spazio curato dai docenti.">
+  <title>IIS Meucci - Mattei, sede di Decimomannu | Studiare, scegliere, partecipare</title>
+  <link rel="stylesheet" href="portal.css?v=20261009-home">
+  <link rel="stylesheet" href="famiglie.css?v=20261009-testi2">
+  <link rel="stylesheet" href="home.css?v=20261009-home">
 </head>
-<body class="home-page">
-  <a class="skip-link" href="#homeMain">Vai al contenuto</a>
-  <header class="site-header home-header">
+<body class="fam-page home-flow">
+  <a class="fam-skip" href="#homeMain">Vai al contenuto</a>
+
+  <svg class="fam-sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-fork" viewBox="0 0 24 24"><path d="M12 21v-6M12 15V4M12 15c0-4-6-4-6-9M12 15c0-4 6-4 6-9"/></symbol>
+      <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.3c3 .2 5.5 2.6 5.5 5.7"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5c2.5-1 5.5-1 8 .5 2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5"/></symbol>
+      <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 3c3.3 0 6 2.5 6 5.6 0 3-2.7 5.400-6 5.400s-6-2.400-6-5.400C6 5.500 8.700 3 12 3zM12 10v11M8 21h8"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.400-7-9.500A4 4 0 0 1 12 8a4 4 0 0 1 7 2.500C19 15.600 12 20 12 20z"/></symbol>
+      <symbol id="i-voice" viewBox="0 0 24 24"><path d="M4 10v4h3l7 4V6l-7 4zM17 9a4 4 0 0 1 0 6"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.500 2"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.200"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.600-6-10.500a6 6 0 0 1 12 0C18 15.400 12 21 12 21z"/><circle cx="12" cy="10.500" r="2.200"/></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.500 7l8.500 6 8.500-6"/></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6 3h3l1.500 5-2 1.500a12 12 0 0 0 6 6l1.500-2 5 1.500v3a2 2 0 0 1-2 2C11 20 4 13 4 5a2 2 0 0 1 2-2z"/></symbol>
+      <symbol id="i-desk" viewBox="0 0 24 24"><path d="M3 9h18M5 9v10M19 9v10M9 9v5h6V9M3 9l2-4h14l2 4"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.300l3 2.900 5-5.700"/></symbol>
+      <symbol id="i-out" viewBox="0 0 24 24"><path d="M8 16l8-8M9 8h7v7"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="site-header">
     <a class="site-brand" href="index.html" aria-label="IIS Meucci - Mattei | Decimomannu · Torna alla pagina iniziale">
       <span class="site-logo"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" alt=""></span><span class="site-brand-copy"><span class="site-brand-name">IIS Meucci - Mattei</span><span class="site-brand-place">Decimomannu</span></span>
     </a>
-    <p class="site-status"><span>Spazio curato dai docenti</span><a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">Sito istituzionale <span aria-hidden="true">↗</span></a></p>
+    <nav class="page-nav" aria-label="Percorsi">
+      <a href="#medie">Terza media</a>
+      <a href="famiglie.html">Famiglie</a>
+      <a href="#studenti">Studenti</a>
+      <a href="#docenti">Docenti</a>
+      <a href="indirizzi.html">Indirizzi</a>
+    </nav>
   </header>
 
-  <main id="homeMain">
-    <section class="hero">
-      <figure class="hero-photo hero-campaign">
-        <a href="assets/campagna-decimomannu-cresce-qui.jpeg" target="_blank" rel="noopener" aria-label="Apri la locandina Decimomannu cresce qui">
-          <img src="assets/campagna-decimomannu-cresce-qui.jpeg" width="1122" height="1402" alt="Locandina illustrativa della campagna Decimomannu cresce qui: studenti, discipline e territorio" fetchpriority="high">
+  <main id="homeMain" class="flow">
+
+    <!-- ============ INIZIO ============ -->
+    <div class="home-start" id="inizio" data-screen>
+
+      <section class="screen s-start home-hero" aria-labelledby="t-inizio">
+        <div class="screen-head">
+          <p class="kicker">Sede di Decimomannu</p>
+          <h1 id="t-inizio" tabindex="-1">A cosa serve <em>imparare</em>?</h1>
+          <p class="lead">A capire la realtà, a saper fare, a stare nel mondo con gli altri.</p>
+        </div>
+        <h2 class="doors-title">Scegli da dove cominciare</h2>
+        <div class="roads doors">
+          <a class="road road-a" href="#medie">
+            <span class="road-ic"><svg><use href="#i-compass"/></svg></span>
+            <span class="road-tx"><strong>Sono in terza media</strong><span>Capisci che cosa ti incuriosisce, prova gli indirizzi, guarda che cosa si studia.</span></span>
+            <span class="road-go">Inizia <svg><use href="#i-arrow"/></svg></span>
+          </a>
+          <a class="road road-c door-sm" href="famiglie.html">
+            <span class="road-ic"><svg><use href="#i-users"/></svg></span>
+            <span class="road-tx"><strong>Sono un genitore</strong><span>La sede, il modo di fare scuola, l’iscrizione.</span></span>
+            <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+          </a>
+          <a class="road road-b door-sm" href="#studenti">
+            <span class="road-ic"><svg><use href="#i-book"/></svg></span>
+            <span class="road-tx"><strong>Studio al Meucci - Mattei</strong><span>Accoglienza, indirizzi di studio, curricoli.</span></span>
+            <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+          </a>
+          <a class="road road-d door-sm" href="#docenti">
+            <span class="road-ic"><svg><use href="#i-desk"/></svg></span>
+            <span class="road-tx"><strong>Sono un docente</strong><span>Visite di orientamento, Mattinée, materiali di lavoro.</span></span>
+            <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+          </a>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="t-scuola">
+        <div class="band-top">
+          <div class="band-head">
+            <p class="kicker">Il modo di fare scuola</p>
+            <h2 id="t-scuola">Che scuola stiamo costruendo?</h2>
+            <p class="lead">Quattro idee guidano il lavoro. Alcune sono già pratica, altre sono in progetto.</p>
+          </div>
+          <figure class="band-figure">
+            <img src="assets/bussola-spazio-condiviso.jpeg" width="886" height="886" loading="lazy" alt="Rappresentazione di ragazzi che studiano e conversano in uno spazio condiviso">
+            <figcaption>Immagine illustrativa</figcaption>
+          </figure>
+        </div>
+        <div class="tiles">
+          <details class="tile">
+            <summary><span class="tile-ic"><svg><use href="#i-target"/></svg></span><span class="tile-tx"><strong>Si impara per capire la realtà</strong><span class="state is-done">Si può provare</span></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+            <p>Le conoscenze servono quando aiutano a capire un problema, a scegliere, ad agire. Per ogni indirizzo c’è una situazione da affrontare: una spesa, un elenco di dati, una stanza da disegnare, una visita, una persona da capire.</p>
+            <p><a href="missioni.html">Prova un’attività</a></p>
+          </details>
+          <details class="tile">
+            <summary><span class="tile-ic"><svg><use href="#i-voice"/></svg></span><span class="tile-tx"><strong>I ragazzi scelgono, propongono, decidono</strong><span class="state is-done">In parte c’è già</span></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+            <p>Le classi prime sono accolte dagli studenti più grandi: così è stato il primo giorno dell’anno scolastico 2026/27. La proposta «Abitare la scuola» sarà discussa nelle classi e votata dagli studenti della sede.</p>
+            <p><a href="famiglie.html#ragazzi">Che posto hanno i ragazzi</a></p>
+          </details>
+          <details class="tile">
+            <summary><span class="tile-ic"><svg><use href="#i-tree"/></svg></span><span class="tile-tx"><strong>L’aula non finisce alla porta</strong><span class="state is-done">In parte c’è già</span></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+            <p>L’orto inclusivo esiste già. Sono in progetto il cortile per le lezioni all’aperto e l’Agorà, una parte dell’atrio pensata per leggere, studiare e incontrarsi.</p>
+            <p><a href="famiglie.html#metodo">Come si impara</a></p>
+          </details>
+          <details class="tile">
+            <summary><span class="tile-ic"><svg><use href="#i-heart"/></svg></span><span class="tile-tx"><strong>Ciò che si studia serve a qualcuno</strong><span class="state is-plan">In progetto</span></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+            <p>Con il Service Learning gli studenti mettono ciò che imparano al servizio di un bisogno della comunità di Decimomannu, scelto da loro. Negli ultimi tre anni tutti fanno formazione scuola-lavoro.</p>
+            <p><a href="famiglie.html#lavoro">La formazione scuola-lavoro</a></p>
+          </details>
+        </div>
+        <p class="src">Il riferimento è Avanguardie educative, il movimento per l’innovazione della scuola nato per iniziativa di INDIRE e di un gruppo di scuole: le sue idee fanno parte del Piano triennale dell’offerta formativa dell’istituto. Fonte: INDIRE, «Il Manifesto delle Avanguardie educative», Genova, 6 novembre 2014.</p>
+      </section>
+
+      <section class="screen s-paper home-courses" aria-labelledby="t-indirizzi">
+        <div class="screen-head">
+          <p class="kicker">Gli indirizzi di studio</p>
+          <h2 id="t-indirizzi">Che cosa si studia?</h2>
+          <p class="lead">Cinque indirizzi diurni: quattro tecnici e uno professionale.</p>
+        </div>
+        <div class="courses">
+          <a class="course c-afm" href="indirizzi.html#afm"><b>AFM</b><strong>Amministrazione, Finanza e Marketing</strong><span>Organizzazioni, economia, scelte</span></a>
+          <a class="course c-sia" href="indirizzi.html#sia"><b>SIA</b><strong>Sistemi Informativi Aziendali</strong><span>Dati, software, impresa</span></a>
+          <a class="course c-tur" href="indirizzi.html#turismo"><b>TUR</b><strong>Turismo</strong><span>Lingue, culture, territorio</span></a>
+          <a class="course c-ssas" href="indirizzi.html#ssas"><b>SSAS</b><strong>Servizi per la Sanità e l’Assistenza Sociale</strong><span>Persone, salute, comunità</span></a>
+          <a class="course c-cat" href="indirizzi.html#cat"><b>CAT</b><strong>Costruzioni, Ambiente e Territorio</strong><span>Progetto, ambiente, territorio</span></a>
+        </div>
+        <ul class="pills">
+          <li><a href="indirizzi.html"><svg><use href="#i-arrow"/></svg>Tutti gli indirizzi</a></li>
+          <li><a href="indirizzi.html#serali"><svg><use href="#i-clock"/></svg>I percorsi serali</a></li>
+          <li><a href="curricoli.html"><svg><use href="#i-book"/></svg>Il curricolo dell’indirizzo SSAS</a></li>
+        </ul>
+      </section>
+
+      <section class="screen s-teal" aria-labelledby="t-sede">
+        <div class="screen-head">
+          <p class="kicker">La sede</p>
+          <h2 id="t-sede">Dove siamo?</h2>
+        </div>
+        <div class="place">
+          <picture class="place-photo">
+            <source media="(max-width: 760px)" srcset="assets/sede-decimomannu-900.webp">
+            <img src="assets/sede-decimomannu-1440.webp" width="1440" height="482" loading="lazy" alt="La sede di Decimomannu dell’IIS Meucci - Mattei">
+          </picture>
+          <ul class="place-facts">
+            <li><svg><use href="#i-pin"/></svg><span><b>Via Ugo Foscolo 48</b>Decimomannu</span></li>
+            <li><svg><use href="#i-clock"/></svg><span><b>Ore 8.30</b>Inizio delle lezioni</span></li>
+            <li><svg><use href="#i-desk"/></svg><span><b>Segreteria</b>A Cagliari, via Bainsizza 30</span></li>
+          </ul>
+          <div class="place-actions">
+            <a class="btn btn-solid" href="mailto:orientamattei@gmail.com?subject=Orientamento"><svg><use href="#i-mail"/></svg>Scrivi alla Commissione Orientamento</a>
+            <a class="btn btn-line" href="tel:+390704657043"><svg><use href="#i-phone"/></svg>Chiama la sede: 070 4657043</a>
+            <a class="btn btn-line" href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener"><svg><use href="#i-out"/></svg>Sito istituzionale</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ TERZA MEDIA ============ -->
+    <section class="screen s-green" id="medie" data-screen data-label="Per chi è in terza media" aria-labelledby="t-medie">
+      <div class="screen-head">
+        <p class="kicker">Per chi è in terza media</p>
+        <h2 id="t-medie" tabindex="-1">Scegliere le superiori, <em>un passo alla volta</em></h2>
+      </div>
+      <ol class="steps">
+        <li class="step-card">
+          <h3>Capisci che cosa ti incuriosisce</h3>
+          <p>La tua Bussola: dodici domande su interessi, materie e aspirazioni. Alla fine vedi quali indirizzi approfondire, e perché.</p>
+          <a class="btn btn-solid" href="bussola.html">Inizia la Bussola <svg><use href="#i-arrow"/></svg></a>
+        </li>
+        <li class="step-card">
+          <h3>Prova gli indirizzi</h3>
+          <p>Una situazione da affrontare per ogni indirizzo. Per SSAS e Turismo ci sono cinque laboratori.</p>
+          <a class="btn btn-line" href="missioni.html">Prova un’attività <svg><use href="#i-arrow"/></svg></a>
+        </li>
+        <li class="step-card">
+          <h3>Guarda che cosa si studia</h3>
+          <p>Cinque indirizzi diurni: le materie, le attività, che cosa si impara a fare.</p>
+          <a class="btn btn-line" href="indirizzi.html">Apri gli indirizzi <svg><use href="#i-arrow"/></svg></a>
+        </li>
+      </ol>
+      <ul class="calm">
+        <li><svg><use href="#i-users"/></svg><span><b>Parlane a casa.</b> <a href="famiglie.html">Nella pagina per le famiglie</a> ci sono anche i passaggi dell’iscrizione.</span></li>
+        <li><svg><use href="#i-mail"/></svg><span><b>Hai una domanda?</b> Scrivi alla Commissione Orientamento: <a href="mailto:orientamattei@gmail.com?subject=Orientamento">orientamattei@gmail.com</a></span></li>
+      </ul>
+    </section>
+
+    <!-- ============ STUDENTI ============ -->
+    <section class="screen s-teal" id="studenti" data-screen data-label="Per chi studia qui" aria-labelledby="t-studenti">
+      <div class="screen-head">
+        <p class="kicker">Per chi studia qui</p>
+        <h2 id="t-studenti" tabindex="-1">Che cosa ti serve?</h2>
+      </div>
+      <div class="roads">
+        <a class="road road-b" href="accoglienza.html">
+          <span class="road-ic"><svg><use href="#i-check"/></svg></span>
+          <span class="road-tx"><strong>Accoglienza 2026/27</strong><span>Programma della prima giornata, orari e classi.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
         </a>
-        <figcaption>Campagna di orientamento · <a href="assets/campagna-decimomannu-cresce-qui.jpeg" target="_blank" rel="noopener">Apri la locandina <span aria-hidden="true">↗</span></a></figcaption>
-      </figure>
-      <div class="hero-copy">
-        <p class="eyebrow">Accoglienza · partecipazione · orientamento</p>
-        <h1><span class="hero-title-main">Uno spazio per conoscere e partecipare</span></h1>
-        <p class="hero-intro">I docenti della sede di Decimomannu dedicano questo spazio a studenti, famiglie e colleghi: per conoscere i percorsi di studio, orientarsi nelle scelte e partecipare alla cura e alla crescita della scuola.</p>
+        <a class="road road-b" href="documenti/accoglienza/Presentazione_accoglienza_studenti_Meucci_Mattei_2026-27.pdf" target="_blank" rel="noopener">
+          <span class="road-ic"><svg><use href="#i-book"/></svg></span>
+          <span class="road-tx"><strong>La scuola in poche pagine</strong><span>Presentazione per gli studenti, in PDF.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-out"/></svg></span>
+        </a>
+        <a class="road road-b" href="indirizzi.html">
+          <span class="road-ic"><svg><use href="#i-fork"/></svg></span>
+          <span class="road-tx"><strong>Indirizzi di studio</strong><span>AFM, SIA, Turismo, SSAS e CAT Archeodesign.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+        </a>
+        <a class="road road-b" href="curricoli.html">
+          <span class="road-ic"><svg><use href="#i-target"/></svg></span>
+          <span class="road-tx"><strong>Curricoli</strong><span>Per ora il curricolo dell’indirizzo SSAS.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+        </a>
       </div>
     </section>
 
-    <section class="bussola-entry home-bussola-entry" aria-labelledby="bussolaEntryTitle">
-      <figure class="home-life-image">
-        <img src="assets/bussola-spazio-condiviso.jpeg" width="886" height="886" loading="lazy" alt="Rappresentazione di ragazzi che studiano e conversano in uno spazio condiviso">
-      </figure>
-      <div class="home-bussola-copy">
-        <p class="explore-kicker">Per gli studenti delle medie</p>
-        <h2 id="bussolaEntryTitle">La tua Bussola</h2>
-        <p>Dodici domande su interessi, materie, predisposizioni e aspirazioni. Scopri quali indirizzi approfondire e conserva il risultato in un attestato personale.</p>
-        <a class="explore-button" href="bussola.html">Inizia la tua Bussola <span aria-hidden="true">→</span></a>
+    <!-- ============ DOCENTI ============ -->
+    <section class="screen s-navy" id="docenti" data-screen data-label="Per i docenti" aria-labelledby="t-docenti">
+      <div class="screen-head">
+        <p class="kicker">Per i docenti</p>
+        <h2 id="t-docenti" tabindex="-1">Orientamento e materiali di lavoro</h2>
       </div>
-    </section>
-
-    <section class="groups-section" aria-labelledby="groups-title">
-      <div class="section-heading"><div><p class="step">Per chi</p><h2 id="groups-title">Trova ciò che ti serve</h2></div></div>
-      <nav class="group-jump" aria-label="Vai alla tua sezione">
-        <a href="#studenti"><span aria-hidden="true">✦</span> Studenti</a>
-        <a href="#famiglie"><span aria-hidden="true">⌂</span> Famiglie</a>
-        <a href="#docenti"><span aria-hidden="true">●</span> Docenti</a>
-        <a href="#medie"><span aria-hidden="true">★</span> Studenti delle medie</a>
-      </nav>
-
-      <div class="group-grid">
-        <section class="group-card group-studenti" id="studenti" aria-labelledby="studenti-title">
-          <header><span class="group-icon" aria-hidden="true">✦</span><div><h3 id="studenti-title">Studenti</h3><p>Per chi frequenta l’IIS Meucci - Mattei di Decimomannu.</p></div></header>
-          <ul class="group-links">
-            <li><a href="accoglienza.html"><strong>Accoglienza 2026/27</strong><span>Programma della prima giornata, orari e classi</span></a></li>
-            <li><a href="documenti/accoglienza/Presentazione_accoglienza_studenti_Meucci_Mattei_2026-27.pdf" target="_blank" rel="noopener"><strong>Presentazione per studenti <span aria-hidden="true">↗</span></strong><span>La scuola in poche pagine (PDF)</span></a></li>
-            <li><a href="indirizzi.html"><strong>Indirizzi di studio</strong><span>AFM, SIA, Turismo, SSAS e CAT Archeodesign</span></a></li>
-            <li><a href="curricoli.html"><strong>Curricoli disponibili</strong><span>Il curricolo dell’indirizzo SSAS</span></a></li>
-          </ul>
-        </section>
-
-        <section class="group-card group-famiglie" id="famiglie" aria-labelledby="famiglie-title">
-          <header><span class="group-icon" aria-hidden="true">⌂</span><div><h3 id="famiglie-title">Famiglie</h3><p>Per accompagnare i figli nella scelta e nel percorso di studio.</p></div></header>
-          <ul class="group-links">
-            <li><a href="famiglie.html"><strong>Scegliere la scuola superiore</strong><span>La sede di Decimomannu, la Bussola da fare insieme, l’iscrizione</span></a></li>
-            <li><a href="accoglienza.html"><strong>Accoglienza 2026/27</strong><span>Programma della prima giornata e organizzazione</span></a></li>
-            <li><a href="indirizzi.html"><strong>Indirizzi di studio</strong><span>Cinque percorsi diurni e tre serali</span></a></li>
-            <li><a href="curricoli.html"><strong>Curricoli disponibili</strong><span>Il curricolo dell’indirizzo SSAS</span></a></li>
-          </ul>
-        </section>
-
-        <section class="group-card group-docenti" id="docenti" aria-labelledby="docenti-title">
-          <header><span class="group-icon" aria-hidden="true">●</span><div><h3 id="docenti-title">Docenti</h3><p>Orientamento, accoglienza e materiali di lavoro.</p></div></header>
-          <ul class="group-links">
-            <li><a href="una-scuola-da-vivere.html"><strong>Una scuola da vivere</strong><span>Disponibilità, proposte Mattinée e registrazione delle attività svolte</span></a></li>
-            <li><a href="orientamento.html"><strong>Commissione Orientamento</strong><span>Area riservata con password</span></a></li>
-            <li><a href="accoglienza.html"><strong>Accoglienza 2026/27</strong><span>Programma della prima giornata</span></a></li>
-            <li><a href="curricoli.html"><strong>Curricoli disponibili</strong><span>Il curricolo dell’indirizzo SSAS</span></a></li>
-          </ul>
-        </section>
-
-        <section class="group-card group-medie" id="medie" aria-labelledby="medie-title">
-          <header><span class="group-icon" aria-hidden="true">★</span><div><h3 id="medie-title">Studenti delle medie</h3><p>Per chi sta scegliendo la scuola superiore.</p></div></header>
-          <ul class="group-links">
-            <li><a href="bussola.html"><strong>La tua Bussola</strong><span>Dodici domande e un orientamento motivato</span></a></li>
-            <li><a href="missioni.html"><strong>Prova un’attività</strong><span>Cinque piccole esperienze, una per indirizzo</span></a></li>
-            <li><a href="indirizzi.html"><strong>Consulta gli indirizzi di studio</strong><span>Cinque percorsi diurni e tre serali</span></a></li>
-            <li><a href="curricoli.html"><strong>Curricoli disponibili</strong><span>Il curricolo dell’indirizzo SSAS</span></a></li>
-            <li><a href="mailto:orientamattei@gmail.com?subject=Orientamento"><strong>Scrivi alla Commissione Orientamento</strong><span>orientamattei@gmail.com</span></a></li>
-          </ul>
-        </section>
+      <div class="roads">
+        <a class="road road-c" href="una-scuola-da-vivere.html">
+          <span class="road-ic"><svg><use href="#i-users"/></svg></span>
+          <span class="road-tx"><strong>Una scuola da vivere</strong><span>Disponibilità per le visite, proposte Mattinée, registro delle attività svolte.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+        </a>
+        <a class="road road-c" href="territorio.html">
+          <span class="road-ic"><svg><use href="#i-pin"/></svg></span>
+          <span class="road-tx"><strong>Territori e scuole da incontrare</strong><span>Comuni, scuole e ragazzi di 12 anni: una guida per preparare le visite.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+        </a>
+        <a class="road road-c" href="orientamento.html">
+          <span class="road-ic"><svg><use href="#i-desk"/></svg></span>
+          <span class="road-tx"><strong>Commissione Orientamento</strong><span>Area riservata, con password.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+        </a>
+        <a class="road road-c" href="accoglienza.html">
+          <span class="road-ic"><svg><use href="#i-check"/></svg></span>
+          <span class="road-tx"><strong>Accoglienza 2026/27</strong><span>Programma della prima giornata.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+        </a>
+        <a class="road road-c" href="curricoli.html">
+          <span class="road-ic"><svg><use href="#i-book"/></svg></span>
+          <span class="road-tx"><strong>Curricoli</strong><span>Per ora il curricolo dell’indirizzo SSAS.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+        </a>
       </div>
     </section>
   </main>
 
+  <nav class="flow-bar" aria-label="Percorso" hidden>
+    <a class="bar-home" href="#inizio"><svg><use href="#i-fork"/></svg><span>Inizio</span></a>
+    <div class="bar-mid">
+      <div class="bar-dots" aria-hidden="true"></div>
+      <p class="bar-label" aria-live="polite"></p>
+    </div>
+    <a class="bar-prev" href="#inizio" aria-label="Schermata precedente"><svg><use href="#i-back"/></svg></a>
+    <a class="bar-next" href="#inizio"><span>Avanti</span><svg><use href="#i-arrow"/></svg></a>
+  </nav>
+
   <footer class="site-footer visual-footer">
     <div class="visual-footer-brand"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" loading="lazy" alt="Marchio IIS Meucci - Mattei | Decimomannu"><p>IIS Meucci - Mattei | Decimomannu</p></div>
-    <p>Spazio curato dai docenti · Non sostituisce il <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a></p>
+    <p>Spazio curato dai docenti · Non sostituisce il <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a> · <a href="assets/campagna-decimomannu-cresce-qui.jpeg" target="_blank" rel="noopener">Locandina della campagna di orientamento <span aria-hidden="true">↗</span></a></p>
   </footer>
+  <script type="module" src="famiglie.mjs?v=20261009-testi2"></script>
 </body>
 </html>

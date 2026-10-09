@@ -368,3 +368,11 @@ input::placeholder, textarea::placeholder { color: #718692; opacity: 1; }
   .page-nav { flex-wrap: wrap; overflow-x: visible; }
   .hero h1, .orientation-hero h1 { line-height: 1.06; letter-spacing: -.04em; }
 }
+
+/* Intestazione e piè di pagina di tutte le pagine: niente maiuscolo, niente scritte sotto 13 px (Claude, 9 ottobre 2026). */
+.site-brand-place { color: #075a46; font-size: .92rem; letter-spacing: 0; text-transform: none; }
+.site-header > p { font-size: .88rem; }
+.page-nav a, .back-link { font-size: .92rem; }
+.site-footer { font-size: .9rem; }
+.site-footer a { color: #fff; }
+.visual-footer > p { max-width: 62ch; font-size: .9rem; }
