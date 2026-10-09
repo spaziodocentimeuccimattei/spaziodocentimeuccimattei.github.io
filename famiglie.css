@@ -141,6 +141,7 @@
 .fam-codecard dd { margin: 5px 0 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .fam-codecard code { min-width: 0; padding: 8px 11px; flex: 1; border: 1px solid var(--line); border-radius: 9px; color: var(--navy); background: white; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .95rem; font-weight: 700; overflow-wrap: anywhere; }
 .fam-codecard code[data-pending] { border: 1px dashed #b97700; color: #7a4d00; background: #fff5db; font-family: inherit; font-size: .88rem; }
+.fam-codenote { margin: 0; color: #3f5767; font-size: .93rem; line-height: 1.55; }
 .fam-copy { min-height: 44px; padding: 0 15px; flex: 0 0 auto; border: 0; border-radius: 10px; color: white; background: var(--navy); cursor: pointer; font-size: .82rem; font-weight: 850; transition: background-color var(--motion-fast) ease; }
 .fam-copy:hover:not(:disabled) { background: var(--green); }
 .fam-copy-status { min-height: 20px; margin: 10px 0 0; color: var(--green); font-size: .86rem; font-weight: 800; }
