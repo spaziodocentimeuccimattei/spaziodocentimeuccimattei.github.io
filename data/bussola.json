@@ -195,7 +195,7 @@
           }
         }
       ],
-      "area": "Curiosità quotidiane"
+      "area": "Tempo libero"
     },
     {
       "id": "imparare",
@@ -273,14 +273,14 @@
         },
         {
           "id": "imparare-5",
-          "text": "Conoscere luoghi, servizi e opportunità del territorio in cui vivi.",
+          "text": "Conoscere i luoghi, i servizi e le occasioni che offre il posto in cui vivi.",
           "weights": {
             "territorio": 2,
             "persone": 1,
             "risorse": 1
           },
-          "label": "Servizi della comunità",
-          "detail": "Conoscere luoghi, servizi e opportunità del territorio in cui vivi.",
+          "label": "Il tuo paese da vicino",
+          "detail": "Conoscere i luoghi, i servizi e le occasioni che offre il posto in cui vivi.",
           "courseLinks": {
             "ssas": {
               "weight": 2,
@@ -293,7 +293,7 @@
           }
         }
       ],
-      "area": "Desideri di apprendimento"
+      "area": "Cose nuove da imparare"
     },
     {
       "id": "domande",
@@ -387,7 +387,7 @@
           }
         }
       ],
-      "area": "Problemi da capire"
+      "area": "Domande"
     },
     {
       "id": "visita-interessi",
@@ -587,7 +587,7 @@
           }
         }
       ],
-      "area": "Tecnologie"
+      "area": "Computer"
     },
     {
       "id": "libro",
@@ -652,14 +652,14 @@
         },
         {
           "id": "libro-4",
-          "text": "Una spiegazione di come cambiano i bisogni delle persone con l’età.",
+          "text": "Come cambiano i bisogni delle persone quando crescono e invecchiano.",
           "weights": {
             "persone": 2,
             "territorio": 1,
             "organizzazione": 1
           },
-          "label": "I bisogni nelle età della vita",
-          "detail": "Una spiegazione di come cambiano i bisogni delle persone con l’età.",
+          "label": "Da bambini ad anziani",
+          "detail": "Come cambiano i bisogni delle persone quando crescono e invecchiano.",
           "courseLinks": {
             "ssas": {
               "weight": 2,
@@ -685,7 +685,7 @@
           }
         }
       ],
-      "area": "Letture e curiosità"
+      "area": "Letture"
     },
     {
       "id": "futuro",
@@ -716,14 +716,14 @@
         },
         {
           "id": "futuro-2",
-          "text": "Il valore delle risorse e le scelte per usarle senza sprecarle.",
+          "text": "Quanto valgono soldi, tempo e materiali, e come usarli senza sprecarli.",
           "weights": {
             "risorse": 2,
             "territorio": 1,
             "organizzazione": 1
           },
-          "label": "Risorse usate con cura",
-          "detail": "Il valore delle risorse e le scelte per usarle senza sprecarle.",
+          "label": "Niente sprechi",
+          "detail": "Quanto valgono soldi, tempo e materiali, e come usarli senza sprecarli.",
           "courseLinks": {
             "afm": {
               "weight": 2,
@@ -733,14 +733,14 @@
         },
         {
           "id": "futuro-3",
-          "text": "Il benessere delle persone e i modi per sostenerle nelle difficoltà.",
+          "text": "Che cosa fa stare bene le persone e come si può aiutare chi è in difficoltà.",
           "weights": {
             "persone": 2,
             "territorio": 1,
             "comunicazione": 1
           },
-          "label": "Benessere e sostegno",
-          "detail": "Il benessere delle persone e i modi per sostenerle nelle difficoltà.",
+          "label": "Stare bene, aiutare",
+          "detail": "Che cosa fa stare bene le persone e come si può aiutare chi è in difficoltà.",
           "courseLinks": {
             "ssas": {
               "weight": 2,
@@ -767,14 +767,14 @@
         },
         {
           "id": "futuro-5",
-          "text": "I diversi ruoli di un lavoro e il modo in cui collaborano le persone.",
+          "text": "Chi fa che cosa in un lavoro e come ci si organizza insieme.",
           "weights": {
             "organizzazione": 2,
             "progetto": 1,
             "persone": 1
           },
-          "label": "Ruoli che collaborano",
-          "detail": "I diversi ruoli di un lavoro e il modo in cui collaborano le persone.",
+          "label": "Lavorare in squadra",
+          "detail": "Chi fa che cosa in un lavoro e come ci si organizza insieme.",
           "courseLinks": {
             "afm": {
               "weight": 2,
@@ -787,7 +787,7 @@
           }
         }
       ],
-      "area": "Futuro"
+      "area": "Alle superiori"
     },
     {
       "id": "materie",
@@ -880,10 +880,10 @@
     },
     {
       "id": "predisposizioni",
-      "title": "Un modo di lavorare che riconosci in te",
-      "scenario": "Pensa a qualcosa che ti capita davvero, anche fuori dalla scuola. Sono modi di lavorare che puoi coltivare; non serve riuscirci sempre.",
+      "title": "Un modo di fare che riconosci",
+      "scenario": "Pensa a cose che ti capitano davvero, anche fuori da scuola. Non serve riuscirci sempre: sono modi di fare che si possono allenare.",
       "question": "In quale situazione ti riconosci di più?",
-      "area": "Predisposizioni da coltivare",
+      "area": "Modi di fare",
       "options": [
         {
           "id": "predisposizioni-1",
@@ -977,8 +977,8 @@
         {
           "id": "sogni-1",
           "label": "Far nascere un’idea",
-          "text": "Far partire una piccola attività con un gruppo: capire a chi serve, organizzare le risorse e renderla sostenibile.",
-          "detail": "Far partire una piccola attività con un gruppo: capire a chi serve, organizzare le risorse e renderla sostenibile.",
+          "text": "Far partire una piccola attività con un gruppo: capire a chi serve, organizzare quello che occorre e farla durare.",
+          "detail": "Far partire una piccola attività con un gruppo: capire a chi serve, organizzare quello che occorre e farla durare.",
           "weights": {
             "organizzazione": 2,
             "risorse": 1
@@ -1061,11 +1061,11 @@
       "title": "Che cosa vorresti saper fare?",
       "scenario": "Guarda ai prossimi anni. Puoi scegliere un traguardo che oggi ti sembra lontano: la scuola serve anche a costruire capacità nuove.",
       "question": "Quale traguardo ti motiverebbe di più?",
-      "area": "Aspirazioni",
+      "area": "Traguardi",
       "options": [
         {
           "id": "aspirazioni-1",
-          "label": "Prendere decisioni consapevoli",
+          "label": "Decidere con i conti in mano",
           "text": "Capire numeri, costi e regole per gestire bene un progetto o un’attività.",
           "detail": "Capire numeri, costi e regole per gestire bene un progetto o un’attività.",
           "weights": {
@@ -1082,8 +1082,8 @@
         {
           "id": "aspirazioni-2",
           "label": "Passare dall’idea al programma",
-          "text": "Creare uno strumento digitale affidabile, controllando che dati e istruzioni funzionino.",
-          "detail": "Creare uno strumento digitale affidabile, controllando che dati e istruzioni funzionino.",
+          "text": "Creare un programma che funziona davvero, controllando dati e istruzioni.",
+          "detail": "Creare un programma che funziona davvero, controllando dati e istruzioni.",
           "weights": {
             "dati": 2,
             "progetto": 1
@@ -1097,7 +1097,7 @@
         },
         {
           "id": "aspirazioni-3",
-          "label": "Comunicare e organizzare esperienze",
+          "label": "Far conoscere un territorio",
           "text": "Usare più lingue e organizzare una visita che faccia conoscere bene un territorio.",
           "detail": "Usare più lingue e organizzare una visita che faccia conoscere bene un territorio.",
           "weights": {
@@ -1113,7 +1113,7 @@
         },
         {
           "id": "aspirazioni-4",
-          "label": "Comprendere e sostenere",
+          "label": "Capire e aiutare le persone",
           "text": "Capire meglio le persone, comunicare con attenzione e progettare attività adatte ai loro bisogni.",
           "detail": "Capire meglio le persone, comunicare con attenzione e progettare attività adatte ai loro bisogni.",
           "weights": {
@@ -1130,8 +1130,8 @@
         {
           "id": "aspirazioni-5",
           "label": "Misurare e progettare",
-          "text": "Leggere un territorio e trasformare un’idea in un disegno tecnico con misure e vincoli.",
-          "detail": "Leggere un territorio e trasformare un’idea in un disegno tecnico con misure e vincoli.",
+          "text": "Osservare un luogo e trasformare un’idea in un disegno tecnico, con le misure giuste.",
+          "detail": "Osservare un luogo e trasformare un’idea in un disegno tecnico, con le misure giuste.",
           "weights": {
             "progetto": 2,
             "territorio": 1

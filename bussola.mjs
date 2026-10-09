@@ -62,7 +62,7 @@ function renderQuestion() {
   const fieldset = el('fieldset', null, 'choices');
   fieldset.append(el('legend', situation.question));
   const list = el('div', null, 'choice-list');
-  const next = button(state.index === situations.length-1 ? 'Scopri il tuo orientamento' : 'Continua →', () => advance(state.answers[situation.id]));
+  const next = button(state.index === situations.length-1 ? 'Vedi il risultato' : 'Continua', () => advance(state.answers[situation.id]));
   next.disabled = !situation.options.some(o => o.id === state.answers[situation.id]);
   for (const option of situation.options) {
     list.append(choice(option, 'radio', 'scenario-choice', state.answers[situation.id] === option.id, () => {
@@ -76,10 +76,10 @@ function renderQuestion() {
     state.index -= 1; persist(state); renderQuestion();
   }, 'explore-button secondary');
   back.disabled = state.index === 0;
-  footer.append(back, button('Non so ancora · passo', () => advance(null), 'skip-button'), next);
+  footer.append(back, button('Non lo so ancora', () => advance(null), 'skip-button'), next);
   const context = el('div', null, 'question-context'); const copy = el('div');
   copy.append(el('p', situation.area, 'question-area'), heading, scenario); context.append(copy, questionArt(situation.id));
-  questions.replaceChildren(progressBox, context, el('p', 'Scegli la proposta più vicina a te oggi. Se sei indeciso, puoi passare e tornarci dopo.', 'plain-note'), fieldset, footer);
+  questions.replaceChildren(progressBox, context, fieldset, footer);
   focusHeading(questions);
 }
 
@@ -92,7 +92,7 @@ function courseCard(item, highlighted = false, direction = null) {
   copy.append(el('p', course.code, 'course-tag'), el('h3', course.name));
   head.append(copy, courseArt(course.id)); card.append(head);
   if (highlighted) {
-    card.append(el('h4', 'Perché approfondirlo'));
+    card.append(el('h4', 'Che cosa ti collega'));
     const traces = el('ul', null, 'direction-evidence');
     // Include interests and a different viewpoint, rather than repeating three similar curiosities.
     const evidence = [...item.evidence].sort((a, b) =>
@@ -103,7 +103,9 @@ function courseCard(item, highlighted = false, direction = null) {
     if (interest && !chosen.includes(interest)) chosen.push(interest);
     for (const trace of chosen) {
       const li = el('li');
-      li.append(el('span', trace.area, 'evidence-area'), el('q', trace.action), el('p', trace.reason));
+      // Nella scheda compare il titolo breve della risposta scelta: la frase intera resta in «Rileggi tutte le tue scelte».
+      const picked = situations.find(s => s.id === trace.situationId)?.options.find(o => o.text === trace.action);
+      li.append(el('span', trace.area, 'evidence-area'), el('q', picked?.label || trace.action), el('p', trace.reason));
       traces.append(li);
     }
     card.append(traces);
@@ -120,7 +122,7 @@ function courseCard(item, highlighted = false, direction = null) {
     const exportRow = el('div', null, 'certificate-action');
     const exportButton = button('Crea il tuo attestato', () => openCertificate(item, direction, situations, contacts, exportButton), 'explore-button secondary');
     exportButton.setAttribute('aria-label', `Crea il tuo attestato: ${course.name}`);
-    exportRow.append(exportButton, el('p', 'Conserva questa direzione in PDF o in un’immagine per Instagram.'));
+    exportRow.append(exportButton, el('p', 'Lo puoi salvare in PDF o come immagine.'));
     card.append(exportRow);
   }
   return card;
@@ -133,22 +135,22 @@ function renderResults() {
   const direction = suggestCourses(situations, courses, state.answers);
   const title = el('h2', 'Da dove potresti partire'); title.id = 'resultTitle';
   const hero = el('div', null, 'direction-intro');
-  hero.append(el('p', 'Il tuo orientamento di massima', 'explore-kicker'), title);
+  hero.append(el('p', 'Il tuo punto di partenza', 'explore-kicker'), title);
   const names = direction.selected.map(item => item.course.code === 'TUR' ? 'Turismo' : item.course.code);
   const joined = names.length > 1 ? `${names.slice(0,-1).join(', ')} e ${names.at(-1)}` : names[0];
   let message;
   if (!names.length) message = direction.reason === 'few'
-    ? 'Le risposte sono ancora poche per suggerire un punto di partenza. Puoi completare altre domande oppure esplorare tutti gli indirizzi.'
-    : 'Le tue scelte toccano interessi diversi, senza collegamenti ripetuti verso un indirizzo. Confronta le materie e prova le attività per capire che cosa vuoi approfondire.';
-  else if (direction.reason === 'tentative') message = `Un primo indizio porta verso ${joined}. Con altre risposte puoi verificare se questa direzione ritorna in situazioni diverse.`;
-  else if (direction.reason === 'mixed') message = `Le tue scelte aprono più direzioni: ${joined}. Puoi metterle a confronto partendo dalle ragioni e dalle materie qui sotto.`;
+    ? 'Le risposte sono ancora poche per indicare un punto di partenza. Puoi rispondere ad altre domande oppure guardare tutti gli indirizzi.'
+    : 'Le tue scelte toccano interessi diversi e nessun indirizzo ritorna più degli altri. Confronta le materie e prova le attività per capire che cosa vuoi approfondire.';
+  else if (direction.reason === 'tentative') message = `Per ora c’è un primo indizio verso ${joined}. Con altre risposte puoi vedere se ritorna.`;
+  else if (direction.reason === 'mixed') message = `Le tue scelte vanno in più direzioni: ${joined}. Mettile a confronto partendo dalle ragioni e dalle materie.`;
   else message = names.length === 1
-    ? `Le tue risposte suggeriscono di approfondire soprattutto ${joined}. Ecco quali scelte lo fanno emergere.`
-    : `Le tue risposte suggeriscono di partire dal confronto tra ${joined}. Ecco che cosa ti collega a ciascuno.`;
+    ? `Dalle tue risposte emerge soprattutto ${joined}. Ecco le scelte che lo fanno emergere.`
+    : `Dalle tue risposte emergono ${joined}. Ecco che cosa ti collega a ciascuno.`;
   hero.append(el('p', message, 'direction-lead'),
     el('p', `Hai risposto a ${direction.answeredCount} domande su ${situations.length}.`, 'plain-note'),
     el('p', names.length
-      ? 'È un’indicazione per esplorare: racconta gli interessi che hai espresso, non misura le tue capacità. Puoi sviluppare nuove predisposizioni e scegliere anche un altro percorso.'
+      ? 'È un punto di partenza, non un voto: racconta gli interessi che hai espresso oggi e non misura le tue capacità. Puoi cambiare idea e scegliere anche un altro percorso.'
       : 'Puoi iniziare dalle materie o da un’attività che ti incuriosisce. Gli interessi possono cambiare con nuove esperienze e le capacità si possono sviluppare.', 'direction-note'));
   results.replaceChildren(hero);
   if (direction.selected.length) {
@@ -163,7 +165,7 @@ function renderResults() {
     catalog.open = !direction.selected.length;
     catalog.append(el('summary', direction.selected.length ? 'Confronta anche gli altri indirizzi' : 'Esplora i cinque indirizzi'));
     catalog.append(el('p', names.length
-      ? 'Ogni indirizzo offre modi diversi di imparare. Qui trovi anche i percorsi che nelle tue risposte sono comparsi meno.'
+      ? 'Qui trovi anche gli indirizzi che nelle tue risposte sono comparsi meno.'
       : 'Confronta che cosa si studia in ogni percorso e scegli un’attività da provare.'));
     const grid = el('div', null, 'discovery-courses');
     for (const item of other) grid.append(courseCard(item));
@@ -184,7 +186,7 @@ function renderResults() {
     const li = el('li'); li.append(el('strong', situation.title), el('span', selected?.text || 'Hai passato questa situazione.')); list.append(li);
   }
   recap.append(list); results.append(recap);
-  results.append(el('p', 'Per fare il passo successivo, confronta due materie, prova un’attività e porta una domanda ai docenti durante l’orientamento.', 'next-step'));
+  results.append(el('p', 'Il passo successivo: confronta due materie, prova un’attività e porta una domanda ai docenti durante l’orientamento.', 'next-step'));
   const row = el('div', null, 'action-row');
   row.append(button('Rivedi le domande', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
   results.append(row);
