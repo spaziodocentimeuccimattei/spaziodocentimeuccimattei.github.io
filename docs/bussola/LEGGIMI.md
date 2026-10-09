@@ -87,3 +87,21 @@ Salvatore ha autorizzato il completamento e la pubblicazione il 4 ottobre 2026, 
 ## Completamento visivo per il rilascio
 
 Otto illustrazioni del contesto delle domande, schema SIA con evidenziazione dei codici correlati, mappa Turismo che segue le selezioni, tre categorie SSAS aggiornate dalle carte scelte e foto della sede nei contatti. Questi elementi completano budget AFM e piante CAT già realizzati. Nessun segnaposto fotografico né foto artificiale di attività della scuola. Le pagine pubbliche non includono spiegazioni di progettazione.
+
+## Revisione di testi e grafica — 9 ottobre 2026 (Claude, su richiesta di Salvatore)
+
+Regole decise da Salvatore il 9 ottobre 2026 per tutte le pagine rivolte a ragazzi e famiglie. Valgono anche per i laboratori nuovi (AFM, SIA, CAT) prima dell’integrazione.
+
+- **Telefono prima di tutto.** Una schermata deve stare in una o due altezze di telefono. Poco testo in vista; il dettaglio si apre a richiesta.
+- **Testi al sodo.** Nessuna frase che spiega com’è fatta la pagina o che annuncia contenuti futuri; nessuna istruzione ripetuta a ogni schermata; titoli come domande o descrizioni, non slogan; parole che un tredicenne usa.
+- **Niente maiuscolo.** Etichette e titoletti in minuscolo normale.
+- **Contrasto misurato.** Testo normale almeno 7:1 sullo sfondo, mai sotto 4,5:1. Niente testo semitrasparente su fondi colorati.
+- **Titoli che non si toccano.** Interlinea dei titoli mai sotto 1; sui telefoni almeno 1,06.
+- **Versioni dei file.** A ogni modifica di un CSS o di un modulo si cambia il numero di versione nel collegamento (`?v=`).
+
+Che cosa è cambiato nei file condivisi rispetto al commit `381b2c0`:
+
+- `portal.css`, `indirizzi.css`, `una-scuola-da-vivere.css`, `territorio.css`, `globals.css`, `turismo.css`: regole aggiunte in coda per i telefoni (interlinea e spaziatura dei titoli, navigazione che va a capo, mappa dei docenti, motivo grafico dell’accoglienza, cartellino della mappa Turismo). Nessuna regola esistente è stata tolta.
+- `bussola.css`: blocco finale limitato a `.bussola-page` (ingresso, domanda, risultato ad alto contrasto, barra dei comandi fissa). Le altre pagine che caricano `bussola.css` non cambiano.
+- `bussola.mjs`: tolta la frase di istruzioni ripetuta a ogni domanda; frasi del risultato più dirette; nelle schede del risultato compare il titolo breve (`label`) della risposta. Nessuna modifica alla logica.
+- `data/bussola.json`: riviste alcune etichette (`label`), frasi (`text`, `detail`), aree e il titolo e lo scenario della domanda `predisposizioni`. ID, pesi, `courseLinks` e ordine sono identici. `node scripts/verifica-bussola.mjs 20000` senza avvisi.
