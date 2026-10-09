@@ -408,3 +408,19 @@
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* Titoli leggibili: le righe non si toccano; sui telefoni hanno più aria e lettere meno strette. */
+.study-hero .hero-copy h1 { line-height: 1; letter-spacing: -.055em; }
+.route-summary strong { line-height: 1; }
+.section-intro h2, .common-skills h2 { line-height: 1.04; }
+.card-title h3 { line-height: 1.06; }
+@media (max-width: 760px) {
+  .study-hero .hero-copy h1 { line-height: 1.06; letter-spacing: -.04em; }
+  .section-intro h2, .common-skills h2 { line-height: 1.1; letter-spacing: -.04em; }
+  .card-title h3 { line-height: 1.12; letter-spacing: -.035em; }
+}
+@media (max-width: 400px) {
+  /* Sugli schermi più stretti i due numeri stanno uno sotto l'altro, senza tagliarsi */
+  .route-summary { grid-template-columns: 1fr; }
+  .route-summary a + a { border-left: 0; border-top: 1px solid rgb(255 255 255 / 20%); }
+}

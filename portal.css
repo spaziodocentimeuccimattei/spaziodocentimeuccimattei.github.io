@@ -360,3 +360,11 @@ input::placeholder, textarea::placeholder { color: #718692; opacity: 1; }
 .group-card header p { color: #fff; }
 .group-studenti { background: linear-gradient(145deg, #006733, var(--green)); }
 .group-medie { background: linear-gradient(145deg, #17656b, #437300); }
+
+/* Telefoni: i titoli grandi non devono avere righe che si toccano e la navigazione va a capo invece di essere tagliata. */
+.hero h1, .orientation-hero h1 { line-height: 1.02; }
+.area-content h3, .group-card h3, .curriculum-copy h3 { line-height: 1.1; }
+@media (max-width: 760px) {
+  .page-nav { flex-wrap: wrap; overflow-x: visible; }
+  .hero h1, .orientation-hero h1 { line-height: 1.06; letter-spacing: -.04em; }
+}

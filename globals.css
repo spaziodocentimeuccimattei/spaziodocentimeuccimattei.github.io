@@ -242,3 +242,11 @@ button, [role="button"] { touch-action: manipulation; }
   .slides-track { display: block; transform: none !important; }
   .slide { min-width: 0; height: 100vh; page-break-after: always; overflow: hidden; }
 }
+
+/* Telefoni: titoli con righe che non si toccano; il motivo grafico resta nell'angolo e non passa sotto le scritte. */
+.teacher-callout h3 { line-height: 1.08; }
+.closing-message h2 { line-height: 1.02; }
+@media (max-width: 640px) {
+  .motif-top { width: 44vw; height: 98px; top: -52px; right: -10px; opacity: .6; }
+  .slide-heading p { max-width: 58%; }
+}

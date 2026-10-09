@@ -168,3 +168,9 @@ tfoot td { color: var(--navy); background: #e9f1f3; font-size: .76rem; font-weig
   html { scroll-behavior: auto; }
   .map-node, .data-disclosure summary b { transition: none; }
 }
+
+/* Telefoni: il titolo grande non deve avere righe che si toccano. */
+.territory-hero h1 { line-height: 1.02; }
+@media (max-width: 760px) {
+  .territory-hero h1 { font-size: clamp(2.2rem, 11.5vw, 4.4rem); line-height: 1.08; letter-spacing: -.05em; }
+}

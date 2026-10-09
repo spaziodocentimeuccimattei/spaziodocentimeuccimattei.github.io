@@ -28,3 +28,6 @@
 [hidden]{display:none!important}.status-line{flex-wrap:wrap}.demo-bar a{color:inherit}#classNames{display:grid;grid-template-columns:1fr 1fr;gap:16px}#classResumeLink{display:inline-block;overflow-wrap:anywhere}.plain-button{background:transparent;color:var(--ink);border:1px solid var(--line);padding:10px 16px;border-radius:12px}#classMessage{margin-top:16px}#classDialog label{display:block;margin-top:14px}#classSubmit{margin-top:20px}.field-help{font-size:.9rem;line-height:1.6;color:var(--muted)}#certificateForm label{display:block}#certificateName{display:block;width:100%}@media(max-width:520px){#classNames{grid-template-columns:1fr}}
 
 .certificate-call{flex-wrap:wrap}.certificate-call a.secondary{text-decoration:none}
+
+/* Telefoni: il cartellino sta sotto la mappa, così non copre le etichette dei luoghi. */
+@media(max-width:520px){.stamp{position:static;width:fit-content;margin:12px auto 16px;transform:rotate(-2deg)}}
