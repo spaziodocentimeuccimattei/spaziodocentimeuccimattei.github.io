@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cinque laboratori · Bussola SSAS</title><meta name="description" content="Cinque laboratori di salute, relazione, cura e autonomia, creatività e progettazione."><link rel="stylesheet" href="ssas-labs.css?v=20261009-stile"></head>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cinque laboratori · Bussola SSAS</title><meta name="description" content="Cinque laboratori di salute, relazione, cura e autonomia, creatività e progettazione."><link rel="stylesheet" href="ssas-labs.css?v=20261010-ssas"></head>
 <body><a href="#main" class="skip">Vai all’attività</a>
 <div class="preview-strip"><span>Bussola per l’orientamento · SSAS</span><span>Cinque laboratori</span></div>
 <header class="site-head"><a class="brand" href="bussola.html"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" alt=""><span>Bussola<small>IIS Meucci - Mattei | Decimomannu</small></span></a><div class="head-actions"><button type="button" id="openClass" class="plain-button">La mia classe</button><button type="button" id="openNotes" class="plain-button">Le mie note <span id="noteCount">0</span></button></div></header>
@@ -23,5 +23,5 @@
 if(location.protocol==='file:'){
  const p=document.createElement('p');p.textContent='Apri l’esperienza dal server locale per svolgere e salvare le attività. ';
  const a=document.createElement('a');a.href='http://127.0.0.1:8766/bussola-ssas.html';a.textContent='Apri i cinque laboratori';p.append(a);document.getElementById('workspace').append(p);
-}else import('./ssas-labs.mjs?v=20261009-cat').catch(()=>{document.getElementById('workspace').textContent='L’attività non si è caricata. Ricarica la pagina; il lavoro salvato resta sul dispositivo.';});
+}else import('./ssas-labs.mjs?v=20261010-ssas').catch(()=>{document.getElementById('workspace').textContent='L’attività non si è caricata. Ricarica la pagina; il lavoro salvato resta sul dispositivo.';});
 </script></body></html>
