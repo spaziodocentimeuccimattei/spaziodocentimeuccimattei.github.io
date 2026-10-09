@@ -355,3 +355,8 @@ input::placeholder, textarea::placeholder { color: #718692; opacity: 1; }
   .visual-footer-brand { gap: 18px; }
   .visual-footer-brand img { width: 112px; }
 }
+
+/* Leggibilità delle schede in home: testo bianco pieno e fondi abbastanza scuri (contrasto almeno 4.5:1). */
+.group-card header p { color: #fff; }
+.group-studenti { background: linear-gradient(145deg, #006733, var(--green)); }
+.group-medie { background: linear-gradient(145deg, #17656b, #437300); }
