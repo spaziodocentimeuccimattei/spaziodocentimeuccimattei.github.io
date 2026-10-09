@@ -66,6 +66,6 @@ export function itineraryMap(options,selected){
  const positions=[[78,65],[330,65],[78,175],[330,175]];
  const node=(tag,attrs,text)=>{const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(text)n.textContent=text;svg.append(n);return n;};
  node('rect',{x:8,y:8,width:424,height:224,rx:20,fill:'#fff'});node('path',{d:'M78 65H330V175H78V65',fill:'none',stroke:'#c4d2d6','stroke-width':8,'stroke-dasharray':'8 10'});
- options.forEach((o,i)=>{const [x,y]=positions[i];const picked=selected.includes(o.id);node('circle',{cx:x,cy:y,r:20,fill:picked?'#b30b47':'#edf2f3',stroke:'#b30b47','stroke-width':2});node('text',{x,y:y+6,'text-anchor':'middle',fill:picked?'#fff':'#123c57','font-size':18,'font-weight':700},picked?'✓':String(i+1));node('text',{x,y:y+39,'text-anchor':'middle',fill:'#123c57','font-size':15},['Piazza','Museo','Torre · scale','Giardino'][i]);});
+ options.forEach((o,i)=>{const [x,y]=positions[i];const picked=selected.includes(o.id);node('circle',{cx:x,cy:y,r:20,fill:picked?'#006733':'#edf2f3',stroke:'#006733','stroke-width':2});node('text',{x,y:y+6,'text-anchor':'middle',fill:picked?'#fff':'#123c57','font-size':18,'font-weight':700},picked?'✓':String(i+1));node('text',{x,y:y+39,'text-anchor':'middle',fill:'#123c57','font-size':15},['Piazza','Museo','Torre · scale','Giardino'][i]);});
  return svg;
 }

@@ -63,7 +63,7 @@ export function setJourney(stage) {
 export function contactsPanel(contacts, onReset) {
   const section = el('section', null, 'contacts-panel');
   section.id = 'contatti';
-  const title = el('h2', 'Non perdere il filo');
+  const title = el('h2', 'I contatti per l’orientamento');
   title.id = 'contactTitle';
   section.setAttribute('aria-labelledby', title.id);
   section.append(el('p', 'Resta in contatto', 'explore-kicker'), title,

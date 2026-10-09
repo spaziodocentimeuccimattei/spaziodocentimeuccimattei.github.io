@@ -2,8 +2,8 @@ import { el, button } from './bussola-ui.mjs';
 import { firstName, certificateModel, imagePdf } from './bussola-attestato-core.mjs';
 
 const palettes = {
-  afm: ['#006b63', '#daf2e9'], sia: ['#477b00', '#edf8d9'], turismo: ['#b30b47', '#fce5ed'],
-  ssas: ['#7a397d', '#f3e6f5'], cat: ['#12667e', '#e1f2f7'],
+  afm: ['#123c57', '#e3edf3'], sia: ['#477b00', '#edf8d9'], turismo: ['#006733', '#e0f3e8'],
+  ssas: ['#c4084f', '#fce4ee'], cat: ['#006b63', '#daf2e9'],
 };
 const formats = { instagram: [1080, 1350], pdf: [1080, 1528] };
 let assets;
@@ -18,7 +18,7 @@ function loadImage(src) {
 async function artwork() {
   if (!assets) {
     assets = Promise.all([
-      loadImage('assets/decimomannu-cresce-qui-contesto.png'),
+      loadImage('assets/logo-meucci-mattei-decimomannu.jpeg'),
       loadImage('assets/qr-orientamento.svg'),
       loadImage('assets/bussola-spazio-condiviso.jpeg'),
     ]).then(([logo, qr, coverImage]) => ({ logo, qr, coverImage }));
@@ -65,13 +65,16 @@ export function drawCertificate(canvas, model, name, format, images, scale = 1) 
   const ink = '#123c57', paper = '#faf5ea';
   ctx.fillStyle = paper; ctx.fillRect(0, 0, width, height);
   ctx.fillStyle = ink; ctx.fillRect(0, 0, width, 144);
-  // Reuse the exact institutional logo crop already shown in the site header.
-  ctx.drawImage(images.logo, 220, 0, 610, 150, 40, 20, 410, 101);
-  textBlock(ctx, 'LA MIA BUSSOLA', 760, 62, 280, 24, 700, '#ffffff');
-  textBlock(ctx, 'Attestato di esplorazione', 760, 94, 280, 20, 400, '#c9f981');
+  // Lo stesso marchio dell'intestazione del sito, intero e senza ritagli.
+  box(ctx, 40, 20, 104, 104, '#ffffff', 16);
+  ctx.drawImage(images.logo, 44, 24, 96, 96);
+  textBlock(ctx, 'IIS Meucci - Mattei', 166, 66, 560, 34, 700, '#ffffff');
+  textBlock(ctx, 'Decimomannu', 166, 104, 560, 26, 400, '#c9f981');
+  textBlock(ctx, 'La mia Bussola', 760, 62, 280, 26, 700, '#ffffff');
+  textBlock(ctx, 'Attestato di esplorazione', 760, 96, 280, 21, 400, '#c9f981');
   const greeting = firstName(name) || 'La mia Bussola';
   fittedLine(ctx, greeting, 48, 223 + extra * .12, 984, 58, 700, ink);
-  textBlock(ctx, 'INDIRIZZO DA APPROFONDIRE', 48, 279 + extra * .24, 984, 20, 700, color);
+  textBlock(ctx, 'Indirizzo da approfondire', 48, 279 + extra * .24, 984, 24, 700, color);
   textBlock(ctx, model.course.code, 48, 372 + extra * .30, 260, 96, 800, color);
   let courseSize = 36; font(ctx, courseSize, 700);
   while (lines(ctx, model.course.name, 646).length > 3 && courseSize > 28) { courseSize--; font(ctx, courseSize, 700); }
@@ -87,7 +90,7 @@ export function drawCertificate(canvas, model, name, format, images, scale = 1) 
     0, photoY, width, photoHeight);
   box(ctx, 800, photoY + photoHeight - 34, 262, 26, 'rgba(18,60,87,.85)', 4);
   textBlock(ctx, 'Immagine illustrativa', 812, photoY + photoHeight - 15, 238, 17, 400, '#ffffff');
-  textBlock(ctx, 'NELLE MIE RISPOSTE', 48, 956 + extra * .70, 984, 19, 700, color);
+  textBlock(ctx, 'Nelle mie risposte', 48, 956 + extra * .70, 984, 22, 700, color);
   model.traces.forEach((trace, index) => {
     const x = 48 + index * 500, y = 974 + extra * .70;
     box(ctx, x, y, 484, 75, fill, 12);
@@ -132,9 +135,9 @@ export function openCertificate(item, direction, situations, contacts, trigger) 
   const privacy = el('p', 'Il nome viene aggiunto solo al file. Non viene salvato dalla Bussola né inviato alla scuola.', 'plain-note'); privacy.id = 'certificatePrivacy';
   const formatLabel = el('label', 'Formato'); formatLabel.htmlFor = 'certificateFormat';
   const select = el('select'); select.id = 'certificateFormat';
-  const pngOption = el('option', 'Immagine per Instagram · 1080 × 1350'); pngOption.value = 'instagram';
+  const pngOption = el('option', 'Immagine · 1080 × 1350'); pngOption.value = 'instagram';
   const pdfOption = el('option', 'PDF A4 · da conservare o stampare'); pdfOption.value = 'pdf';
-  select.append(pngOption, pdfOption);
+  select.append(pdfOption, pngOption);
   const status = el('p', 'Caricamento dell’anteprima…', 'certificate-status'); status.setAttribute('role', 'status');
   const canvas = el('canvas', 'Anteprima dell’attestato.', 'certificate-preview'); canvas.setAttribute('role', 'img');
   let images, failed = false;
@@ -143,7 +146,7 @@ export function openCertificate(item, direction, situations, contacts, trigger) 
     try { drawCertificate(canvas, model, name.value, select.value, images); failed = false; download.disabled = false; status.textContent = ''; }
     catch { failed = true; download.disabled = true; status.textContent = 'Anteprima non disponibile. Chiudi e riprova.'; }
   };
-  const download = button('Scarica immagine', async () => {
+  const download = button('Scarica PDF A4', async () => {
     if (failed || !images) return;
     download.disabled = true; name.disabled = true; select.disabled = true;
     status.textContent = 'Preparazione del file…';
@@ -162,7 +165,7 @@ export function openCertificate(item, direction, situations, contacts, trigger) 
       const anchor = el('a'); anchor.href = url; anchor.download = `la-mia-bussola-${model.course.id}.${format === 'pdf' ? 'pdf' : 'png'}`;
       dialog.append(anchor); anchor.click(); anchor.remove();
       setTimeout(() => URL.revokeObjectURL(url), 30000);
-      status.textContent = format === 'pdf' ? 'PDF pronto. Aprilo per stamparlo.' : 'Immagine pronta. Puoi caricarla su Instagram dal tuo dispositivo.';
+      status.textContent = format === 'pdf' ? 'PDF pronto. Aprilo per stamparlo.' : 'Immagine pronta: la trovi tra i file scaricati.';
     } catch { status.textContent = 'Il file non si è creato. Riprova o scegli l’altro formato.'; }
     finally { if (dialog.isConnected) { download.disabled = false; name.disabled = false; select.disabled = false; } }
   });

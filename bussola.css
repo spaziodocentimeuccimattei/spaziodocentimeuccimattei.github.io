@@ -162,12 +162,12 @@
 .discovery-course ul { padding-left: 22px; }
 .discovery-course .action-row { align-items: stretch; flex-direction: column; }
 @media (max-width: 760px) { .discovery-courses { grid-template-columns: 1fr; } }
-/* Course accents echo the original campaign logo; text stays dark and readable. */
-[data-course="afm"] { --course-color:#006b63; --art-fill:#daf2e9; }
+/* Colori degli indirizzi: gli stessi della home, della pagina per le famiglie e della pagina degli indirizzi. */
+[data-course="afm"] { --course-color:#123c57; --art-fill:#e3edf3; }
 [data-course="sia"] { --course-color:#477b00; --art-fill:#edf8d9; }
-[data-course="turismo"] { --course-color:#b30b47; --art-fill:#fce5ed; }
-[data-course="cat"] { --course-color:#12667e; --art-fill:#e1f2f7; }
-[data-course="ssas"] { --course-color:#7a397d; --art-fill:#f3e6f5; }
+[data-course="turismo"] { --course-color:#006733; --art-fill:#e0f3e8; }
+[data-course="cat"] { --course-color:#006b63; --art-fill:#daf2e9; }
+[data-course="ssas"] { --course-color:#c4084f; --art-fill:#fce4ee; }
 .compass-intro { padding:0; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:0; overflow:hidden; }
 .compass-intro > div { padding:clamp(26px,4vw,48px); }
 .compass-intro #introTitle { font-size:clamp(2.5rem,4vw,4rem); }
@@ -189,7 +189,7 @@
 .amount-visual progress { accent-color:#58bba9; display:block; width:100%; height:16px; }
 .amount-visual.over-limit { border:3px solid #d10a4f; }
 .route-visual { padding:0; list-style:none; display:grid; gap:10px; }
-.route-visual li { padding:12px 16px; border-left:4px solid #b30b47; background:#fff; border-radius:0 12px 12px 0; }
+.route-visual li { padding:12px 16px; border-left:4px solid #006733; background:#fff; border-radius:0 12px 12px 0; }
 .route-visual strong,.route-visual span { display:block; }
 .workspace-records,.workspace-layout { grid-template-columns:1fr; }
 .workspace-layout .choice-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -212,11 +212,11 @@
 .bridge-courses p { margin:8px 0 0; font-size:1rem; }
 .bridge-link { display:inline-flex; align-items:center; min-height:44px; color:#006b63; font-weight:800; }
 .study-card .course-art { height:110px; margin:0 0 16px; }
-.art-afm { color:#006b63; --art-fill:#daf2e9; }
+.art-afm { color:#123c57; --art-fill:#e3edf3; }
 .art-sia { color:#477b00; --art-fill:#edf8d9; }
-.art-turismo { color:#b30b47; --art-fill:#fce5ed; }
-.art-cat { color:#12667e; --art-fill:#e1f2f7; }
-.art-ssas { color:#7a397d; --art-fill:#f3e6f5; }
+.art-turismo { color:#006733; --art-fill:#e0f3e8; }
+.art-cat { color:#006b63; --art-fill:#daf2e9; }
+.art-ssas { color:#c4084f; --art-fill:#fce4ee; }
 
 .question-context { display:grid; grid-template-columns:minmax(0,1fr) 180px; align-items:center; gap:24px; }
 .question-art { width:100%; height:130px; }
@@ -226,7 +226,7 @@
 .related-record { border:3px solid #477b00; box-shadow:0 0 0 3px #edf8d9; }
 .itinerary-map { display:block; width:100%; max-width:520px; margin:10px auto; }
 .observation-visual { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-bottom:20px; }
-.observation-kind { padding:18px; border:2px solid #7a397d; border-radius:14px; background:white; }
+.observation-kind { padding:18px; border:2px solid #c4084f; border-radius:14px; background:white; }
 .observation-kind h3 { font-size:1.1rem; margin:0 0 10px; }
 .observation-kind p { margin:8px 0; }
 .observation-kind ul { padding-left:20px; }

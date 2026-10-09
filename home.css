@@ -48,6 +48,7 @@
 .step-card .btn svg { width: 1.2em; height: 1.2em; transition: transform var(--motion-base) var(--ease-standard); }
 .step-card .btn:hover svg { transform: translateX(4px); }
 .steps + .calm { margin-top: 18px; }
+.calm + .roads { margin-top: 18px; }
 .s-green .calm li { border-color: rgb(255 255 255 / 60%); background: #00522a; }
 
 @media (max-width: 900px) {
