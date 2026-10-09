@@ -1,4 +1,4 @@
-import {completion,courseDetails} from './bussola-records-core.mjs?v=20261009-turismo';
+import {completion,courseDetails} from './bussola-records-core.mjs?v=20261009-cat';
 import {restoreProject,summaryItems,LABS} from './ssas-labs-core.mjs';
 
 export function certificateName(value){

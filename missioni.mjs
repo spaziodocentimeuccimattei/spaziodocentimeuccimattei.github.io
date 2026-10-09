@@ -17,6 +17,7 @@ function openCatalog(updateUrl = true) {
 }
 
 function openMission(id, updateUrl = true) {
+  if (id === 'cat') { window.location.assign('bussola-cat.html'); return; }
   if (id === 'turismo') { window.location.assign('bussola-turismo.html'); return; }
   if (id === 'ssas') { window.location.assign('bussola-ssas.html'); return; }
   current = missions.find(m => m.id === id);
@@ -191,8 +192,8 @@ async function initialize() {
     for (const course of courses) {
       const mission=missions.find(m=>m.id===course.id);
       const card=el('article',null,'mission-card'); card.dataset.course=course.id; card.append(courseArt(course.id));
-      const isSSAS=course.id==='ssas',isTur=course.id==='turismo';
-      card.append(el('p',course.code,'explore-kicker'),el('h2',isSSAS||isTur?'Cinque laboratori, un percorso personale':mission.title),el('p',course.name,'activity-course-name'),el('p',isSSAS?'Salute, relazione, cura e autonomia, creatività e progettazione':isTur?'Territorio, lingue e accoglienza, esperienze, impresa e servizi, comunicazione':mission.subject),isSSAS||isTur?link(`Prova ${course.code}`,isTur?'bussola-turismo.html':'bussola-ssas.html'):button(`Prova ${course.code}`,()=>openMission(course.id)));
+      const isSSAS=course.id==='ssas',isTur=course.id==='turismo',isCat=course.id==='cat';
+      card.append(el('p',course.code,'explore-kicker'),el('h2',isSSAS||isTur||isCat?'Cinque laboratori, un percorso personale':mission.title),el('p',course.name,'activity-course-name'),el('p',isSSAS?'Salute, relazione, cura e autonomia, creatività e progettazione':isCat?'Rilievo, spazi, materiali, Archeodesign e risorse':isTur?'Territorio, lingue e accoglienza, esperienze, impresa e servizi, comunicazione':mission.subject),isSSAS||isTur||isCat?link(`Prova ${course.code}`,isCat?'bussola-cat.html':isTur?'bussola-turismo.html':'bussola-ssas.html'):button(`Prova ${course.code}`,()=>openMission(course.id)));
       cards.append(card);
     }
     contactsMount.replaceChildren(contactsPanel(contacts,()=>{

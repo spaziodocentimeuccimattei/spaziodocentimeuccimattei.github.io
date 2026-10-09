@@ -1,0 +1,95 @@
+{
+  "data": "2026-10-09T18:50:13.375Z",
+  "tests": 21,
+  "result": "superato",
+  "combinations": {
+    "estimates": 24,
+    "phasePlans": 72
+  },
+  "results": [
+    {
+      "name": "L’ingresso non consente avanzamento prima di iniziare",
+      "result": "superato"
+    },
+    {
+      "name": "Tutti i dieci passaggi sono richiesti per completare",
+      "result": "superato"
+    },
+    {
+      "name": "Un elaborato non composto non consente di proseguire",
+      "result": "superato"
+    },
+    {
+      "name": "Una casella occupata non cancella né sovrascrive attività",
+      "result": "superato"
+    },
+    {
+      "name": "Non si collocano attività fuori dalla griglia",
+      "result": "superato"
+    },
+    {
+      "name": "L’area piccola conserva una vecchia posizione e chiede di ricollocarla",
+      "result": "superato"
+    },
+    {
+      "name": "Il passaggio segnala conflitto e vicinanza senza assegnare voti",
+      "result": "superato"
+    },
+    {
+      "name": "Spostare una zona richiede una nuova prova ma conserva la precedente",
+      "result": "superato"
+    },
+    {
+      "name": "Cambiare percorso invalida il controllo corrente",
+      "result": "superato"
+    },
+    {
+      "name": "Servono sole e pioggia sulla medesima soluzione attuale",
+      "result": "superato"
+    },
+    {
+      "name": "Cambiare materiali invalida anche il computo, non Archeodesign",
+      "result": "superato"
+    },
+    {
+      "name": "Cambiare soltanto il titolo del rilievo richiede di ricomporre la tavola",
+      "result": "superato"
+    },
+    {
+      "name": "Cambiare l’area invalida rilievo, pianta, materiali e stima",
+      "result": "superato"
+    },
+    {
+      "name": "Dati e ipotesi sono distinti anche senza ricostruzione",
+      "result": "superato"
+    },
+    {
+      "name": "La modifica della legenda richiede un nuovo confronto",
+      "result": "superato"
+    },
+    {
+      "name": "Stima e fasi coincidono per tutte le combinazioni proposte",
+      "result": "superato"
+    },
+    {
+      "name": "Anche un piano fuori budget può essere completato e discusso",
+      "result": "superato"
+    },
+    {
+      "name": "Cambiare fasi non cancella materiali né prove meteo",
+      "result": "superato"
+    },
+    {
+      "name": "Le note di alunno e docente restano righe autonome e contestualizzate",
+      "result": "superato"
+    },
+    {
+      "name": "La serializzazione conserva anche campi sconosciuti",
+      "result": "superato"
+    },
+    {
+      "name": "Formato sconosciuto e campi strutturali corrotti vengono rifiutati",
+      "result": "superato"
+    }
+  ]
+}

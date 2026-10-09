@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import {createClient} from "npm:@supabase/supabase-js@2.112.4";
+import {remoteProject as restoreCat} from './cat-core.mjs';
 import {remoteProject as restoreTur} from './turismo-core.mjs';
 import {restoreProject} from './ssas-core.mjs';
 const admin=createClient(Deno.env.get('SUPABASE_URL')??'',Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')??'',{auth:{persistSession:false,autoRefreshToken:false}});
@@ -21,7 +22,7 @@ Deno.serve(async req=>{
  try{
    const body=await req.text(); if(body.length>50000)return reply(req,{error:'Richiesta troppo grande.'},413);
    const p=JSON.parse(body); if(!p||typeof p!=='object'||Array.isArray(p))return reply(req,{error:'Richiesta non valida.'},400);
-   const corso=p.corso??'ssas';if(!['ssas','turismo'].includes(corso))return reply(req,{error:'Indirizzo non disponibile.'},400);
+   const corso=p.corso??'ssas';if(!['ssas','turismo','cat'].includes(corso))return reply(req,{error:'Indirizzo non disponibile.'},400);
    const tokenHash=await hash(token);
    let {data:person,error}=await admin.from('bussola_v2_partecipanti').select('id,expires_at').eq('token_hash',tokenHash).maybeSingle();
    if(error)throw error;
@@ -47,8 +48,8 @@ Deno.serve(async req=>{
    }
    if(p.action==='save'){
      if(!p.project||p.project.version!==1||!Number.isInteger(p.revision)||p.revision<0)return reply(req,{error:'Formato del progetto non valido.'},400);
-     if(corso==='ssas'&&(p.project.course==='tur'||p.project.format))return reply(req,{error:'Il progetto non appartiene a questo indirizzo.'},400);
-     const payload=corso==='turismo'?restoreTur(p.project):restoreProject(p.project);if(!payload)return reply(req,{error:'Formato del progetto non valido.'},400);
+     if(corso==='ssas'&&(p.project.course==='tur'||p.project.course==='cat'||p.project.format))return reply(req,{error:'Il progetto non appartiene a questo indirizzo.'},400);
+     const payload=corso==='cat'?restoreCat(p.project):corso==='turismo'?restoreTur(p.project):restoreProject(p.project);if(!payload)return reply(req,{error:'Formato del progetto non valido.'},400);
      const saved=await admin.rpc('bussola_v2_salva',{p_partecipante:person.id,p_corso:corso,p_payload:payload,p_revision:p.revision});
      if(saved.error)throw saved.error;
      if(!saved.data)return reply(req,{error:'Il progetto è cambiato in un’altra finestra. Scarica il tuo lavoro prima di ricaricare.'},409);

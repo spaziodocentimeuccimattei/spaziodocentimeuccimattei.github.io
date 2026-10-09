@@ -1,4 +1,4 @@
-import {safeName,csvCell} from './bussola-records-core.mjs?v=20261009-turismo';
+import {safeName,csvCell} from './bussola-records-core.mjs?v=20261009-cat';
 const encoder=new TextEncoder();
 const join=chunks=>{const bytes=new Uint8Array(chunks.reduce((n,b)=>n+b.length,0));let offset=0;for(const b of chunks){bytes.set(b,offset);offset+=b.length;}return bytes;};
 // One image per A4 page; names are rendered with the browser's Unicode fonts.
@@ -29,4 +29,4 @@ export function zipFiles(files){
  const directory=join(central),end=new Uint8Array(22),v=new DataView(end.buffer);v.setUint32(0,0x06054b50,true);v.setUint16(8,files.length,true);v.setUint16(10,files.length,true);v.setUint32(12,directory.length,true);v.setUint32(16,offset,true);return join([...chunks,directory,end]);
 }
 export function certificatePath(record){const s=record.snapshot;return `${safeName(s.scuola+' '+s.comune)}/${safeName(s.classe+' '+s.anno)}/attestato-${safeName(s.cognome+' '+s.nome)}-${s.alunno_id.slice(0,8)}-${record.id}.pdf`;}
-export function certificateCSV(records){const rows=[['Scuola','Comune','Classe','Anno scolastico','Cognome','Nome','Percorso','Data','ID alunno','ID attestato','File'],...records.map(r=>{const s=r.snapshot;return [s.scuola,s.comune,s.classe,s.anno,s.cognome,s.nome,s.corso==='turismo'?'Turismo':'SSAS',r.created_at.slice(0,10),s.alunno_id,r.id,certificatePath(r)];})];return '\ufeff'+rows.map(row=>row.map(csvCell).join(';')).join('\r\n');}
+export function certificateCSV(records){const rows=[['Scuola','Comune','Classe','Anno scolastico','Cognome','Nome','Percorso','Data','ID alunno','ID attestato','File'],...records.map(r=>{const s=r.snapshot;return [s.scuola,s.comune,s.classe,s.anno,s.cognome,s.nome,s.corso==='cat'?'CAT Archeodesign':s.corso==='turismo'?'Turismo':'SSAS',r.created_at.slice(0,10),s.alunno_id,r.id,certificatePath(r)];})];return '\ufeff'+rows.map(row=>row.map(csvCell).join(';')).join('\r\n');}

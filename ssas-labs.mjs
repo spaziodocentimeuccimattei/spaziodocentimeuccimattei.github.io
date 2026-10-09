@@ -1,5 +1,5 @@
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261008-codice';
-import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261009-turismo';
+import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261009-cat';
 import {GUIDE,cursor,guideIssues,titleDefaults,storyBranch} from './ssas-guided-core.mjs';
 import {FORMAT,LABS,CONDITIONS,OPENINGS,PARTICIPATION,PERSONS,GOALS,SETTINGS,SERVICES,ACCESS,CHECKS,freshProject,restoreProject,issues,beginRevision,summaryItems,xml} from './ssas-labs-core.mjs?v=20261008';
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');
