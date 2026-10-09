@@ -1,5 +1,6 @@
-import {certificateName,participantCertificate} from './bussola-attestato-alunno-core.mjs';
-import {certificateCanvas,downloadCertificate} from './bussola-attestati-render.mjs?v=20261008-attestato';
+import {COURSE_NAMES} from './bussola-records-core.mjs?v=20261009-turismo';
+import {certificateName,participantCertificate} from './bussola-attestato-alunno-core.mjs?v=20261009-turismo';
+import {certificateCanvas,downloadCertificate} from './bussola-attestati-render.mjs?v=20261009-turismo';
 
 export function setupParticipantCertificate(ctx){
  const $=id=>document.getElementById(id),dialog=$('certificateDialog');
@@ -7,7 +8,7 @@ export function setupParticipantCertificate(ctx){
  const message=text=>{$('certificateStatus').textContent=text;};
  function release(){if(url?.startsWith('blob:'))URL.revokeObjectURL(url);url=null;}
  function hideResult(){release();$('certificateResult').hidden=true;$('certificateSheet').replaceChildren();$('certificateDownload').removeAttribute('href');}
- function stamp(){const j=ctx.project().labJourney;if(!/^[0-9a-f-]{36}$/i.test(j.attestato?.id)||!Number.isFinite(Date.parse(j.attestato?.date))){j.attestato={...j.attestato,id:crypto.randomUUID(),date:new Date().toISOString()};ctx.save();}return j.attestato;}
+ function stamp(){const j=ctx.journey?ctx.journey():ctx.project().labJourney;if(!/^[0-9a-f-]{36}$/i.test(j.attestato?.id)||!Number.isFinite(Date.parse(j.attestato?.date))){j.attestato={...j.attestato,id:crypto.randomUUID(),date:new Date().toISOString()};ctx.save();}return j.attestato;}
  async function prepare(){
   const turn=++generation;hideResult();$('certificateSubmit').disabled=true;message('Preparo il tuo attestato…');
   try{
@@ -16,7 +17,7 @@ export function setupParticipantCertificate(ctx){
    const record=participantCertificate(ctx.project(),{identity,name,participant:ctx.participant(),revision:ctx.revision(),id:saved.id,date:saved.date});
    const [canvas,file]=await Promise.all([certificateCanvas(record),downloadCertificate(record)]);
    if(turn!==generation||!dialog.open){if(file.url.startsWith('blob:'))URL.revokeObjectURL(file.url);return;}
-   url=file.url;const s=record.snapshot;canvas.setAttribute('role','img');canvas.setAttribute('aria-label',`Attestato di partecipazione di ${name}. Cinque laboratori SSAS completati: ${s.laboratori.join(', ')}. Curiosità: ${s.curiosita.join(', ')}.`);
+   url=file.url;const s=record.snapshot;canvas.setAttribute('role','img');canvas.setAttribute('aria-label',`Attestato di partecipazione di ${name}. Cinque laboratori ${COURSE_NAMES[s.corso]||s.corso} completati: ${s.laboratori.join(', ')}. Curiosità: ${s.curiosita.join(', ')}.`);
    $('certificateSheet').append(canvas);$('certificateDownload').href=file.url;$('certificateDownload').download=file.name;
    $('certificateForm').hidden=true;$('certificateResult').hidden=false;$('certificateHeading').focus();message('');
   }catch(e){if(turn!==generation)return;$('certificateForm').hidden=false;message(e.message||'L’attestato non è pronto. Riprova.');}

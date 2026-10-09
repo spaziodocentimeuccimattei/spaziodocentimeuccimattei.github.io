@@ -91,10 +91,11 @@ export function makeHandler(admin){
     if(new Set(rows.map(x=>x.id)).size!==rows.length||new Set(rows.map(x=>x.codice)).size!==rows.length)throw fail('Gli identificativi devono essere distinti.');
     const r=await admin.from('bussola_v2_alunni').insert(rows).select('*');if(r.error)throw fail('Elenco non salvato. Aggiorna la classe prima di riprovare.',409);return reply({alunni:r.data});
    }
+   const corso=p.corso??'ssas';if(!['ssas','turismo'].includes(corso))throw fail('Indirizzo non disponibile.');
    if(p.action==='students'){
     await getClass();const pupils=await data(admin.from('bussola_v2_alunni').select('*').eq('classe_id',p.classe_id).order('cognome').order('nome'));
     const owners=pupils.map(a=>a.partecipante_id).filter(Boolean);
-    const projects=owners.length?await data(admin.from('bussola_v2_progetti').select('partecipante_id,payload,revision,updated_at').in('partecipante_id',owners).eq('corso','ssas')):[];
+    const projects=owners.length?await data(admin.from('bussola_v2_progetti').select('partecipante_id,corso,payload,revision,updated_at').in('partecipante_id',owners).eq('corso',corso)):[];
     return reply({alunni:pupils.map(a=>{const project=projects.find(x=>x.partecipante_id===a.partecipante_id);return {...a,project:project||null,...completion(project)};})});
    }
    if(p.action==='update_student'){
@@ -104,22 +105,22 @@ export function makeHandler(admin){
    }
    if(p.action==='notes'){
     const a=await data(admin.from('bussola_v2_alunni').select('partecipante_id').eq('id',id(p.id)).maybeSingle());if(!a)throw fail('Alunno non trovato.',404);
-    const notes=a.partecipante_id?await data(admin.from('bussola_v2_note').select('id,corso,passaggio,contesto,tipo,testo,ruolo_dichiarato,created_at').eq('partecipante_id',a.partecipante_id).order('created_at')):[];return reply({note:notes});
+    const notes=a.partecipante_id?await data(admin.from('bussola_v2_note').select('id,corso,passaggio,contesto,tipo,testo,ruolo_dichiarato,created_at').eq('partecipante_id',a.partecipante_id).eq('corso',corso).order('created_at')):[];return reply({note:notes});
    }
    if(p.action==='history'){
-    await getClass();return reply({attestati:await data(admin.from('bussola_v2_attestati').select('*').eq('classe_id',p.classe_id).order('created_at',{ascending:false}))});
+    await getClass();return reply({attestati:await data(admin.from('bussola_v2_attestati').select('*').eq('classe_id',p.classe_id).eq('corso',corso).order('created_at',{ascending:false}))});
    }
    if(p.action==='issue'){
     if(!Array.isArray(p.selezione)||p.selezione.length<1||p.selezione.length>100)throw fail('Seleziona da 1 a 100 percorsi conclusi.');
     const ids=p.selezione.map(x=>id(x.id));if(new Set(ids).size!==ids.length)throw fail('Selezione duplicata.');
     const pupils=await data(admin.from('bussola_v2_alunni').select('*').in('id',ids));if(pupils.length!==ids.length)throw fail('Alcuni alunni non sono disponibili.',409);
     const classes=await data(admin.from('bussola_v2_classi').select('*').in('id',[...new Set(pupils.map(a=>a.classe_id))]));
-    const projects=await data(admin.from('bussola_v2_progetti').select('*').in('partecipante_id',pupils.map(a=>a.partecipante_id).filter(Boolean)).eq('corso','ssas'));
+    const projects=await data(admin.from('bussola_v2_progetti').select('*').in('partecipante_id',pupils.map(a=>a.partecipante_id).filter(Boolean)).eq('corso',corso));
     const docs=[];
     for(const a of pupils){const expected=p.selezione.find(x=>x.id===a.id),project=projects.find(x=>x.partecipante_id===a.partecipante_id),c=classes.find(x=>x.id===a.classe_id);
      if(!a.verificato||!completion(project).completed)throw fail('Verifica i nomi e seleziona solo percorsi conclusi.',409);
      if(expected.revision!==project.revision||expected.updated_at!==a.updated_at)throw fail('Un lavoro o un nominativo è cambiato. Aggiorna prima di generare.',409);
-     const snapshot=certificateSnapshot(a,c,project);docs.push({alunno_id:a.id,corso:'ssas',revision:project.revision,alunno_updated_at:a.updated_at,classe_updated_at:c.updated_at,impronta:await sha256(JSON.stringify(snapshot)),snapshot});
+     const snapshot=certificateSnapshot(a,c,project);docs.push({alunno_id:a.id,corso,revision:project.revision,alunno_updated_at:a.updated_at,classe_updated_at:c.updated_at,impronta:await sha256(JSON.stringify(snapshot)),snapshot});
     }
     const issued=await admin.rpc('bussola_v2_emetti',{p_documenti:docs});if(issued.error)throw fail('I dati sono cambiati durante la generazione. Aggiorna e riprova.',409);return reply({attestati:issued.data});
    }
