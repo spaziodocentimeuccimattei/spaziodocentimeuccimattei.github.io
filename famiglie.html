@@ -3,13 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Il percorso per i genitori dell’IIS Meucci - Mattei | Decimomannu: scegliere insieme, conoscere la scuola e ciò che sta progettando, la formazione scuola-lavoro e i passaggi dell’iscrizione.">
+  <meta name="description" content="Il percorso per i genitori dell’IIS Meucci - Mattei | Decimomannu: conoscere la scuola in sei tappe brevi, fare la Bussola con il proprio figlio, iscriversi.">
   <title>Per i genitori | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261005-intestazione">
-  <link rel="stylesheet" href="famiglie.css?v=20261009-famiglie">
+  <link rel="stylesheet" href="famiglie.css?v=20261009-flusso">
 </head>
 <body class="fam-page">
   <a class="fam-skip" href="#famMain">Vai al contenuto</a>
+
+  <svg class="fam-sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-fork" viewBox="0 0 24 24"><path d="M12 21v-6M12 15V4M12 15c0-4-6-4-6-9M12 15c0-4 6-4 6-9"/></symbol>
+      <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-7-6 16-3-6.5z"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.3c3 .2 5.5 2.6 5.5 5.7"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M10 8l5 3-5 3zM8 21h8"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5c2.5-1 5.5-1 8 .5 2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.500-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5"/></symbol>
+      <symbol id="i-sofa" viewBox="0 0 24 24"><path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v5H3zM6 18v2M18 18v2"/></symbol>
+      <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 3c3.3 0 6 2.5 6 5.6 0 3-2.7 5.4-6 5.4s-6-2.4-6-5.4C6 5.5 8.7 3 12 3zM12 10v11M8 21h8"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.5A4 4 0 0 1 12 8a4 4 0 0 1 7 2.5C19 15.6 12 20 12 20z"/></symbol>
+      <symbol id="i-voice" viewBox="0 0 24 24"><path d="M4 10v4h3l7 4V6l-7 4zM17 9a4 4 0 0 1 0 6"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol>
+      <symbol id="i-seed" viewBox="0 0 24 24"><path d="M12 21v-8M12 13c0-3.5 2.5-6 6.5-6 0 3.5-2.5 6-6.5 6zM12 15c0-2.8-2-4.8-5.5-4.8 0 2.8 2 4.8 5.5 4.8z"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.6-6-10.5a6 6 0 0 1 12 0C18 15.4 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.2"/></symbol>
+      <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.5-1.6 1.6-2.4 3-2.4s2.5.8 3 2.4M14 10h4M14 13.5h4"/></symbol>
+      <symbol id="i-door" viewBox="0 0 24 24"><path d="M14 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M9 8l4 4-4 4M13 12H4"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4L16.5 4.5a1.8 1.8 0 0 1 2.6 0l.4.4a1.8 1.8 0 0 1 0 2.6L8 19z"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l3 2.9 5-5.7"/></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6 3h3l1.5 5-2 1.5a12 12 0 0 0 6 6l1.5-2 5 1.5v3a2 2 0 0 1-2 2C11 20 4 13 4 5a2 2 0 0 1 2-2z"/></symbol>
+    </defs>
+  </svg>
+
   <header class="site-header">
     <a class="site-brand" href="index.html" aria-label="IIS Meucci - Mattei | Decimomannu · Torna alla pagina iniziale">
       <span class="site-logo"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" alt=""></span><span class="site-brand-copy"><span class="site-brand-name">IIS Meucci - Mattei</span><span class="site-brand-place">Decimomannu</span></span>
@@ -17,273 +49,259 @@
     <nav class="page-nav" aria-label="Navigazione della pagina">
       <a href="index.html">Home</a>
       <a href="indirizzi.html">Indirizzi</a>
-      <a href="#iscrizione">Iscrizione</a>
     </nav>
   </header>
 
-  <main id="famMain">
-    <section class="fam-hero" aria-labelledby="famTitle">
-      <picture class="fam-hero-photo">
-        <source media="(max-width: 760px)" srcset="assets/sede-decimomannu-900.webp">
-        <img src="assets/sede-decimomannu-1440.webp" width="1440" height="482" alt="La sede di Decimomannu dell’IIS Meucci - Mattei" fetchpriority="high">
-      </picture>
-      <div class="fam-hero-copy">
-        <p class="eyebrow">Per i genitori</p>
-        <h1 id="famTitle">Scegliere la scuola superiore, insieme</h1>
-        <p>La scelta è di vostro figlio o di vostra figlia. A voi spetta la parte più difficile: accompagnarla senza sostituirvi. Questa pagina vi fa conoscere la sede di Decimomannu per quello che fa e per quello che sta progettando, e vi porta fino all’iscrizione.</p>
-      </div>
-      <dl class="fam-service" aria-label="Informazioni di servizio">
-        <div><dt>Iscrizioni 2027/28</dt><dd>Date in arrivo · <a href="#iscrizione">come si fa</a></dd></div>
-        <div><dt>Open day</dt><dd>Date in arrivo · <a href="#incontro">venite a vederci</a></dd></div>
-        <div><dt>Dove siamo</dt><dd>Via Ugo Foscolo 48, Decimomannu</dd></div>
-        <div><dt>Una domanda?</dt><dd><a href="mailto:orientamattei@gmail.com?subject=Domanda%20di%20un%20genitore">orientamattei@gmail.com</a></dd></div>
-      </dl>
-    </section>
+  <main id="famMain" class="flow">
 
-    <!-- TAPPA 1 -->
-    <section class="fam-section" id="strade" aria-labelledby="stradeTitle">
-      <header class="fam-heading">
-        <p class="step">Tappa 1 · Da dove partire</p>
-        <h2 id="stradeTitle">Tre strade. Scegliete la vostra.</h2>
-        <p>Non c’è un ordine obbligato. Potete percorrerle tutte, in giorni diversi.</p>
-      </header>
-      <div class="fam-paths">
-        <a class="fam-path fam-path-main" href="#scuola">
-          <span class="fam-path-tag">La strada principale</span>
-          <strong>Il percorso per il genitore</strong>
-          <span>Lo fate voi, con calma: che scuola siamo, che cosa stiamo progettando, che cosa si studia, come funziona la formazione scuola-lavoro, la vita pratica. Una decina di minuti di lettura.</span>
-          <span class="fam-path-go">Cominciate da qui <span aria-hidden="true">↓</span></span>
+    <!-- ============ SCELTA ============ -->
+    <section class="screen s-start" id="inizio" data-screen aria-labelledby="t-inizio">
+      <div class="screen-head">
+        <p class="kicker">Per i genitori</p>
+        <h1 id="t-inizio" tabindex="-1">Scegliere la scuola superiore, <em>insieme.</em></h1>
+        <p class="lead">Da dove volete partire?</p>
+      </div>
+      <div class="roads">
+        <a class="road road-a" href="#scuola">
+          <span class="road-ic"><svg><use href="#i-fork"/></svg></span>
+          <span class="road-tx"><strong>Conoscere la scuola</strong><span>Sei tappe brevi, cinque minuti.</span></span>
+          <span class="road-go">Inizia <svg><use href="#i-arrow"/></svg></span>
         </a>
-        <a class="fam-path" href="bussola.html">
-          <span class="fam-path-tag">Con vostro figlio</span>
-          <strong>La Bussola, insieme</strong>
-          <span>Dodici domande su interessi, materie e aspirazioni. Risponde lui o lei; voi ascoltate. Alla fine non c’è un verdetto: ci sono indirizzi da approfondire, con le ragioni. È un buon punto di partenza per parlarne a casa.</span>
-          <span class="fam-path-go">Aprite la Bussola <span aria-hidden="true">→</span></span>
+        <a class="road road-b" href="bussola.html">
+          <span class="road-ic"><svg><use href="#i-compass"/></svg></span>
+          <span class="road-tx"><strong>La Bussola, con vostro figlio</strong><span>Dodici domande da attraversare insieme.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
         </a>
-        <a class="fam-path" href="#iscrizione">
-          <span class="fam-path-tag">Avete già deciso</span>
-          <strong>Dritto all’iscrizione</strong>
-          <span>I passaggi su Unica in ordine e a chi rivolgersi se serve una mano.</span>
-          <span class="fam-path-go">Andate all’iscrizione <span aria-hidden="true">↓</span></span>
+        <a class="road road-c" href="#iscrizione">
+          <span class="road-ic"><svg><use href="#i-send"/></svg></span>
+          <span class="road-tx"><strong>Iscrizione</strong><span>I passaggi su Unica, uno alla volta.</span></span>
+          <span class="road-go">Vai <svg><use href="#i-arrow"/></svg></span>
         </a>
       </div>
+      <p class="start-foot"><svg><use href="#i-pin"/></svg> Via Ugo Foscolo 48, Decimomannu <span aria-hidden="true">·</span> <a href="mailto:orientamattei@gmail.com?subject=Domanda%20di%20un%20genitore">orientamattei@gmail.com</a></p>
     </section>
 
-    <!-- TAPPA 2 -->
-    <section class="fam-section" id="scuola" aria-labelledby="scuolaTitle">
-      <header class="fam-heading">
-        <p class="step">Tappa 2 · Che scuola siamo</p>
-        <h2 id="scuolaTitle">Una scuola si riconosce da quello che fa.</h2>
-        <p>Qui sotto ci sono soltanto cose già accadute o già disponibili. Quello che è ancora un progetto lo trovate alla tappa successiva, dichiarato come tale.</p>
-      </header>
-      <ul class="fam-facts">
-        <li>
-          <strong>Il primo giorno non si entra da soli.</strong>
-          <span>Il 14 settembre 2026 le classi prime sono state accolte nelle aule dagli studenti più grandi, per conoscersi e per farsi spiegare da loro come funziona la scuola. <a href="accoglienza.html">Il programma dell’accoglienza</a></span>
-        </li>
-        <li>
-          <strong>Prima di scegliere si può provare.</strong>
-          <span>I ragazzi di terza media possono esplorare gli indirizzi con piccole attività, una per percorso: situazioni da affrontare, non verifiche. <a href="missioni.html">Prova un’attività</a></span>
-        </li>
-        <li>
-          <strong>Quello che si studia è scritto, e si può leggere.</strong>
-          <span>Il curricolo dell’indirizzo SSAS è pubblico: competenze, conoscenze, attività e rubriche di valutazione. Gli altri saranno aggiunti quando saranno pronti e verificati. <a href="curricoli.html">Curricoli disponibili</a></span>
-        </li>
-        <li>
-          <strong>Andiamo noi nelle scuole medie.</strong>
-          <span>I docenti della sede incontrano le classi terze nelle loro aule e partecipano agli open day delle scuole del territorio.</span>
-        </li>
-        <li>
-          <strong>Nessuno assegna un indirizzo a un ragazzo.</strong>
-          <span>Gli strumenti di orientamento che usiamo non danno voti e non misurano capacità: aiutano a mettere a fuoco interessi e curiosità, e lasciano aperte le altre strade.</span>
-        </li>
+    <!-- ============ 1 ============ -->
+    <section class="screen s-navy" id="scuola" data-screen data-track="percorso" data-label="Che scuola siamo" aria-labelledby="t-scuola">
+      <div class="screen-head">
+        <p class="kicker">Che scuola siamo</p>
+        <h2 id="t-scuola" tabindex="-1">Una scuola si riconosce da quello che fa.</h2>
+        <p class="lead">Quattro fatti, non promesse.</p>
+      </div>
+      <div class="tiles">
+        <details class="tile">
+          <summary><span class="tile-ic"><svg><use href="#i-users"/></svg></span><span class="tile-tx"><strong>Ad accogliere le prime sono gli studenti più grandi</strong></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p>È accaduto il 14 settembre 2026: il primo giorno, in aula, per conoscersi. <a href="accoglienza.html">Il programma</a></p>
+        </details>
+        <details class="tile">
+          <summary><span class="tile-ic"><svg><use href="#i-play"/></svg></span><span class="tile-tx"><strong>Prima di scegliere si può provare</strong></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p>Una piccola attività per ogni indirizzo: situazioni da affrontare, non verifiche. <a href="missioni.html">Prova un’attività</a></p>
+        </details>
+        <details class="tile">
+          <summary><span class="tile-ic"><svg><use href="#i-book"/></svg></span><span class="tile-tx"><strong>Ciò che si studia è pubblico</strong></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p>Il curricolo dell’indirizzo SSAS si può consultare per intero; gli altri seguiranno. <a href="curricoli.html">Curricoli</a></p>
+        </details>
+        <details class="tile">
+          <summary><span class="tile-ic"><svg><use href="#i-compass"/></svg></span><span class="tile-tx"><strong>Orientare non è assegnare</strong></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p>I nostri strumenti non danno voti e non misurano capacità: mettono a fuoco interessi e curiosità, e lasciano aperte le altre strade.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 2 ============ -->
+    <section class="screen s-green" id="progetto" data-screen data-track="percorso" data-label="Che cosa stiamo progettando" aria-labelledby="t-progetto">
+      <div class="screen-head">
+        <p class="kicker">Che cosa stiamo progettando</p>
+        <h2 id="t-progetto" tabindex="-1">Stiamo immaginando una scuola così.</h2>
+        <p class="lead">Quattro idee di Avanguardie educative, il movimento per l’innovazione promosso da INDIRE, che il nostro istituto ha fatto proprie.</p>
+      </div>
+      <div class="tiles">
+        <details class="tile">
+          <summary><span class="tile-ic"><svg><use href="#i-sofa"/></svg></span><span class="tile-tx"><strong>Spazi che si adattano a ciò che si fa</strong><span class="state is-plan">In progetto</span></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p><b>L’Agorà.</b> Una parte dell’atrio diventa luogo di lettura, studio e incontro.</p>
+          <p class="src">INDIRE, Avanguardie educative, scheda dell’Idea «Spazio flessibile (Aula 3.0)», documento senza numero di versione, 2016, pp. 1-2.</p>
+        </details>
+        <details class="tile">
+          <summary><span class="tile-ic"><svg><use href="#i-tree"/></svg></span><span class="tile-tx"><strong>Si impara anche fuori dall’aula</strong><span class="state is-done">In parte c’è già</span></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p><b>L’orto inclusivo</b> esiste; attrezzi e accessibilità per tutti sono in progetto. <b>Il cortile</b> è in progetto: tavoli e panche per fare lezione all’aperto.</p>
+          <p class="src">INDIRE, Avanguardie educative, Linee guida per l’implementazione dell’Idea «Outdoor education», versione 2.1, 2025, cap. 1.</p>
+        </details>
+        <details class="tile">
+          <summary><span class="tile-ic"><svg><use href="#i-heart"/></svg></span><span class="tile-tx"><strong>Ciò che si studia serve a qualcuno</strong><span class="state is-plan">In progetto</span></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p><b>Service Learning.</b> Mettere ciò che si impara al servizio di un bisogno reale di Decimomannu. I destinatari li scelgono gli studenti.</p>
+          <p class="src">INDIRE, Avanguardie educative, «Dentro/fuori la scuola – Service Learning. Indicazioni e suggerimenti per l’istituzionalizzazione del Service Learning nelle scuole del primo e del secondo ciclo di istruzione», versione 1.0, 2024, Introduzione.</p>
+        </details>
+        <details class="tile">
+          <summary><span class="tile-ic"><svg><use href="#i-voice"/></svg></span><span class="tile-tx"><strong>Gli studenti propongono e decidono</strong><span class="state is-plan">In progetto</span></span><svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p><b>«Abitare la scuola»</b> nasce nelle classi e passa dal voto degli studenti, con il bilancio partecipativo «Partecipo e Conto» della Regione Sardegna.</p>
+          <p class="src">INDIRE, Avanguardie educative, Linee guida per l’implementazione dell’idea «Dentro/fuori la scuola», versione 1.0, 2015-2016.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ 3 ============ -->
+    <section class="screen s-paper" id="percorsi" data-screen data-track="percorso" data-label="Gli indirizzi" aria-labelledby="t-percorsi">
+      <div class="screen-head">
+        <p class="kicker">Gli indirizzi</p>
+        <h2 id="t-percorsi" tabindex="-1">Cinque modi di guardare il mondo.</h2>
+        <p class="lead">Ogni indirizzo apre la sua pagina.</p>
+      </div>
+      <div class="courses">
+        <a class="course c-afm" href="indirizzi.html#afm"><b>AFM</b><span>Economia, conti, decisioni</span></a>
+        <a class="course c-sia" href="indirizzi.html#sia"><b>SIA</b><span>Dati e digitale per decidere</span></a>
+        <a class="course c-tur" href="indirizzi.html#turismo"><b>TUR</b><span>Territorio, lingue, accoglienza</span></a>
+        <a class="course c-ssas" href="indirizzi.html#ssas"><b>SSAS</b><span>Persone, salute, comunità</span></a>
+        <a class="course c-cat" href="indirizzi.html#cat"><b>CAT</b><span>Misurare, disegnare, costruire</span></a>
+      </div>
+      <p class="screen-foot">La sede offre anche <a href="indirizzi.html#serali">percorsi serali</a> per adulti.</p>
+    </section>
+
+    <!-- ============ 4 ============ -->
+    <section class="screen s-pink" id="lavoro" data-screen data-track="percorso" data-label="Formazione scuola-lavoro" aria-labelledby="t-lavoro">
+      <div class="screen-head">
+        <p class="kicker">Formazione scuola-lavoro</p>
+        <h2 id="t-lavoro" tabindex="-1">Il lavoro come luogo in cui si cresce.</h2>
+        <p class="lead">Negli ultimi tre anni: almeno 150 ore negli indirizzi tecnici, 210 nel professionale.</p>
+      </div>
+      <ul class="skills">
+        <li><svg><use href="#i-clock"/></svg>Mantenere un impegno</li>
+        <li><svg><use href="#i-users"/></svg>Lavorare con altri</li>
+        <li><svg><use href="#i-shield"/></svg>Rispettare persone e luoghi</li>
+        <li><svg><use href="#i-target"/></svg>Misurarsi con le aspettative</li>
+        <li><svg><use href="#i-seed"/></svg>Conoscersi</li>
       </ul>
-    </section>
-
-    <!-- TAPPA 3 -->
-    <section class="fam-section fam-vision" id="progetto" aria-labelledby="progettoTitle">
-      <header class="fam-heading">
-        <p class="step">Tappa 3 · Che cosa stiamo progettando</p>
-        <h2 id="progettoTitle">Stiamo immaginando una scuola così.</h2>
-        <p>Non partiamo da zero. Il nostro istituto ha inserito nel Piano triennale dell’offerta formativa (PTOF) le idee di <strong>Avanguardie educative</strong>, il movimento di scuole promosso da INDIRE, l’istituto nazionale di ricerca sull’innovazione educativa. Da lì prendiamo quattro idee. Per ciascuna trovate da quale documento viene e che cosa significa a Decimomannu, con lo stato dei lavori detto chiaramente.</p>
-      </header>
-
-      <ol class="fam-ideas">
-        <li class="fam-idea">
-          <p class="fam-idea-n" aria-hidden="true">1</p>
-          <h3>Gli spazi si adattano a quello che si fa, non il contrario.</h3>
-          <p>Un’aula con i banchi in fila va bene per ascoltare. Per discutere, lavorare in gruppo o studiare da soli servono spazi che si possano riorganizzare.</p>
-          <p class="fam-source"><span>Da dove viene</span> INDIRE, Avanguardie educative, scheda dell’Idea «Spazio flessibile (Aula 3.0)», documento senza numero di versione, 2016, pp. 1-2.</p>
-          <div class="fam-example">
-            <p><span class="fam-state is-plan">In progetto</span> <strong>L’Agorà.</strong> Una parte dell’atrio diventa un punto di lettura, studio e socializzazione: tavoli, sedute e librerie al posto di uno spazio di passaggio. È la prima azione di «Abitare la scuola».</p>
-          </div>
-        </li>
-        <li class="fam-idea">
-          <p class="fam-idea-n" aria-hidden="true">2</p>
-          <h3>Si impara anche fuori dall’aula.</h3>
-          <p>L’esterno non è l’intervallo: è un ambiente in cui si osserva, si misura, si prova e poi si ragiona su quello che è successo, in continuità con il lavoro in classe.</p>
-          <p class="fam-source"><span>Da dove viene</span> INDIRE, Avanguardie educative, Linee guida per l’implementazione dell’Idea «Outdoor education», versione 2.1, 2025, cap. 1.</p>
-          <div class="fam-example">
-            <p><span class="fam-state is-plan">In progetto</span> <strong>Il cortile per l’outdoor learning.</strong> Tavoli e panche da esterno nel cortile interno, perché una classe intera possa fare lezione all’aperto.</p>
-            <p><span class="fam-state is-done">C’è già</span> <strong>L’orto inclusivo.</strong> Esiste; <span class="fam-state is-plan">in progetto</span> ci sono gli attrezzi, l’organizzazione e l’accessibilità, perché tutti gli studenti, anche con disabilità, possano averne cura con compiti veri.</p>
-          </div>
-        </li>
-        <li class="fam-idea">
-          <p class="fam-idea-n" aria-hidden="true">3</p>
-          <h3>Quello che si studia serve a qualcuno.</h3>
-          <p>Si chiama Service Learning: i ragazzi usano ciò che imparano nelle materie per rispondere a un bisogno reale della comunità, e imparano meglio proprio perché lo mettono in pratica per altri.</p>
-          <p class="fam-source"><span>Da dove viene</span> INDIRE, Avanguardie educative, «Dentro/fuori la scuola – Service Learning. Indicazioni e suggerimenti per l’istituzionalizzazione del Service Learning nelle scuole del primo e del secondo ciclo di istruzione», versione 1.0, 2024, Introduzione.</p>
-          <div class="fam-example">
-            <p><span class="fam-state is-plan">In progetto</span> <strong>Gli spazi aperti a Decimomannu.</strong> Agorà, cortile e orto sono pensati anche per attività rivolte alla comunità del paese. A chi rivolgerle lo scelgono gli studenti.</p>
-          </div>
-        </li>
-        <li class="fam-idea">
-          <p class="fam-idea-n" aria-hidden="true">4</p>
-          <h3>La scuola fa parte del paese, e i ragazzi hanno voce.</h3>
-          <p>Una scuola legge i bisogni del territorio in cui vive e dà agli studenti un ruolo vero: proporre, discutere, decidere, prendersi una responsabilità.</p>
-          <p class="fam-source"><span>Da dove viene</span> INDIRE, Avanguardie educative, Linee guida per l’implementazione dell’idea «Dentro/fuori la scuola», versione 1.0, 2015-2016.</p>
-          <div class="fam-example">
-            <p><span class="fam-state is-plan">In progetto</span> <strong>«Abitare la scuola» lo propongono gli studenti.</strong> La bozza si discute nelle classi, la riscrive un gruppo di studenti della sede e la votano tutti. La strada è il bilancio partecipativo «Partecipo e Conto» della Regione Sardegna, dove propongono e votano i ragazzi.</p>
-          </div>
-        </li>
-      </ol>
-      <p class="fam-note">I documenti INDIRE sono citati come fonte e riassunti con parole nostre. Chi vuole leggerli li trova su <a href="https://www.indire.it/progetto/avanguardie-educative/" target="_blank" rel="noopener">indire.it <span aria-hidden="true">↗</span></a>.</p>
-    </section>
-
-    <!-- TAPPA 4 -->
-    <section class="fam-section" id="percorsi" aria-labelledby="percorsiTitle">
-      <header class="fam-heading">
-        <p class="step">Tappa 4 · I percorsi</p>
-        <h2 id="percorsiTitle">Cinque indirizzi, letti con gli occhi di un genitore.</h2>
-        <p>Per ciascuno: di che cosa si occupa. Materie, competenze e possibilità dopo il diploma sono nella pagina degli indirizzi.</p>
-      </header>
-      <div class="fam-courses">
-        <a class="fam-course c-afm" href="indirizzi.html#afm"><span class="fam-code">AFM</span><strong>Amministrazione, Finanza e Marketing</strong><span>Come funzionano le organizzazioni, come si leggono conti e dati, come si prende una decisione economica.</span></a>
-        <a class="fam-course c-sia" href="indirizzi.html#sia"><span class="fam-code">SIA</span><strong>Sistemi Informativi Aziendali</strong><span>Dati, strumenti digitali e programmazione al servizio di chi deve organizzare e decidere.</span></a>
-        <a class="fam-course c-tur" href="indirizzi.html#turismo"><span class="fam-code">TUR</span><strong>Turismo</strong><span>Territorio, patrimonio, lingue e accoglienza: progettare e raccontare un’esperienza di viaggio.</span></a>
-        <a class="fam-course c-ssas" href="indirizzi.html#ssas"><span class="fam-code">SSAS</span><strong>Servizi per la Sanità e l’Assistenza Sociale</strong><span>Persone, salute e comunità: capire i bisogni e progettare attività di cura, inclusione e partecipazione.</span></a>
-        <a class="fam-course c-cat" href="indirizzi.html#cat"><span class="fam-code">CAT</span><strong>Costruzioni, Ambiente e Territorio</strong><span>Misurare, disegnare e progettare spazi e costruzioni, con attenzione all’ambiente.</span></a>
+      <div class="rows">
+        <details class="row">
+          <summary>Perché ci teniamo<svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p>Per la prima volta un ragazzo assume un impegno con adulti che non sono né i genitori né gli insegnanti. È lì che mette alla prova ciò che a scuola si può soltanto preparare, e che comincia a capire che cosa gli riesce, che cosa gli pesa, che cosa lo interessa davvero.</p>
+        </details>
+        <details class="row">
+          <summary>Come è organizzata<svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <ul>
+            <li><b>Una convenzione</b> tra la scuola e la struttura ospitante: lo studente non è un lavoratore.</li>
+            <li><b>Due tutor</b>, un docente della classe e una persona della struttura.</li>
+            <li><b>Un patto formativo</b> firmato dallo studente e dalla famiglia.</li>
+            <li><b>Un registro delle presenze</b> e, al termine, la valutazione del tutor esterno, l’autovalutazione e la relazione dello studente.</li>
+          </ul>
+          <p>Periodi e modalità sono comunicati dai docenti tutor, classe per classe.</p>
+        </details>
+        <details class="row">
+          <summary>Dove si svolge, in genere<svg class="tile-more"><use href="#i-plus"/></svg></summary>
+          <p>I contesti più frequenti nelle scuole italiane con questi indirizzi, a titolo di esempio.</p>
+          <ul>
+            <li><b>AFM</b> Uffici amministrativi, studi professionali, banche, enti; spesso anche un’impresa simulata in classe.</li>
+            <li><b>SIA</b> Aziende informatiche e uffici che gestiscono dati e siti; spesso un progetto per un committente reale.</li>
+            <li><b>Turismo</b> Agenzie di viaggio, ricevimento, uffici turistici, musei, eventi.</li>
+            <li><b>SSAS</b> Servizi per l’infanzia, per gli anziani e per le persone con disabilità, cooperative sociali, volontariato; sempre accanto a un operatore.</li>
+            <li><b>CAT</b> Studi tecnici, uffici tecnici comunali, imprese di costruzione.</li>
+          </ul>
+          <p class="src">Legge 145/2018, art. 1, comma 784; decreto-legge 127/2025, convertito dalla legge 164/2025; Linee guida, D.M. 774/2019.</p>
+        </details>
       </div>
-      <p class="fam-note">La sede ha anche percorsi serali per adulti. <a href="indirizzi.html#serali">Indirizzi serali</a></p>
     </section>
 
-    <!-- TAPPA 5 -->
-    <section class="fam-section fam-fsl" id="lavoro" aria-labelledby="lavoroTitle">
-      <header class="fam-heading">
-        <p class="step">Tappa 5 · Formazione scuola-lavoro</p>
-        <h2 id="lavoroTitle">Non è «andare a lavorare». È imparare a stare in un luogo di lavoro.</h2>
-        <p>Dal 2025/26 si chiama <strong>formazione scuola-lavoro</strong>: è il nuovo nome di quelli che erano i PCTO (percorsi per le competenze trasversali e per l’orientamento) e, prima ancora, l’alternanza scuola-lavoro. Si svolge negli ultimi tre anni: almeno 150 ore negli istituti tecnici (AFM, SIA, Turismo, CAT) e almeno 210 ore negli istituti professionali (SSAS).</p>
-      </header>
-
-      <div class="fam-fsl-why">
-        <h3>Perché ci teniamo</h3>
-        <p>L’esperienza pratica conta, ma non è il punto. Il punto è che un ragazzo, per la prima volta, ha un impegno preso con adulti che non sono né i genitori né i professori. È lì che si mettono alla prova le cose che a scuola si possono solo preparare:</p>
-        <ul class="fam-skills">
-          <li><strong>La responsabilità verso un impegno.</strong> Arrivare in orario, avvisare, portare a termine quello che si è detto di fare.</li>
-          <li><strong>Il lavoro con altre persone.</strong> Colleghi di età diverse, ruoli diversi, un responsabile a cui rispondere.</li>
-          <li><strong>Il rispetto dell’altro e del contesto.</strong> Ogni luogo di lavoro ha regole, linguaggi, riservatezza. Nei servizi alla persona, ha davanti persone fragili.</li>
-          <li><strong>Le aspettative.</strong> Quelle che gli altri hanno su di te, e quelle che cominci ad avere su te stesso.</li>
-          <li><strong>Un bagaglio interiore.</strong> Capire che cosa ti riesce, che cosa ti pesa, che cosa ti interessa davvero: è anche così che si sceglie che cosa fare dopo il diploma.</li>
+    <!-- ============ 5 ============ -->
+    <section class="screen s-teal" id="pratica" data-screen data-track="percorso" data-label="Venite a vederci" aria-labelledby="t-pratica">
+      <div class="screen-head">
+        <p class="kicker">Venite a vederci</p>
+        <h2 id="t-pratica" tabindex="-1">Una scuola si capisce entrandoci.</h2>
+      </div>
+      <div class="place">
+        <picture class="place-photo">
+          <source media="(max-width: 760px)" srcset="assets/sede-decimomannu-900.webp">
+          <img src="assets/sede-decimomannu-1440.webp" width="1440" height="482" loading="lazy" alt="La sede di Decimomannu dell’IIS Meucci - Mattei">
+        </picture>
+        <ul class="place-facts">
+          <li><svg><use href="#i-pin"/></svg><span><b>Via Ugo Foscolo 48</b>Decimomannu</span></li>
+          <li><svg><use href="#i-clock"/></svg><span><b>Ore 8.30</b>Inizio delle lezioni</span></li>
+          <li><svg><use href="#i-bell"/></svg><span><b>Open day</b>Date in arrivo</span></li>
         </ul>
-      </div>
-
-      <div class="fam-fsl-how">
-        <h3>Come è organizzata</h3>
-        <ol>
-          <li><strong>Una convenzione</strong> tra la scuola e la struttura che ospita. Lo studente non è un lavoratore e l’esperienza non è un rapporto di lavoro.</li>
-          <li><strong>Due tutor:</strong> un docente della classe e una persona della struttura, che seguono il ragazzo insieme.</li>
-          <li><strong>Un patto formativo</strong> firmato dallo studente e dalla famiglia, con gli impegni di ciascuno.</li>
-          <li><strong>Un registro delle presenze</strong> e, alla fine, tre sguardi sull’esperienza: la valutazione del tutor esterno, l’autovalutazione dello studente e la sua relazione.</li>
-        </ol>
-        <p class="fam-note">Sono i documenti che la nostra scuola usa. Periodi e modalità vengono comunicati classe per classe dai docenti tutor.</p>
-      </div>
-
-      <div class="fam-fsl-where">
-        <h3>Dove si fa, di solito</h3>
-        <p class="fam-disclaimer">Quelli che seguono sono <strong>esempi generali</strong>: i contesti in cui le scuole italiane con questi indirizzi svolgono più spesso la formazione scuola-lavoro. Non è l’elenco delle nostre convenzioni.</p>
-        <div class="fam-fsl-grid">
-          <article class="c-afm"><h4><span class="fam-code">AFM</span> Amministrazione, Finanza e Marketing</h4><p>Uffici amministrativi di aziende, studi professionali, banche e assicurazioni, uffici di enti pubblici, camere di commercio. Molte scuole affiancano l’<em>impresa formativa simulata</em>: la classe costituisce e gestisce un’azienda dall’idea al bilancio.</p></article>
-          <article class="c-sia"><h4><span class="fam-code">SIA</span> Sistemi Informativi Aziendali</h4><p>Aziende informatiche, uffici che gestiscono dati, archivi e siti, servizi digitali di enti. Frequenti i progetti su commessa: un sito, un archivio o una piccola applicazione realizzati per un committente vero.</p></article>
-          <article class="c-tur"><h4><span class="fam-code">TUR</span> Turismo</h4><p>Agenzie di viaggio, ricevimento di strutture ricettive, uffici di informazione turistica e pro loco, musei e siti culturali, eventi del territorio. Diffuse le esperienze in cui gli studenti guidano i visitatori in un luogo che hanno studiato.</p></article>
-          <article class="c-ssas"><h4><span class="fam-code">SSAS</span> Servizi per la Sanità e l’Assistenza Sociale</h4><p>Servizi per l’infanzia, strutture e centri diurni per anziani, servizi per persone con disabilità, cooperative sociali, associazioni di volontariato. Si osserva e si affianca chi lavora, sempre con un operatore accanto.</p></article>
-          <article class="c-cat"><h4><span class="fam-code">CAT</span> Costruzioni, Ambiente e Territorio</h4><p>Studi tecnici, uffici tecnici dei Comuni, imprese di costruzione. Le attività tipiche sono il rilievo, il disegno, la lettura di pratiche e documenti catastali, l’osservazione dell’organizzazione di un cantiere.</p></article>
+        <div class="place-actions">
+          <a class="btn btn-solid" href="mailto:orientamattei@gmail.com?subject=Visita%20alla%20sede%20di%20Decimomannu"><svg><use href="#i-mail"/></svg>Concordate una visita</a>
+          <a class="btn btn-line" href="tel:+390704657043"><svg><use href="#i-phone"/></svg>070 4657043</a>
         </div>
       </div>
-      <p class="fam-source"><span>Riferimenti</span> Legge 145/2018, art. 1, comma 784 (durata minima); decreto-legge 127/2025, convertito dalla legge 164/2025 (nuova denominazione); Linee guida ministeriali, D.M. 774/2019.</p>
+      <p class="screen-foot">Per trasporti, costi e inclusione scriveteci: rispondiamo sul vostro caso.</p>
     </section>
 
-    <!-- TAPPA 6 -->
-    <section class="fam-section" id="pratica" aria-labelledby="praticaTitle">
-      <header class="fam-heading">
-        <p class="step">Tappa 6 · La vita pratica</p>
-        <h2 id="praticaTitle">Le domande di tutti i giorni.</h2>
-      </header>
-      <dl class="fam-practical">
-        <div><dt>Dove siamo</dt><dd>Via Ugo Foscolo 48, 09033 Decimomannu (CA). Telefono della sede: <a href="tel:+390704657043">070 4657043</a>.</dd></div>
-        <div><dt>Orario</dt><dd>Le lezioni cominciano alle 8.30.</dd></div>
-        <div><dt>Trasporti, costi, inclusione</dt><dd>Ogni famiglia ha le sue domande. Scrivete alla <a href="mailto:orientamattei@gmail.com?subject=Domanda%20di%20un%20genitore">Commissione Orientamento</a>: vi rispondiamo sul vostro caso.</dd></div>
-        <div><dt>Segreteria</dt><dd>La segreteria dell’istituto è a Cagliari, in via Bainsizza 30. Recapiti e orari sul <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a>.</dd></div>
-      </dl>
-    </section>
-
-    <!-- TAPPA 7 -->
-    <section class="fam-section fam-meet" id="incontro" aria-labelledby="incontroTitle">
-      <header class="fam-heading">
-        <p class="step">Tappa 7 · Venite a vederci</p>
-        <h2 id="incontroTitle">Una scuola si capisce entrandoci.</h2>
-        <p>Le date degli open day della sede saranno pubblicate qui. Nel frattempo, o se quelle date non vi andranno bene, scriveteci: una visita si può concordare.</p>
-      </header>
-      <a class="fam-button" href="mailto:orientamattei@gmail.com?subject=Visita%20alla%20sede%20di%20Decimomannu">Scrivete alla Commissione Orientamento</a>
-    </section>
-
-    <!-- ISCRIZIONE -->
-    <section class="fam-section fam-enrol" id="iscrizione" aria-labelledby="iscrizioneTitle">
-      <header class="fam-heading">
-        <p class="step">L’iscrizione</p>
-        <h2 id="iscrizioneTitle">Iscriversi al Meucci - Mattei, sede di Decimomannu</h2>
-        <p>L’iscrizione alla prima classe si fa soltanto online, su <strong>Unica</strong>, la piattaforma del Ministero dell’Istruzione e del Merito. La compila un genitore. Non serve essere pratici: i passaggi sono questi.</p>
-      </header>
-
-      <div class="fam-dates">
-        <p><strong>Quando.</strong> Le date per il 2027/28 le fissa il Ministero, di solito a metà dicembre: le pubblicheremo qui appena escono. Per orientarvi: per il 2026/27 le domande sono state aperte dal 13 gennaio al 21 febbraio 2026.</p>
+    <!-- ============ 6 ============ -->
+    <section class="screen s-end" id="pronti" data-screen data-track="percorso" data-label="Il prossimo passo" aria-labelledby="t-pronti">
+      <div class="screen-head">
+        <p class="kicker">Fine del percorso</p>
+        <h2 id="t-pronti" tabindex="-1">Il prossimo passo è vostro.</h2>
       </div>
+      <div class="roads">
+        <a class="road road-c" href="#iscrizione">
+          <span class="road-ic"><svg><use href="#i-send"/></svg></span>
+          <span class="road-tx"><strong>Iscrizione</strong><span>I passaggi su Unica, uno alla volta.</span></span>
+          <span class="road-go">Vai <svg><use href="#i-arrow"/></svg></span>
+        </a>
+        <a class="road road-b" href="bussola.html">
+          <span class="road-ic"><svg><use href="#i-compass"/></svg></span>
+          <span class="road-tx"><strong>La Bussola, con vostro figlio</strong><span>Dodici domande da attraversare insieme.</span></span>
+          <span class="road-go">Apri <svg><use href="#i-arrow"/></svg></span>
+        </a>
+        <a class="road road-d" href="mailto:orientamattei@gmail.com?subject=Domanda%20di%20un%20genitore">
+          <span class="road-ic"><svg><use href="#i-mail"/></svg></span>
+          <span class="road-tx"><strong>Una domanda</strong><span>Risponde la Commissione Orientamento.</span></span>
+          <span class="road-go">Scrivi <svg><use href="#i-arrow"/></svg></span>
+        </a>
+      </div>
+    </section>
 
-      <ol class="fam-steps">
-        <li><strong>Procuratevi SPID o CIE.</strong> Serve l’identità digitale del genitore che compila (vanno bene anche CNS ed eIDAS). Se non l’avete, fatelo per tempo: è l’unica cosa che può farvi perdere giorni.</li>
-        <li><strong>Entrate in Unica.</strong> Andate su <a href="https://unica.istruzione.gov.it/portale/it/orientamento/iscrizioni" target="_blank" rel="noopener">unica.istruzione.gov.it <span aria-hidden="true">↗</span></a>, sezione «Iscrizioni», e accedete.</li>
-        <li><strong>Cercate la scuola.</strong> Su Unica ogni scuola si trova con il nome oppure con il suo codice meccanografico, una sigla di dieci caratteri. Prima di proseguire controllate che la scuola selezionata sia quella giusta.</li>
-        <li><strong>Compilate la domanda.</strong> Dati dello studente, dati della famiglia, scuola e indirizzo scelti. Potete indicare anche una seconda e una terza scuola: vengono considerate solo se nella prima non c’è posto. Vi verrà chiesto di dichiarare che la scelta è condivisa con l’altro genitore.</li>
-        <li><strong>Controllate e inoltrate.</strong> Potete salvare e riprendere in un altro momento. Quando è tutto a posto, guardate l’anteprima e premete «Inoltra». Arriva un’email di conferma.</li>
-        <li><strong>Seguite la domanda.</strong> Su Unica, e per email, vedete lo stato: «Inoltrata», poi «Accettata». Se avete l’app IO, gli avvisi arrivano anche lì.</li>
-        <li><strong>Dopo l’esame di terza media.</strong> L’iscrizione si completa con la segreteria, che comunica documenti e tempi.</li>
+    <!-- ============ ISCRIZIONE ============ -->
+    <section class="screen s-enrol" id="iscrizione" data-screen data-track="iscrizione" data-label="Iscrizione" aria-labelledby="t-iscrizione">
+      <div class="screen-head">
+        <p class="kicker">Iscrizione</p>
+        <h2 id="t-iscrizione" tabindex="-1">Iscriversi al Meucci&nbsp;-&nbsp;Mattei, sede di&nbsp;Decimomannu</h2>
+        <p class="lead">Si fa online, su Unica, la piattaforma del Ministero. Sette passaggi.</p>
+      </div>
+      <p class="when"><svg><use href="#i-bell"/></svg><span><b>Quando.</b> Le date per il 2027/28 sono attese a metà dicembre e saranno pubblicate qui. Per il 2026/27 la finestra è stata dal 13 gennaio al 21 febbraio.</span></p>
+
+      <ol class="isteps">
+        <li><details class="istep"><summary><span class="istep-n">1</span><svg class="istep-ic"><use href="#i-id"/></svg><strong>SPID o CIE</strong><svg class="tile-more"><use href="#i-plus"/></svg></summary><p>Occorre l’identità digitale del genitore che compila. A chi non l’ha ancora conviene richiederla per tempo.</p></details></li>
+        <li><details class="istep"><summary><span class="istep-n">2</span><svg class="istep-ic"><use href="#i-door"/></svg><strong>Entrate in Unica</strong><svg class="tile-more"><use href="#i-plus"/></svg></summary><p>L’indirizzo è <a href="https://unica.istruzione.gov.it/portale/it/orientamento/iscrizioni" target="_blank" rel="noopener">unica.istruzione.gov.it</a>, sezione «Iscrizioni».</p></details></li>
+        <li><details class="istep"><summary><span class="istep-n">3</span><svg class="istep-ic"><use href="#i-search"/></svg><strong>Cercate la scuola</strong><svg class="tile-more"><use href="#i-plus"/></svg></summary><p>Per nome oppure con il codice meccanografico, una sigla di dieci caratteri. Prima di proseguire verificate che la scuola selezionata sia quella desiderata.</p>
+          <!-- DA FARE: codici meccanografici dei singoli corsi e dicitura su Unica (con tasto copia), se è confermato
+               che esistono codici distinti. Da verificare in segreteria; vedi 30_ISTITUZIONALE/stato.md. -->
+          <p>I codici da utilizzare saranno pubblicati qui prima dell’apertura. Per ogni dubbio, <a href="mailto:orientamattei@gmail.com?subject=Codice%20per%20l%E2%80%99iscrizione">scriveteci</a> prima dell’inoltro.</p></details></li>
+        <li><details class="istep"><summary><span class="istep-n">4</span><svg class="istep-ic"><use href="#i-pencil"/></svg><strong>Compilate la domanda</strong><svg class="tile-more"><use href="#i-plus"/></svg></summary><p>Dati dello studente e della famiglia, scuola e indirizzo. Si possono indicare una seconda e una terza scuola. È richiesta la dichiarazione che la scelta è condivisa con l’altro genitore.</p><p>Chi pensa a SIA si iscrive in prima ad AFM: l’articolazione si sceglie per il terzo anno.</p></details></li>
+        <li><details class="istep"><summary><span class="istep-n">5</span><svg class="istep-ic"><use href="#i-send"/></svg><strong>Controllate e inoltrate</strong><svg class="tile-more"><use href="#i-plus"/></svg></summary><p>La domanda si può salvare e riprendere. A compilazione conclusa: anteprima, poi «Inoltra». Segue un’email di conferma.</p></details></li>
+        <li><details class="istep"><summary><span class="istep-n">6</span><svg class="istep-ic"><use href="#i-bell"/></svg><strong>Seguite la domanda</strong><svg class="tile-more"><use href="#i-plus"/></svg></summary><p>Su Unica e per email compare lo stato: «Inoltrata», poi «Accettata». Con l’app IO gli avvisi arrivano anche lì.</p></details></li>
+        <li><details class="istep"><summary><span class="istep-n">7</span><svg class="istep-ic"><use href="#i-check"/></svg><strong>Dopo l’esame di terza media</strong><svg class="tile-more"><use href="#i-plus"/></svg></summary><p>L’iscrizione si completa in segreteria, che comunica documenti e tempi.</p></details></li>
       </ol>
 
-      <!-- DA FARE: schede con i codici meccanografici dei singoli corsi e la dicitura su Unica (con tasto copia),
-           se è confermato che esistono codici distinti. Da verificare in segreteria; vedi 30_ISTITUZIONALE/stato.md. -->
-      <p class="fam-codes-later"><strong>Quale codice usare.</strong> I codici da inserire su Unica per ciascun corso li pubblicheremo qui prima dell’apertura delle iscrizioni. Se nel frattempo vi serve, o se avete un dubbio su quale voce scegliere, <a href="mailto:orientamattei@gmail.com?subject=Codice%20per%20l%E2%80%99iscrizione">scriveteci</a> prima di inoltrare la domanda.</p>
-      <p class="fam-note">Per i percorsi serali l’iscrizione segue una procedura diversa: <a href="mailto:orientamattei@gmail.com?subject=Iscrizione%20ai%20percorsi%20serali">scriveteci</a>.</p>
+      <a class="help" href="mailto:orientamattei@gmail.com?subject=Aiuto%20per%20l%E2%80%99iscrizione">
+        <svg><use href="#i-mail"/></svg>
+        <span><strong>Vi serve una mano?</strong>La Commissione Orientamento vi accompagna passo per passo.</span>
+        <svg class="help-go"><use href="#i-arrow"/></svg>
+      </a>
 
-      <div class="fam-help">
-        <h3>Se vi serve una mano</h3>
-        <p>Non siete obbligati a fare tutto da soli. Scrivete alla Commissione Orientamento, <a href="mailto:orientamattei@gmail.com?subject=Aiuto%20per%20l%E2%80%99iscrizione">orientamattei@gmail.com</a>: vi diamo le indicazioni passo per passo e vi diciamo a chi rivolgervi.</p>
-      </div>
-
-      <div class="fam-reassure" aria-labelledby="reassureTitle">
-        <h3 id="reassureTitle">Prima di premere «Inoltra»</h3>
-        <ul>
-          <li><strong>Avete il tempo di ripensarci.</strong> Finché la finestra è aperta, la domanda inoltrata può essere restituita dalla scuola e corretta.</li>
-          <li><strong>Vostro figlio non arriva in un posto sconosciuto.</strong> Può aver già provato le attività degli indirizzi, incontrato i nostri docenti nella sua scuola media, visitato la sede. E il primo giorno lo accolgono gli studenti più grandi.</li>
-          <li><strong>Sapete che cosa lo aspetta.</strong> Dove i curricoli sono pubblicati, potete leggere che cosa si studia e come si viene valutati prima di iscrivervi.</li>
-          <li><strong>Sceglie una scuola che gli chiederà di partecipare.</strong> Stiamo progettando spazi e attività insieme agli studenti: non perché sia già tutto fatto, ma perché è il modo in cui vogliamo lavorare.</li>
-          <li><strong>C’è qualcuno a cui scrivere.</strong> Prima, durante e dopo l’iscrizione: la Commissione Orientamento risponde.</li>
-        </ul>
-      </div>
+      <h3 class="calm-title">Prima di premere «Inoltra»</h3>
+      <ul class="calm">
+        <li><svg><use href="#i-check"/></svg><span><b>C’è tempo per ripensarci.</b> Finché la finestra è aperta, la scuola può restituire la domanda.</span></li>
+        <li><svg><use href="#i-check"/></svg><span><b>Non entrerà in un luogo sconosciuto.</b> Il primo giorno ad accoglierlo ci sono gli studenti più grandi.</span></li>
+        <li><svg><use href="#i-check"/></svg><span><b>Troverà una scuola che chiede di partecipare.</b> È il nostro modo di lavorare.</span></li>
+        <li><svg><use href="#i-check"/></svg><span><b>C’è sempre qualcuno a cui scrivere.</b> Prima, durante e dopo.</span></li>
+      </ul>
+      <p class="screen-foot">Per i percorsi serali la procedura è diversa: <a href="mailto:orientamattei@gmail.com?subject=Iscrizione%20ai%20percorsi%20serali">scriveteci</a>.</p>
     </section>
   </main>
+
+  <nav class="flow-bar" aria-label="Avanzamento del percorso" hidden>
+    <a class="bar-home" href="#inizio"><svg><use href="#i-fork"/></svg><span>Le tre strade</span></a>
+    <div class="bar-mid">
+      <div class="bar-dots" aria-hidden="true"></div>
+      <p class="bar-label" aria-live="polite"></p>
+    </div>
+    <a class="bar-prev" href="#inizio" aria-label="Tappa precedente"><svg><use href="#i-back"/></svg></a>
+    <a class="bar-next" href="#inizio"><span>Avanti</span><svg><use href="#i-arrow"/></svg></a>
+  </nav>
 
   <footer class="site-footer visual-footer">
     <div class="visual-footer-brand"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" loading="lazy" alt="Marchio IIS Meucci - Mattei | Decimomannu"><p>IIS Meucci - Mattei | Decimomannu</p></div>
     <p>Spazio curato dai docenti · Non sostituisce il <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a></p>
   </footer>
+  <script type="module" src="famiglie.mjs?v=20261009-flusso"></script>
 </body>
 </html>
