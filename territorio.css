@@ -174,3 +174,44 @@ tfoot td { color: var(--navy); background: #e9f1f3; font-size: .76rem; font-weig
 @media (max-width: 760px) {
   .territory-hero h1 { font-size: clamp(2.2rem, 11.5vw, 4.4rem); line-height: 1.08; letter-spacing: -.05em; }
 }
+
+/* ===== Leggibilità (Claude, 9 ottobre 2026) =====
+   Regole aggiunte in coda: nessuna regola precedente è stata tolta. Niente maiuscolo, niente scritte sotto 13 px,
+   testo normale almeno 7:1 sullo sfondo. */
+.hero-jumps a { font-size: .86rem; }
+.territory-hero-facts span { font-size: .92rem; }
+.kicker { font-size: .86rem; text-transform: none; letter-spacing: 0; }
+.reading-icon { font-size: .86rem; }
+.map-tools button { font-size: .86rem; }
+.map-label { font-size: .86rem; }
+.map-legend { font-size: .86rem; }
+.detail-kicker { font-size: .82rem; text-transform: none; letter-spacing: 0; }
+.detail-count span { font-size: .86rem; }
+.detail-series span { font-size: .82rem; }
+.detail-row { font-size: .92rem; }
+.detail-schools > strong { font-size: .86rem; }
+.detail-schools ul { font-size: .92rem; }
+.school-group header p { font-size: .86rem; }
+.school-place span { font-size: .86rem; }
+.school-place b { font-size: .86rem; }
+.operational-note p { font-size: .92rem; }
+.trend-summary span { font-size: .82rem; text-transform: none; letter-spacing: 0; }
+.trend-summary p { font-size: .92rem; }
+.chart-grid figcaption { font-size: .86rem; }
+caption { font-size: .86rem; }
+thead th { font-size: .86rem; }
+tbody td { font-size: .92rem; }
+tfoot td { font-size: .92rem; }
+.sources p { font-size: .86rem; }
+.territory-hero .back-link { border: 2px solid rgb(255 255 255 / 55%); background: transparent; }
+.territory-hero .eyebrow { width: fit-content; padding: 6px 13px; border-radius: 99px; color: #0b2f47; background: #c9f981; font-weight: 800; }
+.territory-hero h1 { font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: 1.04; letter-spacing: -.04em; }
+.territory-hero .hero-lead, .territory-hero-facts span { color: #fff; }
+.hero-jumps a { min-height: 46px; border: 2px solid rgb(255 255 255 / 55%); background: transparent; font-size: .95rem; }
+.hero-jumps a:first-child { border-color: #fff; }
+.kicker { color: #00522a; font-size: .92rem; font-weight: 800; }
+.town-detail { background: linear-gradient(150deg, #0b2f47, #123c57); }
+.detail-count span, .detail-series span, .detail-row { color: #fff; }
+.school-place b { color: #00522a; }
+.operational-note strong { color: #5c3800; }
+tbody td:nth-child(7) { color: #00522a; }

@@ -424,3 +424,80 @@
   .route-summary { grid-template-columns: 1fr; }
   .route-summary a + a { border-left: 0; border-top: 1px solid rgb(255 255 255 / 20%); }
 }
+
+/* ===== Stesso stile del resto del sito (Claude, 9 ottobre 2026) =====
+   Regole aggiunte in coda: nessuna regola precedente è stata tolta. Testo normale almeno 7:1 sullo sfondo,
+   niente maiuscolo, niente scritte sotto 13 px, apertura più corta. */
+.study-card.sia { --accent: #365f00; }
+.study-card.turismo { --accent: #006733; }
+.study-card.ssas { --accent: #ad093e; }
+.study-card.cat { --accent: #005a53; }
+
+.study-hero { min-height: 0; padding-bottom: 30px; background: linear-gradient(150deg, #0b2f47 0%, #103f58 60%, #0f4f58 100%); }
+.study-hero .back-link { margin-bottom: 26px; border: 2px solid rgb(255 255 255 / 55%); color: #fff; background: transparent; font-size: .95rem; }
+.study-hero .back-link:hover { color: #0b2f47; border-color: #fff; background: #fff; }
+.hero-layout { align-items: center; }
+.study-hero .hero-copy .eyebrow { width: fit-content; margin: 0; padding: 6px 13px; border-radius: 99px; color: #0b2f47; background: #c9f981; font-size: .92rem; font-weight: 800; letter-spacing: 0; text-transform: none; }
+.study-hero .hero-copy h1 { margin: 16px 0 18px; font-size: clamp(2.5rem, 6vw, 4.6rem); line-height: 1.02; letter-spacing: -.04em; }
+.study-hero .hero-summary { color: #fff; font-size: clamp(1.05rem, 1.8vw, 1.25rem); line-height: 1.5; }
+.study-hero .hero-principle { margin-top: 18px; padding: 11px 16px; border-left: 0; border-radius: 14px; color: #0b2f47; background: #c9f981; font-size: 1rem; line-height: 1.4; letter-spacing: 0; }
+.route-summary { border-color: rgb(255 255 255 / 45%); background: rgb(255 255 255 / 8%); backdrop-filter: none; }
+.route-summary a { min-height: 104px; }
+.route-summary span { color: #fff; font-size: .95rem; letter-spacing: 0; text-transform: none; }
+.course-index { margin-top: 26px; padding-top: 20px; gap: 8px; border-top-color: rgb(255 255 255 / 30%); }
+.course-index a { min-height: 46px; padding: 8px 18px; display: inline-flex; align-items: center; border: 2px solid #fff; color: #0b2f47; background: #fff; font-size: 1rem; letter-spacing: 0; }
+.course-index a:hover { border-color: #c9f981; background: #c9f981; }
+
+.study-page .explore-kicker { color: #33495a; font-size: .95rem; letter-spacing: 0; text-transform: none; }
+.study-page .bussola-entry { border: 0; border-radius: 24px; background: #fff; box-shadow: 0 10px 30px rgb(11 47 71 / 10%); }
+.study-page .bussola-entry h2 { color: #0b2f47; letter-spacing: -.03em; }
+.study-page .bussola-entry p a, .study-page .explore-link { color: #0b2f47; font-weight: 800; }
+.study-page .explore-button { min-height: 52px; border-color: #006733; border-radius: 14px; background: #006733; font-weight: 850; }
+.study-page .explore-button:hover { border-color: #00522a; background: #00522a; }
+
+.study-section { padding-top: clamp(44px, 7vw, 76px); }
+.section-kicker { width: fit-content; padding: 5px 12px; border-radius: 99px; color: #fff; background: #0b2f47; font-size: .9rem; font-weight: 800; letter-spacing: 0; text-transform: none; }
+.section-intro h2, .common-skills h2 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; letter-spacing: -.04em; }
+.section-intro > p { color: #33495a; font-size: 1.05rem; line-height: 1.5; }
+.card-number { color: #33495a; font-size: .9rem; letter-spacing: 0; }
+.card-title > p { color: #33495a; font-size: .95rem; font-weight: 750; letter-spacing: 0; text-transform: none; }
+.card-title h3 { font-size: clamp(1.7rem, 4vw, 2.9rem); line-height: 1.08; letter-spacing: -.035em; }
+.course-intent { color: #33495a; font-size: 1.05rem; line-height: 1.5; }
+.course-caption { color: #17314a; font-size: 1rem; line-height: 1.5; }
+.course-caption > span, .evening-caption > span { color: #33495a; font-size: .9rem; font-weight: 800; letter-spacing: 0; text-transform: none; }
+.card-details h4 { color: #0b2f47; font-size: .98rem; font-weight: 850; letter-spacing: 0; text-transform: none; }
+.card-details p { color: #33495a; font-size: 1rem; line-height: 1.5; }
+.course-exploration summary { color: #0b2f47; font-size: 1rem; font-weight: 850; }
+.course-exploration h4 { color: #0b2f47; font-size: .98rem; letter-spacing: 0; text-transform: none; }
+.course-exploration p { color: #33495a; font-size: 1rem; }
+.course-contact { font-size: 1rem; }
+.course-contact strong { font-size: 1rem; letter-spacing: 0; }
+
+.common-skills { background: linear-gradient(150deg, #00522a, #006733); }
+.common-skills .section-kicker { color: #00522a; background: #c9f981; }
+.common-skills li { font-size: 1.05rem; }
+.common-skills li span { color: #fff; font-size: .95rem; }
+.study-page .shared-problem { border: 0; box-shadow: 0 10px 30px rgb(11 47 71 / 10%); }
+.study-page .many-views li { color: #17314a; background: #eef3f4; }
+.study-page .many-views strong { color: #0b2f47; }
+
+.evening-section { background: linear-gradient(150deg, #0b2f47, #123c57); }
+.evening-intro .section-kicker { color: #0b2f47; background: #c9f981; }
+.evening-intro > p { color: #fff; }
+.evening-card, .evening-card:nth-child(2), .evening-card:nth-child(3) { border: 1.5px solid rgb(255 255 255 / 40%); background: rgb(255 255 255 / 6%); }
+.evening-code { font-size: .95rem; letter-spacing: 0; }
+.evening-area { color: #fff; font-size: .95rem; font-weight: 700; letter-spacing: 0; text-transform: none; }
+.evening-description { color: #fff; font-size: 1rem; line-height: 1.5; }
+.evening-caption { color: #fff; font-size: 1rem; line-height: 1.5; }
+.evening-caption > span { color: #c9f981; }
+.evening-card small { color: #fff; font-size: .9rem; }
+
+@media (max-width: 760px) {
+  .study-hero .hero-copy h1 { font-size: clamp(2.3rem, 11vw, 3.2rem); line-height: 1.04; letter-spacing: -.04em; }
+  .route-summary a { min-height: 78px; }
+  .route-summary strong { font-size: 2.2rem; }
+  .card-title h3 { font-size: clamp(1.6rem, 7.6vw, 2.3rem); }
+}
+@media (max-width: 620px) {
+  .site-header .page-nav a { font-size: .92rem; }
+}

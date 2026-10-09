@@ -123,3 +123,22 @@ Che cosa riprendere nei laboratori nuovi (AFM, SIA, CAT):
 - **Telefono.** In alto i cinque laboratori in una riga sola; titolo del passaggio in un pannello blu con l’etichetta lime; scelte bianche con bordo, lime quando sono selezionate; barra dei comandi sospesa in basso con la freccia per tornare indietro e il pulsante verde largo.
 - **Parole.** Niente nomi di servizi tecnici nei messaggi agli alunni; i titoli dicono che cosa si fa; l’ingresso dice in due righe che cosa è il laboratorio e parte con un solo pulsante.
 - **Controlli fatti.** A 320, 360, 390 e 412 px: contrasto minimo 7,03:1 (5,4:1 solo sui comandi disattivati), nessuna scritta sovrapposta o tagliata, nessuno scorrimento laterale. A 1280 px la disposizione a due colonne resta quella di prima. Le prove sono state fatte solo in locale con `?prova=` e dati finti: nessuna chiamata al servizio reale. Non provato su telefoni fisici.
+
+### Home e sezioni — percorsi a imbuto e leggibilità in tutto il sito (9 ottobre 2026)
+
+Su richiesta di Salvatore la home è stata rifatta e le sezioni sono state riviste nei testi e nella grafica.
+
+**Home (`index.html`, `home.css`).** Si apre con la domanda della campagna, «A cosa serve imparare?», e con quattro porte: «Sono in terza media», «Sono un genitore», «Studio al Meucci - Mattei», «Sono un docente». Ogni porta apre un percorso; dalla barra in basso si torna all’inizio e se ne sceglie un altro. Sotto le porte: «Che scuola stiamo costruendo?» (quattro idee, ciascuna con lo stato dichiarato e il rimando alla pagina che la racconta), gli indirizzi, la sede. La home riusa i mattoni di `famiglie.css` e il controllo delle schermate di `famiglie.mjs`: una schermata è un elemento con `data-screen`; senza JavaScript le schermate restano tutte in pagina.
+
+Regole per chi aggiunge qualcosa alla home:
+
+- un percorso nuovo è una porta in più e una schermata in più, non una lista di collegamenti in fondo alla pagina;
+- i fatti sulla scuola stanno nelle pagine di destinazione (`famiglie.html`, `indirizzi.html`, `missioni.html`): la home ne dà una riga e rimanda;
+- di ogni cosa si dice se c’è già o se è in progetto;
+- l’ordine è quello della cornice editoriale della campagna: prima il perché e il modo di fare scuola, poi gli indirizzi.
+
+**Colori e misure comuni (`portal.css`, `globals.css`).** In coda ai due fogli le variabili `--muted`, `--green`, `--pink` e `--teal-ink` hanno ora valori più scuri (`#33495a`, `#006733`, `#ad093e`, `#005a53`): il testo che le usa e il bianco scritto sopra arrivano a un contrasto di almeno 7:1. Le etichette (`.eyebrow`, `.step`, `.area-tag`, `.kicker`, `.section-kicker`) non sono più in maiuscolo. Nessuna scritta resta sotto i 13 px, nemmeno nell’intestazione e nel piè di pagina.
+
+**Sezioni.** `indirizzi.html` (apertura più corta, etichette e testi leggibili, tre titoli più diretti), `curricoli.html` (testo dell’apertura e nota finale riscritti), `territorio.html`, `una-scuola-da-vivere.html` e `accoglienza.html` (solo leggibilità: nessun campo, modulo o dato è stato toccato). In ogni foglio le regole nuove sono in un blocco in coda; nessuna regola precedente è stata tolta.
+
+**Controlli.** Home e sezioni a 320, 360, 390, 412, 768 e 1280 px: nessuna scritta sotto 13 px o in maiuscolo, nessuna sovrapposta o tagliata, nessuno scorrimento laterale; contrasto del testo normale almeno 7:1. Le sette schermate dell’accoglienza a 1280 px stanno ancora nello schermo senza scorrere; sul telefono scorrono dentro la schermata, come prima. Moduli e area riservata non sono stati provati con invii veri. Non provato su telefoni fisici.

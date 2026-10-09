@@ -370,9 +370,56 @@ input::placeholder, textarea::placeholder { color: #718692; opacity: 1; }
 }
 
 /* Intestazione e piè di pagina di tutte le pagine: niente maiuscolo, niente scritte sotto 13 px (Claude, 9 ottobre 2026). */
-.site-brand-place { color: #075a46; font-size: .92rem; letter-spacing: 0; text-transform: none; }
+.site-brand-place { color: #064a3a; font-size: .92rem; letter-spacing: 0; text-transform: none; }
 .site-header > p { font-size: .88rem; }
 .page-nav a, .back-link { font-size: .92rem; }
 .site-footer { font-size: .9rem; }
 .site-footer a { color: #fff; }
 .visual-footer > p { max-width: 62ch; font-size: .9rem; }
+
+/* ===== Leggibilità in tutte le pagine (Claude, 9 ottobre 2026) =====
+   Regole aggiunte in coda: nessuna regola precedente è stata tolta. Colori di testo e di fondo più scuri
+   (contrasto almeno 7:1 con il bianco), niente maiuscolo, niente scritte sotto 13 px. */
+:root { --muted: #33495a; --green: #006733; --pink: #ad093e; --teal-ink: #005a53; }
+.eyebrow, .step, .area-tag { font-size: .86rem; text-transform: none; letter-spacing: 0; }
+.hero-notice > span { font-size: .92rem; }
+.hero-notice a { font-size: .92rem; }
+.reset-filter { font-size: .86rem; }
+.filter-status { font-size: .86rem; }
+.area-number { font-size: .86rem; }
+.area-content a { font-size: .92rem; }
+.password-form label { font-size: .92rem; }
+.access-message { font-size: .92rem; }
+.role-badge { font-size: .82rem; text-transform: none; letter-spacing: 0; }
+.logout-button { font-size: .92rem; }
+.upload-form label { font-size: .86rem; }
+.upload-form input[type="file"], .replacement-input { font-size: .86rem; }
+.upload-message { font-size: .86rem; }
+.resource-card .resource-meta { font-size: .86rem; }
+.resource-empty { font-size: .92rem; }
+.document-actions > a { font-size: .92rem; }
+.document-manage summary { font-size: .92rem; }
+.manage-actions button { font-size: .86rem; }
+.manage-status { font-size: .86rem; }
+.course-actions a { font-size: .92rem; }
+.status-badge { font-size: .82rem; text-transform: none; letter-spacing: 0; }
+.curriculum-copy > p:first-child { font-size: .86rem; text-transform: none; letter-spacing: 0; }
+.curriculum-card > a { font-size: .92rem; }
+.group-links span { font-size: .92rem; }
+.home-page .hero-campaign figcaption { font-size: .92rem; }
+.eyebrow, .step, .area-tag { font-size: .92rem; font-weight: 800; }
+.step { color: #00522a; }
+.orientation-hero { background: linear-gradient(150deg, #0b2f47 0%, #103f58 60%, #0f4f58 100%); }
+.orientation-hero .back-link { border: 2px solid rgb(255 255 255 / 55%); color: #fff; background: transparent; }
+.orientation-hero .back-link:hover { color: #0b2f47; border-color: #fff; background: #fff; }
+.orientation-hero .eyebrow { width: fit-content; padding: 6px 13px; border-radius: 99px; color: #0b2f47; background: #c9f981; }
+.orientation-hero h1 { font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: 1.04; letter-spacing: -.04em; }
+.orientation-hero > p:last-child { color: #fff; font-size: 1.08rem; line-height: 1.5; }
+.curricula-hero { background: linear-gradient(150deg, #00522a, #006733); }
+.curriculum-code { letter-spacing: 0; }
+.curriculum-copy > p:first-child { color: #33495a; font-size: .95rem; font-weight: 750; }
+.curriculum-copy > p:last-child { color: #33495a; font-size: 1rem; line-height: 1.5; }
+.curriculum-card > a { min-height: 52px; background: #006733; font-size: 1rem; font-weight: 850; }
+.curriculum-card > a:hover { background: #00522a; }
+.growth-note { color: #17314a; background: #dfe9ec; font-size: 1rem; line-height: 1.5; }
+.growth-note a { color: #0b2f47; font-weight: 800; }

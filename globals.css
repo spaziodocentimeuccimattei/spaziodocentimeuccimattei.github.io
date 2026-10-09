@@ -250,3 +250,62 @@ button, [role="button"] { touch-action: manipulation; }
   .motif-top { width: 44vw; height: 98px; top: -52px; right: -10px; opacity: .6; }
   .slide-heading p { max-width: 58%; }
 }
+
+/* ===== Leggibilità (Claude, 9 ottobre 2026) =====
+   Regole aggiunte in coda: nessuna regola precedente è stata tolta. Niente maiuscolo, niente scritte sotto 13 px,
+   colori di testo più scuri. */
+:root { --muted: #33495a; --green: #006733; --pink: #ad093e; --teal-ink: #005a53; }
+.top-actions button, .top-actions a, .controls > button { font-size: .92rem; }
+.index-panel > p { font-size: .82rem; text-transform: none; letter-spacing: 0; }
+.index-panel button span { font-size: .82rem; }
+.slide-heading p { font-size: .82rem; text-transform: none; letter-spacing: 0; }
+.objective-grid article > span { font-size: .92rem; }
+.time-legend { font-size: .86rem; text-transform: none; letter-spacing: 0; }
+.journey-strip span { font-size: .82rem; }
+.organization-note { font-size: .92rem; }
+.organization-note b { text-transform: none; letter-spacing: 0; }
+.technical-header p { font-size: .82rem; text-transform: none; letter-spacing: 0; }
+.technical-list p, .follow-up-list p { font-size: .86rem; }
+.technical-list b, .follow-up-list b { font-size: .82rem; }
+.technical-list small, .follow-up-list small { font-size: .82rem; }
+.follow-up-block h3 { font-size: .86rem; text-transform: none; letter-spacing: 0; }
+.teacher-callout span { font-size: .86rem; text-transform: none; letter-spacing: 0; }
+.document-list span { font-size: .86rem; }
+.pairing-board h3, .route-board h3 { text-transform: none; letter-spacing: 0; }
+.pairing-board > p { font-size: .86rem; }
+.pairing-board > div strong { font-size: .82rem; letter-spacing: 0; }
+.pairing-board > small { font-size: .82rem; }
+.route-board p span { font-size: .82rem; }
+.route-board p strong { font-size: .92rem; }
+.end-times span { font-size: .82rem; }
+.end-times b { font-size: .92rem; }
+.senior-activities span { font-size: .86rem; }
+.welcome-card p { font-size: .86rem; }
+.closing-panel span { font-size: .86rem; }
+.closing-panel small { font-size: .82rem; }
+.closing-message p { font-size: .92rem; text-transform: none; letter-spacing: 0; }
+.progress-text { font-size: .82rem; }
+.disclaimer { font-size: .82rem; }
+@media (max-width: 620px) {
+  .disclaimer { font-size: .82rem; }
+}
+.slide-heading p { color: #00522a; font-weight: 800; }
+.objective-grid article > span { color: #33495a; }
+.first-years { background: linear-gradient(150deg, #00522a, #006733); }
+.other-years { background: linear-gradient(150deg, #0b2f47, #123c57); }
+.schedule-label { letter-spacing: 0; }
+.aula-intro { background: linear-gradient(150deg, #0b2f47, #123c57); }
+.aula-intro > p:not(.organization-note), .organization-note, .welcome-card p, .closing-panel small { color: #fff; }
+.closing-panel { background: linear-gradient(150deg, #00522a, #006733); }
+.teacher-callout span { color: #00522a; }
+.closing-message p { color: #00522a; font-weight: 800; }
+.journey-strip span { color: #17314a; }
+.journey-strip span.active { color: #fff; }
+.schedule-card span, .schedule-card small { color: #fff; }
+.technical-list b { color: #8c0732; }
+.follow-up-block { background: linear-gradient(150deg, #00522a, #006733); }
+.follow-up-block h3, .follow-up-list b { color: #c9f981; }
+.follow-up-list p { background: rgb(0 0 0 / 18%); }
+.follow-up-list small, .pairing-board > small { color: #fff; }
+.pairing-board { background: linear-gradient(150deg, #0b2f47, #123c57); }
+.welcome-card span { color: #c9f981; }
