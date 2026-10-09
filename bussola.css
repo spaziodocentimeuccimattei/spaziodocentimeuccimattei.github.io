@@ -334,95 +334,139 @@
 .bussola-page .compass-life-image img { aspect-ratio: 1 / 1; object-fit: cover; }
 
 /* ===== La tua Bussola: schermate ad alto contrasto, pensate prima per il telefono (9 ottobre 2026) =====
-   Regole limitate a .bussola-page. Testo normale almeno 7:1 sullo sfondo, niente maiuscolo. */
-.bussola-page { --b-navy: #0b2f47; --b-ink: #17314a; --b-soft: #33495a; --b-lime: #c9f981; --b-green: #006733; background: #e9eff0; }
-.bussola-page .explore-page .eyebrow, .bussola-page .explore-kicker { letter-spacing: 0; text-transform: none; font-size: .95rem; }
-.bussola-page .journey { color: var(--b-soft); }
-.bussola-page .journey li.current { color: var(--b-navy); }
-.bussola-page .journey li.current::before { background: var(--b-green); }
+   Regole limitate a .bussola-page e .missioni-page. Testo normale almeno 7:1 sullo sfondo, niente maiuscolo. */
+:is(.bussola-page, .missioni-page) { --b-navy: #0b2f47; --b-ink: #17314a; --b-soft: #33495a; --b-lime: #c9f981; --b-green: #006733; background: #e9eff0; }
+:is(.bussola-page, .missioni-page) .explore-page .eyebrow, :is(.bussola-page, .missioni-page) .explore-kicker { letter-spacing: 0; text-transform: none; font-size: .95rem; }
+:is(.bussola-page, .missioni-page) .journey { color: var(--b-soft); }
+:is(.bussola-page, .missioni-page) .journey li.current { color: var(--b-navy); }
+:is(.bussola-page, .missioni-page) .journey li.current::before { background: var(--b-green); }
 
 /* Ingresso */
-.bussola-page .compass-intro { border: 0; color: #fff; background: linear-gradient(150deg, #0b2f47 0%, #103f58 60%, #0f4f58 100%); box-shadow: var(--shadow-md); }
-.bussola-page .compass-intro #introTitle, .bussola-page .compass-intro .intro-lead, .bussola-page .compass-intro p { color: #fff; }
-.bussola-page .compass-intro .eyebrow { width: fit-content; margin: 0; padding: 7px 14px; border-radius: 99px; color: var(--b-navy); background: var(--b-lime); font-weight: 800; }
-.bussola-page .intro-topics li { padding: 7px 13px; border-radius: 99px; color: var(--b-navy); background: #fff; font-size: .95rem; font-weight: 750; }
-.bussola-page .intro-facts span { padding: 6px 13px; border: 1.5px solid rgb(255 255 255 / 60%); border-radius: 99px; color: #fff; background: rgb(255 255 255 / 10%); font-weight: 650; }
-.bussola-page #startPath { min-height: 58px; padding-inline: 28px; border-color: var(--b-lime); border-radius: 16px; color: var(--b-navy); background: var(--b-lime); font-size: 1.1rem; font-weight: 850; }
-.bussola-page #startPath:hover { border-color: #fff; background: #fff; }
-.bussola-page #startPath:disabled { opacity: .7; }
-.bussola-page .compass-intro .explore-link { color: #fff; font-weight: 800; }
-.bussola-page .resume-panel { border: 0; box-shadow: var(--shadow-md); }
+:is(.bussola-page, .missioni-page) .compass-intro { border: 0; color: #fff; background: linear-gradient(150deg, #0b2f47 0%, #103f58 60%, #0f4f58 100%); box-shadow: var(--shadow-md); }
+:is(.bussola-page, .missioni-page) .compass-intro #introTitle, :is(.bussola-page, .missioni-page) .compass-intro .intro-lead, :is(.bussola-page, .missioni-page) .compass-intro p { color: #fff; }
+:is(.bussola-page, .missioni-page) .compass-intro .eyebrow { width: fit-content; margin: 0; padding: 7px 14px; border-radius: 99px; color: var(--b-navy); background: var(--b-lime); font-weight: 800; }
+:is(.bussola-page, .missioni-page) .intro-topics li { padding: 7px 13px; border-radius: 99px; color: var(--b-navy); background: #fff; font-size: .95rem; font-weight: 750; }
+:is(.bussola-page, .missioni-page) .intro-facts span { padding: 6px 13px; border: 1.5px solid rgb(255 255 255 / 60%); border-radius: 99px; color: #fff; background: rgb(255 255 255 / 10%); font-weight: 650; }
+:is(.bussola-page, .missioni-page) #startPath { min-height: 58px; padding-inline: 28px; border-color: var(--b-lime); border-radius: 16px; color: var(--b-navy); background: var(--b-lime); font-size: 1.1rem; font-weight: 850; }
+:is(.bussola-page, .missioni-page) #startPath:hover { border-color: #fff; background: #fff; }
+:is(.bussola-page, .missioni-page) #startPath:disabled { opacity: .7; }
+:is(.bussola-page, .missioni-page) .compass-intro .explore-link { color: #fff; font-weight: 800; }
+:is(.bussola-page, .missioni-page) .resume-panel { border: 0; box-shadow: var(--shadow-md); }
 
 /* Domanda */
-.bussola-page .question-panel { border: 0; color: #fff; background: linear-gradient(150deg, #0b2f47, #123c57); box-shadow: var(--shadow-md); }
-.bussola-page .progress-heading { align-items: center; color: #fff; font-weight: 750; }
-.bussola-page .progress-heading .skip-button { color: #fff; }
-.bussola-page .progress-track { height: 8px; background: rgb(255 255 255 / 28%); }
-.bussola-page .progress-track span { background: var(--b-lime); }
-.bussola-page .question-area { width: fit-content; margin: 0 0 12px; padding: 6px 13px; border-radius: 99px; color: var(--b-navy); background: var(--b-lime); font-size: .92rem; font-weight: 800; }
-.bussola-page #questionTitle { margin: 0 0 12px; color: #fff; font-size: clamp(1.7rem, 5.6vw, 2.7rem); line-height: 1.08; letter-spacing: -.03em; }
-.bussola-page .scenario { margin: 0 0 18px; color: #fff; font-size: 1.08rem; line-height: 1.5; }
-.bussola-page .question-art { padding: 10px; border-radius: 18px; background: #fff; }
-.bussola-page .choices legend { margin-bottom: 14px; color: #fff; font-size: 1.15rem; }
-.bussola-page .choice { align-items: center; gap: 14px; padding: 14px 16px; border: 0; border-radius: 18px; color: var(--b-ink); background: #fff; box-shadow: 0 8px 20px rgb(3 24 38 / 28%); transition: background-color 120ms ease, transform 120ms ease; }
-.bussola-page .choice:hover { border: 0; background: #eef4f4; }
-.bussola-page .choice:active { transform: translateY(1px); }
-.bussola-page .choice strong { color: var(--b-navy); font-size: 1.08rem; line-height: 1.25; }
-.bussola-page .choice small { margin-top: 3px; color: var(--b-soft); font-size: .97rem; line-height: 1.4; }
-.bussola-page .choice input { appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 26px; height: 26px; margin: 0; display: grid; place-items: center; border: 2.5px solid var(--b-navy); border-radius: 50%; background: #fff; }
-.bussola-page .choice input:checked { background: var(--b-navy); }
-.bussola-page .choice input:checked::after { content: ""; width: 11px; height: 6px; border-left: 3px solid #fff; border-bottom: 3px solid #fff; transform: rotate(-45deg) translate(1px, -1px); }
-.bussola-page .choice:has(input:checked) { background: var(--b-lime); }
-.bussola-page .choice:has(input:checked) small { color: var(--b-ink); }
-.bussola-page .choice:has(input:focus-visible) { outline: 3px solid #ffd23f; outline-offset: 3px; }
-.bussola-page .question-footer { position: sticky; bottom: 10px; z-index: 5; margin-top: 18px; padding: 8px; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; border-radius: 20px; background: #fff; box-shadow: 0 14px 40px rgb(3 24 38 / 42%); }
-.bussola-page .question-footer .explore-button { min-height: 52px; border-color: var(--b-green); border-radius: 14px; background: var(--b-green); font-weight: 850; }
-.bussola-page .question-footer .explore-button:hover { border-color: #00522a; background: #00522a; }
-.bussola-page .question-footer .explore-button.secondary { color: var(--b-navy); border-color: #dfe9ec; background: #dfe9ec; }
-.bussola-page .question-footer .explore-button.secondary:hover { border-color: #cddbdf; background: #cddbdf; }
-.bussola-page .question-footer .explore-button:disabled { color: #4b5f6b; border-color: #dfe9ec; background: #dfe9ec; opacity: 1; }
-.bussola-page .question-footer > .skip-button { order: 0; width: auto; color: var(--b-navy); font-weight: 750; text-align: center; }
-.bussola-page .question-footer > .explore-button:last-child { margin-left: 0; }
-.bussola-page .question-footer { border-top: 0; }
+:is(.bussola-page, .missioni-page) .question-panel { border: 0; color: #fff; background: linear-gradient(150deg, #0b2f47, #123c57); box-shadow: var(--shadow-md); }
+:is(.bussola-page, .missioni-page) .progress-heading { align-items: center; color: #fff; font-weight: 750; }
+:is(.bussola-page, .missioni-page) .progress-heading .skip-button { color: #fff; }
+:is(.bussola-page, .missioni-page) .progress-track { height: 8px; background: rgb(255 255 255 / 28%); }
+:is(.bussola-page, .missioni-page) .progress-track span { background: var(--b-lime); }
+:is(.bussola-page, .missioni-page) .question-area { width: fit-content; margin: 0 0 12px; padding: 6px 13px; border-radius: 99px; color: var(--b-navy); background: var(--b-lime); font-size: .92rem; font-weight: 800; }
+:is(.bussola-page, .missioni-page) #questionTitle { margin: 0 0 12px; color: #fff; font-size: clamp(1.7rem, 5.6vw, 2.7rem); line-height: 1.08; letter-spacing: -.03em; }
+:is(.bussola-page, .missioni-page) .scenario { margin: 0 0 18px; color: #fff; font-size: 1.08rem; line-height: 1.5; }
+:is(.bussola-page, .missioni-page) .question-art { padding: 10px; border-radius: 18px; background: #fff; }
+:is(.bussola-page, .missioni-page) .choices legend { margin-bottom: 14px; color: #fff; font-size: 1.15rem; }
+:is(.bussola-page, .missioni-page) .choice { align-items: center; gap: 14px; padding: 14px 16px; border: 0; border-radius: 18px; color: var(--b-ink); background: #fff; box-shadow: 0 8px 20px rgb(3 24 38 / 28%); transition: background-color 120ms ease, transform 120ms ease; }
+:is(.bussola-page, .missioni-page) .choice:hover { border: 0; background: #eef4f4; }
+:is(.bussola-page, .missioni-page) .choice:active { transform: translateY(1px); }
+:is(.bussola-page, .missioni-page) .choice strong { color: var(--b-navy); font-size: 1.08rem; line-height: 1.25; }
+:is(.bussola-page, .missioni-page) .choice small { margin-top: 3px; color: var(--b-soft); font-size: .97rem; line-height: 1.4; }
+:is(.bussola-page, .missioni-page) .choice input { appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 26px; height: 26px; margin: 0; display: grid; place-items: center; border: 2.5px solid var(--b-navy); border-radius: 50%; background: #fff; }
+:is(.bussola-page, .missioni-page) .choice input:checked { background: var(--b-navy); }
+:is(.bussola-page, .missioni-page) .choice input:checked::after { content: ""; width: 11px; height: 6px; border-left: 3px solid #fff; border-bottom: 3px solid #fff; transform: rotate(-45deg) translate(1px, -1px); }
+:is(.bussola-page, .missioni-page) .choice:has(input:checked) { background: var(--b-lime); }
+:is(.bussola-page, .missioni-page) .choice:has(input:checked) small { color: var(--b-ink); }
+:is(.bussola-page, .missioni-page) .choice:has(input:focus-visible) { outline: 3px solid #ffd23f; outline-offset: 3px; }
+:is(.bussola-page, .missioni-page) .question-footer { position: sticky; bottom: 10px; z-index: 5; margin-top: 18px; padding: 8px; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; border-radius: 20px; background: #fff; box-shadow: 0 14px 40px rgb(3 24 38 / 42%); }
+:is(.bussola-page, .missioni-page) .question-footer .explore-button { min-height: 52px; border-color: var(--b-green); border-radius: 14px; background: var(--b-green); font-weight: 850; }
+:is(.bussola-page, .missioni-page) .question-footer .explore-button:hover { border-color: #00522a; background: #00522a; }
+:is(.bussola-page, .missioni-page) .question-footer .explore-button.secondary { color: var(--b-navy); border-color: #dfe9ec; background: #dfe9ec; }
+:is(.bussola-page, .missioni-page) .question-footer .explore-button.secondary:hover { border-color: #cddbdf; background: #cddbdf; }
+:is(.bussola-page, .missioni-page) .question-footer .explore-button:disabled { color: #4b5f6b; border-color: #dfe9ec; background: #dfe9ec; opacity: 1; }
+:is(.bussola-page, .missioni-page) .question-footer > .skip-button { order: 0; width: auto; color: var(--b-navy); font-weight: 750; text-align: center; }
+:is(.bussola-page, .missioni-page) .question-footer > .explore-button:last-child { margin-left: 0; }
+:is(.bussola-page, .missioni-page) .question-footer { border-top: 0; }
 
 /* Risultato */
-.bussola-page .result-panel { padding: 0; border: 0; background: transparent; box-shadow: none; }
-.bussola-page .direction-intro { background: linear-gradient(150deg, #0b2f47 0%, #103f58 60%, #0f4f58 100%); box-shadow: var(--shadow-md); }
-.bussola-page .direction-intro .explore-kicker { width: fit-content; padding: 6px 13px; border-radius: 99px; color: var(--b-navy); background: var(--b-lime); font-weight: 800; }
-.bussola-page .direction-intro .plain-note, .bussola-page .direction-note { color: #fff; }
-.bussola-page .direction-note { border-top-color: rgb(255 255 255 / 45%); font-size: 1rem; }
-.bussola-page .direction-card { border: 0; border-top: 10px solid var(--course-color); border-radius: 22px; box-shadow: var(--shadow-md); }
-.bussola-page .course-tag { padding: 5px 12px; border-radius: 99px; color: #fff; background: var(--course-color); font-size: .95rem; }
-.bussola-page .direction-card h4 { color: var(--b-navy); font-size: 1.08rem; }
-.bussola-page .direction-evidence li { border-left-width: 5px; background: #eef3f4; }
-.bussola-page .evidence-area { color: var(--b-soft); font-size: .88rem; }
-.bussola-page .direction-evidence q { color: var(--b-navy); font-size: 1.02rem; font-weight: 700; quotes: "«" "»"; }
-.bussola-page .direction-evidence p { color: var(--b-ink); font-size: .97rem; }
-.bussola-page .subject-chips li { padding: 6px 12px; border: 0; border-radius: 99px; color: #fff; background: var(--b-navy); font-size: .9rem; font-weight: 700; }
-.bussola-page .direction-card .certificate-action p { color: var(--b-ink); }
-.bussola-page .other-directions, .bussola-page .choice-recap { border: 0; box-shadow: var(--shadow-sm); }
-.bussola-page .choice-recap summary { color: var(--b-navy); font-size: 1.1rem; }
-.bussola-page .discovery-course { border: 1px solid #b9c9cf; border-top: 8px solid var(--course-color); }
-.bussola-page .discovery-course p:not(.course-tag), .bussola-page .choice-recap li, .bussola-page .other-directions > p { color: var(--b-ink); }
-.bussola-page .next-step { border-left: 0; border-radius: 18px; color: var(--b-navy); background: var(--b-lime); font-weight: 650; }
+:is(.bussola-page, .missioni-page) .result-panel { padding: 0; border: 0; background: transparent; box-shadow: none; }
+:is(.bussola-page, .missioni-page) .direction-intro { background: linear-gradient(150deg, #0b2f47 0%, #103f58 60%, #0f4f58 100%); box-shadow: var(--shadow-md); }
+:is(.bussola-page, .missioni-page) .direction-intro .explore-kicker { width: fit-content; padding: 6px 13px; border-radius: 99px; color: var(--b-navy); background: var(--b-lime); font-weight: 800; }
+:is(.bussola-page, .missioni-page) .direction-intro .plain-note, :is(.bussola-page, .missioni-page) .direction-note { color: #fff; }
+:is(.bussola-page, .missioni-page) .direction-note { border-top-color: rgb(255 255 255 / 45%); font-size: 1rem; }
+:is(.bussola-page, .missioni-page) .direction-card { border: 0; border-top: 10px solid var(--course-color); border-radius: 22px; box-shadow: var(--shadow-md); }
+:is(.bussola-page, .missioni-page) .course-tag { padding: 5px 12px; border-radius: 99px; color: #fff; background: var(--course-color); font-size: .95rem; }
+:is(.bussola-page, .missioni-page) .direction-card h4 { color: var(--b-navy); font-size: 1.08rem; }
+:is(.bussola-page, .missioni-page) .direction-evidence li { border-left-width: 5px; background: #eef3f4; }
+:is(.bussola-page, .missioni-page) .evidence-area { color: var(--b-soft); font-size: .88rem; }
+:is(.bussola-page, .missioni-page) .direction-evidence q { color: var(--b-navy); font-size: 1.02rem; font-weight: 700; quotes: "«" "»"; }
+:is(.bussola-page, .missioni-page) .direction-evidence p { color: var(--b-ink); font-size: .97rem; }
+:is(.bussola-page, .missioni-page) .subject-chips li { padding: 6px 12px; border: 0; border-radius: 99px; color: #fff; background: var(--b-navy); font-size: .9rem; font-weight: 700; }
+:is(.bussola-page, .missioni-page) .direction-card .certificate-action p { color: var(--b-ink); }
+:is(.bussola-page, .missioni-page) .other-directions, :is(.bussola-page, .missioni-page) .choice-recap { border: 0; box-shadow: var(--shadow-sm); }
+:is(.bussola-page, .missioni-page) .choice-recap summary { color: var(--b-navy); font-size: 1.1rem; }
+:is(.bussola-page, .missioni-page) .discovery-course { border: 1px solid #b9c9cf; border-top: 8px solid var(--course-color); }
+:is(.bussola-page, .missioni-page) .discovery-course p:not(.course-tag), :is(.bussola-page, .missioni-page) .choice-recap li, :is(.bussola-page, .missioni-page) .other-directions > p { color: var(--b-ink); }
+:is(.bussola-page, .missioni-page) .next-step { border-left: 0; border-radius: 18px; color: var(--b-navy); background: var(--b-lime); font-weight: 650; }
 
 @media (max-width: 760px) {
-  .bussola-page .journey { display: none; }
-  .bussola-page .explore-header { min-height: 0; padding-block: 10px 12px; gap: 10px; }
-  .bussola-page .explore-header .site-logo { width: 54px; height: 54px; border-radius: 12px; }
-  .bussola-page .explore-header .page-nav { gap: 6px; }
-  .bussola-page .explore-header .page-nav a { min-height: 40px; padding: 6px 10px; font-size: .86rem; }
-  .bussola-page .explore-page { padding-top: 12px; }
-  .bussola-page .question-panel { padding: 20px 14px 14px; border-radius: 24px; }
-  .bussola-page .question-progress { margin-bottom: 16px; }
-  .bussola-page .question-context { grid-template-columns: 1fr; gap: 0; }
-  .bussola-page .question-art { display: none; }
-  .bussola-page .choice { padding: 13px 14px; }
-  .bussola-page .question-footer { bottom: 8px; grid-template-columns: auto 1fr auto; }
-  .bussola-page .question-footer > .skip-button { order: 0; width: auto; padding-inline: 4px; }
+  :is(.bussola-page, .missioni-page) .journey { display: none; }
+  :is(.bussola-page, .missioni-page) .explore-header { min-height: 0; padding-block: 10px 12px; gap: 10px; }
+  :is(.bussola-page, .missioni-page) .explore-header .site-logo { width: 54px; height: 54px; border-radius: 12px; }
+  :is(.bussola-page, .missioni-page) .explore-header .page-nav { gap: 6px; }
+  :is(.bussola-page, .missioni-page) .explore-header .page-nav a { min-height: 40px; padding: 6px 10px; font-size: .86rem; }
+  :is(.bussola-page, .missioni-page) .explore-page { padding-top: 12px; }
+  :is(.bussola-page, .missioni-page) .question-panel { padding: 20px 14px 14px; border-radius: 24px; }
+  :is(.bussola-page, .missioni-page) .question-progress { margin-bottom: 16px; }
+  :is(.bussola-page, .missioni-page) .question-context { grid-template-columns: 1fr; gap: 0; }
+  :is(.bussola-page, .missioni-page) .question-art { display: none; }
+  :is(.bussola-page, .missioni-page) .choice { padding: 13px 14px; }
+  :is(.bussola-page, .missioni-page) .question-footer { bottom: 8px; grid-template-columns: auto 1fr auto; }
+  :is(.bussola-page, .missioni-page) .question-footer > .skip-button { order: 0; width: auto; padding-inline: 4px; }
   /* Sul telefono «Indietro» diventa una freccia: il nome resta per chi usa un lettore di schermo */
-  .bussola-page .question-footer > .explore-button.secondary { width: 52px; padding: 0; font-size: 0; }
-  .bussola-page .question-footer > .explore-button.secondary::before { content: "←"; font-size: 1.35rem; line-height: 1; }
-  .bussola-page .question-footer .explore-button { flex: none; padding-inline: 18px; }
-  .bussola-page .direction-card .explore-button { flex: 1 1 100%; }
+  :is(.bussola-page, .missioni-page) .question-footer > .explore-button.secondary { width: 52px; padding: 0; font-size: 0; }
+  :is(.bussola-page, .missioni-page) .question-footer > .explore-button.secondary::before { content: "←"; font-size: 1.35rem; line-height: 1; }
+  :is(.bussola-page, .missioni-page) .question-footer .explore-button { flex: none; padding-inline: 18px; }
+  :is(.bussola-page, .missioni-page) .direction-card .explore-button { flex: 1 1 100%; }
+}
+
+/* ===== Prova un’attività: stesso sistema della Bussola (9 ottobre 2026). Regole limitate a .missioni-page ===== */
+.missioni-page #missionCatalog { padding: clamp(22px, 4vw, 44px); border-radius: 26px; color: #fff; background: linear-gradient(150deg, #0b2f47 0%, #103f58 60%, #0f4f58 100%); box-shadow: var(--shadow-md); }
+.missioni-page #missionCatalog > h2, .missioni-page #missionCatalog > p { color: #fff; }
+.missioni-page #missionCatalog > .eyebrow { width: fit-content; margin: 0; padding: 7px 14px; border-radius: 99px; color: var(--b-navy); background: var(--b-lime); font-weight: 800; }
+.missioni-page #catalogTitle { margin: 14px 0 12px; font-size: clamp(1.9rem, 6vw, 3.2rem); line-height: 1.06; }
+.missioni-page .mission-catalog { gap: 14px; margin-top: 22px; }
+.missioni-page .mission-card { padding: 18px; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; align-content: start; border: 0; border-top: 10px solid var(--course-color, #006b63); border-radius: 20px; color: var(--b-ink); background: #fff; box-shadow: 0 10px 26px rgb(3 24 38 / 28%); }
+.missioni-page .mission-card > * { grid-column: 1; margin: 0; }
+.missioni-page .mission-card .course-art { grid-column: 2; grid-row: 1 / span 4; width: 84px; height: 84px; margin: 0; align-self: start; }
+.missioni-page .mission-card .explore-kicker { width: fit-content; padding: 4px 11px; border-radius: 99px; color: #fff; background: var(--course-color, #006b63); font-weight: 800; }
+.missioni-page .mission-card h2 { margin: 10px 0 6px; color: var(--b-navy); font-size: 1.28rem; line-height: 1.18; }
+.missioni-page .mission-card .activity-course-name { color: var(--b-ink); font-size: .97rem; }
+.missioni-page .mission-card p:not(.explore-kicker):not(.activity-course-name) { margin-top: 4px; color: var(--b-soft); font-size: .95rem; }
+.missioni-page .mission-card .explore-button, .missioni-page .mission-card a.explore-button { grid-column: 1 / -1; width: 100%; margin-top: 14px; border-color: var(--b-navy); border-radius: 14px; background: var(--b-navy); font-weight: 850; }
+.missioni-page .mission-card .explore-button:hover { border-color: var(--b-green); background: var(--b-green); }
+.missioni-page .load-message { color: var(--b-ink); }
+
+.missioni-page .mission-panel { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.missioni-page .activity-heading { padding: clamp(20px, 4vw, 36px) clamp(18px, 4vw, 36px) 8px; border-radius: 24px 24px 0 0; color: #fff; background: var(--b-navy); }
+.missioni-page .activity-heading h2 { margin: 12px 0 8px; color: #fff; font-size: clamp(1.6rem, 5.4vw, 2.6rem); line-height: 1.08; }
+.missioni-page .activity-heading .explore-kicker { width: fit-content; margin: 0; padding: 6px 13px; border-radius: 99px; color: var(--b-navy); background: var(--b-lime); font-weight: 800; }
+.missioni-page .activity-heading .activity-course-name { margin: 0; color: #fff; }
+.missioni-page .activity-heading .course-art { padding: 10px; border-radius: 18px; background: #fff; }
+.missioni-page .activity-heading:not(:has(+ .scenario)) { margin-bottom: 18px; padding-bottom: clamp(20px, 4vw, 32px); border-radius: 24px; }
+.missioni-page .mission-panel > .scenario { max-width: none; margin: 0 0 18px; padding: 6px clamp(18px, 4vw, 36px) clamp(20px, 4vw, 32px); border-radius: 0 0 24px 24px; color: #fff; background: var(--b-navy); font-size: 1.08rem; line-height: 1.5; }
+.missioni-page .choices legend { color: var(--b-navy); font-size: 1.15rem; }
+.missioni-page .choice { border: 2px solid #9fb3ba; box-shadow: none; }
+.missioni-page .choice:hover { border: 2px solid var(--b-navy); }
+.missioni-page .choice:has(input:checked) { border-color: var(--b-navy); }
+.missioni-page .choice input[type="checkbox"] { border-radius: 8px; }
+.missioni-page .mission-feedback { border: 2px solid #9fb3ba; border-radius: 18px; color: var(--b-ink); background: #fff; }
+.missioni-page .mission-feedback p, .missioni-page .mission-panel h3, .missioni-page .mission-panel li { color: var(--b-ink); }
+.missioni-page .mission-feedback .constraint-note { color: #8c0732; }
+.missioni-page .amount-visual { background: var(--b-navy); }
+.missioni-page .amount-visual p, .missioni-page .amount-visual span, .missioni-page .amount-visual strong { color: #fff; }
+.missioni-page .amount-visual progress { accent-color: var(--b-lime); }
+.missioni-page .mission-panel .plain-note { color: var(--b-soft); }
+.missioni-page .question-footer { border: 1px solid #b9c9cf; }
+
+@media (max-width: 760px) {
+  .missioni-page .activity-heading .course-art { display: none; }
+  .missioni-page .mission-card .course-art { width: 64px; height: 64px; }
 }
