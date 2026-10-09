@@ -129,3 +129,18 @@ Chiedere di dire ad alta voce cosa intendono fare in uno o due passaggi, poi las
 La prova con minori non è stata svolta. Nessuna registrazione video, raccolta aggiuntiva di dati familiari o analytics esterno è richiesta dal prototipo.
 
 Fonti, loro limiti e decisioni sono in [fonti.md](fonti.md). L’adattamento necessario al sistema reale è in [integrazione.md](integrazione.md). Lo stato della verifica tecnica è in [verifica.md](verifica.md).
+
+## Revisione dei testi — 9 ottobre 2026
+
+Su richiesta di Salvatore alcuni testi dell’interfaccia sono stati resi più diretti. La progettazione descritta sopra non cambia; cambiano queste scritte:
+
+| Dove | Prima | Adesso |
+|---|---|---|
+| Titolo dell’ingresso | «I luoghi prendono vita. Le idee sono tue.» | «Come nasce una proposta turistica?» |
+| Secondo paragrafo dell’ingresso | «Entra in uno studio di progettazione turistica. Da una mappa a un dialogo, da un’offerta a un invito: costruisci cinque lavori diversi e raccoglili nella tua proposta.» | «Qui lavori in uno studio di progettazione turistica: racconti un luogo, accogli due visitatori in inglese, progetti un’esperienza, prepari l’offerta e scrivi l’invito.» |
+| Cartellino sulla mappa dell’ingresso | «Un territorio. Tante possibilità.» | «Cala delle Trame · luogo immaginario» |
+| Laboratorio 3, secondo passo | «Il cielo cambia. La tua idea continua.» | «Piove: che cosa cambi?» |
+| Titolo della raccolta finale | «La proposta porta il tuo sguardo.» | «Ecco la tua proposta.» |
+| Pulsante delle note | «Una nota su questo punto» | «Lascia una nota» |
+
+Gli altri titoli dei passi restano quelli della tabella di progettazione. Le etichette che erano in maiuscolo sono ora in minuscolo normale.

@@ -105,3 +105,21 @@ Che cosa è cambiato nei file condivisi rispetto al commit `381b2c0`:
 - `bussola.css`: blocco finale limitato a `.bussola-page` (ingresso, domanda, risultato ad alto contrasto, barra dei comandi fissa). Le altre pagine che caricano `bussola.css` non cambiano.
 - `bussola.mjs`: tolta la frase di istruzioni ripetuta a ogni domanda; frasi del risultato più dirette; nelle schede del risultato compare il titolo breve (`label`) della risposta. Nessuna modifica alla logica.
 - `data/bussola.json`: riviste alcune etichette (`label`), frasi (`text`, `detail`), aree e il titolo e lo scenario della domanda `predisposizioni`. ID, pesi, `courseLinks` e ordine sono identici. `node scripts/verifica-bussola.mjs 20000` senza avvisi.
+
+### Laboratori SSAS e Turismo — stesso stile della Bussola (9 ottobre 2026)
+
+Su decisione di Salvatore i due laboratori già pubblicati hanno ora lo stile della Bussola e parole più dirette. Campi, identificativi, ordine delle domande, chiavi di salvataggio e formato dei lavori non sono cambiati: i lavori già salvati dagli alunni si riaprono come prima. Tutti gli script di verifica passano (`verifica-ssas-laboratori`, `verifica-ssas-guida`, `verifica-turismo`, `verifica-attestati`, `verifica-attestato-alunno`).
+
+File toccati:
+
+- `ssas-labs.css` e `turismo.css`: un blocco in coda («Stesso stile della Bussola»). Nessuna regola precedente è stata tolta; il blocco ridefinisce colori, misure e disposizione sui telefoni.
+- `ssas-labs.mjs`, `turismo.mjs`, `turismo-remote.mjs`: solo testi dell’interfaccia (etichette senza maiuscolo, «online» al posto di «Supabase» nei messaggi per gli alunni, ingresso più diretto) e tre ritocchi di sola presentazione: i passaggi SSAS hanno numero e nome in due elementi distinti, il contatore di Turismo dice «Passo 1 di 2», nelle risposte in inglese la traduzione va a capo.
+- `bussola-ssas.html`, `bussola-turismo.html`: etichette senza maiuscolo e nuove versioni dei file (`?v=20261009-stile`).
+
+Che cosa riprendere nei laboratori nuovi (AFM, SIA, CAT):
+
+- **Colori.** Blu `#0b2f47` per titoli e pannelli, testo `#17314a` e `#33495a`, lime `#c9f981` per la scelta fatta e le etichette, verde `#006733` per il pulsante principale, fondo `#e9eff0`, schede bianche.
+- **Misure.** Nessuna scritta sotto 13 px; testo delle scelte almeno 15 px; campi di scrittura a 16 px, altrimenti su iPhone la pagina si ingrandisce da sola quando si tocca il campo.
+- **Telefono.** In alto i cinque laboratori in una riga sola; titolo del passaggio in un pannello blu con l’etichetta lime; scelte bianche con bordo, lime quando sono selezionate; barra dei comandi sospesa in basso con la freccia per tornare indietro e il pulsante verde largo.
+- **Parole.** Niente nomi di servizi tecnici nei messaggi agli alunni; i titoli dicono che cosa si fa; l’ingresso dice in due righe che cosa è il laboratorio e parte con un solo pulsante.
+- **Controlli fatti.** A 320, 360, 390 e 412 px: contrasto minimo 7,03:1 (5,4:1 solo sui comandi disattivati), nessuna scritta sovrapposta o tagliata, nessuno scorrimento laterale. A 1280 px la disposizione a due colonne resta quella di prima. Le prove sono state fatte solo in locale con `?prova=` e dati finti: nessuna chiamata al servizio reale. Non provato su telefoni fisici.

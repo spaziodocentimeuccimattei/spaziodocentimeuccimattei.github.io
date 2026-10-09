@@ -28,7 +28,7 @@ export function setupTourismRemote(ctx){
    await connect();
    while(state.dirty){const stamp=clock,snapshot=remoteProject(ctx.project());state.lastOp=crypto.randomUUID();snapshot._save_operation=state.lastOp;keep();const reply=await api('save',{project:snapshot,revision:state.revision});state.revision=reply.revision;if(stamp===clock)state.dirty=false;keep();}
    for(const n of ctx.project().notes.filter(x=>x.pending)){const note={id:n.id,passaggio:Math.min(5,Math.floor(n.step/2)+1),contesto:n.context,versione:1,ruolo_dichiarato:n.role,tipo:n.kind,testo:n.text};const reply=await api('note',{note});n.pending=false;n.date=reply.note.created_at;ctx.keep();}
-   ctx.notesChanged();ctx.status(ctx.localOK()?'Progetto e note salvati. Puoi riprendere da questo dispositivo.':'Salvato online. Conserva il link personale da «La mia classe» per riprendere.',false);
+   ctx.notesChanged();ctx.status(ctx.localOK()?'Tutto salvato. Puoi riprendere da questo dispositivo.':'Salvato online. Conserva il link personale da «La mia classe» per riprendere.',false);
   }catch(e){if(e.status===409)conflict=true;ctx.status(conflict?e.message:'Il lavoro resta su questo dispositivo. Il salvataggio online è da riprovare.',!conflict);ctx.notesChanged();}
   finally{syncing=false;if(!conflict&&(state.dirty||ctx.project().notes.some(n=>n.pending))&&!document.getElementById('retrySave').hidden)return;if(!conflict&&(state.dirty||ctx.project().notes.some(n=>n.pending)))schedule();}
  }

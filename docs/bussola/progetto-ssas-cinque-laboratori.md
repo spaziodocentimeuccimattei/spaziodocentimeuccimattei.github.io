@@ -86,3 +86,16 @@ L’API esistente conserva i campi aggiuntivi: il nuovo percorso è in `labJourn
 ## Verifica educativa da svolgere
 
 Una prima prova accompagnata con un piccolo gruppo di terza media deve osservare: comprensione delle consegne, punti di arresto, richieste di aiuto, tempi effettivi, uso della revisione e desiderio di continuare. Alla fine chiedere quale aspetto nuovo hanno scoperto e quale lavoro vorrebbero riprendere. Usare le note nei punti di difficoltà; distinguere gradimento visivo da curiosità per il corso. La verifica tecnica del funzionamento non sostituisce questa prova.
+
+## Revisione dei testi — 9 ottobre 2026
+
+Su richiesta di Salvatore alcuni testi dell’interfaccia sono stati resi più diretti. La progettazione descritta sopra non cambia; cambiano queste scritte:
+
+| Dove | Prima | Adesso |
+|---|---|---|
+| Titolo dell’ingresso | «Conosci le persone. Dai forma alle idee.» | «Che cosa fa chi lavora con le persone?» |
+| Secondo paragrafo dell’ingresso | «Attraversa cinque laboratori: scegli, vedi che cosa succede e costruisci un lavoro tuo. Alla fine ritrovi tutti i tuoi lavori.» | «Qui lo provi in cinque laboratori brevi: scegli, vedi che cosa succede e costruisci un lavoro tuo. Alla fine li ritrovi tutti.» |
+| Pulsante dell’ingresso | «Entra nei cinque laboratori» | «Inizia i laboratori» |
+| Messaggi di salvataggio | «Salvato su Supabase…», «Il salvataggio su Supabase è da riprovare.» | «Salvato online…», «Il salvataggio online è da riprovare.» |
+
+Le etichette che erano in maiuscolo sono ora in minuscolo normale. Sui telefoni la barra dei cinque laboratori mostra i numeri; il nome del laboratorio in corso è nell’etichetta sopra il titolo.
