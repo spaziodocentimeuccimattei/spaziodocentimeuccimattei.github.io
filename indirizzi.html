@@ -19,10 +19,92 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icona-32.png">
   <link rel="apple-touch-icon" href="assets/icona-180.png">
   <link rel="stylesheet" href="portal.css?v=20261009-home">
-  <link rel="stylesheet" href="indirizzi.css?v=20261010-serali">
   <link rel="stylesheet" href="bussola.css?v=20261010-revisione">
+  <link rel="stylesheet" href="indirizzi.css?v=20261010-pagina">
 </head>
-<body>
+<body class="study-layout">
+
+  <svg class="study-scenes" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <symbol id="scene-afm" viewBox="0 0 320 220">
+        <circle cx="188" cy="111" r="85" fill="var(--art-soft)"/>
+        <path d="M23 192h274M42 207h235M279 35v12m-6-6h12" fill="none" stroke="var(--art-mid)" stroke-width="1.5"/>
+        <rect x="62" y="33" width="133" height="155" rx="12" fill="#fffdf8" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M81 55h69m-69 14h42M81 97h92M81 117h92M81 137h92M81 157h92M127 87v82" fill="none" stroke="var(--art-mid)" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="163" y="104" width="119" height="78" rx="12" fill="currentColor"/>
+        <path d="M185 161v-17m23 17v-32m23 32v-43m23 43v-26" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="63" cy="155" r="25" fill="var(--art-soft)" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M70 141c-16-8-24 27-4 28m-20-21h24m-23 8h21" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="m206 75 14-27 11 6-14 27-14 10z" fill="#fffdf8" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="m220 48 11 6" fill="none" stroke="currentColor" stroke-width="5"/>
+      </symbol>
+      <symbol id="scene-sia" viewBox="0 0 320 220">
+        <circle cx="171" cy="109" r="86" fill="var(--art-soft)"/>
+        <path d="M24 195h274M43 208h239M283 34v12m-6-6h12" fill="none" stroke="var(--art-mid)" stroke-width="1.5"/>
+        <rect x="48" y="42" width="201" height="130" rx="12" fill="#fffdf8" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M49 67h199" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="61" cy="55" r="3" fill="currentColor"/><circle cx="73" cy="55" r="3" fill="var(--art-mid)"/><circle cx="85" cy="55" r="3" fill="var(--art-mid)"/>
+        <rect x="66" y="82" width="59" height="69" rx="6" fill="var(--art-soft)"/>
+        <path d="M78 97h34m-34 14h23m-23 14h30m-30 14h19M171 84v16m-18 17h-12m37 14v16m-20-40 11-11m20 0 11 11" fill="none" stroke="var(--art-mid)" stroke-width="3" stroke-linecap="round"/>
+        <rect x="155" y="107" width="32" height="24" rx="6" fill="currentColor"/>
+        <rect x="149" y="78" width="44" height="18" rx="5" fill="var(--art-soft)" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="207" y="111" width="26" height="20" rx="5" fill="var(--art-soft)" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M139 172v14h-35m35 0h35" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="256" cy="150" rx="26" ry="10" fill="currentColor"/>
+        <path d="M230 150v30c0 13 52 13 52 0v-30" fill="currentColor"/>
+        <path d="M232 160c5 10 44 10 48 0m-48 10c5 10 44 10 48 0" fill="none" stroke="#fff" stroke-width="2"/>
+      </symbol>
+      <symbol id="scene-turismo" viewBox="0 0 320 220">
+        <circle cx="187" cy="110" r="85" fill="var(--art-soft)"/>
+        <path d="M23 195h274M40 208h240M38 35v12m-6-6h12" fill="none" stroke="var(--art-mid)" stroke-width="1.5"/>
+        <path d="m54 97 66-23 68 20 69-23v105l-69 24-68-21-66 21z" fill="#fffdf8" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M120 75v104m68-84v104" fill="none" stroke="var(--art-mid)" stroke-width="2"/>
+        <path d="m77 161 34-38 42 29 40-35 38 19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 8"/>
+        <circle cx="78" cy="162" r="7" fill="currentColor"/><circle cx="231" cy="136" r="7" fill="currentColor"/>
+        <path d="M151 65c0-24 36-24 36 0 0 14-18 31-18 31s-18-17-18-31z" fill="currentColor"/>
+        <circle cx="169" cy="63" r="6" fill="#fff"/>
+        <path d="M219 34h56a8 8 0 0 1 8 8v31a8 8 0 0 1-8 8h-25l-15 13V81h-16a8 8 0 0 1-8-8V42a8 8 0 0 1 8-8z" fill="#fffdf8" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M228 49h37m-37 12h25" fill="none" stroke="var(--art-mid)" stroke-width="3" stroke-linecap="round"/>
+        <path d="M82 78V58m-14 20V66m28 12V61" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="scene-ssas" viewBox="0 0 320 220">
+        <circle cx="183" cy="109" r="85" fill="var(--art-soft)"/>
+        <path d="M23 195h274M40 208h240M37 45v12m-6-6h12" fill="none" stroke="var(--art-mid)" stroke-width="1.5"/>
+        <rect x="181" y="95" width="86" height="99" rx="12" fill="#fffdf8" stroke="currentColor" stroke-width="2.5"/>
+        <rect x="201" y="85" width="47" height="20" rx="6" fill="var(--art-soft)" stroke="currentColor" stroke-width="2"/>
+        <path d="M199 133h12l5-13 10 27 8-14h15M199 162h49m-49 14h31" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M98 37h75a10 10 0 0 1 10 10v38a10 10 0 0 1-10 10h-39l-20 17V95H98a10 10 0 0 1-10-10V47a10 10 0 0 1 10-10z" fill="#fffdf8" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M136 80s-18-11-18-21c0-10 13-12 18-4 5-8 18-6 18 4 0 10-18 21-18 21z" fill="currentColor"/>
+        <circle cx="71" cy="121" r="20" fill="#fffdf8" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M39 193v-14a32 32 0 0 1 64 0v14" fill="var(--art-soft)" stroke="currentColor" stroke-width="2.5"/>
+        <circle cx="137" cy="143" r="16" fill="#fffdf8" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M112 193v-10a25 25 0 0 1 50 0v10" fill="currentColor"/>
+        <path d="m93 157 19 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M220 49h24m-12-12v24" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="scene-cat" viewBox="0 0 320 220">
+        <circle cx="185" cy="109" r="85" fill="var(--art-soft)"/>
+        <g fill="none" stroke="var(--art-mid)" stroke-width="1"><path d="M24 194h274M42 207h239M48 45h222M48 45v128m28-128v128m28-128v128m28-128v128m28-128v128m28-128v128m28-128v128m28-128v128M48 72h222M48 99h222M48 126h222M48 153h222"/></g>
+        <path d="m77 98 68-46 75 32-69 48z" fill="#fffdf8" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="m77 98 74 34v54l-74-34z" fill="var(--art-soft)" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="m151 132 69-48v54l-69 48z" fill="#fffdf8" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="m169 136 23-16v35l-23 15z" fill="currentColor"/>
+        <path d="m96 126 25 11v24l-25-12z" fill="#fffdf8" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M243 191v-57l46 57z" fill="var(--art-soft)" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M253 173v-17l14 17zM249 191v-6m10 6v-6m10 6v-6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M54 107v44m-4-40 4-4 4 4m-8 36 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M256 100V68m-12 32h24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M243 72c-7-16 6-32 13-32s20 16 13 32c-6 12-20 12-26 0z" fill="var(--art-soft)" stroke="currentColor" stroke-width="2"/>
+      </symbol>
+      <symbol id="scene-compass" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="38" fill="#fffdf8" stroke="currentColor" stroke-width="2"/>
+        <circle cx="50" cy="50" r="28" fill="var(--art-soft)"/>
+        <path d="m61 32-7 25-25 7 7-25z" fill="currentColor"/>
+        <path d="m61 32-25 7 18 18z" fill="#fffdf8" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M50 9v7m0 68v7M9 50h7m68 0h7" fill="none" stroke="currentColor" stroke-width="2"/>
+      </symbol>
+    </defs>
+  </svg>
   <a class="skip-link" href="#studyMain">Vai al contenuto</a>
   <header class="site-header">
     <a class="site-brand" href="index.html" aria-label="IIS Meucci - Mattei | Decimomannu · Torna alla pagina iniziale">
@@ -44,9 +126,18 @@
           <p class="hero-summary">Ogni percorso unisce discipline caratterizzanti e competenze trasversali: comprendere problemi, usare conoscenze e strumenti, collaborare e assumere decisioni responsabili.</p>
           <p class="hero-principle">Le conoscenze diventano competenze quando permettono di comprendere la realtà e di agire in modo consapevole.</p>
         </div>
+        <div class="hero-overview">
+          <div class="hero-showcase" aria-hidden="true">
+            <div class="showcase-board art-afm"><svg viewBox="0 0 320 220" focusable="false"><use href="#scene-afm"/></svg></div>
+            <div class="showcase-board art-sia"><svg viewBox="0 0 320 220" focusable="false"><use href="#scene-sia"/></svg></div>
+            <div class="showcase-board art-turismo"><svg viewBox="0 0 320 220" focusable="false"><use href="#scene-turismo"/></svg></div>
+            <div class="showcase-board art-ssas"><svg viewBox="0 0 320 220" focusable="false"><use href="#scene-ssas"/></svg></div>
+            <div class="showcase-board art-cat"><svg viewBox="0 0 320 220" focusable="false"><use href="#scene-cat"/></svg></div>
+          </div>
         <div class="route-summary" aria-label="Riepilogo dell’offerta">
           <a href="#diurni"><strong>05</strong><span>indirizzi<br>diurni</span></a>
           <a href="#serali"><strong>03</strong><span>indirizzi<br>serali</span></a>
+        </div>
         </div>
       </div>
       <div class="course-index" aria-label="Elenco rapido degli indirizzi">
@@ -59,7 +150,7 @@
       </div>
     </section>
 
-    <section class="bussola-entry" aria-labelledby="exploreEntryTitle"><div><p class="explore-kicker">Per chi sta scegliendo</p><h2 id="exploreEntryTitle">Non sai da dove cominciare?</h2><p id="exploreContext">Parti dalla <a href="bussola.html">Bussola</a> o prova i laboratori di un indirizzo.</p><div id="contextActions" class="action-row" hidden></div></div><a class="explore-button" href="missioni.html">Prova un’attività</a></section>
+    <section class="bussola-entry" aria-labelledby="exploreEntryTitle"><svg class="entry-art art-cat" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#scene-compass"/></svg><div><p class="explore-kicker">Per chi sta scegliendo</p><h2 id="exploreEntryTitle">Non sai da dove cominciare?</h2><p id="exploreContext">Parti dalla <a href="bussola.html">Bussola</a> o prova i laboratori di un indirizzo.</p><div id="contextActions" class="action-row" hidden></div></div><a class="explore-button" href="missioni.html">Prova un’attività</a></section>
     <section class="study-section" id="diurni" aria-labelledby="diurni-title">
       <header class="section-intro">
         <div>
@@ -71,14 +162,18 @@
 
       <div class="day-grid">
         <article class="study-card afm" id="afm">
+          <div class="course-cover">
           <div class="card-head">
             <span class="card-number">01</span>
             <span class="course-code">AFM</span>
           </div>
           <div class="card-title">
+            <svg class="course-art art-afm" viewBox="0 0 320 220" aria-hidden="true" focusable="false"><use href="#scene-afm"/></svg>
             <p>Organizzazioni · economia · scelte</p>
             <h3>Amministrazione, Finanza e Marketing</h3>
           </div>
+          </div>
+          <div class="course-body">
           <p class="course-intent">Per comprendere come funzionano le organizzazioni, leggere i fenomeni economici e trasformare idee e informazioni in decisioni.</p>
           <p class="course-caption"><span>Perché conta</span>Studiare organizzazioni ed economia significa imparare a leggere decisioni, risorse e responsabilità.</p>
           <div class="card-details">
@@ -91,19 +186,24 @@
               <p>Analizzare dati, comunicare con chiarezza, pianificare, collaborare e assumere decisioni responsabili.</p>
             </div>
           </div>
-          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><h4>Cosa affronti</h4><p>Che cosa serve per realizzare un’idea? Come si organizzano risorse e attività?</p><h4>Cosa impari</h4><p>Economia, diritto, informatica e lingue aiutano a leggere dati, costi, organizzazioni e decisioni.</p><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=afm">Prova l’esperienza AFM</a><h4>Dove può portarti</h4><p>Puoi proseguire negli studi universitari o nei percorsi degli Istituti Tecnologici Superiori (ITS Academy), oppure cercare opportunità in attività amministrative e aziendali. Mansioni e requisiti dipendono dal ruolo.</p></details><div class="course-lens" data-course="afm" hidden></div>
+          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><div class="exploration-grid"><div class="exploration-part"><h4>Cosa affronti</h4><p>Che cosa serve per realizzare un’idea? Come si organizzano risorse e attività?</p></div><div class="exploration-part"><h4>Cosa impari</h4><p>Economia, diritto, informatica e lingue aiutano a leggere dati, costi, organizzazioni e decisioni.</p></div><div class="exploration-part"><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=afm">Prova l’esperienza AFM</a></div><div class="exploration-part"><h4>Dove può portarti</h4><p>Puoi proseguire negli studi universitari o nei percorsi degli Istituti Tecnologici Superiori (ITS Academy), oppure cercare opportunità in attività amministrative e aziendali. Mansioni e requisiti dipendono dal ruolo.</p></div></div></details><div class="course-lens" data-course="afm" hidden></div>
           <a class="course-contact" href="mailto:orientamattei@gmail.com?subject=Orientamento%20AFM"><span>Vuoi parlare con noi di AFM?</span><strong>Scrivici</strong></a>
+          </div>
         </article>
 
         <article class="study-card sia" id="sia">
+          <div class="course-cover">
           <div class="card-head">
             <span class="card-number">02</span>
             <span class="course-code">SIA</span>
           </div>
           <div class="card-title">
+            <svg class="course-art art-sia" viewBox="0 0 320 220" aria-hidden="true" focusable="false"><use href="#scene-sia"/></svg>
             <p>Dati · software · impresa</p>
             <h3>Sistemi Informativi Aziendali</h3>
           </div>
+          </div>
+          <div class="course-body">
           <p class="course-intent">SIA è un’articolazione di AFM: in prima ci si iscrive ad AFM e SIA si sceglie per il terzo anno. Unisce informatica ed economia per progettare soluzioni digitali capaci di organizzare dati, processi e servizi.</p>
           <p class="course-caption"><span>Perché conta</span>Dati e tecnologie diventano strumenti di apprendimento quando aiutano a comprendere problemi e progettare soluzioni.</p>
           <div class="card-details">
@@ -116,19 +216,24 @@
               <p>Pensiero logico, problem solving, lettura dei dati, lavoro per progetti e comunicazione tecnica.</p>
             </div>
           </div>
-          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><h4>Cosa affronti</h4><p>Come si organizzano le informazioni? Quale strumento digitale può rendere più semplice un’attività?</p><h4>Cosa impari</h4><p>Informatica ed economia si incontrano nel lavoro su dati, programmi e processi aziendali.</p><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=sia">Prova l’esperienza SIA</a><h4>Dove può portarti</h4><p>Puoi continuare con studi universitari o ITS Academy, oppure esplorare attività legate a sistemi informativi e processi aziendali. Gli incarichi specifici richiedono competenze e requisiti propri.</p></details><div class="course-lens" data-course="sia" hidden></div>
+          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><div class="exploration-grid"><div class="exploration-part"><h4>Cosa affronti</h4><p>Come si organizzano le informazioni? Quale strumento digitale può rendere più semplice un’attività?</p></div><div class="exploration-part"><h4>Cosa impari</h4><p>Informatica ed economia si incontrano nel lavoro su dati, programmi e processi aziendali.</p></div><div class="exploration-part"><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=sia">Prova l’esperienza SIA</a></div><div class="exploration-part"><h4>Dove può portarti</h4><p>Puoi continuare con studi universitari o ITS Academy, oppure esplorare attività legate a sistemi informativi e processi aziendali. Gli incarichi specifici richiedono competenze e requisiti propri.</p></div></div></details><div class="course-lens" data-course="sia" hidden></div>
           <a class="course-contact" href="mailto:orientamattei@gmail.com?subject=Orientamento%20SIA"><span>Vuoi parlare con noi di SIA?</span><strong>Scrivici</strong></a>
+          </div>
         </article>
 
         <article class="study-card turismo" id="turismo">
+          <div class="course-cover">
           <div class="card-head">
             <span class="card-number">03</span>
             <span class="course-code">TUR</span>
           </div>
           <div class="card-title">
+            <svg class="course-art art-turismo" viewBox="0 0 320 220" aria-hidden="true" focusable="false"><use href="#scene-turismo"/></svg>
             <p>Lingue · culture · territorio</p>
             <h3>Turismo</h3>
           </div>
+          </div>
+          <div class="course-body">
           <p class="course-intent">Per conoscere e raccontare luoghi e culture, progettare esperienze di accoglienza e valorizzare il patrimonio.</p>
           <p class="course-caption"><span>Perché conta</span>Il territorio è fatto di luoghi, culture e relazioni: conoscerlo permette di valorizzarlo con responsabilità.</p>
           <div class="card-details">
@@ -141,19 +246,24 @@
               <p>Comunicazione interculturale, progettazione, collaborazione, creatività e attenzione alla sostenibilità.</p>
             </div>
           </div>
-          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><h4>Cosa affronti</h4><p>Come si prepara un’esperienza di visita? Come si racconta un luogo a persone con lingue e interessi diversi?</p><h4>Cosa impari</h4><p>Lingue, geografia, arte e territorio, diritto e discipline turistiche aiutano a progettare e comunicare esperienze di accoglienza.</p><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=turismo">Prova l’esperienza TUR</a><h4>Dove può portarti</h4><p>Puoi proseguire con università o ITS Academy, oppure esplorare attività di accoglienza, organizzazione e servizi turistici. Per alcune professioni occorrono ulteriori titoli o abilitazioni.</p></details><div class="course-lens" data-course="turismo" hidden></div>
+          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><div class="exploration-grid"><div class="exploration-part"><h4>Cosa affronti</h4><p>Come si prepara un’esperienza di visita? Come si racconta un luogo a persone con lingue e interessi diversi?</p></div><div class="exploration-part"><h4>Cosa impari</h4><p>Lingue, geografia, arte e territorio, diritto e discipline turistiche aiutano a progettare e comunicare esperienze di accoglienza.</p></div><div class="exploration-part"><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=turismo">Prova l’esperienza TUR</a></div><div class="exploration-part"><h4>Dove può portarti</h4><p>Puoi proseguire con università o ITS Academy, oppure esplorare attività di accoglienza, organizzazione e servizi turistici. Per alcune professioni occorrono ulteriori titoli o abilitazioni.</p></div></div></details><div class="course-lens" data-course="turismo" hidden></div>
           <a class="course-contact" href="mailto:orientamattei@gmail.com?subject=Orientamento%20Turismo"><span>Vuoi parlare con noi di Turismo?</span><strong>Scrivici</strong></a>
+          </div>
         </article>
 
         <article class="study-card ssas" id="ssas">
+          <div class="course-cover">
           <div class="card-head">
             <span class="card-number">04</span>
             <span class="course-code">SSAS</span>
           </div>
           <div class="card-title">
+            <svg class="course-art art-ssas" viewBox="0 0 320 220" aria-hidden="true" focusable="false"><use href="#scene-ssas"/></svg>
             <p>Persone · salute · comunità</p>
             <h3>Servizi per la Sanità e l’Assistenza Sociale</h3>
           </div>
+          </div>
+          <div class="course-body">
           <p class="course-intent">Per comprendere bisogni, relazioni e contesti di vita e progettare attività che promuovono benessere, inclusione e partecipazione.</p>
           <p class="course-caption"><span>Perché conta</span>Cura, relazione e collaborazione sono componenti formative: richiedono conoscenze, ascolto e pratica.</p>
           <div class="card-details">
@@ -166,19 +276,24 @@
               <p>Ascolto, osservazione, comunicazione, progettazione, lavoro di gruppo e responsabilità verso le persone e la comunità.</p>
             </div>
           </div>
-          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><h4>Cosa affronti</h4><p>Quali bisogni si possono osservare in una situazione? Come si progetta un’attività che favorisca benessere e partecipazione?</p><h4>Cosa impari</h4><p>Metodologie operative, psicologia, scienze umane, igiene e diritto aiutano a comprendere persone e contesti e a progettare attività.</p><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=ssas">Prova l’esperienza SSAS</a><h4>Dove può portarti</h4><p>Puoi continuare negli studi universitari o in altri percorsi formativi, oppure esplorare attività nei servizi sociali e sociosanitari secondo i requisiti previsti. Il diploma non attribuisce automaticamente qualifiche come OSS, infermiere o assistente sociale.</p></details><div class="course-lens" data-course="ssas" hidden></div>
+          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><div class="exploration-grid"><div class="exploration-part"><h4>Cosa affronti</h4><p>Quali bisogni si possono osservare in una situazione? Come si progetta un’attività che favorisca benessere e partecipazione?</p></div><div class="exploration-part"><h4>Cosa impari</h4><p>Metodologie operative, psicologia, scienze umane, igiene e diritto aiutano a comprendere persone e contesti e a progettare attività.</p></div><div class="exploration-part"><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=ssas">Prova l’esperienza SSAS</a></div><div class="exploration-part"><h4>Dove può portarti</h4><p>Puoi continuare negli studi universitari o in altri percorsi formativi, oppure esplorare attività nei servizi sociali e sociosanitari secondo i requisiti previsti. Il diploma non attribuisce automaticamente qualifiche come OSS, infermiere o assistente sociale.</p></div></div></details><div class="course-lens" data-course="ssas" hidden></div>
           <a class="course-contact" href="mailto:orientamattei@gmail.com?subject=Orientamento%20SSAS"><span>Vuoi parlare con noi di SSAS?</span><strong>Scrivici</strong></a>
+          </div>
         </article>
 
         <article class="study-card cat" id="cat">
+          <div class="course-cover">
           <div class="card-head">
             <span class="card-number">05</span>
             <span class="course-code">CAT</span>
           </div>
           <div class="card-title">
+            <svg class="course-art art-cat" viewBox="0 0 320 220" aria-hidden="true" focusable="false"><use href="#scene-cat"/></svg>
             <p>Progetto · ambiente · territorio</p>
             <h3>Costruzioni, Ambiente e Territorio</h3>
           </div>
+          </div>
+          <div class="course-body">
           <p class="course-intent">Per leggere e misurare il territorio, progettare spazi e costruzioni e cercare soluzioni attente alla sicurezza e all’ambiente.</p>
           <p class="course-caption"><span>Perché conta</span>Progettare il territorio significa collegare conoscenze tecniche, problemi reali e responsabilità ambientale.</p>
           <div class="card-details">
@@ -191,8 +306,9 @@
               <p>Precisione, problem solving, uso di strumenti digitali, visione spaziale, collaborazione e responsabilità ambientale.</p>
             </div>
           </div>
-          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><h4>Cosa affronti</h4><p>Come si misura e si rappresenta uno spazio? Come si progetta una trasformazione tenendo conto dei vincoli?</p><h4>Cosa impari</h4><p>Progettazione, costruzioni, topografia, estimo e sicurezza collegano misure, rappresentazioni e problemi del territorio.</p><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=cat">Prova l’esperienza CAT</a><h4>Dove può portarti</h4><p>Puoi proseguire con università o ITS Academy, oppure esplorare attività tecniche legate a costruzioni e territorio. L’esercizio di professioni regolamentate richiede i requisiti e le abilitazioni previsti.</p></details><div class="course-lens" data-course="cat" hidden></div>
+          <details class="course-exploration"><summary>Esplora le attività e le possibilità</summary><div class="exploration-grid"><div class="exploration-part"><h4>Cosa affronti</h4><p>Come si misura e si rappresenta uno spazio? Come si progetta una trasformazione tenendo conto dei vincoli?</p></div><div class="exploration-part"><h4>Cosa impari</h4><p>Progettazione, costruzioni, topografia, estimo e sicurezza collegano misure, rappresentazioni e problemi del territorio.</p></div><div class="exploration-part"><h4>Prova</h4><p>Cinque laboratori per provare il modo di lavorare dell’indirizzo.</p><a class="explore-button" href="missioni.html?corso=cat">Prova l’esperienza CAT</a></div><div class="exploration-part"><h4>Dove può portarti</h4><p>Puoi proseguire con università o ITS Academy, oppure esplorare attività tecniche legate a costruzioni e territorio. L’esercizio di professioni regolamentate richiede i requisiti e le abilitazioni previsti.</p></div></div></details><div class="course-lens" data-course="cat" hidden></div>
           <a class="course-contact" href="mailto:orientamattei@gmail.com?subject=Orientamento%20CAT"><span>Vuoi parlare con noi di CAT?</span><strong>Scrivici</strong></a>
+          </div>
         </article>
       </div>
     </section>
@@ -211,7 +327,7 @@
       </ul>
     </aside>
 
-    <section class="shared-problem" aria-labelledby="manyViewsTitle"><p class="explore-kicker">Un problema, molti sguardi</p><h2 id="manyViewsTitle">Immagina uno spazio da trasformare.</h2><p>Lo stesso progetto può richiedere attività diverse. E ogni persona può provare più modi di contribuire.</p><ul class="many-views"><li><strong>AFM</strong>Quali risorse servono e come possiamo organizzarle?</li><li><strong>SIA</strong>Come raccogliamo e mettiamo in ordine le informazioni utili?</li><li><strong>Turismo</strong>Come raccontiamo lo spazio a persone con lingue e interessi diversi?</li><li><strong>SSAS</strong>Quali bisogni ascoltiamo e come favoriamo la partecipazione?</li><li><strong>CAT</strong>Come misuriamo lo spazio e rappresentiamo una proposta?</li></ul><p>Prima di decidere, metti a confronto due punti di vista. Quale domanda aggiunge ciascuno?</p><div class="action-row"><a class="explore-button" href="missioni.html">Prova le cinque esperienze</a><a class="explore-link" href="bussola.html">Inizia la tua Bussola</a></div></section>
+    <section class="shared-problem" aria-labelledby="manyViewsTitle"><div class="shared-intro"><div><p class="explore-kicker">Un problema, molti sguardi</p><h2 id="manyViewsTitle">Immagina uno spazio da trasformare.</h2><p>Lo stesso progetto può richiedere attività diverse. E ogni persona può provare più modi di contribuire.</p></div><svg class="shared-art art-cat" viewBox="0 0 320 220" aria-hidden="true" focusable="false"><use href="#scene-cat"/></svg></div><ul class="many-views"><li class="view-afm"><strong>AFM</strong>Quali risorse servono e come possiamo organizzarle?</li><li class="view-sia"><strong>SIA</strong>Come raccogliamo e mettiamo in ordine le informazioni utili?</li><li class="view-turismo"><strong>Turismo</strong>Come raccontiamo lo spazio a persone con lingue e interessi diversi?</li><li class="view-ssas"><strong>SSAS</strong>Quali bisogni ascoltiamo e come favoriamo la partecipazione?</li><li class="view-cat"><strong>CAT</strong>Come misuriamo lo spazio e rappresentiamo una proposta?</li></ul><p>Prima di decidere, metti a confronto due punti di vista. Quale domanda aggiunge ciascuno?</p><div class="action-row"><a class="explore-button" href="missioni.html">Prova le cinque esperienze</a><a class="explore-link" href="bussola.html">Inizia la tua Bussola</a></div></section>
 
     <section class="evening-section" id="serali" aria-labelledby="serali-title">
       <header class="section-intro evening-intro">
@@ -300,7 +416,7 @@
       </div>
     </section>
 
-    <section class="bussola-entry" aria-labelledby="enrolTitle"><div><p class="explore-kicker">Per decidere in famiglia</p><h2 id="enrolTitle">Come ci si iscrive?</h2><p>La domanda si presenta online su Unica, con l’identità digitale di un genitore. Per SIA si sceglie AFM.</p></div><a class="explore-button" href="famiglie.html#iscrizione">I passaggi dell’iscrizione</a></section>
+    <section class="bussola-entry enrol-entry" aria-labelledby="enrolTitle"><svg class="entry-art" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><rect x="22" y="14" width="56" height="72" rx="10" fill="#fffdf8" stroke="currentColor" stroke-width="2"/><path d="M34 32h32M34 45h24m-22 17 8 8 20-20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="explore-kicker">Per decidere in famiglia</p><h2 id="enrolTitle">Come ci si iscrive?</h2><p>La domanda si presenta online su Unica, con l’identità digitale di un genitore. Per SIA si sceglie AFM.</p></div><a class="explore-button" href="famiglie.html#iscrizione">I passaggi dell’iscrizione</a></section>
   </main>
 
   <footer class="site-footer">
