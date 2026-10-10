@@ -1,7 +1,7 @@
-import { courseArt, questionArt } from './bussola-visuals.mjs';
+import { courseArt, questionArt } from './bussola-visuals.mjs?v=20261010-correzioni';
 import { freshState, readState, clearState, summarize, suggestCourses, validateContent } from './bussola-core.mjs';
-import { el, button, link, storage, persist, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs';
-import { openCertificate } from './bussola-attestato.mjs';
+import { el, button, link, storage, persist, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs?v=20261010-correzioni';
+import { openCertificate } from './bussola-attestato.mjs?v=20261010-correzioni';
 
 const intro = document.getElementById('introPanel');
 const resume = document.getElementById('resumePanel');

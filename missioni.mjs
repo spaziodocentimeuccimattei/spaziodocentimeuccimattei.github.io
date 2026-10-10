@@ -1,7 +1,7 @@
 import { readState, freshState, totals, clearState } from './bussola-core.mjs';
-import { el, button, link, choice, storage, persist, loadData, focusHeading, setJourney, contactsPanel, showError } from './bussola-ui.mjs';
+import { el, button, link, choice, storage, persist, loadData, focusHeading, setJourney, contactsPanel, showError } from './bussola-ui.mjs?v=20261010-correzioni';
 
-import { courseArt, amountVisual, routeVisual, dataFlow, observationVisual, itineraryMap } from './bussola-visuals.mjs';
+import { courseArt, amountVisual, routeVisual, dataFlow, observationVisual, itineraryMap } from './bussola-visuals.mjs?v=20261010-correzioni';
 
 const catalog = document.getElementById('missionCatalog');
 const cards = document.getElementById('catalogCards');

@@ -1,6 +1,6 @@
-import { courseArt } from './bussola-visuals.mjs';
+import { courseArt } from './bussola-visuals.mjs?v=20261010-correzioni';
 import { readState, summarize, suggestCourses, clearState } from './bussola-core.mjs';
-import { el, button, link, storage, loadData } from './bussola-ui.mjs';
+import { el, button, link, storage, loadData } from './bussola-ui.mjs?v=20261010-correzioni';
 
 async function initialize() {
   try {

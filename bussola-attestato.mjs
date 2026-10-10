@@ -1,4 +1,4 @@
-import { el, button } from './bussola-ui.mjs';
+import { el, button } from './bussola-ui.mjs?v=20261010-correzioni';
 import { firstName, certificateModel, imagePdf } from './bussola-attestato-core.mjs';
 
 const palettes = {
