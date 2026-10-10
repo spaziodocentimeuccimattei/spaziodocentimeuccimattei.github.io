@@ -91,7 +91,7 @@ export function makeHandler(admin){
     if(new Set(rows.map(x=>x.id)).size!==rows.length||new Set(rows.map(x=>x.codice)).size!==rows.length)throw fail('Gli identificativi devono essere distinti.');
     const r=await admin.from('bussola_v2_alunni').insert(rows).select('*');if(r.error)throw fail('Elenco non salvato. Aggiorna la classe prima di riprovare.',409);return reply({alunni:r.data});
    }
-   const corso=p.corso??'ssas';if(!['ssas','turismo','cat'].includes(corso))throw fail('Indirizzo non disponibile.');
+   const corso=p.corso??'ssas';if(!['ssas','afm','sia','turismo','cat'].includes(corso))throw fail('Indirizzo non disponibile.');
    if(p.action==='students'){
     await getClass();const pupils=await data(admin.from('bussola_v2_alunni').select('*').eq('classe_id',p.classe_id).order('cognome').order('nome'));
     const owners=pupils.map(a=>a.partecipante_id).filter(Boolean);

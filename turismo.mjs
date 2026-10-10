@@ -1,5 +1,5 @@
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261009-turismo';
-import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261009-cat';
+import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261010-all';
 import {setupTourismRemote} from './turismo-remote.mjs?v=20261009-stile';
 import {KEY as BASE_KEY,LABS,PLACES,QUESTIONS,WELCOMES,PLANS,RAIN,SERVICES,TERMS,TONES,createProject,restore,choose,canAdvance,next,complete,costs} from './turismo-core.mjs?v=20261009-turismo';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

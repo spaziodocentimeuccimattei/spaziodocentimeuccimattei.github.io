@@ -1,9 +1,9 @@
-# SSAS nello stile di CAT — anteprima locale
+# SSAS nello stile di CAT — revisione del percorso
 
 [GPT 2026-10-10 01:49]
 
 Richiesta di Salvatore: «Ora nello stesso stile migliora SSAs».
-Base: `a7a7a9b2b693055aab5501a7b07c5b0b278f9aa0`, che comprende la revisione dei laboratori e della home pubblicata da Claude e il rilascio CAT. Questa revisione SSAS è locale: non è stata pubblicata e non modifica il servizio Supabase.
+Base: `a7a7a9b2b693055aab5501a7b07c5b0b278f9aa0`, che comprende la revisione dei laboratori e della home pubblicata da Claude e il rilascio CAT. Questa revisione SSAS è stata consegnata inizialmente come anteprima locale. Salvatore ha autorizzato il rilascio dei cinque percorsi il 10 ottobre 2026; questa revisione ne fa parte. Non cambia il formato dei lavori SSAS.
 
 ## Che cosa cambia
 
@@ -43,4 +43,4 @@ Ramo isolato: `codex/ssas-stile-cat-20261010`.
 Anteprima: `http://127.0.0.1:8776/bussola-ssas.html?prova=ssas-anteprima`.
 Evidenze e copia integra della base: `outputs/ssas-stile-cat/`, fuori dalla radice del sito. Contengono solo sorgenti e prove fittizie.
 
-Per pubblicare occorre una nuova autorizzazione esplicita. Prima del rilascio confrontare nuovamente `origin/main` e conservare gli eventuali nuovi contributi di Claude.
+Pubblicazione autorizzata da Salvatore il 10 ottobre 2026. Il confronto con `origin/main` è stato ripetuto e i contributi precedenti di Claude sono conservati. Il raccordo dei cinque percorsi è descritto in `cinque-percorsi-rilascio.md`.

@@ -1,0 +1,28 @@
+/* Attestato personale: vista, PDF e stampa A4. */
+.certificate-sheet canvas,#certificateSheet canvas{display:block;width:100%;height:auto}.certificate-actions{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}.certificate-actions a{display:inline-block;text-decoration:none}.certificate-save-help{margin:8px 0 18px}.print-certificate #certificateDialog{max-width:none}
+@media print{
+ body.print-certificate>*{display:none!important}
+ body.print-certificate>#certificateDialog{display:block!important;position:static!important;inset:auto!important;width:210mm!important;max-width:none!important;height:auto!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:white!important;overflow:visible!important}
+ body.print-certificate #certificateDialog>*:not(#certificateResult),body.print-certificate .certificate-actions,body.print-certificate .certificate-save-help{display:none!important}
+ body.print-certificate #certificateResult{display:block!important}
+ body.print-certificate #certificateSheet{width:210mm;height:297mm;margin:0;box-shadow:none;break-inside:avoid;overflow:hidden}
+ body.print-certificate #certificateSheet canvas{width:210mm;height:297mm}
+ @page{size:A4 portrait;margin:0}
+}
+
+/* Raccordo con classe e attestato: contrasto e comandi espliciti. */
+.preview-strip a{color:#fff;text-underline-offset:3px}.preview-strip a:focus-visible{outline-color:#fff}
+#classDialog:has(#classForm[hidden]) #classIdentity{display:none}
+.dialog-head button{min-width:72px;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:white;font:inherit;color:var(--ink)}
+
+#classGuest{min-height:44px;border:0;padding:10px 0;background:none;text-align:left;text-decoration:underline;text-underline-offset:3px;color:var(--accent)}
+
+/* Comandi comuni e leggibilità delle attività AFM/SIA. */
+.plain-button,.text-button,.secondary{font:inherit;color:var(--ink);padding:10px 14px;min-height:44px;border:1px solid var(--line);border-radius:10px;background:white;cursor:pointer}
+.secondary{text-decoration:none;display:inline-block}.preview-strip a{color:inherit;text-underline-offset:3px}.field-help{font-size:14px;line-height:1.55}.save-row{flex-wrap:wrap}.save-row button{font-size:13px;padding:8px 12px}
+.helper,.brand span,.eyebrow,.step-tag,.preview-strip,.save-row,#journey button,.canvas-label,.choice small,.task-card small,.task-number,.need,.poster-kicker,.poster-bottom,.subjects,.pill{font-size:max(13px,1em)}
+.brand span,.eyebrow,.step-tag,.preview-strip,.save-row,#journey button,.canvas-label,.choice small,.task-card small,.task-number,.need,.poster-kicker,.poster-bottom,.subjects,.pill{font-size:13px}
+@media(max-width:760px){.brand span{font-size:12px}.preview-strip{gap:8px}.preview-strip a{font-size:13px}.save-row{gap:8px}}
+
+#stage small,#stage th,#stage td,#stage .client,#stage .record-id,#stage .phone-top,#stage .permission-head{font-size:max(13px,1em)}
+#stage .bar-row span,#stage .bar-row strong,#stage dt,#stage .poster .poster-kicker,#stage .poster .poster-bottom{font-size:13px}

@@ -1,5 +1,5 @@
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261008-codice';
-import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261009-cat';
+import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261010-all';
 import {setupCatRemote} from './cat-remote.mjs?v=20261009-cat';
 import {FORMAT,STORE as BASE_STORE,LABS,STAGES,AREAS,VIEWS,ZONES,ROOFS,FLOORS,OBSERVATIONS,HYPOTHESES,PHASES,find,createProject,dimensions,inBounds,layoutValid,place,surveySignature,composeSurvey,layoutSignature,testLayout,buildSignature,testWeather,heritageSignature,compareHeritage,estimate,planSignature,testPlan,latest,ready,completed,advance,invalidate,context,addNote,validProject} from './cat-core.mjs?v=20261009-cat';
 import {esc,viewDrawing,planBoard,construction,heritage,heroDrawing} from './cat-visuals.mjs?v=20261009-cat';
@@ -68,7 +68,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
  }
  if(b.id==='copyConflict'){
   const copy=JSON.parse(JSON.stringify(p));copy.id=crypto.randomUUID();copy.identity=null;copy.notes=copy.notes.map(n=>({...n,id:crypto.randomUUID(),copiedFrom:n.id,projectId:copy.id,pending:true}));copy.title=(copy.title+' · copia').slice(0,80);copy.revision=1;
-  try{localStorage.setItem(`${STORE}.${copy.id}`,JSON.stringify(copy));const u=new URL(location.href);u.searchParams.set('progetto',copy.id);u.hash='ingresso';location.assign(u.href);}catch{$('saveStatus').textContent='Il dispositivo non permette di conservare la copia. Tieni aperta questa finestra.';}return;
+  try{const copyStore=BASE_STORE+(localTest?':prova:'+localTest:'');localStorage.setItem(`${copyStore}.${copy.id}`,JSON.stringify(copy));const u=new URL(location.href);u.searchParams.set('progetto',copy.id);u.hash='ingresso';location.assign(u.href);}catch{$('saveStatus').textContent='Il dispositivo non permette di conservare la copia. Tieni aperta questa finestra.';}return;
  }
  if(conflicted)return;
  if(b.id==='notesOpen'){renderNotes();$('noteStatus').textContent='';$('notesDialog').showModal();return;}

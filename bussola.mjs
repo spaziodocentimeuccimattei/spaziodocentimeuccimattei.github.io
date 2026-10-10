@@ -116,7 +116,7 @@ function courseCard(item, highlighted = false, direction = null) {
   card.append(subjects);
   const actions = el('div', null, 'action-row');
   actions.append(link('Esplora l’indirizzo', `indirizzi.html#${course.id}`),
-    link('Prova un’attività', course.id === 'cat' ? 'bussola-cat.html' : course.id === 'ssas' ? 'bussola-ssas.html' : course.id === 'turismo' ? 'bussola-turismo.html' : `missioni.html?corso=${course.id}`, 'explore-button secondary'));
+    link('Prova un’attività', course.id === 'afm' ? 'bussola-afm.html' : course.id === 'sia' ? 'bussola-sia.html' : course.id === 'cat' ? 'bussola-cat.html' : course.id === 'ssas' ? 'bussola-ssas.html' : course.id === 'turismo' ? 'bussola-turismo.html' : `missioni.html?corso=${course.id}`, 'explore-button secondary'));
   card.append(actions);
   if (highlighted) {
     const exportRow = el('div', null, 'certificate-action');

@@ -1,5 +1,5 @@
-import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261009-cat';
-import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261009-cat';
+import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261010-all';
+import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261010-all';
 let imagePromise;
 function logo(){return imagePromise??=new Promise((resolve,reject)=>{const loaded=document.querySelector('img[src="assets/logo-meucci-mattei-decimomannu.jpeg"]');if(loaded?.complete&&loaded.naturalWidth){resolve(loaded);return;}const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{imagePromise=null;reject(new Error('Il logo della scuola non si è caricato. Riprova.'));};img.src='assets/logo-meucci-mattei-decimomannu.jpeg';});}
 function lines(ctx,text,maxWidth){const out=[];let line='';for(const word of String(text).split(/\s+/)){if(ctx.measureText(word).width>maxWidth){if(line){out.push(line);line='';}let part='';for(const c of word){if(ctx.measureText(part+c).width>maxWidth){out.push(part);part=c;}else part+=c;}line=part;continue;}if(line&&ctx.measureText(line+' '+word).width>maxWidth){out.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)out.push(line);return out;}

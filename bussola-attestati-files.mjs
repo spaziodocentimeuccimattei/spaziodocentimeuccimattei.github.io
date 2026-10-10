@@ -1,4 +1,4 @@
-import {safeName,csvCell} from './bussola-records-core.mjs?v=20261009-cat';
+import {safeName,csvCell} from './bussola-records-core.mjs?v=20261010-all';
 const encoder=new TextEncoder();
 const join=chunks=>{const bytes=new Uint8Array(chunks.reduce((n,b)=>n+b.length,0));let offset=0;for(const b of chunks){bytes.set(b,offset);offset+=b.length;}return bytes;};
 // One image per A4 page; names are rendered with the browser's Unicode fonts.
