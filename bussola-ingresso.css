@@ -1,0 +1,19 @@
+/* Ingresso comune dei cinque laboratori della Bussola (12 ottobre 2026).
+   Pulsante «Inizia» e scelta «senza classe» ben visibile per chi prova da solo o con la famiglia. */
+body button.primary.bussola-start{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:62px;padding:14px 36px;border:0;border-radius:999px;color:#fff;background:#006733;font-size:1.3rem;font-weight:800;line-height:1.1;letter-spacing:.01em;box-shadow:0 10px 24px rgba(0,103,51,.3);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease}
+body button.primary.bussola-start span{display:inline-block;transition:transform .15s ease}
+body button.primary.bussola-start:hover{color:#fff;background:#00522a;transform:translateY(-2px);box-shadow:0 14px 28px rgba(0,82,42,.34)}
+body button.primary.bussola-start:hover span{transform:translateX(4px)}
+body button.primary.bussola-start:focus-visible{outline:3px solid #0b2f47;outline-offset:4px}
+@media (max-width:600px){body button.primary.bussola-start{width:100%}}
+
+#classDialog .class-guest{margin:4px 0 18px}
+#classDialog .class-guest[hidden]{display:none}
+#classDialog #classGuest{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;margin:0;padding:14px 20px;border:0;border-radius:999px;color:#fff;background:#006733;font:inherit;font-size:1.15rem;font-weight:800;text-decoration:none;box-shadow:0 8px 20px rgba(0,103,51,.28);cursor:pointer}
+#classDialog #classGuest:hover{background:#00522a}
+#classDialog #classGuest:focus-visible{outline:3px solid #0b2f47;outline-offset:4px}
+#classDialog .class-guest-help{margin:10px 0 0;color:#33495a;font-size:.95rem;text-align:center}
+#classDialog .class-or{display:flex;align-items:center;gap:12px;margin:22px 0 0;color:#33495a;font-size:.92rem;font-weight:700}
+#classDialog .class-or::before,#classDialog .class-or::after{content:"";flex:1;height:1px;background:#c8d2d6}
+#classDialog .class-or span{flex:0 1 auto;text-align:center}
+@media (prefers-reduced-motion:reduce){body button.primary.bussola-start,body button.primary.bussola-start span{transition:none}body button.primary.bussola-start:hover,body button.primary.bussola-start:hover span{transform:none}}

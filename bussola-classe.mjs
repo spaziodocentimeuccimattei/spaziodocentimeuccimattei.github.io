@@ -11,9 +11,9 @@ export function setupClass(ctx){
  function keep(){try{localStorage.setItem(ctx.key+':classe',JSON.stringify({code:access}));}catch{}}
  async function api(action,payload={}){const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-bussola-token':ctx.token()},body:JSON.stringify({action,...payload}),signal:ctrl.signal});const b=await r.json();if(!r.ok)throw Object.assign(new Error(b.error||'Classe non disponibile.'),{status:r.status});return b;}finally{clearTimeout(timer);}}
  function show(){
-  const panel=$('classSummary');panel.replaceChildren();$('classTitle').textContent=startMode?'Prima di iniziare':'Il tuo lavoro e la tua classe';
-  $('classSubmit').textContent=startMode?'Inizia il percorso':'Collega il mio lavoro';
-  $('classGuest').hidden=!startMode||!!entry.classe||!!identity?.alunno;
+  const panel=$('classSummary');panel.replaceChildren();$('classTitle').textContent=startMode?'Come vuoi iniziare?':'Il tuo lavoro e la tua classe';
+  $('classSubmit').textContent=startMode?'Inizia con la mia classe':'Collega il mio lavoro';
+  $('classGuestBox').hidden=!startMode||!!entry.classe||!!identity?.alunno;
   if(identity?.alunno){
    const text=document.createElement('span');text.textContent=`${identity.alunno.nome} ${identity.alunno.cognome} · ${identity.classe.classe} · ${identity.classe.scuola}`;panel.append(text);
    $('openClass').textContent='La mia classe';$('classIdentity').textContent=text.textContent;form.hidden=true;$('classResume').hidden=false;
@@ -48,7 +48,7 @@ export function setupClass(ctx){
  async function open(trigger,begin=false){
   if(identity?.alunno&&begin){ctx.start();return;}
   returnFocus=trigger;startMode=begin;$('classMessage').textContent='';show();if(!dialog.open)dialog.showModal();
-  (identity?.alunno?$('closeClass'):info?.modalita==='elenco'?$('classSubmit'):info?form.elements.nome:codeInput).focus();
+  (identity?.alunno?$('closeClass'):!$('classGuestBox').hidden&&!info?$('classGuest'):info?.modalita==='elenco'?$('classSubmit'):info?form.elements.nome:codeInput).focus();
   if(ctx.token()||access)try{await refresh();if(dialog.open&&startMode&&identity?.alunno)start();}catch(e){if(dialog.open)$('classMessage').textContent=e.message;}
  }
  $('openClass').addEventListener('click',e=>open(e.currentTarget,ctx.isIntro()));$('closeClass').addEventListener('click',()=>dialog.close());
