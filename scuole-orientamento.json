@@ -11,7 +11,16 @@
     "comune": "Assemini",
     "etichetta": "Pascoli",
     "area": "bacino",
-    "ordine": 20
+    "ordine": 20,
+    "avviso": {
+      "titolo": "Orientamento I.C. Assemini 2 · date proposte",
+      "indicazioni": [
+        "Date alternative: 27 ottobre o 4 novembre 2026. Data e orario da concordare e confermare con la scuola.",
+        "Fasce proposte: 10:00–11:00 oppure 11:00–12:00. Indicare una fascia preferita e una seconda alternativa; assegnazione in ordine di arrivo delle conferme.",
+        "Plesso Pascoli, corso America 3, Assemini. Presentazione in teatro, in forma di conferenza, con tutte le classi terze riunite.",
+        "Proiettore e microfoni disponibili. Segnalare in anticipo eventuali esigenze tecniche o logistiche particolari."
+      ]
+    }
   },
   {
     "id": "decimomannu-da-vinci",
