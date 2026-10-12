@@ -67,7 +67,16 @@
     "comune": "Uta",
     "etichetta": "Scuola secondaria di I grado",
     "area": "bacino",
-    "ordine": 100
+    "ordine": 100,
+    "avviso": {
+      "titolo": "Settimana dell’orientamento · data da definire",
+      "indicazioni": [
+        "Periodo indicativo: entro la metà di novembre 2026, da confermare. L’IC di Uta comunicherà giorno e orario.",
+        "Un’aula a disposizione: i gruppi classe si alterneranno per ascoltare la nostra offerta formativa, come lo scorso anno.",
+        "Gli alunni potranno poi partecipare ai nostri open day o alle nostre lezioni su prenotazione.",
+        "Puoi già dare la disponibilità per Uta; data e orario saranno concordati dopo la conferma."
+      ]
+    }
   },
   {
     "id": "vallermosa-sede",

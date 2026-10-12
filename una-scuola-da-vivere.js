@@ -140,6 +140,19 @@ function renderSchools(schools) {
       const tag = document.createElement('em');
       tag.className = 'school-tag';
       copy.append(town, name, tag);
+      if (school.avviso) {
+        const notice = document.createElement('span');
+        notice.className = 'school-notice';
+        const title = document.createElement('b');
+        title.textContent = school.avviso.titolo;
+        notice.append(title);
+        for (const text of school.avviso.indicazioni) {
+          const line = document.createElement('span');
+          line.textContent = text;
+          notice.append(line);
+        }
+        copy.append(notice);
+      }
       label.append(input, copy);
       grid.append(label);
     }
@@ -189,7 +202,7 @@ async function loadSchools() {
     if (previewCatalog) {
       schools = JSON.parse(previewCatalog.textContent);
     } else {
-      const response = await fetch('scuole-orientamento.json?v=20260922-1', { cache: 'no-store' });
+      const response = await fetch('scuole-orientamento.json?v=20261012-uta', { cache: 'no-store' });
       if (!response.ok) throw new Error();
       schools = await response.json();
     }

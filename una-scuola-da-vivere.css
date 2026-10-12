@@ -224,6 +224,8 @@
 }
 .school-dates { display: grid; gap: 3px; margin-top: 4px; padding-top: 6px; border-top: 1px dashed #cbd9dd; }
 .school-dates b { color: var(--navy); font-size: .68rem; font-weight: 800; line-height: 1.35; }
+.school-notice { display: grid; gap: 7px; margin-top: 7px; padding-top: 8px; border-top: 1px dashed #cbd9dd; color: var(--navy); font-size: .86rem; line-height: 1.5; overflow-wrap: anywhere; }
+.school-notice b { font-weight: 800; }
 
 /* Telefoni: titoli con righe che non si toccano e mappa con etichette che non finiscono sotto cerchi e nota. */
 .support-hero h1 { line-height: 1.02; }
