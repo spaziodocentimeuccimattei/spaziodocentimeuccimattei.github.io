@@ -1,5 +1,5 @@
-import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261010-all';
-import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261010-all';
+import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261013-ssas';
+import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261013-ssas';
 let imagePromise;
 function logo(){return imagePromise??=new Promise((resolve,reject)=>{const loaded=document.querySelector('img[src="assets/logo-meucci-mattei-decimomannu.jpeg"]');if(loaded?.complete&&loaded.naturalWidth){resolve(loaded);return;}const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{imagePromise=null;reject(new Error('Il logo della scuola non si è caricato. Riprova.'));};img.src='assets/logo-meucci-mattei-decimomannu.jpeg';});}
 function lines(ctx,text,maxWidth){const out=[];let line='';for(const word of String(text).split(/\s+/)){if(ctx.measureText(word).width>maxWidth){if(line){out.push(line);line='';}let part='';for(const c of word){if(ctx.measureText(part+c).width>maxWidth){out.push(part);part=c;}else part+=c;}line=part;continue;}if(line&&ctx.measureText(line+' '+word).width>maxWidth){out.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)out.push(line);return out;}
@@ -17,6 +17,7 @@ export async function certificateCanvas(record){
  const colors=['#aa4c48','#456d80','#507354','#79568b','#93602a'];ctx.textAlign='left';ctx.font='600 25px Arial';s.laboratori.forEach((lab,i)=>{const top=y+112+i*54;ctx.fillStyle='#e8eddf';ctx.fillRect(170,top-30,900,45);ctx.fillStyle=colors[i];ctx.fillText(`${i+1}`,198,top+3);ctx.fillStyle='#294f40';ctx.fillText(lab,247,top+3);});
  y+=430;ctx.textAlign='center';ctx.font='600 23px Arial';ctx.fillText(s.curiosita.length?'Ha espresso curiosità per':'Ha esplorato diverse possibilità dell’indirizzo',620,y);ctx.font='26px Arial';lines(ctx,s.curiosita.join(' · '),1000).forEach((t,i)=>ctx.fillText(t,620,y+44+i*37));
  ctx.font='22px Arial';ctx.fillStyle='#4f6156';ctx.fillText(new Intl.DateTimeFormat('it-IT',{dateStyle:'long'}).format(new Date(record.created_at)),620,1505);ctx.font='17px Arial';ctx.fillText('Attestato di partecipazione: non è una valutazione delle capacità.',620,1568);ctx.font='15px Arial';ctx.fillText(`Identificativo: ${record.id}${record.origine==='percorso_alunno'?'':` · Versione del lavoro: ${s.revision}`}`,620,1622);
+ if(['localhost','127.0.0.1'].includes(location.hostname)){ctx.fillStyle='#ad093e';ctx.font='bold 34px Arial';ctx.fillText('ANTEPRIMA LOCALE · NON EMESSO',620,1680);}
  return canvas;
 }
 async function jpeg(record){const canvas=await certificateCanvas(record),blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.88));return {width:canvas.width,height:canvas.height,bytes:new Uint8Array(await blob.arrayBuffer())};}

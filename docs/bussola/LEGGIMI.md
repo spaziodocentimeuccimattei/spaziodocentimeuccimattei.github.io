@@ -156,3 +156,11 @@ Su richiesta di Salvatore: il laboratorio deve poterlo fare anche un genitore co
 ### Limite delle nuove prove per rete: da 200 a 2000 al giorno (12 ottobre 2026)
 
 La funzione `public.bussola_v2_quota` conta le nuove prove avviate ogni giorno dalla stessa connessione (somma dei cinque laboratori). A scuola tutti i dispositivi escono con un solo indirizzo: con 200, più classi nella stessa giornata bloccavano i laboratori («Troppe nuove prove oggi»). Su decisione di Salvatore il limite è 2000. Applicato in produzione il 12/10/2026 (migrazione `bussola_quota_2000`), copia in `supabase/sql/bussola-quota-2000.sql`. Permessi invariati: la funzione resta eseguibile solo da `service_role`. Nessuna tabella o dato toccato.
+
+## SSAS — sei situazioni illustrate (13 ottobre 2026)
+
+I nuovi progetti di `bussola-ssas.html` propongono dipendenze e benessere digitale, disabilità e partecipazione, immigrazione e accoglienza, anziani e solitudine, disagio emotivo e pregiudizi, bambini ed emozioni. La situazione scelta accompagna cinque laboratori, con scene SVG per desktop e telefono.
+
+Il formato `caseJourney: ssas-sei-situazioni-2` conserva i campi precedenti. `ssas-situazioni-entry.mjs` riapre i lavori già iniziati con il percorso originale; «Inizia un nuovo progetto» conserva la copia precedente e apre le sei situazioni. Gestione, raccolta e attestati riconoscono entrambi i formati. Nessuna migrazione dei dati.
+
+Verifica: `node scripts/verifica-ssas-situazioni.mjs` esercita 84 percorsi, conservazione delle risposte, cambi di situazione, contratto API, completamento e attestati. Restano valide le verifiche esistenti degli altri indirizzi. Le prove nel browser usano il server locale fittizio; il pilotaggio con alunni resta separato.

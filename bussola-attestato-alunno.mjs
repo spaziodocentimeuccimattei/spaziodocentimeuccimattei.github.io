@@ -1,6 +1,6 @@
-import {COURSE_NAMES} from './bussola-records-core.mjs?v=20261010-all';
-import {certificateName,participantCertificate} from './bussola-attestato-alunno-core.mjs?v=20261010-all';
-import {certificateCanvas,downloadCertificate} from './bussola-attestati-render.mjs?v=20261010-all';
+import {COURSE_NAMES} from './bussola-records-core.mjs?v=20261013-ssas';
+import {certificateName,participantCertificate} from './bussola-attestato-alunno-core.mjs?v=20261013-ssas';
+import {certificateCanvas,downloadCertificate} from './bussola-attestati-render.mjs?v=20261013-ssas';
 
 export function setupParticipantCertificate(ctx){
  const $=id=>document.getElementById(id),dialog=$('certificateDialog');
