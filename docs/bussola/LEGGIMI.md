@@ -152,3 +152,7 @@ Su richiesta di Salvatore: il laboratorio deve poterlo fare anche un genitore co
 - **AFM**: il riquadro «In questo indirizzo impari a…» viene dopo le cinque schede dei laboratori.
 - **Stile**: nuovo foglio `bussola-ingresso.css`, collegato in coda nelle cinque pagine; nessuna regola esistente tolta. Verde `#006733` con testo bianco (contrasto 7:1), pulsante a pillola, ombra e freccia che si sposta al passaggio del mouse (ferma con «riduci movimento»).
 - **Controlli**: i nove script di `scripts/` passano; nel browser, in locale e senza chiamate al servizio, a 320, 390 e 1280 px: nessuno scorrimento laterale, nessun errore in console, «Inizia senza classe» apre il primo laboratorio in tutti e cinque i percorsi. Non provato su telefoni fisici.
+
+### Limite delle nuove prove per rete: da 200 a 2000 al giorno (12 ottobre 2026)
+
+La funzione `public.bussola_v2_quota` conta le nuove prove avviate ogni giorno dalla stessa connessione (somma dei cinque laboratori). A scuola tutti i dispositivi escono con un solo indirizzo: con 200, più classi nella stessa giornata bloccavano i laboratori («Troppe nuove prove oggi»). Su decisione di Salvatore il limite è 2000. Applicato in produzione il 12/10/2026 (migrazione `bussola_quota_2000`), copia in `supabase/sql/bussola-quota-2000.sql`. Permessi invariati: la funzione resta eseguibile solo da `service_role`. Nessuna tabella o dato toccato.
