@@ -1,0 +1,100 @@
+.school-calendar { --calendar-ink:#14384e; --calendar-muted:#4a626e; color:var(--calendar-ink); margin:24px 0; }
+.school-calendar * { box-sizing:border-box; }
+.school-calendar__heading { display:flex; align-items:start; justify-content:space-between; gap:24px; margin-bottom:24px; }
+.school-calendar__eyebrow { margin:0 0 7px; color:#00685a; font-size:.9375rem; font-weight:750; }
+.school-calendar h2 { margin:0 0 10px; font-size:clamp(1.8rem,3vw,2.5rem); line-height:1.2; letter-spacing:-.035em; }
+.school-calendar__lead { margin:0; max-width:80ch; color:var(--calendar-muted); font-size:1rem; line-height:1.6; }
+.school-calendar__toolbar { display:flex; flex-wrap:wrap; align-items:end; justify-content:space-between; gap:18px; padding:20px; background:#edf3f5; border:1px solid #c3d2d9; border-radius:16px; }
+.school-calendar__toolbar label { display:grid; gap:7px; color:var(--calendar-ink); font-size:.9375rem; font-weight:700; }
+.school-calendar__toolbar input { min-width:0; width:100%; min-height:46px; padding:10px 13px; border:1px solid #839eab; border-radius:10px; background:#fff; color:var(--calendar-ink); font:inherit; font-size:1rem; }
+.school-calendar__toolbar > label { flex:1 1 230px; max-width:340px; }
+.school-calendar__period { display:flex; gap:9px; align-items:end; }
+.school-calendar__period input { width:220px; }
+.school-calendar__period > button { width:46px; min-height:46px; padding:10px; font-size:1.25rem; }
+.school-calendar__action { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 14px; border:1px solid #9bb5c1; border-radius:9px; color:#14384e; background:#fff; font-family:inherit; font-size:.9375rem; font-weight:700; line-height:1.4; cursor:pointer; }
+.school-calendar__action:hover { background:#e7f1f3; border-color:#446d7e; }
+.school-calendar__filters { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:18px 0; }
+.school-calendar__filter { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:15px; border:1px solid #b9cbd4; border-radius:12px; color:#14384e; background:#fff; text-align:left; font:inherit; font-size:.9375rem; font-weight:650; cursor:pointer; }
+.school-calendar__filter b { font-size:1.5rem; }
+.school-calendar__filter[aria-pressed=true] { color:#fff; background:#14384e; border-color:#14384e; }
+.school-calendar__filter:disabled { opacity:1; color:#4a626e; background:#edf2f4; }
+.school-calendar__period-title { margin:24px 0 6px; color:#14384e; font-size:clamp(1.25rem,2.2vw,1.625rem); line-height:1.3; }
+.school-calendar__result { margin:0 0 16px; color:var(--calendar-muted); font-size:.9375rem; }
+.school-calendar__message { margin:12px 0; color:var(--calendar-muted); font-size:1rem; line-height:1.5; }
+.school-calendar__message:empty { display:none; }
+.school-calendar__message.is-error { padding:16px; color:#813118; background:#fff3e9; border:1px solid #d7a588; border-radius:12px; }
+.school-calendar__table-wrap { border:1px solid #bdcfd7; border-radius:16px; }
+.school-calendar table { width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; font-size:1rem; }
+.school-calendar thead th { position:sticky; top:0; z-index:3; padding:18px 16px; color:#fff; background:#14384e; text-align:left; font-size:1.125rem; line-height:1.4; font-weight:700; border-right:1px solid #6c8b9a; }
+.school-calendar thead th:first-child { width:24%; border-top-left-radius:15px; }
+.school-calendar thead th:last-child { border-top-right-radius:15px; border-right:0; }
+.school-calendar tbody th,.school-calendar tbody td { padding:18px 16px; vertical-align:top; border-bottom:1px solid #cbd9df; }
+.school-calendar tbody tr:last-child > * { border-bottom:0; }
+.school-calendar__school { text-align:left; background:#f5f8fa; border-right:1px solid #bdcfd7; overflow-wrap:anywhere; }
+.school-calendar__school > strong { display:block; font-size:1.1875rem; line-height:1.3; margin-bottom:5px; }
+.school-calendar__school > span:not(.school-calendar__school-state) { display:block; color:var(--calendar-muted); font-size:1rem; font-weight:500; line-height:1.4; }
+.school-calendar__school-state { display:block; margin:12px 0 0; padding-left:10px; border-left:4px solid #b26c20; color:#80500a; font-size:.875rem; font-weight:750; line-height:1.4; }
+.school-calendar__school-state.is-confirmed { color:#17613f; border-color:#208558; }
+.school-calendar__school-state.is-planned { color:#89530a; border-color:#c48026; }
+.school-calendar__school-state.is-unknown { color:#4a626e; border-color:#778b95; }
+.school-calendar__participation { display:block; margin-top:10px; color:#4a626e; font-size:.875rem; font-weight:500; }
+.school-calendar__school > button { margin-top:16px; }
+.school-calendar__month { background:#fff; border-right:1px solid #d4e0e5; }
+.school-calendar__month:last-child { border-right:0; }
+.school-calendar__month.is-empty { background:repeating-linear-gradient(90deg,#fafcfd 0,#fafcfd calc(25% - 1px),#eef3f5 calc(25% - 1px),#eef3f5 25%); }
+.school-calendar__event { padding:16px; border:1px solid #a8c9b7; border-top:4px solid #208558; border-radius:12px; background:#f0f8f3; overflow-wrap:anywhere; }
+.school-calendar__event + .school-calendar__event { margin-top:12px; }
+.school-calendar__event.is-planned { border-color:#d5b783; border-top-color:#ba781f; background:#fff8e9; }
+.school-calendar__date { display:flex; align-items:center; gap:12px; }
+.school-calendar__date > strong { color:#14384e; font-size:2.5rem; line-height:1; letter-spacing:-.05em; }
+.school-calendar__date > span { min-width:0; display:grid; gap:2px; color:#14384e; font-size:.875rem; line-height:1.4; }
+.school-calendar__date b { font-weight:750; }
+.school-calendar__time { margin:13px 0 10px; color:#14384e; font-size:1.25rem; font-weight:750; line-height:1.3; }
+.school-calendar__badge { display:inline-block; margin:0 0 14px; padding:5px 9px; border:1px solid #97bfa8; border-radius:7px; color:#145233; background:#deefe4; font-size:.875rem; font-weight:750; line-height:1.45; }
+.is-planned .school-calendar__badge { color:#764700; border-color:#d1b07a; background:#fff0cf; }
+.school-calendar__type { margin:0 0 8px; color:#14384e; font-size:.9375rem; font-weight:650; line-height:1.45; }
+.school-calendar__place { margin:0; color:#405c69; font-size:.9375rem; line-height:1.6; white-space:pre-wrap; }
+.school-calendar__past { margin:0 0 10px; color:#526975; font-size:.875rem; }
+.school-calendar__note { margin-top:14px; padding-top:12px; border-top:1px solid #b4d1c0; color:#284b3d; font-size:.9375rem; line-height:1.6; }
+.school-calendar__note > strong { font-size:.875rem; }
+.school-calendar__note p { margin:5px 0 0; white-space:pre-wrap; }
+.school-calendar__event > button { width:100%; margin-top:16px; }
+.school-calendar__gap { background:#fcfaf5; }
+.school-calendar__gap > strong { display:block; padding-left:12px; border-left:4px solid #b17a2c; color:#80500a; font-size:1.125rem; }
+.school-calendar__gap > p { margin:8px 0 0 16px; color:#655842; font-size:.9375rem; line-height:1.5; }
+.school-calendar__gap .school-calendar__event { max-width:440px; margin-top:16px; }
+.school-calendar__notice { margin-top:14px; font-size:.9375rem; line-height:1.55; font-weight:400; }
+.school-calendar__notice summary { padding:10px 0; cursor:pointer; color:#14384e; font-weight:650; min-height:44px; }
+.school-calendar__notice p { margin:9px 0 0; color:#405c69; }
+.school-calendar__outside td { background:#f7fafb; }
+.school-calendar__outside .school-calendar__event { display:inline-block; max-width:380px; margin:14px 14px 0 0; }
+.school-calendar__legend { margin:16px 0 0; color:#4a626e; font-size:.9375rem; line-height:1.6; }
+.school-calendar__empty { padding:24px; margin:0; color:#4a626e; }
+.school-calendar__sr-only { position:absolute; width:1px; height:1px; padding:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.school-calendar :is(button,input,summary):focus-visible { outline:3px solid #006c63; outline-offset:3px; }
+@media(max-width:900px) {
+  .school-calendar__table-wrap { border:0; border-radius:0; }
+  .school-calendar table,.school-calendar tbody { display:block; width:100%; }
+  .school-calendar thead { display:none; }
+  .school-calendar tbody { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:start; }
+  .school-calendar tbody tr { display:block; min-width:0; border:1px solid #bdcfd7; border-radius:14px; background:#fff; }
+  .school-calendar tbody th,.school-calendar tbody td { display:block; width:100%; border-right:0; border-bottom:0; padding:18px; }
+  .school-calendar tbody th { border-bottom:1px solid #cbd9df; border-radius:14px 14px 0 0; }
+  .school-calendar__month.is-empty { display:none; }
+  .school-calendar__month.has-events::before { content:attr(data-month); display:block; margin-bottom:12px; color:#14384e; font-size:1.0625rem; font-weight:750; }
+  .school-calendar__gap { border-radius:0 0 14px 14px; }
+  .school-calendar__filters { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .school-calendar__outside { grid-column:1/-1; }
+}
+@media(max-width:600px) {
+  .school-calendar__toolbar { display:grid; padding:16px; }
+  .school-calendar__toolbar > label { max-width:none; }
+  .school-calendar__period { display:grid; grid-template-columns:44px minmax(0,1fr) 44px; }
+  .school-calendar__period input { width:100%; }
+  .school-calendar__period > button { width:44px; }
+  .school-calendar__filter { padding:12px; font-size:.875rem; }
+  .school-calendar__filter b { font-size:1.375rem; }
+  .school-calendar tbody { grid-template-columns:1fr; gap:14px; }
+  .school-calendar__school > button { width:100%; }
+  .school-calendar__event { padding:16px; }
+}

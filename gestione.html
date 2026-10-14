@@ -8,8 +8,9 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261009-home">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261014-leggibilita">
+  <link rel="stylesheet" href="gestione.css?v=20261014-calendario">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261014-leggibilita">
+  <link rel="stylesheet" href="scuole-calendario.css?v=20261014-1">
 </head>
 <body class="gestione-page">
   <a class="manage-skip" href="#gestioneMain">Vai al contenuto</a>
@@ -42,7 +43,7 @@
           <label for="managePassword">Password personale</label>
           <div class="password-row">
             <input id="managePassword" name="password" type="password" autocomplete="current-password" required>
-            <button type="submit">Accedi</button>
+            <button type="submit" disabled>Accedi</button>
           </div>
           <p class="access-message" id="accessMessage" role="status" aria-live="polite"></p>
         </form>
@@ -50,10 +51,13 @@
 
       <div class="manage-panel" id="workspacePanel" hidden>
         <div class="manage-top">
-          <div><p class="step">Gestione orientamento</p><h2 id="workspaceTitle" tabindex="-1">Attività e disponibilità ricevute</h2></div>
-          <div class="manage-actions"><button id="refreshButton" type="button">Aggiorna dati</button><button class="logout-button" id="logoutButton" type="button">Esci</button></div>
+          <div><p class="step">Gestione orientamento</p><h2 id="workspaceTitle" tabindex="-1">Il calendario delle scuole</h2></div>
+          <div class="manage-actions"><a class="manage-tools-link" href="#managementTools">Attività e attestati ↓</a><button id="refreshButton" type="button">Aggiorna dati</button><button class="logout-button" id="logoutButton" type="button">Esci</button></div>
         </div>
         <p id="globalMessage" class="global-message" role="status" aria-live="polite"></p>
+        <section id="manageSchoolCalendar" aria-label="Calendario completo delle scuole"></section>
+        <details class="management-tools" id="managementTools">
+          <summary>Disponibilità, attività, moduli e attestati</summary>
         <details class="manage-overview">
           <summary>Riepilogo delle attività <span>Conteggi, scuole visitate e prossime date</span></summary>
           <div class="contribution-summary" id="summary"></div>
@@ -179,7 +183,7 @@
           <h3 class="sub-title">Attività confermate, docente per docente</h3>
           <div class="review-list" id="activityList"></div>
         </section>
-
+        </details>
       </div>
     </section>
   </main>
@@ -188,7 +192,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script src="gestione.js?v=20261008-registro"></script>
+  <script type="module" src="gestione.js?v=20261014-calendario"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261013-ssas"></script>
 </body>
 </html>

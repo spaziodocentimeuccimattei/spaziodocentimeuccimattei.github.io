@@ -1,3 +1,4 @@
+import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261014-1';
 const ORIENTATION_API = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const MAX_SCHOOLS = 5;
 const previewCatalog = document.getElementById('school-preview-data');
@@ -18,6 +19,20 @@ let schoolStates = new Map();
 let schoolDates = new Map();
 const DATE_TYPES = { aule: 'nelle aule', stand: 'open day con stand' };
 let schoolFilter = 'all';
+let overviewLoaded = false;
+const schoolCalendar = createSchoolCalendar(document.getElementById('teacherSchoolCalendar'), {
+  onChoose(school) {
+    openActionPanel('#scuole');
+    const input = [...schoolChoices.querySelectorAll('input[name="scuole"]')].find(item => item.value === school.id);
+    if (input && !input.checked && selectedSchools().length < MAX_SCHOOLS) {
+      input.checked = true;
+      input.dispatchEvent(new Event('change', {bubbles:true}));
+    }
+    if (input && !input.checked) setMessage('supporterMessage', 'Hai già selezionato cinque scuole. Togli una scelta prima di aggiungerne un’altra.');
+    supporterForm.scrollIntoView({block:'start',behavior:'instant'});
+    supporterForm.elements.nome.focus({preventScroll:true});
+  },
+});
 
 function setMessage(id, message, kind = '') {
   const element = document.getElementById(id);
@@ -63,7 +78,7 @@ function applySchoolStates() {
     const state = schoolStates.get(option.dataset.school) || 'libera';
     option.dataset.state = state;
     const tag = option.querySelector('.school-tag');
-    tag.textContent = state === 'visitata' ? 'Già visitata' : state === 'in_arrivo' ? 'Disponibilità presente' : 'Nessuna disponibilità';
+    tag.textContent = !overviewLoaded ? 'Stato non disponibile' : state === 'visitata' ? 'Già visitata' : state === 'in_arrivo' ? 'Disponibilità presente' : 'Nessuna disponibilità';
     // Date inserite dalla Funzione Strumentale: il docente le vede prima di candidarsi.
     option.querySelector('.school-dates')?.remove();
     const dates = schoolDates.get(option.dataset.school) || [];
@@ -256,15 +271,21 @@ async function loadOverview(schools) {
   try {
     if (previewCatalog) throw new Error();
     const data = await send('overview', {});
+    overviewLoaded = true;
     schoolStates = new Map(data.scuole.map((school) => [school.id, school.stato]));
     schoolDates = new Map();
     for (const item of data.appuntamenti || []) schoolDates.set(item.scuola_id, [...(schoolDates.get(item.scuola_id) || []), item]);
     for (const [key, value] of Object.entries(data.totali)) setStat(key, value);
     renderMission(data.totali.scuole, data.totali.scuole_visitate, data.totali.scuole_con_disponibilita);
+    schoolCalendar.update(schools, data.appuntamenti || [], schoolStates);
   } catch {
-    for (const key of ['scuole_visitate', 'scuole_con_disponibilita', 'mattinee_proposte']) setStat(key, 0);
-    setStat('scuole', schools.length || 24);
-    renderMission(schools.length || 24, 0, 0);
+    schoolCalendar.setError(schools);
+    if (!overviewLoaded) {
+      for (const key of ['scuole_visitate', 'scuole_con_disponibilita', 'mattinee_proposte']) setStat(key, '—');
+      setStat('scuole', schools.length || '—');
+      document.getElementById('missionCaption').textContent = 'Il riepilogo delle visite non è disponibile. Aggiorna il calendario per riprovare.';
+      document.getElementById('missionProgress').removeAttribute('aria-valuenow');
+    }
   }
   applySchoolStates();
   renderLights(schools);
@@ -322,6 +343,11 @@ function openActionPanel(hash = window.location.hash) {
 }
 
 let currentSchools = [];
+document.getElementById('refreshSchoolCalendar').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  try { await loadOverview(currentSchools); } finally { button.disabled = false; }
+});
 supporterForm.addEventListener('submit', (event) => submitForm(event, 'submit_supporter', 'supporterMessage'));
 proposalForm.addEventListener('submit', (event) => submitForm(event, 'submit_proposal', 'proposalMessage'));
 reportForm.addEventListener('submit', (event) => submitForm(event, 'report_activity', 'reportMessage'));
@@ -344,6 +370,7 @@ for (const link of document.querySelectorAll('a[href^="#"]')) {
   link.addEventListener('click', () => openActionPanel(link.getAttribute('href')));
 }
 window.addEventListener('hashchange', () => openActionPanel());
+for (const form of [supporterForm, proposalForm, reportForm]) form.querySelector('button[type="submit"]').disabled = false;
 resetReportForm();
 loadSchools().then((schools) => {
   currentSchools = schools;

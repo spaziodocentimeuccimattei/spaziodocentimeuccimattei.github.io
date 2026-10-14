@@ -1,3 +1,4 @@
+import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261014-1';
 const API_URL = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const SESSION_KEY = 'mattei-gestione-session';
 
@@ -27,6 +28,33 @@ const appointmentSchool = document.getElementById('appointmentSchool');
 const appointmentMessage = document.getElementById('appointmentMessage');
 const appointmentSubmit = document.getElementById('appointmentSubmit');
 const appointmentCancel = document.getElementById('appointmentCancel');
+const managementTools = document.getElementById('managementTools');
+const schoolCalendar = createSchoolCalendar(document.getElementById('manageSchoolCalendar'), {
+  admin: true,
+  onAdd: (school) => openCalendarForm(school),
+  onEdit: (item) => openCalendarForm(null, item),
+});
+function openCalendarForm(school, item) {
+  const hasDraft = [...appointmentForm.querySelectorAll('input:not([type="hidden"])')].some(input => input.value);
+  managementTools.open = true;
+  document.querySelector('[data-tab="calendario"]').click();
+  if (hasDraft) {
+    appointmentMessage.textContent = 'Hai una data non ancora salvata. Salvala oppure annulla la bozza prima di aprire un altro appuntamento.';
+    appointmentCancel.hidden = false;
+    appointmentCancel.textContent = 'Annulla la bozza';
+    appointmentForm.scrollIntoView({block:'start',behavior:'instant'});
+    return;
+  }
+  if (item) editAppointment(item);
+  else {
+    resetAppointmentForm();
+    appointmentSchool.value = school.id;
+    appointmentMessage.textContent = `Nuova data per ${school.comune} · ${school.etichetta}.`;
+    appointmentForm.scrollIntoView({block:'start',behavior:'instant'});
+    appointmentForm.elements.data.focus({preventScroll:true});
+  }
+}
+document.querySelector('.manage-tools-link').addEventListener('click', () => { managementTools.open = true; });
 
 // Data di oggi in Italia, nel formato delle date salvate (AAAA-MM-GG).
 function today() {
@@ -79,6 +107,7 @@ function showWorkspace() {
 function resetSession() {
   sessionToken = '';
   data = null;
+  schoolCalendar.clear();
   sessionStorage.removeItem(SESSION_KEY);
   document.dispatchEvent(new CustomEvent('bussola-gestione-uscita'));
   workspacePanel.hidden = true;
@@ -225,6 +254,11 @@ function renderProposals() {
 }
 
 function renderSchools() {
+  const participation = new Map(data.scuole.map(school => [school.id,
+    data.attivita.some(item => item.tipo === 'visita' && item.scuola_id === school.id && item.data <= today()) ? 'visitata' :
+    data.disponibilita.some(item => item.stato !== 'archiviata' && item.scuole.includes(school.id)) ? 'in_arrivo' : 'libera'
+  ]));
+  schoolCalendar.update(data.scuole, data.appuntamenti, participation);
   const board = document.getElementById('schoolBoard');
   board.replaceChildren();
   for (const school of data.scuole) {
@@ -329,6 +363,7 @@ function resetAppointmentForm() {
   appointmentSchool.value = school;
   appointmentSubmit.textContent = 'Aggiungi la data';
   appointmentCancel.hidden = true;
+  appointmentCancel.textContent = 'Annulla la modifica';
 }
 
 function editAppointment(item) {
@@ -547,6 +582,7 @@ async function load() {
     render();
     if (globalMessage.textContent === 'Caricamento…') globalMessage.textContent = '';
   } catch (error) {
+    if (error.status !== 401 && error.status !== 403) schoolCalendar.setError(data?.scuole || []);
     handleError(error);
   } finally {
     refreshButton.disabled = false;
@@ -684,3 +720,6 @@ for(const [i,tab] of [...document.querySelectorAll('[role="tab"]')].entries()){
  const panel=document.querySelector('[data-panel="'+tab.dataset.tab+'"]');if(panel){panel.id='gestione-panel-'+tab.dataset.tab;panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby',tab.id);tab.setAttribute('aria-controls',panel.id);}
  tab.addEventListener('keydown',event=>{const tabs=[...document.querySelectorAll('[role="tab"]')];const index=event.key==='Home'?0:event.key==='End'?tabs.length-1:event.key==='ArrowRight'?(i+1)%tabs.length:event.key==='ArrowLeft'?(i-1+tabs.length)%tabs.length:null;if(index!==null){event.preventDefault();tabs[index].click();tabs[index].focus();}});
 }
+
+// L’accesso diventa attivo solo dopo il collegamento dei gestori del modulo.
+passwordForm.querySelector('button[type="submit"]').disabled = false;

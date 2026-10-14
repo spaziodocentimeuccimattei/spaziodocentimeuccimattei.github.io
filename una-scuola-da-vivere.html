@@ -20,9 +20,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icona-32.png">
   <link rel="apple-touch-icon" href="assets/icona-180.png">
   <link rel="stylesheet" href="portal.css?v=20261009-home">
-  <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261012-uta">
+  <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261014-calendario">
+  <link rel="stylesheet" href="scuole-calendario.css?v=20261014-1">
 </head>
-<body>
+<body class="school-calendar-page">
   <header class="site-header">
     <a class="site-brand" href="index.html" aria-label="IIS Meucci - Mattei | Decimomannu · Torna alla pagina iniziale">
       <span class="site-logo"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" alt=""></span><span class="site-brand-copy"><span class="site-brand-name">IIS Meucci - Mattei</span><span class="site-brand-place">Decimomannu</span></span>
@@ -38,8 +39,8 @@
     <section class="support-hero" aria-labelledby="page-title">
       <div class="hero-copy">
         <p class="eyebrow">Una scuola da vivere · Orientamento 2026/27</p>
-        <h1 id="page-title">Partecipa alle visite<br><span>di orientamento</span></h1>
-        <p class="hero-lead">Questo è lo spazio operativo dei docenti della sede di Decimomannu: puoi offrire la tua disponibilità, proporre un’attività per le Mattinée o registrare ciò che hai già svolto.</p>
+        <h1 id="page-title">Il calendario<br><span>delle scuole</span></h1>
+        <p class="hero-lead">Tutte le scuole, quando andare e dove. Consulta le date confermate e quelle ancora da concordare, poi offri la tua disponibilità.</p>
         <div class="hero-stats" id="heroStats" aria-live="polite">
           <div><strong data-stat="scuole_visitate">–</strong><span>scuole già raggiunte</span></div>
           <div><strong data-stat="scuole_con_disponibilita">–</strong><span>scuole con disponibilità</span></div>
@@ -51,6 +52,11 @@
         <a href="#mattinee"><span class="action-number">02</span><span><strong>Proponi una Mattinée</strong><small>Presenta un laboratorio o una lezione aperta.</small></span><b aria-hidden="true">→</b></a>
         <a href="#visita"><span class="action-number">03</span><span><strong>Registra un’attività</strong><small>Comunica una visita o una Mattinée già svolta.</small></span><b aria-hidden="true">→</b></a>
       </nav>
+    </section>
+
+    <section class="teacher-calendar-shell" id="calendario-scuole" aria-label="Calendario completo delle scuole">
+      <div id="teacherSchoolCalendar"></div>
+      <button type="button" class="school-calendar__action" id="refreshSchoolCalendar">Aggiorna calendario</button>
     </section>
 
     <section class="territory-invitation" aria-labelledby="territory-title">
@@ -141,7 +147,7 @@
           <textarea name="nota" rows="3" maxlength="600" placeholder="Per esempio: conosco già questa scuola o posso accompagnare un collega."></textarea>
         </label>
         <label class="website-trap" aria-hidden="true">Sito web <input name="website" tabindex="-1" autocomplete="off"></label>
-        <div class="form-footer"><p>I dati vengono trasmessi esclusivamente alla Commissione Orientamento per organizzare le visite.</p><button type="submit">Invia la disponibilità</button></div>
+        <div class="form-footer"><p>I dati vengono trasmessi esclusivamente alla Commissione Orientamento per organizzare le visite.</p><button type="submit" disabled>Invia la disponibilità</button></div>
         <p class="form-message" id="supporterMessage" role="status" aria-live="polite"></p>
       </form>
       </div>
@@ -187,7 +193,7 @@
         <label>Spazi o attrezzature necessari <span class="optional">facoltativo</span><textarea name="esigenze" rows="2" maxlength="600"></textarea></label>
         <label>Note <span class="optional">facoltative</span><textarea name="nota" rows="2" maxlength="600"></textarea></label>
         <label class="website-trap" aria-hidden="true">Sito web <input name="website" tabindex="-1" autocomplete="off"></label>
-        <div class="form-footer"><p>La proposta viene trasmessa alla Commissione Orientamento, che la valuta e definisce date e spazi.</p><button type="submit">Invia proposta</button></div>
+        <div class="form-footer"><p>La proposta viene trasmessa alla Commissione Orientamento, che la valuta e definisce date e spazi.</p><button type="submit" disabled>Invia proposta</button></div>
         <p class="form-message" id="proposalMessage" role="status" aria-live="polite"></p>
       </form>
       </div>
@@ -219,7 +225,7 @@
           <textarea name="nota" rows="2" maxlength="600" placeholder="Per esempio: classi incontrate, collega presente."></textarea>
         </label>
         <label class="website-trap" aria-hidden="true">Sito web <input name="website" tabindex="-1" autocomplete="off"></label>
-        <div class="form-footer"><p>La registrazione viene trasmessa alla Funzione Strumentale e resta in attesa di verifica.</p><button type="submit">Invia la registrazione</button></div>
+        <div class="form-footer"><p>La registrazione viene trasmessa alla Funzione Strumentale e resta in attesa di verifica.</p><button type="submit" disabled>Invia la registrazione</button></div>
         <p class="form-message" id="reportMessage" role="status" aria-live="polite"></p>
       </form>
       </div>
@@ -229,6 +235,6 @@
   </main>
 
   <footer class="site-footer"><p>IIS Meucci - Mattei, sede di Decimomannu</p><p>Spazio curato dai docenti · Non sostituisce il <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a></p></footer>
-  <script src="una-scuola-da-vivere.js?v=20261012-uta"></script>
+  <script type="module" src="una-scuola-da-vivere.js?v=20261014-calendario"></script>
 </body>
 </html>

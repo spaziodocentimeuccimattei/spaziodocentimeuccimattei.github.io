@@ -78,7 +78,7 @@
 
 /* Gestione: accesso compatto, sezioni riconoscibili e comandi leggibili. */
 .gestione-page { --manage-muted: #4b6170; --manage-border: #b8cbd2; background: #f1f5f6; }
-.gestione-page .orientation-main { max-width: 1280px; padding-bottom: 48px; }
+.gestione-page .orientation-main { width:min(1440px,calc(100% - 40px)); max-width:1440px; padding-bottom:48px; }
 .gestione-page .orientation-hero { min-height: 0; padding: clamp(24px, 4vw, 44px); border-radius: 0 0 26px 26px; background: linear-gradient(115deg, #123c57, #1c545c); }
 .gestione-page .orientation-hero h1 { margin: 14px 0 12px; font-size: clamp(2rem, 4.5vw, 3.5rem); line-height: 1.1; letter-spacing: -.04em; }
 .gestione-page .orientation-hero > p:not(.eyebrow) { max-width: 780px; margin: 0; color: #edf5f7; font-size: 1rem; line-height: 1.6; }
@@ -109,6 +109,10 @@
 .manage-actions button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--manage-border); font-size: .9375rem; font-weight: 700; }
 .manage-actions #refreshButton { color: #fff; background: #123c57; border-color: #123c57; }
 .manage-actions .logout-button { color: #123c57; background: #fff; }
+.manage-tools-link { display:inline-flex; align-items:center; min-height:44px; padding:10px 14px; border:1px solid #a5bdc8; border-radius:10px; color:#123c57; background:#fff; font-size:.9375rem; font-weight:700; text-decoration:none; }
+.management-tools { margin-top:32px; padding:22px; border:1px solid #bdcfd7; border-radius:16px; background:#fff; }
+.management-tools > summary { min-height:48px; padding:8px 0; color:#123c57; font-size:1.1875rem; font-weight:750; cursor:pointer; }
+.management-tools[open] > summary { margin-bottom:18px; }
 .global-message { font-size: .9375rem; line-height: 1.5; }
 .gestione-page #activityMessage { font-size: .9375rem; }
 .global-message:empty { min-height: 0; margin: 0; }
@@ -189,6 +193,9 @@
   .manage-hero-topics { gap: 7px; }
   .manage-hero-topics span { padding: 6px 9px; }
   .manage-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .manage-tools-link { grid-column:1/-1; justify-content:center; }
+  .gestione-page .orientation-main { width:calc(100% - 24px); }
+  .management-tools { padding:16px; }
   .manage-actions button { padding: 10px 12px; }
   .manage-panel .contribution-summary > div { padding: 15px 12px; }
   .manage-panel .contribution-summary span { font-size: .875rem; }
