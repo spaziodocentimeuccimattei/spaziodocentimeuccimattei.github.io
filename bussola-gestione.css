@@ -4,3 +4,58 @@
 #bussolaManagement .primary,#bussolaManagement .secondary,#bussolaManagement .plain-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 17px;border:1px solid #aabd9e;border-radius:10px;font:600 14px/1.35 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;text-decoration:none;cursor:pointer;min-height:44px;background:#fffdf5;color:#294f40}#bussolaManagement .primary{background:#294f40;border-color:#294f40;color:#fffaf0}#bussolaManagement button:disabled{cursor:default;background:#e3e8dc;color:#5b675c;border-color:#c9d2c2}#bmDialog select{width:100%;padding:11px;border:1px solid #aabd9e;border-radius:8px;font:inherit;background:#fffefa;color:#294f40}#bmRosterForm label{grid-column:1/-1}#bussolaManagement summary{cursor:pointer;min-height:44px;padding:8px 0}#bussolaManagement .bm-create summary{padding:0}
 
 .bm-code-summary{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:18px 22px;background:#eef3e9;border-radius:14px}.bm-code-summary strong{font-size:2rem;letter-spacing:.16em;color:#294e40}.bm-entry-card{text-align:center}.bm-entry-code{font-size:clamp(2.5rem,9vw,5rem);letter-spacing:.16em;font-weight:800;color:#294e40;margin:22px 0}.bm-entry-qr{max-width:280px;margin:22px auto;background:white;padding:10px;border-radius:12px}.bm-entry-qr svg{display:block;width:100%;height:auto}.bm-entry-card a{display:inline-block;margin-top:12px}
+
+/* Stessa gerarchia e stessi controlli del pannello orientamento. */
+#bussolaManagement { color: #17314a; }
+.bm-intro h2 { margin: 0 0 10px; color: #123c57; font-size: 1.5rem; line-height: 1.25; letter-spacing: -.025em; }
+.bm-intro p { max-width: 80ch; margin: 0; color: #4b6170; font-size: 1rem; line-height: 1.65; }
+#bmStatus { margin: 12px 0; font-size: .9375rem; }
+#bmStatus:empty { min-height: 0; margin: 0; }
+.bm-create { padding: 20px; border-color: #b8cbd2; background: #f4f8f9; border-radius: 16px; }
+.bm-create summary { color: #123c57; font-size: 1.0625rem; font-weight: 700; }
+.bm-create form { gap: 18px; }
+.bm-create label, .bm-filters label, .bm-class-info label, #bmDialog label { min-width: 0; color: #123c57; font-size: .9375rem; font-weight: 650; }
+.bm-create input, .bm-create select, .bm-create textarea, .bm-filters select, .bm-class-info input, #bmDialog input, #bmDialog select { min-width: 0; min-height: 46px; max-width: 100%; padding: 11px 12px; color: #17314a; border-color: #8aa7b4; border-radius: 10px; background: #fff; font-size: 1rem; }
+.bm-filters { padding: 20px; gap: 16px; border: 1px solid #ccd9de; border-radius: 16px; background: #f4f8f9; }
+.bm-filters label { min-width: min(180px, 100%); }
+.bm-class-info { padding: 22px; border: 1px solid #ccd9de; border-radius: 16px; background: #fff; }
+.bm-class-info h3 { margin-top: 0; font-size: 1.25rem; line-height: 1.4; }
+.bm-class-info input { font-size: 1rem; }
+.bm-code-summary { gap: 16px; padding: 18px; background: #edf6f2; border: 1px solid #b3d2c2; }
+.bm-code-summary strong { color: #123c57; overflow-wrap: anywhere; }
+.bm-selection { gap: 12px; padding: 20px; background: #edf6f2; border: 1px solid #b3d2c2; border-radius: 16px; }
+.bm-selection p { width: 100%; margin: 0; color: #123c57; font-size: 1.0625rem; font-weight: 700; }
+.bm-students { border: 1px solid #ccd9de; border-radius: 14px; background: #fff; }
+.bm-students > p { padding: 20px; margin: 0; color: #4b6170; }
+.bm-students table { font-size: 1rem; }
+.bm-students caption { padding: 18px; color: #123c57; font-size: 1.125rem; background: #f4f8f9; }
+.bm-students thead { color: #123c57; background: #edf3f5; }
+.bm-students th, .bm-students td { padding: 16px; border-color: #d4e0e5; }
+.bm-students th small { margin-top: 6px; color: #4b6170; font-size: .875rem; overflow-wrap: anywhere; }
+.bm-students tbody tr:nth-child(even) { background: #f7fafb; }
+.bm-students tbody tr:hover { background: #edf6f2; }
+.bm-students input[type=checkbox], #bmDialog input[type=checkbox] { accent-color: #006733; min-height: 22px; }
+.bm-downloads { color: #123c57; background: #edf6f2; border: 1px solid #b3d2c2; border-radius: 16px; }
+#bussolaManagement .primary, #bussolaManagement .secondary, #bussolaManagement .plain-button { min-height: 46px; padding: 11px 16px; border-color: #a4bdc6; border-radius: 10px; color: #123c57; background: #fff; font-family: inherit; font-size: .9375rem; font-weight: 700; }
+#bussolaManagement .primary { color: #fff; background: #006733; border-color: #006733; }
+#bussolaManagement button:hover:not(:disabled) { filter: brightness(.95); }
+#bussolaManagement button:disabled { opacity: 1; color: #4b6170; border-color: #c4d2d8; background: #e8eef0; }
+#bmHistoryBox { padding: 18px 20px; border: 1px solid #ccd9de; border-radius: 14px; margin-top: 20px; }
+#bmHistoryBox summary { color: #123c57; font-weight: 700; }
+#bmDialog { padding: clamp(20px, 4vw, 32px); border-color: #a4bdc6; border-radius: 20px; color: #17314a; background: #fff; }
+#bmDialog::backdrop { background: #123c5799; }
+.bm-dialog-head { align-items: flex-start; margin-bottom: 20px; }
+.bm-dialog-head h2 { margin: 0; color: #123c57; font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.25; overflow-wrap: anywhere; }
+.bm-note { color: #17314a; border-color: #ccd9de; background: #f4f8f9; }
+.bm-entry-code { color: #123c57; overflow-wrap: anywhere; }
+#bussolaManagement :is(button, input, select, textarea, summary, a):focus-visible { outline: 3px solid #006b63; outline-offset: 3px; }
+@media (max-width: 650px) {
+  .bm-filters { display: grid; padding: 18px; }
+  .bm-filters label { margin: 0; }
+  .bm-create, .bm-class-info, .bm-selection { padding: 18px; }
+  .bm-students table { min-width: 600px; }
+  .bm-students td, .bm-students th { padding: 14px 12px; }
+  .bm-dialog-head { gap: 12px; flex-wrap: wrap; }
+  .bm-dialog-head button { margin-left: auto; }
+  .bm-class-info button, .bm-downloads button { width: 100%; margin-right: 0; }
+}
