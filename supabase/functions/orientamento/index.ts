@@ -273,6 +273,10 @@ function personKey(nome: string, cognome: string) {
   return `${nome} ${cognome}`.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/\s+/g, " ").trim();
 }
 
+function localToday() {
+  return new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date());
+}
+
 async function loadParticipationData() {
   const [schools, supporter, proposals, activities, appointments] = await Promise.all([
     admin.from("orientamento_scuole").select("id,comune,etichetta,area,verificata").eq("attiva", true).order("ordine"),
@@ -295,8 +299,8 @@ async function loadParticipationData() {
 async function overview(request: Request) {
   try {
     const data = await loadParticipationData();
-    const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date());
-    // Una visita a registro con data futura è in programma: conta come svolta solo dal suo giorno.
+    const today = localToday();
+    // La sola data non conferma una visita: activities contiene esclusivamente le conferme FS.
     const done = data.activities.filter((item) => item.data <= today);
     const visited = new Set(done.filter((item) => item.tipo === "visita" && item.scuola_id).map((item) => item.scuola_id));
     const offered = new Set(data.supporters.filter((item) => item.stato !== "archiviata").flatMap((item) => item.scuole as string[]));
@@ -354,8 +358,7 @@ async function activityFields(payload: Record<string, unknown>, allowFuture = fa
   if (!tipo) throw new Error("Scegli il tipo di attività.");
   const data = typeof payload.data === "string" && /^\d{4}-\d{2}-\d{2}$/.test(payload.data) ? payload.data : "";
   if (!data || Number.isNaN(Date.parse(data))) throw new Error("Indica la data dell’attività.");
-  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  if (!allowFuture && data > tomorrow) throw new Error("La data non può essere nel futuro: registra l’attività dopo averla svolta.");
+  if (!allowFuture && data > localToday()) throw new Error("La data non può essere nel futuro: registra l’attività dopo averla svolta.");
   const titolo = publicText(payload.titolo ?? "", 0, 160);
   const nota = publicText(payload.nota ?? "", 0, 600);
   let scuolaId: string | null = null;
@@ -371,10 +374,10 @@ async function activityFields(payload: Record<string, unknown>, allowFuture = fa
 
 async function registerActivity(request: Request, payload: Record<string, unknown>) {
   try {
-    // La Funzione Strumentale mette a registro anche una visita concordata per una data futura.
+    // Assegnare o inserire un'attività non certifica che sia stata svolta.
     const fields = await activityFields(payload, true);
     const { data: row, error } = await admin.from("orientamento_attivita")
-      .insert({ ...fields, stato: "confermata" })
+      .insert({ ...fields, stato: "da_confermare" })
       .select("id").single();
     if (error || !row) throw new Error("Registrazione non riuscita.");
     return json(request, { ok: true, id: row.id }, 201);
@@ -389,7 +392,8 @@ async function updateActivity(request: Request, payload: Record<string, unknown>
     const id = payload.id;
     if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Voce non valida.");
     const fields = await activityFields(payload, true);
-    const { data: row, error } = await admin.from("orientamento_attivita").update(fields)
+    // Una conferma precedente non vale per una diversa data, scuola o persona.
+    const { data: row, error } = await admin.from("orientamento_attivita").update({ ...fields, stato: "da_confermare" })
       .eq("id", id).eq("archiviata", false).select("id").maybeSingle();
     if (error || !row) throw new Error("Modifica non riuscita.");
     return json(request, { ok: true, id: row.id });
@@ -418,8 +422,10 @@ async function confirmActivity(request: Request, payload: Record<string, unknown
   const id = payload.id;
   if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) return json(request, { error: "Voce non valida." }, 400);
   const { data, error } = await admin.from("orientamento_attivita").update({ stato: "confermata" })
-    .eq("id", id).eq("archiviata", false).select("id").maybeSingle();
-  if (error || !data) return json(request, { error: "Conferma non riuscita." }, 500);
+    .eq("id", id).eq("archiviata", false).eq("stato", "da_confermare").lte("data", localToday())
+    .select("id").maybeSingle();
+  if (error) return json(request, { error: "Conferma non riuscita." }, 500);
+  if (!data) return json(request, { error: "Puoi confermare solo attività da verificare con data fino a oggi." }, 400);
   return json(request, { ok: true });
 }
 

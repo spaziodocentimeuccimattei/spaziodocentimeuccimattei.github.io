@@ -77,16 +77,16 @@
 
         <section class="tab-panel" data-panel="confermare">
           <h3 class="panel-title">Attività da confermare</h3>
-          <p class="panel-help">Visite e Mattinée registrate dai docenti. <b>Conferma l’attività</b> se si è svolta: entrerà nell’elenco per la Dirigente. <b>Scarta la registrazione</b> se è un errore o un doppione.</p>
+          <p class="panel-help">Qui trovi le visite assegnate e le attività segnalate dai docenti. Solo tu puoi <b>confermare che si sono svolte</b>: dopo la tua conferma entrano nel conteggio delle scuole raggiunte e nell’elenco per la Dirigente. Le date future restano in attesa. <b>Scarta la registrazione</b> se è un errore o un doppione.</p>
           <div class="review-list" id="pendingList"></div>
         </section>
 
         <section class="tab-panel" data-panel="candidature" hidden>
           <h3 class="panel-title">Disponibilità dei docenti</h3>
-          <p class="panel-help">Docenti che hanno dato la disponibilità per le visite nelle scuole secondarie di primo grado. Per ciascuna scuola scegli la data e <b>conferma a registro</b>: da quel momento il docente risulta nel registro per quella scuola. Più docenti possono essere confermati nella stessa scuola. Se poi qualcuno non va, lo correggi o lo sostituisci in «Attività confermate».</p>
+          <p class="panel-help">Per ciascuna scuola scegli la data e <b>assegna la visita</b> al docente. Puoi assegnare più docenti alla stessa scuola. L’assegnazione resta in «Da confermare» finché non confermi tu che la visita si è svolta.</p>
           <div class="filters" data-filter-for="candidature">
-            <button data-filter="ricevuta" aria-pressed="true">Da confermare</button>
-            <button data-filter="assegnata" aria-pressed="false">Confermate</button>
+            <button data-filter="ricevuta" aria-pressed="true">Da assegnare</button>
+            <button data-filter="assegnata" aria-pressed="false">Assegnate</button>
             <button data-filter="archiviata" aria-pressed="false">Archiviate</button>
             <button data-filter="tutte" aria-pressed="false">Tutte</button>
           </div>
@@ -158,7 +158,7 @@
             <p class="panel-help">Qui registri e ritrovi, per ogni docente, quando e dove è andato a fare orientamento. Il pulsante scarica l’elenco per la Dirigente (docente, attività, scuola, data e, se la data è in calendario, tipo di orientamento e orario), da aprire con Excel.</p>
             <button type="button" class="act ok" id="exportButton">Scarica elenco CSV</button>
           </div>
-          <p class="panel-help">Puoi inserire tu una riga, anche per una data futura già concordata. Con <b>Modifica o sostituisci</b> cambi data, scuola o docente di una riga; con <b>Annulla registrazione</b> la togli dal registro.</p>
+          <p class="panel-help">Puoi inserire tu un’attività, anche per una data futura già concordata: resta in «Da confermare». Con <b>Modifica o sostituisci</b> cambi data, scuola o docente; la modifica richiede una nuova conferma di svolgimento. Con <b>Annulla registrazione</b> la togli dal registro.</p>
           <form id="activityForm" class="activity-form appointment-form">
             <input type="hidden" name="id">
             <label>Nome <input name="nome" list="teacherNames" maxlength="80" required></label>
@@ -174,7 +174,7 @@
             <label>Data <input name="data" type="date" required></label>
             <label class="activity-wide">Nota <span>facoltativa</span><input name="nota" maxlength="600"></label>
             <div class="appointment-buttons">
-              <button type="submit">Registra l’attività</button>
+              <button type="submit">Inserisci da confermare</button>
               <button type="button" class="act neutral" id="activityCancel" hidden>Annulla la modifica</button>
             </div>
           </form>
@@ -192,7 +192,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script type="module" src="gestione.js?v=20261014-calendario"></script>
+  <script type="module" src="gestione.js?v=20261016-conferma-fs"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261013-ssas"></script>
 </body>
 </html>
