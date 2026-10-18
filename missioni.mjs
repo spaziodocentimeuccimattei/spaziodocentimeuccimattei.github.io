@@ -208,7 +208,7 @@ async function initialize() {
         afm:{title:'Dai forma a un’idea d’impresa',description:'Idee e impresa, organizzazione, dati e finanza, accordi, marketing e lingue',url:'bussola-afm.html'},
         sia:{title:'Progetta una soluzione digitale',description:'Processi, dati, programmazione, interfacce e responsabilità',url:'bussola-sia.html'},
         turismo:{title:'Crea una proposta turistica',description:'Territorio, lingue e accoglienza, esperienze, impresa e servizi, comunicazione',url:'bussola-turismo.html'},
-        ssas:{title:'Ascolta una persona e progetta un aiuto',description:'Sei storie per provare ascolto, sostegno e attività per persone di età diverse, attraverso cinque laboratori.',url:'bussola-ssas.html'},
+        ssas:{title:'Ascolta una persona e progetta l’aiuto',description:'Sei storie per provare ascolto, sostegno e attività per persone di età diverse, attraverso cinque laboratori.',url:'bussola-ssas.html'},
         cat:{title:'Progetta uno spazio e documenta il patrimonio',description:'Un cortile da progettare e una documentazione archeologica da preparare, in cinque laboratori.',url:'bussola-cat.html'}
       }[course.id];
       card.id = `prova-${course.id}`;
