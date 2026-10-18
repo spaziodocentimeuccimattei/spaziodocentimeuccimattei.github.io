@@ -115,8 +115,8 @@ function courseCard(item, highlighted = false, direction = null) {
   for (const subject of course.subjects) subjects.append(el('li', subject));
   card.append(subjects);
   const actions = el('div', null, 'action-row');
-  actions.append(link('Esplora l’indirizzo', `indirizzi.html#${course.id}`),
-    link('Prova un’attività', course.id === 'afm' ? 'bussola-afm.html' : course.id === 'sia' ? 'bussola-sia.html' : course.id === 'cat' ? 'bussola-cat.html' : course.id === 'ssas' ? 'bussola-ssas.html' : course.id === 'turismo' ? 'bussola-turismo.html' : `missioni.html?corso=${course.id}`, 'explore-button secondary'));
+  actions.append(link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`, `bussola-${course.id}.html`),
+    link('Materie e percorso di studio', `indirizzi.html#${course.id}`, 'explore-link'));
   card.append(actions);
   if (highlighted) {
     const exportRow = el('div', null, 'certificate-action');
@@ -186,9 +186,9 @@ function renderResults() {
     const li = el('li'); li.append(el('strong', situation.title), el('span', selected?.text || 'Hai passato questa situazione.')); list.append(li);
   }
   recap.append(list); results.append(recap);
-  results.append(el('p', 'Il passo successivo: confronta due materie, prova un’attività e porta una domanda ai docenti durante l’orientamento.', 'next-step'));
+  results.append(el('p', 'Ora scegli un’attività da provare. Potrai esplorare anche gli altri indirizzi.', 'next-step'));
   const row = el('div', null, 'action-row');
-  row.append(button('Rivedi le domande', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
+  row.append(link('Tutte le attività', 'missioni.html', 'explore-link'), button('Rivedi le domande', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
   results.append(row);
   contactsMount.replaceChildren(contactsPanel(contacts, resetToIntro));
   focusHeading(results);

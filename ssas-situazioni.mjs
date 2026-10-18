@@ -112,10 +112,12 @@ function svgWrap(content,title,description){
 
 function board(){const b=node('aside',null,'visual-board');b.setAttribute('aria-label','Il lavoro che stai costruendo');b.dataset.lab=LABS[journey().step-1]?.id;b.append(node('div',LAB_PRESENTATION[journey().step-1]?.product||'Il tuo lavoro','board-label'));b.append(node('p','Le tue scelte aggiornano questa anteprima.','board-help'));const canvas=node('div',null,'board-canvas');canvas.id='liveCanvas';b.append(canvas);return b;}
 function intro(){
- const s=node('section',null,'intro'),c=node('div');
- c.append(node('p','Servizi per la sanità e l’assistenza sociale','eyebrow'),node('h1','Da una situazione a un aiuto concreto.'),node('p','Scegli una storia e prova alcune attività dei laboratori SSAS.','lead'),node('p','Comprendere una situazione, comunicare, preparare un aiuto e organizzare un’attività.'),btn(journey().visited>0?'Riprendi i laboratori →':'Inizia →',e=>classUI.begin(e.currentTarget),'primary bussola-start'),node('small','Il lavoro si salva. Puoi riprenderlo da questo dispositivo.'));
- const art=node('div',null,'intro-visual');art.append(entranceImage());art.append(node('div','Sei situazioni · cinque lavori personali','intro-caption'));s.append(c,art);mount.append(s);
- const route=node('div',null,'route-intro');const hints=['Capire la situazione.','Ascoltare la persona.','Adattare un sostegno.','Creare e provare un materiale.','Organizzare un’attività accessibile.'];LABS.forEach((l,i)=>{const card=node('section',null,'route-card');card.style.setProperty('--accent',l.color);card.append(symbol(l.id),node('h2',l.label),node('p',hints[i]));route.append(card);});mount.append(route);
+ const s=node('section',null,'intro bussola-entry'),c=node('div',null,'entry-copy');
+ const title=node('h1','Ascoltare le persone. ');title.id='ssasEntryTitle';title.append(node('span','Progettare un aiuto.','entry-title-accent'));s.setAttribute('aria-labelledby',title.id);
+ const start=btn(journey().visited>0?'Riprendi i laboratori':'Inizia',e=>classUI.begin(e.currentTarget),'primary bussola-start'),arrow=node('span','→');arrow.setAttribute('aria-hidden','true');start.append(arrow);
+ c.append(node('p','SSAS · Servizi per la sanità e l’assistenza sociale','eyebrow'),title,node('p','Nel SSAS impari a conoscere i bisogni delle persone, comunicare con loro e progettare attività per il benessere e l’autonomia.','lead'),node('p','Qui scegli una delle sei storie: ascolti una richiesta, concordi un aiuto e prepari un’attività, attraverso cinque laboratori.'),start,node('p','Le tue scelte si salvano e puoi riprendere il lavoro.','entry-help'));
+ const art=node('div',null,'entry-art entry-art-ssas');art.append(node('p','Sei storie · persone, bisogni e possibilità','entry-art-title'),entranceImage(),node('p','Scegli una storia. Ti accompagnerà nei cinque laboratori.','entry-art-footnote'));s.append(c,art);mount.append(s);
+ const route=node('div',null,'route-intro entry-labs');route.setAttribute('aria-label','Che cosa farai nei cinque laboratori');const hints=['Descrivi le difficoltà di una persona.','Scegli le domande per ascoltarla.','Concorda un aiuto con lei.','Prepara un messaggio, una storia o un gioco.','Organizza un’attività a cui possa partecipare.'];LABS.forEach((l,i)=>{const card=node('section',null,'route-card');card.append(node('span',String(i+1).padStart(2,'0'),'entry-number'),node('h2',l.label),node('p',hints[i]));route.append(card);});mount.append(route);
 }
 function heading(){
  const j=journey(),lab=LABS[j.step-1],c=cursor(j),item=caseById(j.health.focus),h=node('div',null,'stage-heading'),copy=node('div');
@@ -205,5 +207,5 @@ $('newProject').addEventListener('click',()=>{$('backupBeforeReset').href=jsonHr
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')keep();});
 const classUI=setupClass({key:KEY,isIntro:()=>journey().step===0,start:()=>go(1,0),token:()=>state.token,ensure:async()=>{if(!connected)await connect();if(!state.participant)throw new Error('Il collegamento non è riuscito. Riprova tra poco.');}});
 const certificateUI=setupParticipantCertificate({project:()=>state.project,journey:()=>journey(),participant:()=>state.participant,revision:()=>state.revision,identity:()=>classUI.identity(),save:()=>changed(false,true)});
-if(localTest)document.querySelector('.preview-strip').textContent='Anteprima locale · Sei situazioni SSAS · 13–14 anni';
+if(localTest)document.querySelector('.experience-path [aria-current]').textContent='SSAS · Anteprima locale';
 render(false);if(state.token)sync();

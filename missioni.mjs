@@ -13,21 +13,26 @@ let selected = [], followup = '', firstSelection = [];
 function openCatalog(updateUrl = true) {
   if (updateUrl) history.replaceState(null, '', 'missioni.html');
   panel.hidden = true; catalog.hidden = false; contactsMount.hidden = false;
-  current = null; setJourney(2); focusHeading(catalog);
+  current = null; setJourney(0); focusHeading(catalog);
 }
 
 function openMission(id, updateUrl = true) {
-  if (id === 'afm') { window.location.assign('bussola-afm.html'); return; }
-  if (id === 'sia') { window.location.assign('bussola-sia.html'); return; }
-  if (id === 'cat') { window.location.assign('bussola-cat.html'); return; }
-  if (id === 'turismo') { window.location.assign('bussola-turismo.html'); return; }
-  if (id === 'ssas') { window.location.assign('bussola-ssas.html'); return; }
+  id = String(id).toLowerCase();
+  if (['afm','sia','cat','turismo','ssas'].includes(id)) {
+    // Keep personal/class links and local test isolation on old catalog URLs.
+    const target = new URL(`bussola-${id}.html`, location.href);
+    target.search = location.search;
+    target.searchParams.delete('corso');
+    target.hash = location.hash;
+    window.location.replace(target.href);
+    return;
+  }
   current = missions.find(m => m.id === id);
   if (!current) return openCatalog(updateUrl);
   if (updateUrl) history.replaceState(null, '', `missioni.html?corso=${encodeURIComponent(id)}`);
   step = 0; selected = []; followup = ''; firstSelection = [];
   catalog.hidden = true; contactsMount.hidden = true; panel.hidden = false;
-  setJourney(2); renderMission();
+  setJourney(1); renderMission();
 }
 
 function planSvg(layout, suffix) {
@@ -187,6 +192,11 @@ function renderMission() {
 }
 
 async function initialize() {
+  const legacyCourse = new URLSearchParams(location.search).get('corso')?.toLowerCase();
+  if (['afm','sia','cat','turismo','ssas'].includes(legacyCourse)) {
+    openMission(legacyCourse, false);
+    return;
+  }
   try {
     const [m,c,b,contactData]=await loadData(['missioni','indirizzi','bussola','contatti']);
     missions=m.missions; courses=c.courses; situations=b.situations; contacts=contactData;
@@ -194,22 +204,29 @@ async function initialize() {
     for (const course of courses) {
       const mission=missions.find(m=>m.id===course.id);
       const card=el('article',null,'mission-card'); card.dataset.course=course.id; card.append(courseArt(course.id));
-      const isAFM=course.id==='afm',isSIA=course.id==='sia';const isSSAS=course.id==='ssas',isTur=course.id==='turismo',isCat=course.id==='cat';
-      card.append(el('p',course.code,'explore-kicker'),el('h2',isSSAS||isTur||isCat||isAFM||isSIA?'Cinque laboratori, un percorso personale':mission.title),el('p',course.name,'activity-course-name'),el('p',isAFM?'Idee e impresa, organizzazione, dati e finanza, accordi, marketing e lingue':isSIA?'Processi, dati, programmazione, interfacce e responsabilità':isSSAS?'Salute, relazione, cura e autonomia, creatività e progettazione':isCat?'Rilievo, spazi, materiali, Archeodesign e risorse':isTur?'Territorio, lingue e accoglienza, esperienze, impresa e servizi, comunicazione':mission.subject),isSSAS||isTur||isCat||isAFM||isSIA?link(`Prova ${course.code}`,isAFM?'bussola-afm.html':isSIA?'bussola-sia.html':isCat?'bussola-cat.html':isTur?'bussola-turismo.html':'bussola-ssas.html'):button(`Prova ${course.code}`,()=>openMission(course.id)));
+      const entry={
+        afm:{title:'Dai forma a un’idea d’impresa',description:'Idee e impresa, organizzazione, dati e finanza, accordi, marketing e lingue',url:'bussola-afm.html'},
+        sia:{title:'Progetta una soluzione digitale',description:'Processi, dati, programmazione, interfacce e responsabilità',url:'bussola-sia.html'},
+        turismo:{title:'Crea una proposta turistica',description:'Territorio, lingue e accoglienza, esperienze, impresa e servizi, comunicazione',url:'bussola-turismo.html'},
+        ssas:{title:'Ascolta una persona e progetta un aiuto',description:'Sei storie per provare ascolto, sostegno e attività per persone di età diverse, attraverso cinque laboratori.',url:'bussola-ssas.html'},
+        cat:{title:'Progetta uno spazio e documenta il patrimonio',description:'Un cortile da progettare e una documentazione archeologica da preparare, in cinque laboratori.',url:'bussola-cat.html'}
+      }[course.id];
+      card.id = `prova-${course.id}`;
+      card.append(el('p',course.code === 'TUR' ? 'Turismo' : course.code,'explore-kicker'),el('h2',entry?.title||mission.title),el('p',course.name,'activity-course-name'),el('p',entry?.description||mission.subject),entry?link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`,entry.url):button(`Prova ${course.code}`,()=>openMission(course.id)));
       cards.append(card);
     }
     contactsMount.replaceChildren(contactsPanel(contacts,()=>{
       clearState(storage()); current=null; selected=[]; followup=''; firstSelection=[]; openCatalog();
-      document.getElementById('announcements').textContent='Le risposte della Bussola e lo stato delle esperienze sono stati cancellati.';
+      document.getElementById('announcements').textContent='Le risposte delle dodici domande della Bussola sono state cancellate.';
     }));
-    const id=new URLSearchParams(location.search).get('corso');
+    const id=new URLSearchParams(location.search).get('corso')?.toLowerCase();
     if (id && missions.some(m=>m.id===id)) openMission(id,false);
-    else setJourney(2);
+    else setJourney(0);
   } catch { showError(cards,initialize); }
 }
 window.addEventListener('popstate',()=>{
   if (!missions) return;
-  const id=new URLSearchParams(location.search).get('corso');
+  const id=new URLSearchParams(location.search).get('corso')?.toLowerCase();
   if (id) openMission(id,false); else openCatalog(false);
 });
 initialize();

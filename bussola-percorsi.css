@@ -1,0 +1,48 @@
+/* A single parent for the five activities; project and class controls stay in place. */
+.experience-path {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  padding: 10px max(20px, calc((100vw - 1180px) / 2));
+  color: #123c57;
+  background: #edf4f4;
+  border-bottom: 1px solid #cbdcde;
+  font: 700 14px/1.4 system-ui, sans-serif;
+}
+.experience-path a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #075d56;
+  text-underline-offset: 4px;
+}
+.experience-path a:focus-visible {
+  outline: 3px solid #006b63;
+  outline-offset: 3px;
+}
+.experience-path [aria-current] { font-weight: 800; }
+.missioni-page .activity-path { margin-bottom: 26px; }
+.missioni-page #catalogTitle { color: #fff; }
+.missioni-page .mission-card { display: flex; flex-direction: column; align-items: flex-start; }
+.missioni-page .mission-card > .explore-button { margin-top: auto; }
+.missioni-page .mission-card > p:last-of-type { margin-bottom: 24px; }
+.catalog-support {
+  margin-top: 36px;
+  padding: clamp(22px, 4vw, 36px);
+  border: 1px solid #cbdcde;
+  border-radius: 22px;
+  background: #edf4f4;
+  scroll-margin-top: 24px;
+}
+.explore-page .catalog-support h2 { margin-top: 0; font-size: clamp(1.5rem, 3vw, 2rem); }
+.catalog-support .action-row { margin-top: 18px; }
+.catalog-contacts { margin-top: 24px; }
+.catalog-contacts > summary { padding: 14px 0; min-height: 44px; color: #075d56; font-weight: 750; cursor: pointer; }
+@media (max-width: 760px) {
+  .experience-path { padding: 8px 20px; gap: 0 12px; }
+  .experience-path [aria-current] { padding-block: 8px; }
+  .activity-path { flex-direction: column; gap: 8px; }
+}
+@media print { .experience-path { display: none; } }

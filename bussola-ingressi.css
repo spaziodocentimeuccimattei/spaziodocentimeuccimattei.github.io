@@ -1,0 +1,67 @@
+/* Ingressi SSAS e CAT: stessa gerarchia, contesti e illustrazioni propri. */
+.preview-strip a{color:inherit;text-underline-offset:3px}
+.site-head .brand{font-size:23px;min-width:0}
+.site-head .brand>span{min-width:0}
+.site-head .brand img{width:52px;height:52px;flex-shrink:0}
+.site-head .head-actions{display:block;flex-shrink:0}
+.site-head .brand small{font-size:13px;letter-spacing:0}
+.save-bar{flex-wrap:wrap;gap:10px;border:0;margin-bottom:12px;padding-top:2px;padding-bottom:12px;font-size:13px}
+.save-bar #openClass{margin-left:auto;border:1px solid #9eb4be;border-radius:12px;background:white;text-decoration:none;padding:10px 16px;font-size:14px}
+.intro.bussola-entry,.hero.bussola-entry{
+ display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:center;
+ gap:32px;margin:8px 0 22px;padding:32px;border:1px solid #cbd7da;border-radius:28px;
+ background:#fff;color:#17314a;box-shadow:0 10px 30px #0b2f4706;
+}
+.bussola-entry .entry-copy{min-width:0}
+.bussola-entry .eyebrow{
+ width:fit-content;max-width:100%;margin:0 0 18px;padding:7px 12px;border-radius:12px;
+ background:#e9f2df;color:#214b37;font-size:13px;font-weight:750;line-height:1.45;
+ letter-spacing:0;text-transform:none;
+}
+.bussola-entry h1{margin:0 0 20px;color:#0b2f47;font:800 clamp(32px,4.1vw,54px)/1.08 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.04em}
+.bussola-entry .entry-title-accent{display:block;color:#006733}
+.bussola-entry p{color:#17314a;line-height:1.55}
+.bussola-entry .lead{margin-bottom:16px;font-size:18px;font-weight:600;line-height:1.5}
+.bussola-entry button.primary.bussola-start{margin:6px 0 0}
+.bussola-entry .entry-help{margin:16px 0 0;color:#445d69;font-size:14px;line-height:1.5}
+.bussola-entry .entry-art{min-width:0;padding:18px;border-radius:23px;background:#153c51;box-shadow:0 10px 20px #0b2f4710;overflow:hidden}
+.bussola-entry .entry-art-title{margin:0 0 14px;color:#fff;font-size:14px;font-weight:700;line-height:1.5}
+.entry-art .entrance-art,.entry-art .entry-drawing svg{display:block;width:100%;height:auto;border-radius:14px}
+.bussola-entry .entry-art-footnote{margin:14px 0 0;color:#fff;font-size:14px;line-height:1.5}
+.entry-projects{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.entry-projects>div{padding:13px;border-radius:13px;background:#e9f1e3;color:#17314a}
+.entry-projects>div:last-child{background:#f3e6cd}
+.entry-projects strong,.entry-projects span{display:block}
+.entry-projects strong{margin-bottom:5px;font-size:15px}
+.entry-projects span{font-size:14px;line-height:1.45}
+.route-intro.entry-labs,.lab-preview.entry-labs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:0}
+.entry-labs>article,.entry-labs>.route-card{display:block;min-width:0;padding:18px;border:1px solid #cbd7da;border-radius:17px;background:#fff;box-shadow:none}
+.entry-labs .entry-number{display:block;margin:0 0 12px;color:#006733;font-size:23px;font-weight:800;line-height:1}
+.entry-labs h2{margin:0 0 8px;color:#0b2f47;font-size:17px;line-height:1.25}
+.entry-labs p{margin:0;color:#33495a;font-size:14px;line-height:1.5}
+@media(max-width:1000px){
+ .intro.bussola-entry,.hero.bussola-entry{gap:24px;padding:26px}
+ .route-intro.entry-labs,.lab-preview.entry-labs{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+ .site-head{display:flex;align-items:center;gap:12px}
+ .site-head .brand{flex:1;gap:8px;font-size:16px}
+ .site-head .brand img{width:36px;height:36px}
+ .site-head .plain-button{font-size:13px;padding:10px}
+ .site-head .head-actions .plain-button{width:104px}
+ .intro.bussola-entry,.hero.bussola-entry{grid-template-columns:1fr;gap:24px;padding:22px 18px;margin-top:8px;border-radius:22px}
+ .bussola-entry h1{font-size:clamp(30px,7.2vw,42px)}
+ .bussola-entry .lead{font-size:17px}
+ .bussola-entry .eyebrow{font-size:13px;margin-bottom:16px}
+ .bussola-entry .entry-art{width:100%;max-width:none;padding:14px;border-radius:18px}
+ .bussola-entry .entry-help{font-size:14px}
+ .route-intro.entry-labs,.lab-preview.entry-labs{grid-template-columns:1fr;gap:10px}
+ .entry-labs>article,.entry-labs>.route-card{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 12px;padding:15px}
+ .entry-labs .entry-number{grid-row:1/3;margin:0;font-size:21px}
+ .entry-labs h2,.entry-labs p{margin:0}
+ .entry-labs>article:last-child,.entry-labs>.route-card:last-child{grid-column:auto}
+}
+@media(max-width:360px){
+ .intro.bussola-entry,.hero.bussola-entry{padding:18px 14px}
+ .entry-projects{grid-template-columns:1fr}
+}
