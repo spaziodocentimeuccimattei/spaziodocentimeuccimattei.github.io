@@ -1,3 +1,4 @@
+import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261012-ingresso';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261010-all';
 import {setupCatRemote} from './cat-remote.mjs?v=20261009-cat';
@@ -16,6 +17,13 @@ const initialRaw=initialKey?get(`${STORE}.${initialKey}`):null;
 try{const parsed=initialRaw?JSON.parse(initialRaw):null;if(validProject(parsed)){p=parsed;loadedInitial=true;seenRevision=p.revision||0;}else if(initialRaw)localStorage.setItem(`${STORE}.unrecognised.${Date.now()}`,initialRaw);}catch{if(initialRaw){try{localStorage.setItem(`${STORE}.unrecognised.${Date.now()}`,initialRaw);}catch{}}}
 p ||= createProject(!initialRaw&&requested&&/^[0-9a-f-]{36}$/i.test(requested)?requested:undefined);
 const storageId=loadedInitial?initialKey:p.id;
+const navigation=setupExperienceNavigation(route=>{restoreRoute(route);render(true,false);});
+function restoreRoute(route){
+ const n=route==='conclusione'?10:Number(route.match(/^passaggio-(\d+)$/)?.[1])-1;
+ if(p.started&&Number.isInteger(n)&&n>=0&&(n<=p.unlocked||n===10&&(p.screen===10||completed(p)))){navigation.enter();p.screen=n;}
+ else navigation.showIntro();
+}
+
 const fingerprint=value=>{const {revision,updatedAt,...rest}=value;return JSON.stringify(rest);};
 let savedFingerprint=seenRevision?fingerprint(p):null;
 function openConflict(){if(!$('conflictDialog').open)$('conflictDialog').showModal();$('saveStatus').textContent='Le modifiche di questa finestra attendono la tua scelta.';}
@@ -55,8 +63,8 @@ function end(){const pending=LABS.filter((l,i)=>![i*2,i*2+1].every(s=>ready(p,s)
  return `<section class="end-top"><p class="eyebrow">Cinque elaborati · Due incarichi</p><h1 id="stageTitle" tabindex="-1">Il tuo dossier di progetto.</h1><p>Hai creato cinque elaborati. Puoi aprirli qui sotto e tornare a modificarli.</p><label>Titolo del dossier, se vuoi<input id="dossierTitle" value="${esc(p.title)}" maxlength="80"></label></section>${pending.length?`<div class="pending">Hai modificato alcune scelte. Ripassa ${pending.map(l=>l.label).join(', ')} per provare la versione corrente. Le prove precedenti sono conservate.</div>`:''}<section class="interest-section"><h2>Quali parti vorresti approfondire?</h2><p>Puoi indicarne più di una.</p><div class="interests">${LABS.map(l=>`<label class="interest"><input type="checkbox" name="interest" value="${l.id}" ${p.interests.includes(l.id)?'checked':''}><span>${l.label}</span></label>`).join('')}</div><p id="interestMessage" class="interest-message">${interestText()}</p></section><div class="certificate-cta"><button id="certificateOpen" class="primary" type="button" ${completed(p)?'':'disabled'}>Visualizza il tuo attestato</button><p>Puoi stamparlo o scaricarlo in PDF sul dispositivo.</p></div><div class="end-grid">${cards}</div>`;}
 
 function recovery(){let items=[];try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(!key?.startsWith(`${STORE}.`)||key.includes('latest')||key.includes('unrecognised'))continue;try{const x=JSON.parse(localStorage.getItem(key));if(validProject(x))items.push({...x,storageKey:key.slice(STORE.length+1)});}catch{}}}catch{}items.sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt)));$('previousProjects').innerHTML=items.map(x=>`<option value="${x.storageKey}" ${x.storageKey===storageId?'selected':''}>${esc(x.title||'Nuova prova')} · ${new Date(x.updatedAt||Date.now()).toLocaleString('it-IT')} ${x.id===p.id?'· attuale':''}</option>`).join('');}
-function render(focus=false,notify=true){const active=document.activeElement?.id;$('journey').innerHTML=p.started?LABS.map((l,i)=>`<button id="lab-${i}" type="button" data-goto="${i*2}" ${p.unlocked<i*2?'disabled':''} ${p.screen>=i*2&&p.screen<i*2+2?'aria-current="step"':''} aria-label="${l.label}" class="${[i*2,i*2+1].every(s=>ready(p,s)&&p.done.includes(s))?'done':''}"><span>${i+1}</span>${l.label}</button>`).join('')+(p.unlocked===10?'<button id="navDossier" data-goto="10" type="button">Dossier</button>':''):'';$('stage').innerHTML=p.screen<0?intro():p.screen===10?end():activity();const route=new URL(location.href),step=p.screen<0?'ingresso':p.screen===10?'conclusione':`passaggio-${p.screen+1}`;route.searchParams.set('progetto',storageId);route.hash=entry.classe?new URLSearchParams({classe:entry.classe,...entryToken?{alunno:entryToken}:{},passaggio:step}).toString():step;window.history.replaceState(null,'',route.href);save(notify);recovery();if(focus){$('stageTitle')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}else if(active&&$(active))$(active).focus({preventScroll:true});}
-function renderNotes(){$('noteContext').value=context(p).label;$('notesList').innerHTML=p.notes.length?p.notes.map(n=>`<article class="saved-note"><small>${n.role==='docente'?'Docente':'Alunno'} · ${esc(n.kind)} · ${new Date(n.createdAt).toLocaleString('it-IT')}</small><strong>${esc(n.label)}</strong><p>${esc(n.text)}</p></article>`).join(''):'<p class="helper">Non hai ancora scritto note.</p>';}
+function render(focus=false,notify=true){const active=document.activeElement?.id;$('journey').innerHTML=!navigation.isIntro()&&p.started?LABS.map((l,i)=>`<button id="lab-${i}" type="button" data-goto="${i*2}" ${p.unlocked<i*2?'disabled':''} ${p.screen>=i*2&&p.screen<i*2+2?'aria-current="step"':''} aria-label="${l.label}" class="${[i*2,i*2+1].every(s=>ready(p,s)&&p.done.includes(s))?'done':''}"><span>${i+1}</span>${l.label}</button>`).join('')+(p.unlocked===10?'<button id="navDossier" data-goto="10" type="button">Dossier</button>':''):'';$('stage').innerHTML=navigation.isIntro()||p.screen<0?intro():p.screen===10?end():activity();navigation.write(navigation.isIntro()||p.screen<0?'ingresso':p.screen>=10?'conclusione':`passaggio-${p.screen+1}`,!notify,storageId);save(notify);recovery();if(focus){$('stageTitle')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}else if(active&&$(active))$(active).focus({preventScroll:true});}
+function renderNotes(){$('noteContext').value=navigation.isIntro()?'Ingresso · presentazione':context(p).label;$('notesList').innerHTML=p.notes.length?p.notes.map(n=>`<article class="saved-note"><small>${n.role==='docente'?'Docente':'Alunno'} · ${esc(n.kind)} · ${new Date(n.createdAt).toLocaleString('it-IT')}</small><strong>${esc(n.label)}</strong><p>${esc(n.text)}</p></article>`).join(''):'<p class="helper">Non hai ancora scritto note.</p>';}
 function updateNavigation(){const n=$('next');if(n){n.disabled=!ready(p);$('advanceHelp').textContent=ready(p)?'Puoi continuare o rivedere le scelte.':STAGES[p.screen][2];}save();}
 document.addEventListener('input',e=>{if(conflicted)return;const t=e.target;if(t.id==='surveyTitle'){p.survey.title=t.value.slice(0,80);invalidate(p);updateNavigation();}if(t.id==='dossierTitle'){p.title=t.value.slice(0,80);save();}});
 document.addEventListener('change',e=>{if(conflicted)return;const t=e.target;if(t.name==='interest'){p.interests=t.checked?[...new Set([...p.interests,t.value])]:p.interests.filter(id=>id!==t.value);save();$('interestMessage').textContent=interestText();}});
@@ -72,9 +80,9 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
  }
  if(conflicted)return;
  if(b.id==='notesOpen'){renderNotes();$('noteStatus').textContent='';$('notesDialog').showModal();return;}
- if(b.dataset.goto!==undefined){const s=Number(b.dataset.goto);if(Number.isInteger(s)&&s>=0&&s<=p.unlocked){p.screen=s;placementMessage='';render(true);}return;}
- if(b.id==='start'){if(p.started){p.screen=Math.min(p.unlocked,10);render(true);}else{classAccess.begin(b);}return;}
- if(b.id==='previous'){p.screen=Math.max(-1,p.screen-1);placementMessage='';render(true);return;}
+ if(b.dataset.goto!==undefined){const s=Number(b.dataset.goto);if(Number.isInteger(s)&&s>=0&&s<=p.unlocked){navigation.enter();p.screen=s;placementMessage='';render(true);}return;}
+ if(b.id==='start'){if(p.started){navigation.enter();p.screen=Math.max(0,p.screen);render(true);}else classAccess.begin(b);return;}
+ if(b.id==='previous'){if(p.screen===0)navigation.showIntro();else p.screen--;placementMessage='';render(true);return;}
  if(b.id==='next'){if(advance(p)){placementMessage='';render(true);}return;}
  if(b.dataset.area){p.survey.area=b.dataset.area;p.survey.measures=[];invalidate(p);render();return;}
  if(b.dataset.measure){const id=b.dataset.measure;if(!p.survey.measures.includes(id))p.survey.measures.push(id);invalidate(p);render();return;}
@@ -99,10 +107,10 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
 
 });
 $('noteForm').addEventListener('submit',e=>{e.preventDefault();if(conflicted)return;const note=addNote(p,Object.fromEntries(new FormData(e.target)));if(note){note.pending=true;const ok=save();renderNotes();e.target.elements.text.value='';$('noteStatus').textContent=ok?'Nota conservata; aggiornamento online in corso.':'La nota resta in questa pagina: il browser non permette il salvataggio.';}});
-function loaded(value){p=value;p.revision=seenRevision;render(false,false);}
+function loaded(value){p=value;p.revision=seenRevision;restoreRoute(navigation.route());render(false,false);}
 remote=setupCatRemote({key:STORE+'.remote.'+storageId,entryToken,project:()=>p,keep:()=>save(false),loaded,localOK:()=>!memoryOnly,status:(text,retry)=>{$('saveStatus').textContent=text;$('retrySave').hidden=!retry;},notesChanged:()=>{$('noteCount').textContent=p.notes.length;if($('notesDialog').open)renderNotes();},conflict:()=>{conflicted=true;openConflict();}});
-classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:()=>remote.ensure(),isIntro:()=>p.screen<0,start:async()=>{try{await remote.ensure();}catch{}p.started=true;p.screen=Math.max(0,p.screen);render(true);}});
+classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:()=>remote.ensure(),isIntro:()=>navigation.isIntro()||p.screen<0,start:async()=>{try{await remote.ensure();}catch{}navigation.enter();p.started=true;p.screen=Math.max(0,p.screen);render(true);}});
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());
-render(false,false);if(remote.token())remote.sync();
+restoreRoute(navigation.route());render(false,false);if(remote.token())remote.sync();

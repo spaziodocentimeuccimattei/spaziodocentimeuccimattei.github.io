@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cinque laboratori · Bussola SSAS</title><meta name="description" content="Sei situazioni e cinque laboratori per esplorare il percorso SSAS."><link rel="stylesheet" href="ssas-labs.css?v=20261010-ssas"><link rel="stylesheet" href="bussola-ingresso.css?v=20261012-ingresso"><link rel="stylesheet" href="ssas-situazioni.css?v=20261018-testi"><link rel="stylesheet" href="bussola-ingressi.css?v=20261018-percorsi"><link rel="stylesheet" href="bussola-percorsi.css?v=20261018-percorsi"></head>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cinque laboratori · Bussola SSAS</title><meta name="description" content="Sei situazioni e cinque laboratori per esplorare il percorso SSAS."><link rel="stylesheet" href="ssas-labs.css?v=20261010-ssas"><link rel="stylesheet" href="bussola-ingresso.css?v=20261012-ingresso"><link rel="stylesheet" href="ssas-situazioni.css?v=20261018-testi"><link rel="stylesheet" href="bussola-ingressi.css?v=20261018-flow"><link rel="stylesheet" href="bussola-percorsi.css?v=20261018-flow"></head>
 <body><a href="#main" class="skip">Vai all’attività</a>
 <nav class="experience-path" aria-label="Percorso"><a href="missioni.html">← Prova gli indirizzi</a><span aria-current="page">SSAS</span></nav>
 <header class="site-head"><div class="brand"><img src="assets/logo-meucci-mattei-decimomannu.jpeg" width="886" height="886" alt=""><span>Bussola per l’orientamento<small>IIS Meucci - Mattei | Decimomannu</small></span></div><div class="head-actions"><button type="button" id="openNotes" class="plain-button">Le mie note <span id="noteCount">0</span></button></div></header>
@@ -23,5 +23,5 @@
 if(location.protocol==='file:'){
  const p=document.createElement('p');p.textContent='Apri l’esperienza dal server locale per svolgere e salvare le attività. ';
  const a=document.createElement('a');a.href='http://127.0.0.1:8766/bussola-ssas.html';a.textContent='Apri i cinque laboratori';p.append(a);document.getElementById('workspace').append(p);
-}else import('./ssas-situazioni-entry.mjs?v=20261018-percorsi').catch(()=>{document.getElementById('workspace').textContent='L’attività non si è caricata. Ricarica la pagina; il lavoro salvato resta sul dispositivo.';});
+}else import('./ssas-situazioni-entry.mjs?v=20261018-flow').catch(()=>{document.getElementById('workspace').textContent='L’attività non si è caricata. Ricarica la pagina; il lavoro salvato resta sul dispositivo.';});
 </script></body></html>
