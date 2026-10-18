@@ -28,9 +28,7 @@ for(const c of CASES){
  }
 }
 console.log(`${runs} percorsi verificati: sei casi, scelte alternative, salvataggio/ripresa, raccolta, attestato di prova e conservazione dei lavori precedenti.`);
-const {needsLegacy}=await import('../ssas-situazioni-entry-core.mjs');
-assert(needsLegacy({labJourney:{format:'ssas-cinque-laboratori-1',visited:1}}));assert(!needsLegacy({labJourney:{format:'ssas-cinque-laboratori-1',visited:0}}));assert(!needsLegacy({labJourney:{format:'ssas-cinque-laboratori-1',visited:6},caseJourney:{format:FORMAT}}));
 const {restoreProject:serverRestore}=await import('../supabase/functions/bussola-esperienze/ssas-core.mjs');
 const {completion:serverCompletion}=await import('../supabase/functions/bussola-gestione/bussola-records-core.mjs');
 let candidate=selectCase(freshProject(),'infanzia');assert.deepEqual(serverRestore(candidate).caseJourney,candidate.caseJourney);assert.deepEqual(serverCompletion({payload:candidate}),completion({payload:candidate}));
-console.log('Compatibilità: ripresa del percorso precedente, riconoscimento del nuovo formato e conservazione nel contratto API verificati.');
+console.log('Compatibilità: nuovo formato e conservazione dei lavori precedenti nel contratto API verificati.');

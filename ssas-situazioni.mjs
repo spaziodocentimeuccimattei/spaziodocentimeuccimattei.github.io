@@ -1,3 +1,4 @@
+import {readEntryState} from './ssas-situazioni-entry-core.mjs?v=20261018-ingresso';
 import {sceneCardArt,sceneFigure,entranceImage} from './ssas-illustrazioni.mjs?v=20261012-scene';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261012-ingresso';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261013-ssas';
@@ -19,7 +20,7 @@ const fileCache=new Map();
 function fileURL(content,type){const previous=fileCache.get(type);if(previous?.content===content)return previous.url;const url=URL.createObjectURL(new Blob([content],{type}));fileCache.set(type,{content,url});if(previous)setTimeout(()=>URL.revokeObjectURL(previous.url),60000);return url;}
 let localOK=true, connected=false, syncing=false, conflict=false, clock=0, timer, epoch=0, noteTrigger;
 let state={project:freshProject(),token:'',participant:'',revision:0,dirty:false,notes:[],draft:null};
-try{const raw=JSON.parse(localStorage.getItem(KEY));if(raw&&typeof raw==='object')state={...state,...raw,project:restoreProject(raw.project),token:/^[\w-]{43}$/.test(raw.token)?raw.token:'',revision:Number.isInteger(raw.revision)?raw.revision:0,notes:Array.isArray(raw.notes)?raw.notes.filter(n=>n&&typeof n.testo==='string'):[]};}catch{}
+try{const raw=readEntryState(localStorage,KEY);if(raw&&typeof raw==='object')state={...state,...raw,project:restoreProject(raw.project),token:/^[\w-]{43}$/.test(raw.token)?raw.token:'',revision:Number.isInteger(raw.revision)?raw.revision:0,notes:Array.isArray(raw.notes)?raw.notes.filter(n=>n&&typeof n.testo==='string'):[]};}catch{}
 if(entryAlumno&&!state.token)state.token=entryAlumno;
 function keep(){try{localStorage.setItem(KEY,JSON.stringify(state));localOK=true;}catch{localOK=false;}}
 function status(text,error=false){saveStatus.textContent=localTest?text.replaceAll('Supabase','database di prova')+' · Prova locale':text;$('saveStatus').parentElement.dataset.error=String(error);retry.hidden=!error||conflict;}
