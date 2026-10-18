@@ -72,3 +72,10 @@
 }
 @media(prefers-reduced-motion:reduce){.case-choices .case-option{transition:none}}
 @media print{.case-option-art,.case-art,.entrance-art{max-height:160px;break-inside:avoid}.summary-with-art{display:block}}
+
+/* Raccordi narrativi e restituzione del lavoro, senza nuove azioni obbligatorie. */
+.case-reminder{margin:0 0 14px;padding:12px 15px;border:1px solid #b7c8cc;border-radius:12px;background:#eef5f7;color:#173b4f}
+.case-reminder summary{cursor:pointer;font-weight:700;min-height:24px}
+.case-reminder p{margin:10px 0 0;line-height:1.55}
+.learning-badge{margin:18px 0 12px;padding:11px 14px;border-left:4px solid #527263;border-radius:8px;background:#e8f0e7;color:#203f33;font-size:.94rem;line-height:1.5;overflow-wrap:anywhere}
+.learning-badge[hidden]{display:none}

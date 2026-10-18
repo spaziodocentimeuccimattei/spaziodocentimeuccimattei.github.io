@@ -1,3 +1,4 @@
+import {reviseCase} from './ssas-situazioni-revisione.mjs';
 // Casi inventati per l’orientamento. Adattamenti delle UDA, per ragazzi di 13–14 anni.
 export const CASES = [
  {
@@ -96,5 +97,6 @@ for (const c of CASES) {
  c.closings=[`«Ripartiamo da ciò che ${c.person} desidera fare e concordiamo il prossimo passo.»`,`«Abbiamo una richiesta da cui partire. Scegliamo insieme che cosa provare e quando rivederci.»`];
  c.formats=c.formats.map(([label,detail,draft,improvements],i)=>({id:'f'+(i+1),label,detail,draft,improvements}));
  c.responses=options(c.responses,'r');
+ reviseCase(c);
 }
 export const caseById = id => CASES.find(c=>c.id===id);

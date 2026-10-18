@@ -67,7 +67,7 @@ export function summaryItems(j){
  const c=caseById(j.health.focus);if(!c)return [];
  return [
   {title:j.health.title||c.label,text:j.health.explanation,detail:c.scene},
-  {title:'Il dialogo con '+c.person,text:[c.openings.find(x=>x.id===j.relation.opening)?.label,c.participation.find(x=>x.id===j.relation.participation)?.label,j.relation.closing].filter(Boolean).join(' '),detail:c.desire},
+  {title:'Il dialogo con '+c.person,text:[c.openings.find(x=>x.id===j.relation.opening)?.label,c.participation.find(x=>x.id===j.relation.participation)?.label,j.relation.closing].filter(Boolean).join(' '),detail:c.openings.find(x=>x.id===j.relation.opening)?.reply||''},
   {title:'Il sostegno per '+c.person,text:[...c.supports.filter(x=>j.autonomy.supports.includes(x.id)).map(x=>x.label),c.adaptations.find(x=>x.id===j.autonomy.adaptation)?.label].filter(Boolean).join(' · '),detail:c.supportGoal},
   {title:j.creative.title||'Il mio materiale',text:j.creative.ending,detail:c.purposes.find(x=>x.id===j.creative.goal)?.label||''},
   {title:j.service.name||c.service,text:[c.activities.find(x=>x.id===j.service.activity)?.label,c.access.find(x=>x.id===j.service.access)?.label,c.checks.find(x=>x.id===j.service.check)?.label].filter(Boolean).join(' · '),detail:c.team}

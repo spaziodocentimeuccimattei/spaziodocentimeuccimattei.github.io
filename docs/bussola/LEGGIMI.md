@@ -164,3 +164,11 @@ I nuovi progetti di `bussola-ssas.html` propongono dipendenze e benessere digita
 Il formato `caseJourney: ssas-sei-situazioni-2` conserva i campi precedenti. `ssas-situazioni-entry.mjs` apre sempre le sei situazioni, anche con un progetto precedente o un link personale. Le risposte del vecchio percorso restano nel campo `labJourney`, senza riaprire la vecchia interfaccia. Se manca uno stato locale nuovo, si recuperano progetto, accesso e note dalla chiave precedente, che resta intatta. «Inizia un nuovo progetto» conserva una copia del progetto corrente. Gestione, raccolta e attestati riconoscono entrambi i formati. Nessuna migrazione dei dati.
 
 Verifica: `node scripts/verifica-ssas-situazioni.mjs` esercita 84 percorsi, conservazione delle risposte, cambi di situazione, contratto API, completamento e attestati. Restano valide le verifiche esistenti degli altri indirizzi. Le prove nel browser usano il server locale fittizio; il pilotaggio con alunni resta separato.
+
+### Revisione editoriale delle sei situazioni
+
+I testi di ciascun caso sono integrati da `ssas-situazioni-revisione.mjs`: domande e risposte contestualizzate, raccordi tra i laboratori e riscritture coerenti con scopo e formato. Identificativi delle scelte, campi e regole di completamento restano invariati. La gestione conserva lo stesso modulo di testi per descrivere le scelte salvate. Non sono previste migrazioni di dati.
+
+La breve etichetta di fine laboratorio compare quando sono compilati i campi richiesti, senza un nuovo passaggio. La riflessione finale riprende le attività sperimentate e la domanda facoltativa sul SSAS.
+
+Controlli: `node scripts/verifica-ssas-situazioni.mjs`, `node scripts/verifica-ssas-revisione.mjs` e `node --experimental-vm-modules scripts/verifica-ssas-ingresso.mjs`. Il secondo controllo può ricevere il percorso a una baseline dei casi fittizi per confrontare ID e conservazione delle risposte. Le prove d’uso con alunni restano un riscontro successivo, senza bloccare la revisione editoriale e tecnica.

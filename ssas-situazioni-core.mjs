@@ -1,15 +1,15 @@
-import {CASES,caseById} from './ssas-situazioni-data.mjs';
+import {CASES,caseById} from './ssas-situazioni-data.mjs?v=20261018-testi';
 import {LABS as originalLabs,xml} from './ssas-labs-core.mjs';
 export {CASES,caseById,xml};
 export const FORMAT='ssas-sei-situazioni-2';
 export const LABS=originalLabs.map((l,i)=>i?{...l}:{...l,label:'Salute e bisogni',title:'Un bisogno da capire',bridge:'Benessere, prevenzione e bisogni della persona: osservare una situazione e comunicarla con parole chiare.'});
-export const GUIDE=[['Scegli la situazione','Spiega il bisogno'],['Apri il dialogo','Scegli come ascoltare','Concorda il prossimo passo'],['Scegli i sostegni','Adatta l’aiuto'],['Scegli lo scopo','Scegli il materiale','Migliora e prova'],['Scegli l’attività','Apri l’accesso','Pensa al miglioramento']];
+export const GUIDE=[['Scegli la situazione','Descrivi la situazione'],['Scegli la domanda','Approfondisci il racconto','Proponi un primo passo'],['Scegli i sostegni','Adatta l’aiuto'],['Scegli lo scopo','Scegli il materiale','Migliora e prova'],['Scegli l’attività','Apri l’accesso','Pensa al miglioramento']];
 export const PRESENTATION=[
- {title:'Un bisogno da capire.',product:'La tua scheda del bisogno',result:'Scegli una situazione. Spiega che cosa occorre capire prima di proporre un aiuto.'},
+ {title:'Una situazione da comprendere.',product:'La tua descrizione della situazione',result:'Scegli il caso che ti interessa e considera le difficoltà raccontate.'},
  {title:'Una conversazione da aprire.',product:'La tua proposta di dialogo',result:'Ascolta la persona e concorda un primo passo.'},
- {title:'Un sostegno da adattare.',product:'Il tuo piano di sostegno',result:'Parti dal desiderio della persona. Poi ascolta la nuova richiesta.'},
- {title:'Un’idea da far provare.',product:'Il tuo materiale',result:'Prepara un materiale, migliora la bozza e ascolta chi lo userà.'},
- {title:'Un servizio da organizzare.',product:'La tua proposta di servizio',result:'Scegli un’attività, rendila accessibile e decidi che cosa osservare.'}
+ {title:'Un aiuto da concordare.',product:'Il tuo piano di aiuto',result:'Scegli i sostegni e adattali alle richieste della persona.'},
+ {title:'Un materiale da preparare.',product:'Il tuo materiale',result:'Scegli lo scopo e il formato, poi rivedi la bozza.'},
+ {title:'Un’attività da organizzare.',product:'La tua proposta di attività',result:'Scegli l’attività, come partecipare e che cosa verificare.'}
 ];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const areas=['health','relation','autonomy','creative','service'];
@@ -67,7 +67,7 @@ export function summaryItems(j){
  const c=caseById(j.health.focus);if(!c)return [];
  return [
   {title:j.health.title||c.label,text:j.health.explanation,detail:c.scene},
-  {title:'Il dialogo con '+c.person,text:[c.openings.find(x=>x.id===j.relation.opening)?.label,c.participation.find(x=>x.id===j.relation.participation)?.label,j.relation.closing].filter(Boolean).join(' '),detail:c.desire},
+  {title:'Il dialogo con '+c.person,text:[c.openings.find(x=>x.id===j.relation.opening)?.label,c.participation.find(x=>x.id===j.relation.participation)?.label,j.relation.closing].filter(Boolean).join(' '),detail:c.openings.find(x=>x.id===j.relation.opening)?.reply||''},
   {title:'Il sostegno per '+c.person,text:[...c.supports.filter(x=>j.autonomy.supports.includes(x.id)).map(x=>x.label),c.adaptations.find(x=>x.id===j.autonomy.adaptation)?.label].filter(Boolean).join(' · '),detail:c.supportGoal},
   {title:j.creative.title||'Il mio materiale',text:j.creative.ending,detail:c.purposes.find(x=>x.id===j.creative.goal)?.label||''},
   {title:j.service.name||c.service,text:[c.activities.find(x=>x.id===j.service.activity)?.label,c.access.find(x=>x.id===j.service.access)?.label,c.checks.find(x=>x.id===j.service.check)?.label].filter(Boolean).join(' · '),detail:c.team}
