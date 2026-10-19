@@ -23,7 +23,7 @@ function dropSession(){
  for(const id of ['monitorSchool','monitorClass','monitorCourse'])$(id).replaceChildren();
  $('includeTests').checked=false;$('autoRefresh').checked=false;$('reportAnonymous').checked=true;$('compareWorks').checked=false;$('monitorFrom').value='';$('monitorTo').value='';$('monitorState').value='all';view='summary';student='';offset=0;lab=0;showNames=false;
  for(const b of document.querySelectorAll('[data-view]')){b.setAttribute('aria-selected',String(b.dataset.view==='summary'));b.tabIndex=b.dataset.view==='summary'?0:-1;}$('monitorBody').setAttribute('aria-labelledby','tabSummary');
- $('teacherWorkspace').hidden=true;$('teacherLogin').hidden=false;$('teacherLoginForm').reset();
+ $('teacherWorkspace').hidden=true;$('teacherLogout').hidden=true;$('teacherGuide').open=false;$('teacherLogin').hidden=false;$('teacherLoginForm').reset();
 }
 async function api(action,payload={}){
  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),20000);
@@ -51,7 +51,7 @@ async function startSession(){
  options($('monitorCourse'),[...session.corsi.map(c=>[c,COURSES[c]]),['bussola',COURSES.bussola]],course);
  $('teacherName').textContent=session.nome;$('staffAccessBox').hidden=!session.admin;$('adminLinks').hidden=!session.admin;
  $('openMonitorClass').hidden=!session.commissione;$('commissionHelp').hidden=!session.commissione;
- $('teacherWorkspace').hidden=false;$('teacherLogin').hidden=true;
+ $('teacherWorkspace').hidden=false;$('teacherLogout').hidden=false;$('teacherLogin').hidden=true;
  if(session.admin)sessionStorage.setItem(FS_KEY,token);
  fillFilters();await load();
 }
@@ -175,7 +175,12 @@ function renderReport(){const box=$('reportContent');box.replaceChildren(el('p',
 function saveCSV(){const text='\ufeff'+[reportHead,...reportData()].map(r=>r.map(csvCell).join(';')).join('\r\n'),url=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'})),a=el('a');a.href=url;a.download='bussola-report.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 
 $('teacherLoginForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('button');b.disabled=true;status('Verifica dell’accesso…');try{const r=await api('monitor_login',{accesso:f.elements.accesso.value,password:f.elements.password.value});token=r.token;sessionStorage.setItem(KEY,token);f.reset();await startSession();}catch(e){dropSession();status(e.message,true);}finally{b.disabled=false;}});
-$('teacherLogout').addEventListener('click',async()=>{try{await api('monitor_logout');}catch{}dropSession();status('Accesso chiuso.');});
+$('teacherLogout').addEventListener('click',async()=>{
+ const closingToken=token;dropSession();status('Accesso chiuso.');$('teacherLoginForm').elements.password.focus();
+ if(!closingToken)return;
+ const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),20000);
+ try{await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-orientamento-session':closingToken},body:JSON.stringify({action:'monitor_logout',corso:course}),signal:ctrl.signal,keepalive:true});}catch{}finally{clearTimeout(timer);}
+});
 for(const b of document.querySelectorAll('[data-view]')){b.addEventListener('click',()=>chooseView(b.dataset.view));b.addEventListener('keydown',e=>{const tabs=[...document.querySelectorAll('[data-view]')],i=tabs.indexOf(b);const next=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i+tabs.length-1)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:null;if(next!==null){e.preventDefault();tabs[next].click();tabs[next].focus();}});}
 $('monitorCourse').addEventListener('change',()=>{course=$('monitorCourse').value;offset=0;lab=0;student='';clearSelection();load();});
 for(const id of ['monitorSchool','monitorClass','includeTests'])$(id).addEventListener('change',()=>{if(id==='monitorSchool')$('monitorClass').value='';fillFilters();offset=0;student='';clearSelection();load();});
