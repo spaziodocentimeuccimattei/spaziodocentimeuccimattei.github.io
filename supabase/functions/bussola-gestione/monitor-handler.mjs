@@ -1,5 +1,6 @@
 import {teacherSession,tokenHash,randomToken,passwordHash,equalHash} from './monitor-auth.mjs';
 import questions from './questionario-data.json' with {type:'json'};
+import {classCode,isShortCode} from './bussola-codice.mjs';
 const COURSES=['ssas','afm','sia','turismo','cat'];
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const bad=(text,status=400)=>Object.assign(new Error(text),{status});
@@ -41,7 +42,7 @@ export async function monitorAction(admin,req,p){
   const token=randomToken(),hash=await tokenHash(token),expires=new Date(Date.now()+6*3600000).toISOString();
   if(!accesso){
    const level=await data(admin.rpc('verifica_orientamento_accesso',{p_password:password}));
-   if(level!=='funzione_strumentale')throw bad('Accesso non riuscito. Per la commissione inserisci anche il nome di accesso personale.',401);
+   if(!['funzione_strumentale','orientatore'].includes(level))throw bad('Usa la password della Funzione Strumentale o della Commissione Orientamento.',401);
    await data(admin.from('orientamento_sessioni').insert({token_hash:hash,expires_at:expires,access_level:level}));
   }else{
    if(!/^[a-z0-9][a-z0-9._-]{2,39}$/.test(accesso))throw bad('Accesso non riuscito.',401);
@@ -61,9 +62,9 @@ export async function monitorAction(admin,req,p){
  if(![...COURSES,'bussola'].includes(course))throw bad('Indirizzo non disponibile.');
  if(!session.admin&&!['monitor_session','monitor_logout'].includes(p.action)&&course!=='bussola'&&!session.courses.includes(course))throw bad('Indirizzo non assegnato.',403);
  const classRows=await all(()=>{let q=admin.from('bussola_v2_classi').select('*').order('scuola').order('classe');return session.admin?q:q.in('id',session.classes.length?session.classes:['00000000-0000-4000-8000-000000000000']);});
- if(p.action==='monitor_session')return {admin:session.admin,nome:session.name,corsi:session.courses,classi:classRows.map(safeClass),expires_at:session.expires_at};
+ if(p.action==='monitor_session')return {admin:session.admin,commissione:session.shared===true,nome:session.name,corsi:session.courses,classi:classRows.map(safeClass),expires_at:session.expires_at};
  if(p.action==='monitor_logout'){
-  await data(admin.from(session.admin?'orientamento_sessioni':'bussola_v2_sessioni_docenti').delete().eq('token_hash',session.hash));return {ok:true};
+  await data(admin.from(session.admin||session.shared?'orientamento_sessioni':'bussola_v2_sessioni_docenti').delete().eq('token_hash',session.hash));return {ok:true};
  }
  if(p.action==='monitor_staff'){
   requireAdmin();return {docenti:(await data(admin.from('bussola_v2_docenti').select('id,nome,accesso,corsi,classi,attivo,updated_at').order('nome'))).map(safeTeacher)};
@@ -82,25 +83,34 @@ export async function monitorAction(admin,req,p){
   if(!reply.data)throw bad('L’accesso è cambiato. Aggiorna la pagina.',409);
   return {docente:safeTeacher(reply.data)};
  }
+ if(p.action==='monitor_open_class'){
+  if(!session.shared)throw bad('Questa operazione è riservata alla Commissione.',403);
+  const address=(req.headers.get('cf-connecting-ip')||req.headers.get('x-forwarded-for')||'rete-condivisa').split(',')[0].trim();
+  if(!await data(admin.rpc('bussola_v2_quota_docente',{p_fingerprint:await tokenHash('apri-classe:'+address)})))throw bad('Troppi tentativi. Riprova fra 15 minuti.',429);
+  const code=classCode(p.codice);if(!isShortCode(code))throw bad('Controlla il codice di sei caratteri della classe.',400);
+  const found=await data(admin.rpc('bussola_v2_classe_commissione',{p_sessione:session.hash,p_codice:code,p_crea:null}));
+  if(!found)throw bad('Codice non disponibile. Controllalo oppure chiedilo alla Funzione Strumentale.',404);
+  return {classe:safeClass(found)};
+ }
  if(p.action==='monitor_create_class'){
   if(course==='bussola')throw bad('Scegli un indirizzo per creare la classe.');
   const row={id:crypto.randomUUID(),codice:randomToken(),scuola:text(p.scuola,140,2),comune:text(p.comune,80,2),classe:text(p.classe,20).toUpperCase(),anno:text(p.anno,9),modalita:'nomi',prova:p.prova===true};
   if(!/^20\d{2}\/20\d{2}$/.test(row.anno)||Number(row.anno.slice(5))!==Number(row.anno.slice(0,4))+1)throw bad('Controlla l’anno scolastico.');
-  const r=await admin.from('bussola_v2_classi').insert(row).select('*').single();
-  if(r.error?.code==='23505')throw bad('La classe esiste già. Chiedi alla Funzione Strumentale di assegnartela.',409);
+  const r=session.shared?await admin.rpc('bussola_v2_classe_commissione',{p_sessione:session.hash,p_codice:null,p_crea:row}):await admin.from('bussola_v2_classi').insert(row).select('*').single();
+  if(r.error?.code==='23505')throw bad('La classe esiste già. Aprila con il codice oppure chiedilo alla Funzione Strumentale.',409);
   if(r.error)throw bad('Classe non creata. Riprova.',503);
-  if(!session.admin&&!await data(admin.rpc('bussola_v2_assegna_classe',{p_docente:session.id,p_classe:r.data.id})))throw bad('Classe creata; chiedi alla Funzione Strumentale di verificare l’assegnazione.',409);
+  if(!session.admin&&!session.shared&&!await data(admin.rpc('bussola_v2_assegna_classe',{p_docente:session.id,p_classe:r.data.id})))throw bad('Classe creata; chiedi alla Funzione Strumentale di verificare l’assegnazione.',409);
   return {classe:safeClass(r.data)};
  }
  if(p.action==='monitor_feedback'){
-  const id=uuid(p.id),row={id,docente_id:session.id||null,corso:course,contesto:text(p.contesto,160),testo:text(p.testo,2000,2)};
-  const found=await data(admin.from('bussola_v2_segnalazioni_docenti').select('id,docente_id,corso,contesto,testo').eq('id',id).maybeSingle());
-  if(found){if(found.docente_id!==(session.id||null)||found.corso!==row.corso||found.contesto!==row.contesto||found.testo!==row.testo)throw bad('Questa segnalazione è già registrata. Scrivi una nuova segnalazione per aggiungere altro.',409);return {ok:true};}
+  const id=uuid(p.id),row={id,docente_id:session.id||null,sessione_hash:session.shared?session.hash:null,corso:course,contesto:text(p.contesto,160),testo:text(p.testo,2000,2)};
+  const found=await data(admin.from('bussola_v2_segnalazioni_docenti').select('id,docente_id,sessione_hash,corso,contesto,testo').eq('id',id).maybeSingle());
+  if(found){if(found.docente_id!==row.docente_id||found.sessione_hash!==row.sessione_hash||found.corso!==row.corso||found.contesto!==row.contesto||found.testo!==row.testo)throw bad('Questa segnalazione è già registrata. Scrivi una nuova segnalazione per aggiungere altro.',409);return {ok:true};}
   await data(admin.from('bussola_v2_segnalazioni_docenti').insert(row));return {ok:true};
  }
  if(p.action==='monitor_feedback_list'){
   let q=admin.from('bussola_v2_segnalazioni_docenti').select('id,docente_id,corso,contesto,testo,created_at').order('created_at',{ascending:false}).limit(100);
-  if(!session.admin)q=q.eq('docente_id',session.id);
+  if(session.shared)q=q.eq('sessione_hash',session.hash);else if(!session.admin)q=q.eq('docente_id',session.id);
   return {segnalazioni:await data(q)};
  }
  const selected=p.classe_id||'';

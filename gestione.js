@@ -1,4 +1,10 @@
 import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261014-1';
+const managementParams=new URLSearchParams(location.search);
+if(location.hash==='#bussola'&&managementParams.get('strumenti')!=='bussola'){
+  const destination=new URL('bussola-docenti.html',location.href);
+  for(const key of ['corso','prova'])if(managementParams.has(key))destination.searchParams.set(key,managementParams.get(key));
+  location.replace(destination.href);
+}else{
 const API_URL = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const SESSION_KEY = 'mattei-gestione-session';
 
@@ -750,3 +756,4 @@ for(const [i,tab] of [...document.querySelectorAll('[role="tab"]')].entries()){
 window.addEventListener('hashchange', openRequestedManagementSection);
 openRequestedManagementSection();
 passwordForm.querySelector('button[type="submit"]').disabled = false;
+}

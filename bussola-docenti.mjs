@@ -6,8 +6,8 @@ const $=id=>document.getElementById(id),el=(tag,text,cls)=>{const n=document.cre
 const button=(label,fn,cls='secondary')=>{const b=el('button',label,cls);b.type='button';b.addEventListener('click',fn);return b;};
 const test=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).has('prova');
 const API=test?'/__test/bussola-gestione':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-gestione';
-const KEY='bussola-docente-session',FS_KEY='mattei-gestione-session';
-let token=sessionStorage.getItem(KEY)||sessionStorage.getItem(FS_KEY)||'',session=null,questions=[],rows=[],offset=0,more=false,view='summary',lab=0,student='',requestVersion=0,authVersion=0,reportRows=[];
+const KEY='bussola-docente-session',FS_KEY='mattei-gestione-session',COMMISSION_KEY='mattei-orientamento-session';
+let token=sessionStorage.getItem(KEY)||sessionStorage.getItem(FS_KEY)||sessionStorage.getItem(COMMISSION_KEY)||'',session=null,questions=[],rows=[],offset=0,more=false,view='summary',lab=0,student='',requestVersion=0,authVersion=0,reportRows=[];
 let course=new URLSearchParams(location.search).get('corso')?.toLowerCase()||'ssas';if(!COURSES[course])course='ssas';
 let selections=new Map(),presentIndex=0,showNames=false,focusBeforeDialog=null,expiryTimer;
 const when=value=>value?new Date(value).toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}):'—';
@@ -15,10 +15,12 @@ function status(value,error=false){$('teacherStatus').textContent=value;$('teach
 function dropSession(){
  const old=token;authVersion++;requestVersion++;clearTimeout(expiryTimer);token='';session=null;rows=[];reportRows=[];selections.clear();
  sessionStorage.removeItem(KEY);if(sessionStorage.getItem(FS_KEY)===old)sessionStorage.removeItem(FS_KEY);
+ if(sessionStorage.getItem(COMMISSION_KEY)===old)sessionStorage.removeItem(COMMISSION_KEY);
  for(const d of document.querySelectorAll('dialog[open]'))d.close();
  for(const id of ['monitorBody','viewTools','codeContent','staffList','feedbackList','reportContent','presentationContent'])$(id).replaceChildren();
  for(const f of document.querySelectorAll('form'))f.reset();
  for(const id of ['teacherName','pageDescription','selectedWorkCount'])$(id).textContent='';
+ for(const id of ['monitorSchool','monitorClass','monitorCourse'])$(id).replaceChildren();
  $('includeTests').checked=false;$('autoRefresh').checked=false;$('reportAnonymous').checked=true;$('compareWorks').checked=false;$('monitorFrom').value='';$('monitorTo').value='';$('monitorState').value='all';view='summary';student='';offset=0;lab=0;showNames=false;
  for(const b of document.querySelectorAll('[data-view]')){b.setAttribute('aria-selected',String(b.dataset.view==='summary'));b.tabIndex=b.dataset.view==='summary'?0:-1;}$('monitorBody').setAttribute('aria-labelledby','tabSummary');
  $('teacherWorkspace').hidden=true;$('teacherLogin').hidden=false;$('teacherLoginForm').reset();
@@ -28,6 +30,10 @@ async function api(action,payload={}){
  try{
   const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json',...(token?{'x-orientamento-session':token}:{})},body:JSON.stringify({action,corso:course,...payload}),signal:ctrl.signal});
   const d=await r.json();if(!r.ok){if(r.status===401&&action!=='monitor_login'){dropSession();status('Sessione scaduta. Accedi di nuovo.',true);}throw Object.assign(new Error(d.error||'Operazione non riuscita.'),{status:r.status});}return d;
+ }catch(e){
+  if(e.name==='AbortError')throw new Error('La connessione è lenta. Premi Aggiorna per riprovare.');
+  if(e instanceof TypeError)throw new Error('Connessione non disponibile. Controlla la rete e riprova.');
+  throw e;
  }finally{clearTimeout(timer);}
 }
 function options(select,items,value){select.replaceChildren(...items.map(([v,label])=>{const o=el('option',label);o.value=v;return o;}));if(items.some(([v])=>v===value))select.value=value;}
@@ -36,7 +42,7 @@ function fillFilters(){
  const school=$('monitorSchool').value,chosen=$('monitorClass').value;
  options($('monitorSchool'),[['','Tutte le scuole'],...[...new Set(session.classi.map(schoolKey))].map(x=>[x,x])],school);
  const classes=session.classi.filter(c=>(!$('monitorSchool').value||schoolKey(c)===$('monitorSchool').value)&&($('includeTests').checked||!c.prova));
- options($('monitorClass'),[['',session.admin?'Tutti i lavori':'Tutte le mie classi'],...(session.admin&&!$('monitorSchool').value?[['senza-classe','Lavori senza classe']]:[]),...classes.map(c=>[c.id,`${c.classe} · ${c.anno} · ${c.scuola}${c.prova?' · prova docente':''}`])],chosen);
+ options($('monitorClass'),[['',session.admin?'Tutti i lavori':session.commissione?'Classi aperte in questo accesso':'Tutte le mie classi'],...(session.admin&&!$('monitorSchool').value?[['senza-classe','Lavori senza classe']]:[]),...classes.map(c=>[c.id,`${c.classe} · ${c.anno} · ${c.scuola}${c.prova?' · prova docente':''}`])],chosen);
  $('showClassCode').disabled=!classes.some(c=>c.id===$('monitorClass').value);$('newMonitorClass').disabled=course==='bussola';
 }
 async function startSession(){
@@ -44,6 +50,7 @@ async function startSession(){
  session=r;armExpiry();if(course!=='bussola'&&!session.corsi.includes(course))course=session.corsi[0];
  options($('monitorCourse'),[...session.corsi.map(c=>[c,COURSES[c]]),['bussola',COURSES.bussola]],course);
  $('teacherName').textContent=session.nome;$('staffAccessBox').hidden=!session.admin;$('adminLinks').hidden=!session.admin;
+ $('openMonitorClass').hidden=!session.commissione;$('commissionHelp').hidden=!session.commissione;
  $('teacherWorkspace').hidden=false;$('teacherLogin').hidden=true;
  if(session.admin)sessionStorage.setItem(FS_KEY,token);
  fillFilters();await load();
@@ -67,7 +74,7 @@ async function load(silent=false){
   const reply=await api('monitor_list',listPayload());if(version!==requestVersion||identity!==authVersion||!session)return;
   rows=decorate(reply);more=reply.more;session.classi=reply.classi;fillFilters();render();
   if(!silent)status('Lavori aggiornati.');
- }catch(e){if(version!==requestVersion)return;if(e.status===403){rows=[];reportRows=[];selections.clear();for(const id of ['monitorBody','viewTools','presentationContent','reportContent','codeContent'])$(id).replaceChildren();for(const d of document.querySelectorAll('dialog[open]'))d.close();updateSelection();}if(session)status(e.name==='AbortError'?'La connessione è lenta. Premi Aggiorna per riprovare.':e.message,true);}
+ }catch(e){if(version!==requestVersion)return;if(e.status===403){rows=[];reportRows=[];selections.clear();for(const id of ['monitorBody','viewTools','presentationContent','reportContent','codeContent'])$(id).replaceChildren();for(const d of document.querySelectorAll('dialog[open]'))d.close();updateSelection();}else if(session&&!silent)$('monitorBody').replaceChildren(el('p','Aggiornamento non riuscito. Premi Aggiorna per riprovare.','empty'));if(session)status(e.message,true);}
  finally{if(version===requestVersion)$('monitorRefresh').disabled=false;}
 }
 function name(row,anonymous=false,index=0){return anonymous?`Partecipante ${index+1}`:row.alunno?`${row.alunno.cognome} ${row.alunno.nome}`:'Partecipante senza nominativo';}
@@ -76,15 +83,15 @@ function labOptions(){return course==='bussola'?questions.map((q,i)=>[String(i),
 function chooseView(next){view=next;for(const b of document.querySelectorAll('[data-view]')){const active=b.dataset.view===view;b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;if(active)$('monitorBody').setAttribute('aria-labelledby',b.id);}render();}
 function render(){
  if(!session)return;const filtered=visible();$('viewTools').replaceChildren();
- $('pageDescription').textContent=`${filtered.length} righe visualizzate in questa pagina${rows.length!==filtered.length?' su '+rows.length+' prima dei filtri':''}. ${course==='bussola'?'Le domande possono essere saltate.':'Il completamento descrive il percorso svolto.'} I lavori senza nominativo non identificano persone uniche.`;
+ $('pageDescription').textContent=`${filtered.length} ${filtered.length===1?"percorso":"percorsi"} in questa pagina${rows.length!==filtered.length?' su '+rows.length+' prima dei filtri':''}. ${course==='bussola'?'Le domande iniziali possono essere saltate.':'Apri un partecipante per leggere il suo lavoro.'}`;
  $('previousPage').disabled=offset===0;$('nextPage').disabled=!more;$('pageNumber').textContent='Pagina '+(offset/50+1);
  if(view==='summary')renderSummary(filtered);else if(view==='board')renderBoard(filtered);else renderNotebook(filtered);
  updateSelection();
 }
 function openNotebook(row,index=0){student=row.key;lab=index;chooseView('notebook');$('monitorBody').scrollIntoView({block:'start'});}
 function renderSummary(filtered){
- const box=$('monitorBody');box.replaceChildren();if(!filtered.length){box.append(el('p','Nessun lavoro in questa pagina con i filtri scelti. Controlla anche le pagine successive.','empty'));return;}
- const tiles=el('div',null,'summary-tiles');for(const [n,label] of [[filtered.length,'righe in questa pagina'],[filtered.filter(r=>r.project).length,'con un salvataggio'],[filtered.filter(r=>r.view.completed).length,'percorsi conclusi']]){const p=el('p');p.append(el('strong',String(n)),el('span',label));tiles.append(p);}box.append(tiles);
+ const box=$('monitorBody');box.replaceChildren();if(!filtered.length){const message=session.commissione&&!session.classi.length?'Per iniziare, crea una classe oppure aprila con il suo codice.':$('monitorClass').value&&$('monitorClass').value!=='senza-classe'?'I lavori compariranno qui quando gli alunni entreranno con il codice della classe.':'Nessun percorso con i filtri scelti. Controlla anche le pagine successive.';box.append(el('p',message,'empty'));return;}
+ const tiles=el('div',null,'summary-tiles');for(const [n,label] of [[filtered.length,'percorsi visualizzati'],[filtered.filter(r=>r.project).length,'con risposte salvate'],[filtered.filter(r=>r.view.completed).length,'percorsi conclusi']]){const p=el('p');p.append(el('strong',String(n)),el('span',label));tiles.append(p);}box.append(tiles);
  const wrap=el('div',null,'table-scroll'),table=el('table'),head=el('tr');head.append(el('th','Partecipante'));
  for(const [i,label] of labOptions()){const th=el('th');th.append(button(course==='bussola'?String(Number(i)+1):String(Number(i)+1),()=>{lab=Number(i);chooseView('board');}));th.title=label;head.append(th);}head.append(el('th','Ultimo salvataggio'));const thead=el('thead');thead.append(head);table.append(thead);
  const body=el('tbody');for(const row of filtered){const tr=el('tr'),th=el('th');th.scope='row';th.append(button(name(row),()=>openNotebook(row),'row-name'),el('small',className(row)));if(row.alunno&&!row.alunno.verificato)th.append(el('small','Nominativo dichiarato · da verificare'));tr.append(th);
@@ -164,7 +171,7 @@ async function collectReport(){
 }
 function reportData(){const anon=$('reportAnonymous').checked;return reportRows.map((r,i)=>[name(r,anon,i),className(r),COURSES[course],`${r.view.done}/${r.view.total}`,r.view.completed?'Concluso':r.project?'In corso':'Non iniziato',when(r.project?.updated_at),(r.view.interests||[]).join(', ')]);}
 const reportHead=['Partecipante','Classe','Percorso','Completamento','Stato','Ultimo salvataggio','Interessi dichiarati'];
-function renderReport(){const box=$('reportContent');box.replaceChildren(el('p',`${COURSES[course]} · ${reportRows.length} lavori nel report · ${reportRows.filter(r=>r.view.completed).length} conclusi`));const div=el('div',null,'report-table'),table=el('table'),head=el('tr');reportHead.forEach(t=>head.append(el('th',t)));const thead=el('thead');thead.append(head);table.append(thead);const body=el('tbody');for(const line of reportData()){const tr=el('tr');line.forEach(v=>tr.append(el('td',v)));body.append(tr);}table.append(body);div.append(table);box.append(div);}
+function renderReport(){const box=$('reportContent');box.replaceChildren(el('p',`${COURSES[course]} · ${reportRows.length} ${reportRows.length===1?"lavoro":"lavori"} nel report · ${reportRows.filter(r=>r.view.completed).length} conclusi`));const div=el('div',null,'report-table'),table=el('table'),head=el('tr');reportHead.forEach(t=>head.append(el('th',t)));const thead=el('thead');thead.append(head);table.append(thead);const body=el('tbody');for(const line of reportData()){const tr=el('tr');line.forEach(v=>tr.append(el('td',v)));body.append(tr);}table.append(body);div.append(table);box.append(div);}
 function saveCSV(){const text='\ufeff'+[reportHead,...reportData()].map(r=>r.map(csvCell).join(';')).join('\r\n'),url=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'})),a=el('a');a.href=url;a.download='bussola-report.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 
 $('teacherLoginForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('button');b.disabled=true;status('Verifica dell’accesso…');try{const r=await api('monitor_login',{accesso:f.elements.accesso.value,password:f.elements.password.value});token=r.token;sessionStorage.setItem(KEY,token);f.reset();await startSession();}catch(e){dropSession();status(e.message,true);}finally{b.disabled=false;}});
@@ -179,6 +186,8 @@ for(const b of document.querySelectorAll('[data-close]'))b.addEventListener('cli
 for(const d of document.querySelectorAll('dialog'))d.addEventListener('close',()=>{if(d.id==='presentation'){$('presentationContent').replaceChildren();showNames=false;if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});}if(d.id==='staffEditor')$('staffForm').elements.password.value='';focusBeforeDialog?.focus({preventScroll:true});});
 $('showClassCode').addEventListener('click',()=>{const c=session.classi.find(c=>c.id===$('monitorClass').value);if(c)showCode(c);});
 $('newMonitorClass').addEventListener('click',()=>{$('monitorClassForm').reset();$('classEditorStatus').textContent='';showDialog('classEditor');});
+$('openMonitorClass').addEventListener('click',()=>{$('openClassForm').reset();$('openClassStatus').textContent='';showDialog('openClassDialog');});
+$('openClassForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('[type=submit]');b.disabled=true;try{const r=await api('monitor_open_class',{codice:f.elements.codice.value});$('openClassDialog').close();if(!session.classi.some(c=>c.id===r.classe.id))session.classi.push(r.classe);if(r.classe.prova)$('includeTests').checked=true;$('monitorSchool').value='';fillFilters();$('monitorClass').value=r.classe.id;offset=0;clearSelection();await load();}catch(e){$('openClassStatus').textContent=e.message;}finally{b.disabled=false;}});
 $('monitorClassForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('[type=submit]');b.disabled=true;try{const r=await api('monitor_create_class',{...Object.fromEntries(new FormData(f)),prova:f.elements.prova.checked});$('classEditor').close();session.classi.push(r.classe);if(r.classe.prova)$('includeTests').checked=true;fillFilters();$('monitorClass').value=r.classe.id;offset=0;await load();showCode(r.classe);}catch(e){$('classEditorStatus').textContent=e.message;}finally{b.disabled=false;}});
 $('staffAccessBox').addEventListener('toggle',()=>{if($('staffAccessBox').open)loadStaff().catch(e=>status(e.message,true));});$('newStaff').addEventListener('click',()=>editStaff());
 $('staffForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('[type=submit]');b.disabled=true;try{await api('monitor_save_staff',{id:f.elements.id.value||undefined,updated_at:f.elements.updated_at.value,nome:f.elements.nome.value,accesso:f.elements.accesso.value,password:f.elements.password.value,corsi:[...f.querySelectorAll('[name=corsi]:checked')].map(x=>x.value),classi:[...f.elements.classi.selectedOptions].map(x=>x.value),attivo:f.elements.attivo.checked});$('staffEditor').close();await loadStaff();status('Accesso del collega salvato.');}catch(e){$('staffEditorStatus').textContent=e.message;}finally{b.disabled=false;}});

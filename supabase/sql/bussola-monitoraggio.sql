@@ -1,6 +1,31 @@
 -- Intervento additivo. Eseguire prima delle nuove funzioni Edge; nessuna password o dato di prova.
 begin;
 alter table public.bussola_v2_classi add column prova boolean not null default false;
+create table public.bussola_v2_classi_sessione (
+ token_hash text not null references public.orientamento_sessioni(token_hash) on delete cascade,
+ classe_id uuid not null references public.bussola_v2_classi(id),
+ primary key(token_hash,classe_id)
+);
+alter table public.bussola_v2_classi_sessione enable row level security;
+revoke all on public.bussola_v2_classi_sessione from public,anon,authenticated,service_role;
+grant select,insert,delete on public.bussola_v2_classi_sessione to service_role;
+create function public.bussola_v2_classe_commissione(p_sessione text,p_codice text,p_crea jsonb) returns jsonb
+language plpgsql security invoker set search_path='' as $$
+declare c public.bussola_v2_classi;
+begin
+ if not exists(select 1 from public.orientamento_sessioni where token_hash=p_sessione and access_level='orientatore' and expires_at>now()) then return null; end if;
+ if p_crea is null then
+  select * into c from public.bussola_v2_classi where codice_breve=p_codice and attiva;
+  if not found then return null; end if;
+ else
+  insert into public.bussola_v2_classi(id,codice,scuola,comune,classe,anno,modalita,prova)
+  values((p_crea->>'id')::uuid,p_crea->>'codice',p_crea->>'scuola',p_crea->>'comune',p_crea->>'classe',p_crea->>'anno','nomi',coalesce((p_crea->>'prova')::boolean,false)) returning * into c;
+ end if;
+ insert into public.bussola_v2_classi_sessione(token_hash,classe_id) values(p_sessione,c.id) on conflict do nothing;
+ return to_jsonb(c);
+end; $$;
+revoke all on function public.bussola_v2_classe_commissione(text,text,jsonb) from public,anon,authenticated;
+grant execute on function public.bussola_v2_classe_commissione(text,text,jsonb) to service_role;
 create table public.bussola_v2_docenti (
  id uuid primary key default gen_random_uuid(),
  nome text not null check(char_length(nome) between 2 and 100),
@@ -46,6 +71,7 @@ create index bussola_revisioni_proprietario on public.bussola_v2_revisioni(parte
 create table public.bussola_v2_segnalazioni_docenti (
  id uuid primary key,
  docente_id uuid references public.bussola_v2_docenti(id),
+ sessione_hash text,
  corso text not null check(corso in ('ssas','afm','sia','turismo','cat','bussola')),
  contesto text not null check(char_length(contesto) between 1 and 160),
  testo text not null check(char_length(testo) between 2 and 2000),

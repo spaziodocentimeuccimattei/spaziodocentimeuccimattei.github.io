@@ -1,38 +1,42 @@
-# Bussola: attività e lavori nell’area docenti
+# Bussola: area docenti, classi e lavori
 
-Un solo ingresso, `bussola-docenti.html`, dalla Bussola, dal catalogo delle attività e dai cinque indirizzi. Tre viste: **Riepilogo**, **Bacheca**, **Quaderno**. Periodo, aggiornamento automatico, segnalazioni e accessi della commissione restano richiudibili.
+Un solo ingresso, `bussola-docenti.html`, dalla Bussola, dal catalogo e dai cinque indirizzi. Gli indirizzi precedenti `gestione.html#bussola` e `gestione.html?corso=ssas#bussola` portano alla nuova area. La gestione amministrativa resta separata; il collegamento agli strumenti precedenti usa `gestione.html?strumenti=bussola#bussola`.
 
-La Funzione Strumentale usa la propria password, lasciando vuoto il nome di accesso. Ogni collega ha un nome di accesso e una password personali, creati dalla Funzione Strumentale in «Accessi della commissione». Gli indirizzi selezionati sono visibili in tutte le classi assegnate. Il collega può creare una propria classe per gli indirizzi autorizzati; non può assegnarsi una classe già esistente, cambiare permessi, emettere attestati o accedere alla gestione generale.
+## Le due password già esistenti
 
-## Lavori e presentazione
+- **Funzione Strumentale:** la password abituale apre tutte le classi e tutti i lavori, compresi quelli senza classe. Restano disponibili gestione generale, elenchi e attestati.
+- **Commissione Orientamento:** la password abituale del ruolo `orientatore` permette di creare una classe e ricevere subito codice/QR, oppure aprire una classe con il suo codice di sei caratteri. Il collega vede i lavori delle classi aperte nella propria sessione, nei cinque indirizzi e nelle dodici domande. Non ottiene la gestione amministrativa generale né l'elenco di tutti i partecipanti.
+- Dopo essere usciti, i colleghi riaprono la stessa classe con il codice già comunicato agli alunni. Non occorre ricreare la classe o impostare altre password.
+- La password condivisa riconosce il ruolo Commissione, non identifica il singolo collega. Non si attribuiscono automaticamente le attività a un docente specifico.
+- Gli accessi personali preparati in precedenza rimangono facoltativi, in una sezione chiusa della Funzione Strumentale. Non sono necessari per il percorso ordinario della Commissione. Conservano i limiti di indirizzi/classi assegnati e la revoca immediata.
 
-- Il riepilogo distingue lavori in corso, conclusi e non iniziati degli alunni presenti nell’elenco. I lavori senza classe rimangono consultabili dalla Funzione Strumentale, senza attribuire automaticamente un’identità.
-- Bacheca e quaderno leggono anche progetti incompleti e formati precedenti. Le viste sono di sola lettura: non aprono la pagina impersonando uno studente e non ne attivano il salvataggio.
-- Per la LIM si scelgono i singoli lavori. La presentazione parte con nominativi nascosti; le note private restano nel quaderno. I testi liberi vanno controllati prima della proiezione perché possono contenere nomi scritti dagli alunni.
-- I report raccolgono tutte le pagine della selezione e possono essere esportati in CSV o stampati/salvati in PDF. Di default nascondono i nominativi. Le date sono quelle dell’ultimo salvataggio nel fuso italiano. I conteggi riguardano lavori, non persone uniche fra dispositivi o indirizzi; i filtri della vista corrente indicano esplicitamente la pagina visualizzata.
-- «Classe di prova del docente» consente di distinguere le prove e di escluderle dai riepiloghi ordinari.
+## Uso in classe
 
-## Salvataggi
+1. Il docente entra, sceglie l'indirizzo e crea la classe oppure inserisce il codice esistente.
+2. Condivide codice, collegamento o QR: il primo approdo degli alunni è la Bussola. Possono svolgere le domande o usare «Salta» per passare all'attività.
+3. Gli alunni entrano con nome/cognome o con il link personale già previsto. Le risposte e le note si salvano; «Cambia partecipante» conserva il lavoro precedente sui computer condivisi.
+4. Il docente usa **Riepilogo**, **Bacheca** e **Quaderno**. Vede anche i lavori incompleti, apre le risposte, seleziona i prodotti per la presentazione e può esportare il report.
+5. La Funzione Strumentale può consultare anche le classi create e seguite dai colleghi.
 
-Le dodici domande mantengono la ripresa locale e si salvano anche in `bussola_v2_questionari`, con controllo della revisione e richieste ripetibili. In assenza di rete la bozza viene conservata prima dell’invio; un conflitto offre download della bozza e riapertura della versione online, archiviando la copia locale.
+## Consultazione e presentazione
 
-Il token personale viene riutilizzato nei nuovi percorsi e trasportato nei soli collegamenti interni della Bussola; i progetti esistenti mantengono il proprio proprietario. Nessuna unione automatica per nome e cognome e nessuna ricostruzione delle risposte mai trasmesse dal browser. Il token rimane nel frammento del collegamento personale, non in un URL di presentazione o report.
+Le viste leggono i progetti senza impersonare gli alunni o avviare salvataggi. Nella presentazione i nomi sono inizialmente nascosti; le note private restano nel quaderno. Prima di proiettare occorre controllare i testi liberi, che potrebbero contenere nomi scritti dagli alunni.
 
-Su un computer condiviso, «La mia classe → Cambia partecipante» apre un accesso personale distinto e lascia conservato il lavoro precedente. Il codice della classe rimane disponibile; la persona successiva entra con il proprio nome.
+Report, CSV e stampa comprendono tutte le pagine della selezione. I nominativi sono nascosti come impostazione iniziale. I conteggi si riferiscono ai percorsi; un lavoro senza nominativo non dimostra una persona unica fra dispositivi o indirizzi. Le classi contrassegnate come prove restano escludibili dai report ordinari. L'ultimo salvataggio non è una misura di presenza o attenzione.
 
-Le versioni sono registrate dal database ai passaggi significativi: primo salvataggio, avanzamenti, conclusione e revisione, conservando lo stato prima della revisione. Non si registrano battiture, movimenti del mouse o presunte presenze online. I dati precedenti alla migrazione non ricevono uno storico inventato.
+## Salvataggi e sicurezza
 
-## Accessi e protezione
+Le dodici domande mantengono la bozza locale e si salvano anche in `bussola_v2_questionari`. I tentativi ripetuti sono idempotenti; i conflitti conservano la bozza e permettono di riaprire la versione online. Nessuna unione automatica di omonimi o ricostruzione di risposte mai inviate.
 
-`monitor-handler.mjs` è raggiunto dal wrapper esistente della funzione `bussola-gestione`. Ogni richiesta ricontrolla sul server sessione, stato del collega, indirizzi e classi. I token della commissione non sono accettati dagli endpoint precedenti riservati alla Funzione Strumentale. Sessioni di sei ore per i nuovi accessi; logout revocato nel database; un reset della password cambia `auth_version`. Disattivazione e revoca delle assegnazioni sono effettive nelle richieste successive.
+Le versioni registrano solo passaggi significativi dalla data di attivazione: primo salvataggio, avanzamento, conclusione e revisione. I progetti precedenti non ricevono uno storico inventato. Non si registrano battiture o movimenti del mouse.
 
-Le password della commissione sono derivate con PBKDF2-SHA256, 310.000 iterazioni e salt casuale; hash e salt non sono restituiti al client. Il login ha una quota atomica per rete. Le nuove tabelle hanno RLS e nessun privilegio per `anon`, `authenticated` o `PUBLIC`; le funzioni applicative sono eseguibili dal solo backend. Le autorizzazioni non dipendono da un ruolo dichiarato dal browser.
+Ogni richiesta ricontrolla sul server sessione, ruolo, classi e indirizzi. Le classi aperte dalla Commissione sono associate al token di sessione nella tabella riservata `bussola_v2_classi_sessione`; l'associazione si chiude al logout. Creazione e associazione della nuova classe avvengono nella stessa transazione. Aprire una classe richiede la password Commissione e il codice; conoscere soltanto un ID non concede accesso. I tentativi sono limitati sul server.
 
-L’interfaccia cancella lavori, presentazioni e report al logout/scadenza e ricontrolla gli accessi anche quando la presentazione è aperta. Password e token reali non vanno nei sorgenti, nei log o nei materiali di consegna.
+Le nuove tabelle hanno RLS e nessun accesso per `anon`, `authenticated` o `PUBLIC`. Gli RPC applicativi sono riservati al backend. Gli endpoint amministrativi precedenti continuano ad accettare soltanto la Funzione Strumentale. Le password esistenti e la loro verifica non sono modificate. Password, salt e token reali non entrano nei log o negli archivi.
 
-## Prove e anteprima locale
+## Prove e anteprima
 
-Serve Node.js 24 o successivo. Le dipendenze sono esclusivamente di sviluppo; nessun framework o nuovo servizio è richiesto per le pagine pubbliche.
+Richiede Node.js 24 e le dipendenze fissate in `package-lock.json`, esclusivamente per sviluppo.
 
 ```sh
 npm ci
@@ -41,23 +45,19 @@ npm run test:interfaccia
 npm run preview:monitoraggio
 ```
 
-Anteprima: `http://127.0.0.1:8766/bussola-docenti.html?prova=monitoraggio`.
+Anteprima: http://127.0.0.1:8885/bussola-docenti.html?prova=monitoraggio
 
-Credenziali **solo dell’archivio locale fittizio**:
+Credenziali **esclusivamente fittizie locali**: `ANTEPRIMA` per la Funzione Strumentale; `ORIENTATORE` per la Commissione. Il nome di accesso resta vuoto. Le prove degli accessi personali facoltativi usano `collega.ssas` / `PROVA-docente-2026`.
 
-- Funzione Strumentale: nome di accesso vuoto, password `ANTEPRIMA`.
-- Commissione: `collega.ssas` oppure `collega.turismo`, password `PROVA-docente-2026`.
+Il server usa PostgreSQL/PGlite in memoria e gli handler effettivi. Tutti i salvataggi sono locali; le richieste della pagina verso le funzioni pubbliche sono riscritte ai servizi locali. È stato corretto il percorso della radice che nella prima anteprima causava HTTP 403 e impediva il collaudo nel browser.
 
-L’anteprima usa PGlite/PostgreSQL in memoria e gli handler effettivi; si azzera alla chiusura del server. Non contiene dati o password reali e non inoltra salvataggi alla produzione. I test dell’interfaccia usano un DOM simulato: provano i comandi e le richieste, ma non attestano la resa visiva del browser, della LIM o della stampa fisica.
+## Attivazione e conservazione
 
-## Attivazione, dopo l’approvazione della revisione concreta
+1. Rileggere `origin/main` e il diff approvato. La base pubblicata è `bbb67f4`; le modifiche del monitoraggio sono state integrate su questa base senza duplicare il precedente rilascio.
+2. Rilevare conteggi e impronte aggregate non identificative dei dati preesistenti. Conservare il servizio precedente per il ripristino.
+3. Dopo l'autorizzazione, applicare una sola volta la migrazione additiva `supabase/sql/bussola-monitoraggio.sql`: non contiene password o dati fittizi e non riscrive i lavori precedenti.
+4. Distribuire `bussola-gestione` con tutti i suoi sorgenti, `monitor-auth.mjs`, `monitor-handler.mjs` e `questionario-data.json`. Quest'ultimo deve coincidere con `data/bussola.json`. Conservare le impostazioni di autenticazione del wrapper precedente.
+5. Pubblicare la revisione approvata; attendere Pages e verificare file, collegamenti, conservazione e accessi non autenticati. Non creare sessioni privilegiate nel database o alunni fittizi in produzione per provare l'accesso.
+6. La prova con le password reali richiede il normale login del titolare; le verifiche locali complete non vengono dichiarate come autenticazione reale o prova educativa con gli alunni.
 
-1. Rileggere `main` e confrontare il diff autorizzato. La lavorazione comprende anche la precedente revisione locale del primo approdo alla Bussola e dell’accesso ai codici, base `bbb67f4`, importata senza modificare il checkout originale.
-2. Applicare **una sola volta** `supabase/sql/bussola-monitoraggio.sql` come migrazione tracciata. È additiva e transazionale: non riscrive progetti, note, codici o nominativi preesistenti. Non contiene credenziali o record dimostrativi.
-3. Distribuire `bussola-gestione` includendo `monitor-handler.mjs`, `monitor-auth.mjs` e `questionario-data.json`, oltre ai file già necessari alla funzione. Mantenere le impostazioni di autenticazione del wrapper precedente; la funzione verifica le proprie sessioni in ogni richiesta.
-4. Pubblicare i file del sito approvati e verificare i file serviti, gli accessi dai cinque indirizzi e il recupero dei lavori. Il JSON `questionario-data.json` deve coincidere con `data/bussola.json`; aggiornarli insieme se cambiano le dodici domande.
-5. Collaudare il normale accesso della Funzione Strumentale e poi un accesso personale realmente assegnato. Le nuove tabelle partono senza colleghi: la Funzione Strumentale crea solo gli accessi effettivamente necessari. Non usare alunni fittizi nei progressi di produzione.
-
-Prima del rilascio resta necessario il collaudo visivo in un browser effettivo, sul telefono e sullo schermo destinato alla presentazione. Nell’ambiente di lavorazione il browser integrato ha rifiutato le pagine locali con `net::ERR_BLOCKED_BY_CLIENT`; non è una verifica negativa dell’applicazione.
-
-Per tornare alla versione precedente basta ridistribuire i file e la funzione precedenti: le nuove tabelle possono restare riservate, senza cancellare quanto eventualmente salvato. Nessun processo di eliminazione dei lavori è introdotto da questa revisione.
+Il ripristino consiste nel ridistribuire pagine e servizio precedenti. Le tabelle aggiunte possono restare riservate senza cancellare i dati eventualmente raccolti.

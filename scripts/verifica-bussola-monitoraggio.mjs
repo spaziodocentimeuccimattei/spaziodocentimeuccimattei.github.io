@@ -8,7 +8,34 @@ const login=async(accesso='',password='ANTEPRIMA')=>{const r=await call('monitor
 const fs=await login(),a=await login('collega.ssas','PROVA-docente-2026'),b=await login('collega.turismo','PROVA-docente-2026');
 for(const action of ['monitor_session','monitor_list','monitor_detail','monitor_staff','monitor_feedback_list'])eq((await call(action,{partecipante_id:people[0].id})).status,401,'accesso anonimo negato');
 eq((await call('monitor_list',{access_level:'funzione_strumentale'},'F'.repeat(43))).status,401,'sessione inventata');
-eq((await call('monitor_login',{password:'ORIENTATORE'})).status,401,'la vecchia password di ruolo non crea identità personali');
+const commission=await login('','ORIENTATORE'),otherCommission=await login('','ORIENTATORE');
+eq((await call('monitor_session',{},commission)).body.commissione,true,'password Commissione esistente');
+eq((await call('monitor_session',{},commission)).body.classi,[],'nessun elenco globale ai colleghi');
+for(const action of ['monitor_staff','monitor_save_staff','classes','create_class'])ok([401,403].includes((await call(action,{},commission)).status),'nessun accesso alla gestione master: '+action);
+eq((await call('monitor_list',{classe_id:ids.classA},commission)).status,403,'non apre una classe da un ID');
+eq((await call('monitor_detail',{partecipante_id:people[0].id},commission)).status,403,'non legge un alunno prima del codice');
+eq((await call('monitor_open_class',{codice:'AAAAAA'},commission)).status,404,'codice non disponibile');
+const codeA=(await e.admin.from('bussola_v2_classi').select('codice_breve').eq('id',ids.classA).single()).data.codice_breve;
+eq((await call('monitor_open_class',{codice:codeA.toLowerCase()},commission)).status,200,'apertura con il codice esistente');
+eq((await call('monitor_open_class',{codice:codeA},commission)).status,200,'riapertura idempotente');
+eq((await call('monitor_session',{},commission)).body.classi.length,1);
+eq((await call('monitor_session',{},otherCommission)).body.classi.length,0,'sessioni Commissione distinte');
+for(const corso of ['ssas','afm','sia','turismo','cat']){
+ const reply=await call('monitor_list',{corso,classe_id:ids.classA},commission);eq(reply.status,200,'Commissione '+corso);eq(reply.body.rows.length,1);
+}
+eq((await call('monitor_list',{classe_id:'senza-classe'},commission)).status,403,'quadro globale solo FS');
+eq((await call('monitor_detail',{partecipante_id:people[1].id},commission)).status,403,'altra classe protetta');
+const cc=await call('monitor_create_class',{corso:'cat',scuola:'Commissione fittizia',comune:'Comune fittizio',classe:'3CO',anno:'2026/2027'},commission);
+eq(cc.status,200,'Commissione crea classe e codice senza master');ok(cc.body.classe.codice_breve);
+ok((await call('monitor_session',{},fs)).body.classi.some(c=>c.id===cc.body.classe.id),'FS vede anche le classi della Commissione');
+const cf=crypto.randomUUID();eq((await call('monitor_feedback',{id:cf,contesto:'Classe di prova',testo:'Segnalazione fittizia'},commission)).status,200);
+eq((await call('monitor_feedback_list',{},otherCommission)).body.segnalazioni.length,0,'segnalazioni di altra sessione nascoste');
+eq((await call('monitor_feedback_list',{},fs)).body.segnalazioni.length,1,'master vede le segnalazioni della Commissione');
+eq((await call('monitor_logout',{},commission)).status,200);
+eq((await call('monitor_session',{},commission)).status,401,'logout Commissione effettivo');
+eq((await call('monitor_session',{},otherCommission)).body.classi.length,0);
+eq((await call('monitor_open_class',{codice:cc.body.classe.codice_breve},otherCommission)).status,200,'codice riapre la classe in un nuovo accesso');
+await call('monitor_logout',{},otherCommission);
 const sa=await call('monitor_session',{},a);eq(sa.body.corsi,['ssas']);eq(sa.body.classi.map(c=>c.id),[ids.classA]);
 eq((await call('monitor_session',{},b)).status,200,'la sessione non dipende dal corso iniziale');
 eq((await call('monitor_list',{corso:'cat'},a)).status,403,'indirizzo non assegnato');
@@ -41,7 +68,7 @@ eq((await call('monitor_list',{corso:'bussola'},a)).body.rows[0].project.payload
 const original=structuredClone(projects.ssas),revised=structuredClone(original);revised.caseJourney.finished=false;revised.caseJourney.done=['salute'];revised.caseJourney.health.explanation='Testo rivisto di prova';
 eq((await e.admin.rpc('bussola_v2_salva',{p_partecipante:people[0].id,p_corso:'ssas',p_payload:revised,p_revision:1})).data,2);
 const history=(await call('monitor_detail',{corso:'ssas',partecipante_id:people[0].id},a)).body.history;ok(history.some(h=>h.tipo==='prima_della_revisione'&&h.snapshot.caseJourney.health.explanation===original.caseJourney.health.explanation));ok(history.some(h=>h.tipo==='revisione'));eq((await call('monitor_detail',{corso:'ssas',partecipante_id:people[0].id},a)).body.project.payload.extraFuture,{conservare:true},'campi sconosciuti conservati');
-const fbid=crypto.randomUUID();eq((await call('monitor_feedback',{corso:'ssas',id:fbid,contesto:'Laboratorio 1',testo:'Consegna di prova'},a)).status,200);eq((await call('monitor_feedback',{corso:'ssas',id:fbid,contesto:'Laboratorio 1',testo:'Consegna di prova'},a)).status,200);eq((await call('monitor_feedback_list',{corso:'turismo'},b)).body.segnalazioni.length,0);eq((await call('monitor_feedback_list',{},fs)).body.segnalazioni.length,1);
+const fbid=crypto.randomUUID();eq((await call('monitor_feedback',{corso:'ssas',id:fbid,contesto:'Laboratorio 1',testo:'Consegna di prova'},a)).status,200);eq((await call('monitor_feedback',{corso:'ssas',id:fbid,contesto:'Laboratorio 1',testo:'Consegna di prova'},a)).status,200);eq((await call('monitor_feedback_list',{corso:'turismo'},b)).body.segnalazioni.length,0);eq((await call('monitor_feedback_list',{},fs)).body.segnalazioni.length,2);
 const staffPayload={nome:'Collega di prova',accesso:'collega.nuovo',password:'Password-di-prova-2026',corsi:['ssas'],classi:[ids.classA],attivo:true};
 eq((await call('monitor_save_staff',{...staffPayload,password:'breve'},fs)).status,400,'password troppo breve');
 const createdStaff=await call('monitor_save_staff',staffPayload,fs);eq(createdStaff.status,200);ok(!JSON.stringify(createdStaff.body).includes('password_hash'),'nessun hash restituito al client');
@@ -54,7 +81,7 @@ await db.query('update bussola_v2_docenti set classi=$1 where id=$2',[[],ids.tea
 await db.query('update bussola_v2_docenti set auth_version=gen_random_uuid() where id=$1',[ids.teacherA]);eq((await call('monitor_session',{},a)).status,401,'nuova password invalida le sessioni');
 await db.exec('reset role');await db.query('update bussola_v2_sessioni_docenti set expires_at=now()-interval \'1 minute\' where docente_id=$1',[ids.teacherB]);await db.exec('set role service_role');eq((await call('monitor_session',{},b)).status,401,'sessione scaduta');
 await db.exec('reset role;set role anon');
-for(const table of ['bussola_v2_docenti','bussola_v2_sessioni_docenti','bussola_v2_questionari','bussola_v2_revisioni','bussola_v2_segnalazioni_docenti']){await assert.rejects(()=>db.query('select * from '+table));checks++;}
+for(const table of ['bussola_v2_docenti','bussola_v2_sessioni_docenti','bussola_v2_classi_sessione','bussola_v2_questionari','bussola_v2_revisioni','bussola_v2_segnalazioni_docenti']){await assert.rejects(()=>db.query('select * from '+table));checks++;}
 await assert.rejects(()=>db.query("select bussola_v2_quota_docente(repeat('a',64))"));checks++;
 await db.exec('reset role;set role authenticated');await assert.rejects(()=>db.query('select * from bussola_v2_questionari'));checks++;
 await db.exec('reset role;set role service_role');

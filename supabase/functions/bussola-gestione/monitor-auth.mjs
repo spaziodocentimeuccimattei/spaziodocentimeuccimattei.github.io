@@ -13,6 +13,11 @@ export async function teacherSession(admin,token){
  const fs=await admin.from('orientamento_sessioni').select('access_level,expires_at').eq('token_hash',hash).gt('expires_at',now).maybeSingle();
  if(fs.error)throw new Error('Accesso non disponibile.');
  if(fs.data?.access_level==='funzione_strumentale')return {admin:true,name:'Funzione Strumentale',courses:['ssas','afm','sia','turismo','cat'],classes:[],hash,expires_at:fs.data.expires_at};
+ if(fs.data?.access_level==='orientatore'){
+  const scope=await admin.from('bussola_v2_classi_sessione').select('classe_id').eq('token_hash',hash);
+  if(scope.error)throw new Error('Accesso alle classi non disponibile.');
+  return {admin:false,shared:true,name:'Commissione Orientamento',courses:['ssas','afm','sia','turismo','cat'],classes:scope.data.map(c=>c.classe_id),hash,expires_at:fs.data.expires_at};
+ }
  const session=await admin.from('bussola_v2_sessioni_docenti').select('docente_id,auth_version,expires_at').eq('token_hash',hash).gt('expires_at',now).maybeSingle();
  if(session.error)throw new Error('Accesso non disponibile.');
  if(!session.data)return null;
