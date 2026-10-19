@@ -53,4 +53,17 @@ await second.reload();eq(loaded.answers[first.id],first.options[1].id,'conflitto
 const normalFetch=w.fetch;w.fetch=async()=>{throw new Error('Rete assente nella prova');};
 second.changed({...draft,index:2});await second.retry();assert.match(lastStatus,/conservate sul dispositivo/);checks++;
 const offline=factory({status:t=>{lastStatus=t;},loaded:p=>{loaded=p;},links:()=>{}});await offline.init();eq(loaded.index,2,'bozza ricaricata offline');w.fetch=normalFetch;await offline.retry();await until(()=>lastStatus.startsWith('Risposte salvate'),'retry offline');
+// Il cambio partecipante usa il controller effettivo e conserva l'archivio precedente.
+const studentHtml=await readFile(new URL('bussola-ssas.html',base),'utf8');
+const classInfo=(await env.admin.from('bussola_v2_classi').select('*').eq('id',env.ids.classA).single()).data;
+const studentDom=new JSDOM(studentHtml,{url:'http://127.0.0.1:8766/bussola-ssas.html?prova=monitoraggio#classe='+classInfo.codice_breve});
+const saved=new Map([['lavoro-precedente','risposte da conservare']]);const storage={getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v),removeItem:k=>saved.delete(k)};
+let destination='';const studentLocation=new URL(studentDom.window.location.href);studentLocation.assign=url=>{destination=url;};
+const context2=vm.createContext({document:studentDom.window.document,window:studentDom.window,location:studentLocation,localStorage:storage,crypto,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,btoa,fetch:async(url,opts)=>env.handler(new Request(new URL(url,studentLocation),{...opts,headers:{...opts.headers,Origin:'http://127.0.0.1:8766'}}))});
+const m2=new Map();async function load2(url){if(!m2.has(url.href))m2.set(url.href,(async()=>new vm.SourceTextModule(await readFile(fileURLToPath(url),'utf8'),{context:context2,identifier:url.href}))());return m2.get(url.href);}
+const controller=await load2(new URL('bussola-classe.mjs',base));await controller.link((id,parent)=>load2(new URL(id,parent.identifier)));await controller.evaluate();
+controller.namespace.setupClass({key:'archivio-immutato',token:()=>env.people[0].token,ensure:async()=>{},isIntro:()=>true,start:()=>{}});
+await until(()=>studentDom.window.document.getElementById('classSummary').textContent.includes('Alunno 1'),'identità precedente riconosciuta');
+[...studentDom.window.document.querySelectorAll('button')].find(b=>b.textContent==='Cambia partecipante').click();
+const nextPerson=new URL(destination),identityParams=new URLSearchParams(nextPerson.hash.slice(1));eq(identityParams.get('classe'),classInfo.codice_breve);assert.notEqual(identityParams.get('alunno'),env.people[0].token);checks++;eq(identityParams.get('alunno').length,43);eq(saved.get('lavoro-precedente'),'risposte da conservare');assert.ok(nextPerson.searchParams.get('progetto'));checks++;studentDom.window.close();
 console.log(JSON.stringify({status:'superato',checks,scope:'Client questionario (offline, retry, conflitti) e interfaccia eseguita in DOM simulato con il vero handler e PostgreSQL locale: tre viste, presentazione, CSV, stampa, cinque indirizzi, commissione e revoca',limite:'Non sostituisce un collaudo visivo nel browser'},null,2));w.close();await env.db.close();
