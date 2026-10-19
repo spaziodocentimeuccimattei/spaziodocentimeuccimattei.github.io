@@ -1,8 +1,9 @@
 import { courseArt, questionArt } from './bussola-visuals.mjs?v=20261010-correzioni';
-import { freshState, readState, clearState, summarize, suggestCourses, validateContent } from './bussola-core.mjs';
-import { el, button, link, storage, persist, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs?v=20261010-correzioni';
+import { freshState, readState, clearState, sanitizeState, summarize, suggestCourses, validateContent } from './bussola-core.mjs';
+import { el, button, link, storage, persist as persistLocal, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs?v=20261010-correzioni';
+import {questionnaireRemote} from './bussola-questionario-remote.mjs?v=20261019-monitor';
 import { openCertificate } from './bussola-attestato.mjs?v=20261010-correzioni';
-import { activityDestination } from './bussola-navigazione.mjs?v=20261019-accessi';
+import { activityDestination as rawDestination } from './bussola-navigazione.mjs?v=20261019-accessi';
 
 const intro = document.getElementById('introPanel');
 const resume = document.getElementById('resumePanel');
@@ -14,12 +15,15 @@ const start = document.getElementById('startPath');
 const announcements = document.getElementById('announcements');
 const missionIds = ['afm', 'sia', 'turismo', 'ssas', 'cat'];
 let situations, dimensions, courses, contacts, state;
+let remoteQuestion=null;
+function destination(...args){const u=rawDestination(...args);return remoteQuestion?remoteQuestion.destination(u):u;}
+function persist(value){persistLocal(value);remoteQuestion?.changed(value);}
 const skipActivities = document.getElementById('skipActivities');
-skipActivities.href = activityDestination(location.href);
+skipActivities.href = destination(location.href);
 const entryCourse = new URL(location.href).searchParams.get('corso')?.toLowerCase();
 if (['afm','sia','turismo','ssas','cat'].includes(entryCourse)) {
   skipActivities.textContent = `Salta e vai all’attività ${entryCourse === 'turismo' ? 'Turismo' : entryCourse.toUpperCase()} →`;
-  document.querySelector('.page-nav a[href^="gestione.html"]').href = `gestione.html?corso=${entryCourse}#bussola`;
+  document.querySelector('.page-nav a[href^="bussola-docenti.html"]').href = `bussola-docenti.html?corso=${entryCourse}`;
 }
 
 function hidePanels() {
@@ -38,6 +42,7 @@ function newPath() {
 function resetToIntro() {
   clearState(storage());
   state = freshState();
+  persist(state);
   hidePanels(); intro.hidden = false;
   setJourney(0);
   focusHeading(intro);
@@ -127,7 +132,7 @@ function courseCard(item, highlighted = false, direction = null) {
   for (const subject of course.subjects) subjects.append(el('li', subject));
   card.append(subjects);
   const actions = el('div', null, 'action-row');
-  actions.append(link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`, activityDestination(location.href, course.id)),
+  actions.append(link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`, destination(location.href, course.id)),
     link('Materie e percorso di studio', `indirizzi.html#${course.id}`, 'explore-link'));
   card.append(actions);
   if (highlighted) {
@@ -200,7 +205,7 @@ function renderResults() {
   recap.append(list); results.append(recap);
   results.append(el('p', 'Ora scegli un’attività da provare. Potrai esplorare anche gli altri indirizzi.', 'next-step'));
   const row = el('div', null, 'action-row');
-  row.append(link('Tutte le attività', activityDestination(location.href, ''), 'explore-link'), button('Rivedi le domande', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
+  row.append(link('Tutte le attività', destination(location.href, ''), 'explore-link'), button('Rivedi le domande', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
   results.append(row);
   contactsMount.replaceChildren(contactsPanel(contacts, resetToIntro));
   focusHeading(results);
@@ -214,10 +219,13 @@ async function initialize() {
     if (check.errors.length) throw new Error(check.errors.join(' '));
     situations = b.situations; dimensions = d.dimensions; courses = c.courses; contacts = contactData;
     state = readState(storage(), situations, missionIds);
-    status.textContent = 'Per il percorso non serve registrarsi. Le risposte restano in questa scheda del browser. Alla fine puoi aggiungere solo il tuo nome a un attestato da scaricare.';
+    const syncText=el('span','Le risposte si salvano mentre procedi. Nell’area docenti possono consultarle solo le persone autorizzate.');
+    const retry=button('Riprova il salvataggio',()=>remoteQuestion?.retry(),'explore-link'),copy=button('Scarica la bozza',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(remoteQuestion.copy(),null,2)],{type:'application/json'})),a=el('a');a.href=url;a.download='bussola-risposte.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);},'explore-link'),online=button('Apri la versione online',async()=>{try{await remoteQuestion.reload();}catch(e){syncText.textContent=e.message;}},'explore-link');retry.hidden=copy.hidden=online.hidden=true;status.replaceChildren(syncText,document.createTextNode(' '),retry,document.createTextNode(' '),copy,document.createTextNode(' '),online);
+    remoteQuestion=questionnaireRemote({status:(message,error=false,details={})=>{syncText.textContent=message;retry.hidden=!error||details.conflict;copy.hidden=!error;online.hidden=!details.conflict;},loaded:value=>{const next=sanitizeState({...value,missions:{...state?.missions,...value.missions}},situations,missionIds);if(next){state=next;persistLocal(state);if(!questions.hidden){if(state.stage==='results')renderResults();else renderQuestion();}else if(!results.hidden)renderResults();}},links:personal=>{for(const a of document.querySelectorAll('a[href]')){const u=new URL(a.href);if(u.origin===location.origin&&/(?:missioni|bussola-(?:afm|sia|turismo|ssas|cat))\.html$/.test(u.pathname))a.href=personal(a.href);}}});
     start.disabled = false;
     if (state && Object.keys(state.answers).length) { intro.hidden = true; resume.hidden = false; }
     else state = freshState();
+    remoteQuestion.init().then(()=>{if((!intro.hidden||!resume.hidden)&&state&&Object.keys(state.answers).length){intro.hidden=true;resume.hidden=false;}});
   } catch {
     status.replaceChildren(el('span', 'Le situazioni non si sono caricate. Controlla la connessione. '), button('Riprova', initialize, 'explore-link'));
   }

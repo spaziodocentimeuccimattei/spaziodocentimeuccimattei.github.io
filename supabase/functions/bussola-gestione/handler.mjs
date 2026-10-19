@@ -1,5 +1,6 @@
 import {completion,certificateSnapshot} from './bussola-records-core.mjs';
 import {classCode,isShortCode} from './bussola-codice.mjs';
+import {monitorAction} from './monitor-handler.mjs';
 const TOKEN=/^[A-Za-z0-9_-]{43}$/;
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ORIGINS=new Set(['https://spaziodocentimeuccimattei.github.io','http://127.0.0.1:8766','http://localhost:8766','http://127.0.0.1:8765','http://localhost:8765','http://127.0.0.1:8768','http://localhost:8768']);
@@ -21,6 +22,7 @@ export function makeHandler(admin){
    const raw=await req.text();if(raw.length>80000)throw fail('Richiesta troppo grande.',413);
    let p;try{p=JSON.parse(raw);}catch{throw fail('Richiesta non valida.');}
    if(!p||typeof p!=='object'||Array.isArray(p))throw fail('Richiesta non valida.');
+   if(typeof p.action==='string'&&(p.action.startsWith('monitor_')||p.action.startsWith('questionnaire_')))return reply(await monitorAction(admin,req,p));
    const publicActions=['class_info','identity','enroll'];
    let participant=null;
    if(publicActions.includes(p.action)){

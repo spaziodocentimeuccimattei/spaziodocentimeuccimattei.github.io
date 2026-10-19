@@ -1,7 +1,7 @@
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261012-ingresso';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261010-all';
-import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261010-all';
+import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor';
 import {restore,remoteProject} from './afm-records.mjs?v=20261010-all';
 const COURSE='afm';
 import {STORE as BASE_STORE,LABS,OFFERS,TASKS,OBSTACLES,AGREEMENTS,AMENDMENTS,TONES,QUESTIONS,STAGES,find,createProject,offer,feature,question,economics,cashflow,ready,choose,moveTask,advance,completed,posterTitle,context,addNote,validProject} from './afm-core.mjs?v=20261010-all';

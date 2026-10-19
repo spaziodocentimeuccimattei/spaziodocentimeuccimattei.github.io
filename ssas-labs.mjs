@@ -1,4 +1,5 @@
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261012-ingresso';
+import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261010-all';
 import {GUIDE,cursor,guideIssues,titleDefaults,storyBranch} from './ssas-guided-core.mjs';
 import {LAB_PRESENTATION,studioArt} from './ssas-labs-visuals.mjs?v=20261010-ssas';
@@ -22,6 +23,7 @@ let localOK=true, connected=false, syncing=false, conflict=false, clock=0, timer
 let state={project:freshProject(),token:'',participant:'',revision:0,dirty:false,notes:[],draft:null};
 try{const raw=JSON.parse(localStorage.getItem(KEY));if(raw&&typeof raw==='object')state={...state,...raw,project:restoreProject(raw.project),token:/^[\w-]{43}$/.test(raw.token)?raw.token:'',revision:Number.isInteger(raw.revision)?raw.revision:0,notes:Array.isArray(raw.notes)?raw.notes.filter(n=>n&&typeof n.testo==='string'):[]};}catch{}
 if(entryAlumno&&!state.token)state.token=entryAlumno;
+if(!state.token)state.token=sharedParticipant();
 function keep(){try{localStorage.setItem(KEY,JSON.stringify(state));localOK=true;}catch{localOK=false;}}
 function status(text,error=false){saveStatus.textContent=localTest?text.replaceAll('Supabase','database di prova')+' · Prova locale':text;$('saveStatus').parentElement.dataset.error=String(error);retry.hidden=!error||conflict;}
 function newToken(){const bytes=crypto.getRandomValues(new Uint8Array(32));return btoa(String.fromCharCode(...bytes)).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');}
@@ -34,7 +36,7 @@ async function call(action,payload={}){
 }
 async function connect(){
  if(!state.token){state.token=newToken();keep();}
- const generation=epoch,reply=await call('start');if(generation!==epoch)return;
+ rememberParticipant(state.token);const generation=epoch,reply=await call('start');if(generation!==epoch)return;
  if(reply.project&&state.dirty&&reply.project.revision!==state.revision){
   if(state.lastOp&&reply.project.payload?._save_operation===state.lastOp)state.revision=reply.project.revision;
   else{conflict=true;throw Object.assign(new Error('Il progetto è cambiato in un’altra finestra. Scarica il tuo lavoro prima di ricaricare.'),{code:409});}

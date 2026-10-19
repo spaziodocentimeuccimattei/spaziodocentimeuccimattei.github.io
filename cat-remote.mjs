@@ -1,3 +1,4 @@
+import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 import {restore,remoteProject} from './cat-core.mjs?v=20261009-cat';
 
 export function setupCatRemote(ctx){
@@ -5,6 +6,7 @@ export function setupCatRemote(ctx){
  const API=testing?'/__test/bussola-esperienze':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-esperienze';
  let state={token:ctx.entryToken||'',participant:'',revision:0,dirty:false,lastOp:''},connected=false,syncing=false,conflict=false,clock=0,timer,connecting=null;
  try{const raw=JSON.parse(localStorage.getItem(ctx.key));if(raw&&/^[A-Za-z0-9_-]{43}$/.test(raw.token)&&(!ctx.entryToken||ctx.entryToken===raw.token))state={...state,...raw};}catch{}
+ if(!state.token)state.token=sharedParticipant();
  const keep=()=>{try{localStorage.setItem(ctx.key,JSON.stringify(state));}catch{}};
  async function api(action,payload={}){
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
@@ -25,7 +27,7 @@ export function setupCatRemote(ctx){
   if(connected)return;if(connecting)return connecting;
   connecting=(async()=>{
    if(!state.token){state.token=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');keep();}
-   const reply=await api('start');
+   rememberParticipant(state.token);const reply=await api('start');
    if(reply.project&&state.dirty&&reply.project.revision!==state.revision){
     if(state.lastOp&&reply.project.payload?._save_operation===state.lastOp)state.revision=reply.project.revision;
     else{conflict=true;ctx.conflict();throw Object.assign(new Error('Il lavoro è cambiato in un’altra finestra.'),{status:409});}

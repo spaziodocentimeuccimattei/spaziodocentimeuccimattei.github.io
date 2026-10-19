@@ -1,7 +1,7 @@
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261012-ingresso';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261010-all';
-import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261010-all';
+import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor';
 import {restore,remoteProject} from './sia-records.mjs?v=20261010-all';
 const COURSE='sia';
 import {FORMAT,STORE as BASE_STORE,LABS,STAGES,PROCESS,FIELDS,BLOCKS,CASES,PARTS,ROLES,find,createProject,move,processRun,processSignature,handoffRun,records,query,programSignature,execute,runProgram,uiSignature,runUI,accessSignature,runAccess,currentRuns,ready,completed,advance,context,addNote,validProject,invalidate} from './sia-core.mjs?v=20261010-all';

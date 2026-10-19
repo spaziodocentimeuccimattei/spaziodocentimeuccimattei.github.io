@@ -1,7 +1,7 @@
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261012-ingresso';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261010-all';
-import {setupTourismRemote} from './turismo-remote.mjs?v=20261009-stile';
+import {setupTourismRemote} from './turismo-remote.mjs?v=20261019-monitor';
 import {KEY as BASE_KEY,LABS,PLACES,QUESTIONS,WELCOMES,PLANS,RAIN,SERVICES,TERMS,TONES,createProject,restore,choose,canAdvance,next,complete,costs} from './turismo-core.mjs?v=20261009-turismo';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');

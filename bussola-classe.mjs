@@ -1,4 +1,5 @@
 import {classCode,isShortCode} from './bussola-codice.mjs?v=20261008-codice';
+import {rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 const TOKEN=/^[A-Za-z0-9_-]{43}$/;
 export function classEntry(){const p=new URLSearchParams(location.hash.slice(1));return {classe:classCode(p.get('classe')),alunno:TOKEN.test(p.get('alunno'))?p.get('alunno'):''};}
 export function setupClass(ctx){
@@ -41,7 +42,7 @@ export function setupClass(ctx){
  }
  async function refresh(){
   if(ctx.token()){
-   const d=await api('identity');if(d.alunno){identity=d;info=d.classe;access=info.codice_breve||info.codice||access;codeInput.value=isShortCode(access)?access:'';keep();show();return;}
+   const d=await api('identity');if(d.alunno){identity=d;info=d.classe;access=info.codice_breve||info.codice||access;rememberParticipant(ctx.token(),access);codeInput.value=isShortCode(access)?access:'';keep();show();return;}
   }
   if(access){info=(await api('class_info',{classe:access})).classe;show();}
  }
@@ -62,7 +63,7 @@ export function setupClass(ctx){
    if(info.modalita==='elenco'&&!entry.alunno)throw new Error('Questa classe usa accessi personali. Apri quello ricevuto dal docente.');
    const nome=form.elements.nome.value,cognome=form.elements.cognome.value;
    await ctx.ensure();identity=await api('enroll',{classe:access,accesso:entry.alunno||ctx.token(),nome,cognome});keep();show();
-   if(startMode)start();else dialog.close();
+   rememberParticipant(ctx.token(),access);if(startMode)start();else dialog.close();
   }catch(e){$('classMessage').textContent=e.message;}finally{submit.disabled=false;}
  });
  $('classGuest').addEventListener('click',()=>{if(!startMode||entry.classe||identity?.alunno)return;access='';info=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}start();});

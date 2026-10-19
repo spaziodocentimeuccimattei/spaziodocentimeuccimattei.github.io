@@ -1,8 +1,9 @@
+import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
 import {materialExamples,materialCheck,INTEREST_ACTIVITIES} from './ssas-situazioni-revisione.mjs';
 import {readEntryState} from './ssas-situazioni-entry-core.mjs?v=20261018-ingresso';
 import {sceneCardArt,sceneFigure,entranceImage} from './ssas-illustrazioni.mjs?v=20261012-scene';
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261012-ingresso';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261013-ssas';
 import {FORMAT,LABS,CASES,caseById,PRESENTATION as LAB_PRESENTATION,GUIDE,cursor,guideIssues,titleDefaults,freshProject,restoreProject,selectCase,issues,beginRevision,summaryItems,xml} from './ssas-situazioni-core.mjs?v=20261018-testi';
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');
@@ -24,6 +25,7 @@ let localOK=true, connected=false, syncing=false, conflict=false, clock=0, timer
 let state={project:freshProject(),token:'',participant:'',revision:0,dirty:false,notes:[],draft:null};
 try{const raw=readEntryState(localStorage,KEY);if(raw&&typeof raw==='object')state={...state,...raw,project:restoreProject(raw.project),token:/^[\w-]{43}$/.test(raw.token)?raw.token:'',revision:Number.isInteger(raw.revision)?raw.revision:0,notes:Array.isArray(raw.notes)?raw.notes.filter(n=>n&&typeof n.testo==='string'):[]};}catch{}
 if(entryAlumno&&!state.token)state.token=entryAlumno;
+if(!state.token)state.token=sharedParticipant();
 const navigation=setupExperienceNavigation(route=>{restoreRoute(route);render(true);});
 function restoreRoute(route){
  const m=route.match(/^laboratorio-([1-5])-([1-3])$/),step=route==='conclusione'?6:Number(m?.[1]),part=Number(m?.[2])-1,j=journey();
@@ -45,7 +47,7 @@ async function call(action,payload={}){
 }
 async function connect(){
  if(!state.token){state.token=newToken();keep();}
- const generation=epoch,reply=await call('start');if(generation!==epoch)return;
+ rememberParticipant(state.token);const generation=epoch,reply=await call('start');if(generation!==epoch)return;
  if(reply.project&&state.dirty&&reply.project.revision!==state.revision){
   if(state.lastOp&&reply.project.payload?._save_operation===state.lastOp)state.revision=reply.project.revision;
   else{conflict=true;throw Object.assign(new Error('Il progetto è cambiato in un’altra finestra. Scarica il tuo lavoro prima di ricaricare.'),{code:409});}

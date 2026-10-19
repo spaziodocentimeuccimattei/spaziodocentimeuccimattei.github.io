@@ -1,7 +1,7 @@
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261012-ingresso';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261010-all';
-import {setupCatRemote} from './cat-remote.mjs?v=20261009-cat';
+import {setupCatRemote} from './cat-remote.mjs?v=20261019-monitor';
 import {FORMAT,STORE as BASE_STORE,LABS,STAGES,AREAS,VIEWS,ZONES,ROOFS,FLOORS,OBSERVATIONS,HYPOTHESES,PHASES,find,createProject,dimensions,inBounds,layoutValid,place,surveySignature,composeSurvey,layoutSignature,testLayout,buildSignature,testWeather,heritageSignature,compareHeritage,estimate,planSignature,testPlan,latest,ready,completed,advance,invalidate,context,addNote,validProject} from './cat-core.mjs?v=20261009-cat';
 import {esc,viewDrawing,planBoard,construction,heritage,heroDrawing} from './cat-visuals.mjs?v=20261009-cat';
 const entry=classEntry(),entryToken=entry.alunno;

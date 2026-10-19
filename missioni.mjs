@@ -1,3 +1,4 @@
+import {personalDestination} from './bussola-identita.mjs?v=20261019-monitor';
 import {activityDestination} from './bussola-navigazione.mjs?v=20261019-accessi';
 import { readState, freshState, totals, clearState } from './bussola-core.mjs';
 import { el, button, link, choice, storage, persist, loadData, focusHeading, setJourney, contactsPanel, showError } from './bussola-ui.mjs?v=20261010-correzioni';
@@ -213,7 +214,7 @@ async function initialize() {
         cat:{title:'Progetta uno spazio e documenta il patrimonio',description:'Un cortile da progettare e una documentazione archeologica da preparare, in cinque laboratori.',url:'bussola-cat.html'}
       }[course.id];
       card.id = `prova-${course.id}`;
-      card.append(el('p',course.code === 'TUR' ? 'Turismo' : course.code,'explore-kicker'),el('h2',entry?.title||mission.title),el('p',course.name,'activity-course-name'),el('p',entry?.description||mission.subject),entry?link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`,activityDestination(location.href,course.id)):button(`Prova ${course.code}`,()=>openMission(course.id)));
+      card.append(el('p',course.code === 'TUR' ? 'Turismo' : course.code,'explore-kicker'),el('h2',entry?.title||mission.title),el('p',course.name,'activity-course-name'),el('p',entry?.description||mission.subject),entry?link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`,personalDestination(activityDestination(location.href,course.id))):button(`Prova ${course.code}`,()=>openMission(course.id)));
       cards.append(card);
     }
     contactsMount.replaceChildren(contactsPanel(contacts,()=>{
