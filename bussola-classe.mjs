@@ -67,6 +67,13 @@ export function setupClass(ctx){
   }catch(e){$('classMessage').textContent=e.message;}finally{submit.disabled=false;}
  });
  $('classGuest').addEventListener('click',()=>{if(!startMode||entry.classe||identity?.alunno)return;access='';info=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}start();});
+ const changePerson=document.createElement('button');changePerson.type='button';changePerson.className='secondary';changePerson.textContent='Cambia partecipante';changePerson.title='Il lavoro attuale resta conservato. L’altra persona entrerà con il proprio nome.';
+ changePerson.addEventListener('click',()=>{
+  const nextToken=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
+  const url=new URL(location.href),params=new URLSearchParams({alunno:nextToken});if(access)params.set('classe',access);
+  // A new query forces a fresh page and separate storage even on a shared computer.
+  url.searchParams.set('progetto',crypto.randomUUID());url.hash=params.toString();rememberParticipant(nextToken,access);location.assign(url.href);
+ });dialog.append(changePerson);
  document.addEventListener('bussola-progetto-nuovo',()=>{identity=null;form.elements.nome.value='';form.elements.cognome.value='';show();});
  const initial=ctx.token()||access?refresh().catch(()=>{}):Promise.resolve();
  if(entry.classe)initial.then(()=>{if(info&&!identity?.alunno)open($('openClass'),ctx.isIntro());});

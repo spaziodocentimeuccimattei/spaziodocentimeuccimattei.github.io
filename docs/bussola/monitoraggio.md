@@ -18,6 +18,8 @@ Le dodici domande mantengono la ripresa locale e si salvano anche in `bussola_v2
 
 Il token personale viene riutilizzato nei nuovi percorsi e trasportato nei soli collegamenti interni della Bussola; i progetti esistenti mantengono il proprio proprietario. Nessuna unione automatica per nome e cognome e nessuna ricostruzione delle risposte mai trasmesse dal browser. Il token rimane nel frammento del collegamento personale, non in un URL di presentazione o report.
 
+Su un computer condiviso, «La mia classe → Cambia partecipante» apre un accesso personale distinto e lascia conservato il lavoro precedente. Il codice della classe rimane disponibile; la persona successiva entra con il proprio nome.
+
 Le versioni sono registrate dal database ai passaggi significativi: primo salvataggio, avanzamenti, conclusione e revisione, conservando lo stato prima della revisione. Non si registrano battiture, movimenti del mouse o presunte presenze online. I dati precedenti alla migrazione non ricevono uno storico inventato.
 
 ## Accessi e protezione
