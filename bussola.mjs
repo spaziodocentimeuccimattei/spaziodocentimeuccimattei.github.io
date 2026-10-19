@@ -2,6 +2,7 @@ import { courseArt, questionArt } from './bussola-visuals.mjs?v=20261010-correzi
 import { freshState, readState, clearState, summarize, suggestCourses, validateContent } from './bussola-core.mjs';
 import { el, button, link, storage, persist, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs?v=20261010-correzioni';
 import { openCertificate } from './bussola-attestato.mjs?v=20261010-correzioni';
+import { activityDestination } from './bussola-navigazione.mjs?v=20261019-accessi';
 
 const intro = document.getElementById('introPanel');
 const resume = document.getElementById('resumePanel');
@@ -13,9 +14,17 @@ const start = document.getElementById('startPath');
 const announcements = document.getElementById('announcements');
 const missionIds = ['afm', 'sia', 'turismo', 'ssas', 'cat'];
 let situations, dimensions, courses, contacts, state;
+const skipActivities = document.getElementById('skipActivities');
+skipActivities.href = activityDestination(location.href);
+const entryCourse = new URL(location.href).searchParams.get('corso')?.toLowerCase();
+if (['afm','sia','turismo','ssas','cat'].includes(entryCourse)) {
+  skipActivities.textContent = `Salta e vai all’attività ${entryCourse === 'turismo' ? 'Turismo' : entryCourse.toUpperCase()} →`;
+  document.querySelector('.page-nav a[href^="gestione.html"]').href = `gestione.html?corso=${entryCourse}#bussola`;
+}
 
 function hidePanels() {
   for (const panel of [intro, resume, questions, results, contactsMount]) panel.hidden = true;
+  skipActivities.parentElement.hidden = false;
   announcements.textContent = '';
 }
 
@@ -77,9 +86,12 @@ function renderQuestion() {
   }, 'explore-button secondary');
   back.disabled = state.index === 0;
   footer.append(back, button('Non lo so ancora', () => advance(null), 'skip-button'), next);
+  const exit = el('p', null, 'compass-skip');
+  exit.append(link(skipActivities.textContent, skipActivities.href, 'explore-link'));
+  skipActivities.parentElement.hidden = true;
   const context = el('div', null, 'question-context'); const copy = el('div');
   copy.append(el('p', situation.area, 'question-area'), heading, scenario); context.append(copy, questionArt(situation.id));
-  questions.replaceChildren(progressBox, context, fieldset, footer);
+  questions.replaceChildren(progressBox, context, fieldset, footer, exit);
   focusHeading(questions);
 }
 
@@ -115,7 +127,7 @@ function courseCard(item, highlighted = false, direction = null) {
   for (const subject of course.subjects) subjects.append(el('li', subject));
   card.append(subjects);
   const actions = el('div', null, 'action-row');
-  actions.append(link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`, `bussola-${course.id}.html`),
+  actions.append(link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`, activityDestination(location.href, course.id)),
     link('Materie e percorso di studio', `indirizzi.html#${course.id}`, 'explore-link'));
   card.append(actions);
   if (highlighted) {
@@ -188,7 +200,7 @@ function renderResults() {
   recap.append(list); results.append(recap);
   results.append(el('p', 'Ora scegli un’attività da provare. Potrai esplorare anche gli altri indirizzi.', 'next-step'));
   const row = el('div', null, 'action-row');
-  row.append(link('Tutte le attività', 'missioni.html', 'explore-link'), button('Rivedi le domande', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
+  row.append(link('Tutte le attività', activityDestination(location.href, ''), 'explore-link'), button('Rivedi le domande', () => { state.index = 0; state.stage = 'question'; persist(state); renderQuestion(); }, 'explore-button secondary'), button('Ricomincia', resetToIntro, 'explore-button secondary'));
   results.append(row);
   contactsMount.replaceChildren(contactsPanel(contacts, resetToIntro));
   focusHeading(results);

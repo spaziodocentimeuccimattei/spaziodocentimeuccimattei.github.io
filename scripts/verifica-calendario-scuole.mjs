@@ -41,7 +41,7 @@ console.log('Calendario scuole: conservazione, 24 scuole, stati, ordine, periodi
 // La nuova apertura non deve mai sovrascrivere una data non ancora salvata.
 const managementSource=await readFile(new URL('../gestione.js',import.meta.url),'utf8');
 const start=managementSource.indexOf('function openCalendarForm(');
-const end=managementSource.indexOf('\ndocument.querySelector(\'.manage-tools-link\')',start);
+const end=managementSource.indexOf('\ndocument.',start);
 const draft=[{value:'2026-10-27'},{value:'Bozza da conservare'}];
 const form={querySelectorAll:()=>draft,scrollIntoView:()=>{},elements:{data:{focus:()=>{}}}};
 const tools={open:false}, message={textContent:''}, cancel={hidden:true,textContent:''}, schoolSelect={value:'scuola-in-compilazione'};

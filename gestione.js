@@ -54,7 +54,7 @@ function openCalendarForm(school, item) {
     appointmentForm.elements.data.focus({preventScroll:true});
   }
 }
-document.querySelector('.manage-tools-link').addEventListener('click', () => { managementTools.open = true; });
+document.querySelectorAll('.manage-tools-link').forEach(link => link.addEventListener('click', () => { managementTools.open = true; }));
 
 // Data di oggi in Italia, nel formato delle date salvate (AAAA-MM-GG).
 function today() {
@@ -102,6 +102,19 @@ function showWorkspace() {
   loginPanel.hidden = true;
   workspacePanel.hidden = false;
   document.getElementById('workspaceTitle').focus({ preventScroll: true });
+}
+
+function openRequestedManagementSection() {
+  if (location.hash !== '#bussola') return;
+  if (!loginPanel.hidden) {
+    document.getElementById('access-title').textContent = 'Accedi per creare il codice della classe';
+    return;
+  }
+  managementTools.open = true;
+  const tab = document.querySelector('[data-tab="bussola"]');
+  tab.click();
+  tab.focus({preventScroll:true});
+  document.getElementById('bussolaManagement').scrollIntoView({block:'start',behavior:'instant'});
 }
 
 function resetSession() {
@@ -609,6 +622,7 @@ async function enter() {
     throw error;
   }
   showWorkspace();
+  openRequestedManagementSection();
   document.dispatchEvent(new CustomEvent('bussola-gestione-accesso'));
   globalMessage.textContent = 'Caricamento…';
   await load();
@@ -733,4 +747,6 @@ for(const [i,tab] of [...document.querySelectorAll('[role="tab"]')].entries()){
 }
 
 // L’accesso diventa attivo solo dopo il collegamento dei gestori del modulo.
+window.addEventListener('hashchange', openRequestedManagementSection);
+openRequestedManagementSection();
 passwordForm.querySelector('button[type="submit"]').disabled = false;

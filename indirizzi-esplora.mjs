@@ -38,7 +38,7 @@ async function initialize() {
     }, 'explore-button secondary'), button('È un dispositivo condiviso: cancella le scelte', () => {
       clearState(storage());
       document.querySelectorAll('[data-course]').forEach(box => { box.replaceChildren(); box.hidden = true; });
-      actions.replaceChildren(link('Torna alle attività', 'missioni.html', 'explore-link'));
+      actions.replaceChildren(link('Torna alla Bussola', 'bussola.html', 'explore-link'));
       document.getElementById('exploreContext').textContent = 'Le risposte precedenti sono state cancellate. Puoi esplorare tutti gli indirizzi.';
     }, 'explore-button secondary'));
   } catch {

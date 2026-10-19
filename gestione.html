@@ -52,7 +52,7 @@
       <div class="manage-panel" id="workspacePanel" hidden>
         <div class="manage-top">
           <div><p class="step">Gestione orientamento</p><h2 id="workspaceTitle" tabindex="-1">Il calendario delle scuole</h2></div>
-          <div class="manage-actions"><a class="manage-tools-link" href="#managementTools">Attività e attestati ↓</a><button id="refreshButton" type="button">Aggiorna dati</button><button class="logout-button" id="logoutButton" type="button">Esci</button></div>
+          <div class="manage-actions"><a class="manage-tools-link bussola-tools-link" href="#bussola">Classi e codici della Bussola</a><a class="manage-tools-link" href="#managementTools">Attività e attestati ↓</a><button id="refreshButton" type="button">Aggiorna dati</button><button class="logout-button" id="logoutButton" type="button">Esci</button></div>
         </div>
         <p id="globalMessage" class="global-message" role="status" aria-live="polite"></p>
         <section id="manageSchoolCalendar" aria-label="Calendario completo delle scuole"></section>
@@ -69,7 +69,7 @@
           <button role="tab" data-tab="proposte" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M8 14a6 6 0 1 1 8 0l-1 3H9z"/></svg><span class="tab-label">Proposte Mattinée <span class="count" id="countProposte"></span></span></button>
           <button role="tab" data-tab="scuole" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12M9 21v-7h6v7M6 10v2M18 10v2M6 16v2M18 16v2"/></svg><span class="tab-label">Scuole</span></button>
           <button role="tab" data-tab="calendario" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 11h18M7 15h2M15 15h2"/></svg><span class="tab-label">Calendario <span class="count" id="countCalendario"></span></span></button>
-          <button role="tab" data-tab="bussola" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/></svg><span class="tab-label">Bussola e attestati</span></button>
+          <button role="tab" data-tab="bussola" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/></svg><span class="tab-label">Classi, codici e attestati</span></button>
           <button role="tab" data-tab="attivita" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 15l2 2 5-5"/></svg><span class="tab-label">Attività confermate</span></button>
         </nav>
 
@@ -192,7 +192,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script type="module" src="gestione.js?v=20261016-conferma-fs"></script>
-<script type="module" src="bussola-gestione.mjs?v=20261013-ssas"></script>
+  <script type="module" src="gestione.js?v=20261019-accessi"></script>
+<script type="module" src="bussola-gestione.mjs?v=20261019-accessi"></script>
 </body>
 </html>

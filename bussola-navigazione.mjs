@@ -1,4 +1,16 @@
 // Presentation is a view, never a change to the saved project's position.
+// A public orientation entry keeps its selected activity and any shared link.
+export function activityDestination(href, course = null) {
+  const source = new URL(href);
+  const selected = String(course ?? source.searchParams.get('corso') ?? '').toLowerCase();
+  const valid = ['afm', 'sia', 'turismo', 'ssas', 'cat'].includes(selected);
+  const target = new URL(valid ? `bussola-${selected}.html` : 'missioni.html', source);
+  target.search = source.search;
+  target.searchParams.delete('corso');
+  if (source.hash.includes('=')) target.hash = source.hash;
+  return target.href;
+}
+
 export function experienceRoute(hash = '') {
   const raw = hash.replace(/^#/, '');
   const route = raw.includes('=') ? new URLSearchParams(raw).get('passaggio') : raw;

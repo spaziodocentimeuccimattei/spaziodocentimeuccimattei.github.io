@@ -23,6 +23,9 @@
   outline-offset: 3px;
 }
 .experience-path [aria-current] { font-weight: 800; }
+.experience-path .experience-teacher { margin-left: auto; font-weight: 600; }
+.compass-skip { margin: 0 0 22px; text-align: right; }
+.compass-skip a { display: inline-flex; align-items: center; min-height: 44px; }
 .missioni-page .activity-path { margin-bottom: 26px; }
 .missioni-page #catalogTitle { color: #fff; }
 .missioni-page .mission-card { display: flex; flex-direction: column; align-items: flex-start; }
