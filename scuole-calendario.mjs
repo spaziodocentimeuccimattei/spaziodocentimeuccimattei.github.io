@@ -28,7 +28,7 @@ export function calendarModel(schools, appointments, {start = italyToday().slice
     const state = !ready ? 'unknown' : upcoming.some(item => item.stato === 'confermata') ? 'confirmed' : upcoming.length ? 'planned' : 'undated';
     return {school, all, upcoming, state, cells:months.map(month => all.filter(item => item.data.startsWith(month))), outside:all.filter(item => !months.includes(item.data.slice(0,7)))};
   });
-  return {months, rows, counts:{all:rows.length, dated:ready ? rows.filter(row => row.upcoming.length).length : null, undated:ready ? rows.filter(row => !row.upcoming.length).length : null, planned:ready ? rows.filter(row => row.upcoming.some(item => item.stato !== 'confermata')).length : null}};
+  return {months, rows, counts:{all:rows.length, dated:ready ? rows.filter(row => row.upcoming.length).length : null, confirmed:ready ? rows.filter(row => row.state === 'confirmed').length : null, undated:ready ? rows.filter(row => !row.upcoming.length).length : null, planned:ready ? rows.filter(row => row.upcoming.some(item => item.stato !== 'confermata')).length : null}};
 }
 const node = (tag, text, className) => {
   const element = document.createElement(tag);
@@ -61,7 +61,7 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
   toolbar.append(period,searchLabel);root.append(toolbar);
   const filters=node('div',null,'school-calendar__filters');filters.setAttribute('aria-label','Scuole da mostrare');
   const buttons=new Map();
-  for (const [key,title] of [['all','Tutte le scuole'],['dated','Con date in arrivo'],['undated','Senza date in arrivo'],['planned','Date da confermare']]) {
+  for (const [key,title] of [['all','Tutte le scuole'],['dated','Con date in arrivo'],['confirmed','Date confermate'],['planned','Date da confermare'],['undated','Senza date in arrivo']]) {
     const button=action('',()=>{filter=key;render();},'school-calendar__filter');button.dataset.calendarFilter=key;button.dataset.title=title;buttons.set(key,button);filters.append(button);
   }
   root.append(filters);
@@ -107,7 +107,7 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
   function render() {
     const model=calendarModel(schools,appointments,{start,ready});
     for(const [key,button] of buttons) {button.replaceChildren(node('span',button.dataset.title),node('b',model.counts[key] ?? '—'));button.setAttribute('aria-pressed',String(filter===key));button.disabled=!ready&&key!=='all';}
-    const visible=model.rows.filter(row=> (!term||normalize(`${row.school.comune} ${row.school.etichetta}`).includes(term)) && (filter==='all'||filter==='dated'&&row.upcoming.length||filter==='undated'&&!row.upcoming.length||filter==='planned'&&row.upcoming.some(item=>item.stato!=='confermata')));
+    const visible=model.rows.filter(row=> (!term||normalize(`${row.school.comune} ${row.school.etichetta}`).includes(term)) && (filter==='all'||filter==='dated'&&row.upcoming.length||filter==='confirmed'&&row.state==='confirmed'||filter==='undated'&&!row.upcoming.length||filter==='planned'&&row.upcoming.some(item=>item.stato!=='confermata')));
     periodHeading.textContent=`${monthTitle(model.months[0])} — ${monthTitle(model.months[2])}`;
     result.textContent=`${visible.length} di ${schools.length} scuole visibili${filter==='all'&&!term?' · elenco completo':''}`;
     wrap.replaceChildren();
