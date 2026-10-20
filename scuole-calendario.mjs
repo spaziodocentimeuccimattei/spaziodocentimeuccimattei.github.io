@@ -25,10 +25,10 @@ export function calendarModel(schools, appointments, {start = italyToday().slice
   const rows = schools.map(school => {
     const all = ordered(dates.filter(item => item.scuola_id === school.id));
     const upcoming = all.filter(item => item.data >= today);
-    const state = !ready ? 'unknown' : upcoming.some(item => item.stato === 'confermata') ? 'confirmed' : upcoming.length ? 'planned' : 'undated';
+    const state = !ready ? 'unknown' : upcoming.length ? 'bookable' : 'undated';
     return {school, all, upcoming, state, cells:months.map(month => all.filter(item => item.data.startsWith(month))), outside:all.filter(item => !months.includes(item.data.slice(0,7)))};
   });
-  return {months, rows, counts:{all:rows.length, dated:ready ? rows.filter(row => row.upcoming.length).length : null, confirmed:ready ? rows.filter(row => row.state === 'confirmed').length : null, undated:ready ? rows.filter(row => !row.upcoming.length).length : null, planned:ready ? rows.filter(row => row.upcoming.some(item => item.stato !== 'confermata')).length : null}};
+  return {months, rows, counts:{all:rows.length, bookable:ready ? rows.filter(row => row.upcoming.length).length : null}};
 }
 const node = (tag, text, className) => {
   const element = document.createElement(tag);
@@ -61,7 +61,7 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
   toolbar.append(period,searchLabel);root.append(toolbar);
   const filters=node('div',null,'school-calendar__filters');filters.setAttribute('aria-label','Scuole da mostrare');
   const buttons=new Map();
-  for (const [key,title] of [['all','Tutte le scuole'],['dated','Con date in arrivo'],['confirmed','Date confermate'],['planned','Date da confermare'],['undated','Senza date in arrivo']]) {
+  for (const [key,title] of [['all','Tutte le scuole'],['bookable','Date prenotabili']]) {
     const button=action('',()=>{filter=key;render();},'school-calendar__filter');button.dataset.calendarFilter=key;button.dataset.title=title;buttons.set(key,button);filters.append(button);
   }
   root.append(filters);
@@ -69,18 +69,16 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
   const periodHeading=node('h3',null,'school-calendar__period-title');root.append(periodHeading);
   const result=node('p',null,'school-calendar__result');result.setAttribute('aria-live','polite');root.append(result);
   const wrap=node('div',null,'school-calendar__table-wrap');root.append(wrap);
-  const legend=node('p','Confermata dalla scuola · Prevista, da confermare · Senza data in arrivo','school-calendar__legend');root.append(legend);
   search.addEventListener('input',()=>{term=normalize(search.value.trim());render();});
   month.addEventListener('change',()=>{if(/^\d{4}-\d{2}$/.test(month.value)){start=month.value;render();}});
   function changePeriod(offset) {start=shiftMonth(start,offset);month.value=start;render();}
   function eventCard(item) {
-    const card=node('article',null,`school-calendar__event ${item.stato==='confermata'?'is-confirmed':'is-planned'}`);
+    const card=node('article',null,`school-calendar__event ${item.data>=italyToday()?'is-bookable':'is-past'}`);
     const date=node('time',null,'school-calendar__date');date.dateTime=item.data;
     const number=node('strong',String(Number(item.data.slice(8))));
     const dateCopy=node('span');dateCopy.append(node('b',monthTitle(item.data.slice(0,7))),node('span',new Intl.DateTimeFormat('it-IT',{weekday:'long'}).format(new Date(`${item.data}T12:00:00`))));date.append(number,dateCopy);card.append(date);
     card.append(node('p',timeRange(item),'school-calendar__time'));
-    card.append(node('p',item.stato==='confermata'?'Confermata dalla scuola':'Prevista · da confermare','school-calendar__badge'));
-    if(item.data<italyToday()) card.append(node('p','Data trascorsa','school-calendar__past'));
+    card.append(node('p',item.data>=italyToday()?'Data prenotabile':'Data trascorsa','school-calendar__badge'));
     card.append(node('p',item.tipo==='stand'?'Open day con stand':'Orientamento nelle aule','school-calendar__type'));
     card.append(node('p',item.luogo || 'Luogo da definire','school-calendar__place'));
     if(admin && item.nota) {const note=node('div',null,'school-calendar__note');note.append(node('strong','Nota interna'),node('p',item.nota));card.append(note);}
@@ -90,7 +88,7 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
   function schoolHeader(row) {
     const th=node('th',null,'school-calendar__school');th.scope='row';
     th.append(node('strong',row.school.comune),node('span',row.school.etichetta));
-    const labels={confirmed:'Con date confermate',planned:'Date da confermare',undated:'Senza data in arrivo',unknown:'Date non disponibili'};
+    const labels={bookable:'Date prenotabili',undated:'Data da concordare',unknown:'Date non disponibili'};
     th.append(node('span',labels[row.state],`school-calendar__school-state is-${row.state}`));
     const participation=states.get(row.school.id);
     if(participation==='visitata')th.append(node('small','Visita già registrata','school-calendar__participation'));
@@ -105,9 +103,10 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
     return th;
   }
   function render() {
-    const model=calendarModel(schools,appointments,{start,ready});
+    const today=italyToday();
+    const model=calendarModel(schools,appointments,{start,ready,today});
     for(const [key,button] of buttons) {button.replaceChildren(node('span',button.dataset.title),node('b',model.counts[key] ?? '—'));button.setAttribute('aria-pressed',String(filter===key));button.disabled=!ready&&key!=='all';}
-    const visible=model.rows.filter(row=> (!term||normalize(`${row.school.comune} ${row.school.etichetta}`).includes(term)) && (filter==='all'||filter==='dated'&&row.upcoming.length||filter==='confirmed'&&row.state==='confirmed'||filter==='undated'&&!row.upcoming.length||filter==='planned'&&row.upcoming.some(item=>item.stato!=='confermata')));
+    const visible=model.rows.filter(row=> (!term||normalize(`${row.school.comune} ${row.school.etichetta}`).includes(term)) && (filter==='all'||filter==='bookable'&&row.upcoming.length));
     periodHeading.textContent=`${monthTitle(model.months[0])} — ${monthTitle(model.months[2])}`;
     result.textContent=`${visible.length} di ${schools.length} scuole visibili${filter==='all'&&!term?' · elenco completo':''}`;
     wrap.replaceChildren();
@@ -117,7 +116,8 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
     const thead=node('thead'),head=node('tr');const schoolColumn=node('th','Scuola');schoolColumn.scope='col';head.append(schoolColumn);
     for(const key of model.months){const th=node('th',monthTitle(key));th.scope='col';head.append(th);}thead.append(head);table.append(thead);
     const tbody=node('tbody');
-    for(const row of visible) {
+    for(const schoolRow of visible) {
+      const row=filter==='bookable'?{...schoolRow,all:schoolRow.upcoming,cells:schoolRow.cells.map(items=>items.filter(item=>item.data>=today)),outside:schoolRow.outside.filter(item=>item.data>=today)}:schoolRow;
       const tr=node('tr');tr.dataset.school=row.school.id;tr.dataset.calendarState=row.state;tr.append(schoolHeader(row));
       if(!ready || !row.all.length || !row.cells.some(cell=>cell.length)) {
         const td=node('td',null,'school-calendar__gap');td.colSpan=3;

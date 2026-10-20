@@ -13,7 +13,7 @@
 .school-calendar__period > button { width:46px; min-height:46px; padding:10px; font-size:1.25rem; }
 .school-calendar__action { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 14px; border:1px solid #9bb5c1; border-radius:9px; color:#14384e; background:#fff; font-family:inherit; font-size:.9375rem; font-weight:700; line-height:1.4; cursor:pointer; }
 .school-calendar__action:hover { background:#e7f1f3; border-color:#446d7e; }
-.school-calendar__filters { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:18px 0; }
+.school-calendar__filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:18px 0; }
 .school-calendar__filter { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:15px; border:1px solid #b9cbd4; border-radius:12px; color:#14384e; background:#fff; text-align:left; font:inherit; font-size:.9375rem; font-weight:650; cursor:pointer; }
 .school-calendar__filter b { font-size:1.5rem; }
 .school-calendar__filter[aria-pressed=true] { color:#fff; background:#14384e; border-color:#14384e; }
@@ -34,7 +34,7 @@
 .school-calendar__school > strong { display:block; font-size:1.1875rem; line-height:1.3; margin-bottom:5px; }
 .school-calendar__school > span:not(.school-calendar__school-state) { display:block; color:var(--calendar-muted); font-size:1rem; font-weight:500; line-height:1.4; }
 .school-calendar__school-state { display:block; margin:12px 0 0; padding-left:10px; border-left:4px solid #b26c20; color:#80500a; font-size:.875rem; font-weight:750; line-height:1.4; }
-.school-calendar__school-state.is-confirmed { color:#17613f; border-color:#208558; }
+.school-calendar__school-state.is-bookable { color:#17613f; border-color:#208558; }
 .school-calendar__school-state.is-planned { color:#89530a; border-color:#c48026; }
 .school-calendar__school-state.is-unknown { color:#4a626e; border-color:#778b95; }
 .school-calendar__participation { display:block; margin-top:10px; color:#4a626e; font-size:.875rem; font-weight:500; }
@@ -83,8 +83,6 @@
   .school-calendar__month.is-empty { display:none; }
   .school-calendar__month.has-events::before { content:attr(data-month); display:block; margin-bottom:12px; color:#14384e; font-size:1.0625rem; font-weight:750; }
   .school-calendar__gap { border-radius:0 0 14px 14px; }
-  .school-calendar__filters { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .school-calendar__filter:first-child { grid-column:1/-1; }
   .school-calendar__outside { grid-column:1/-1; }
 }
 @media(max-width:600px) {

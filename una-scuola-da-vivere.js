@@ -1,4 +1,4 @@
-import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261020-confermate';
+import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261020-prenotabili';
 const ORIENTATION_API = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const MAX_SCHOOLS = 5;
 const previewCatalog = document.getElementById('school-preview-data');

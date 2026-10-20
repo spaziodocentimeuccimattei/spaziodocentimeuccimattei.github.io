@@ -1,4 +1,4 @@
-import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261020-confermate';
+import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261020-prenotabili';
 const managementParams=new URLSearchParams(location.search);
 if(location.hash==='#bussola'&&managementParams.get('strumenti')!=='bussola'){
   const destination=new URL('bussola-docenti.html',location.href);
