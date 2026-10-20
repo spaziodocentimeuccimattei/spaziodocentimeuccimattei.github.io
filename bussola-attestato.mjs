@@ -6,6 +6,13 @@ const palettes = {
   ssas: ['#c4084f', '#fce4ee'], cat: ['#006b63', '#daf2e9'],
 };
 const formats = { instagram: [1080, 1350], pdf: [1080, 1528] };
+export const ILLUSTRATION_TEXT = {
+  afm: 'Illustrazione: una bottega con vetrina, grafici in crescita, monete e un accordo firmato.',
+  sia: 'Illustrazione: un programma sullo schermo, un archivio di dati, un’app e un lucchetto per i permessi.',
+  turismo: 'Illustrazione: una guida con due visitatori lungo la costa, tra nuraghe, laguna con fenicotteri e mare.',
+  ssas: 'Illustrazione: due persone si ascoltano al tavolo, al centro di una rete di servizi.',
+  cat: 'Illustrazione: un edificio in costruzione con le quote, una gru, il rilievo topografico e reperti archeologici.',
+};
 let assets;
 function loadImage(src) {
   return new Promise((resolve, reject) => {
@@ -15,16 +22,20 @@ function loadImage(src) {
     image.src = src;
   });
 }
-async function artwork() {
+const illustrations = {};
+async function artwork(course) {
   if (!assets) {
     assets = Promise.all([
       loadImage('assets/logo-meucci-mattei-decimomannu.jpeg'),
       loadImage('assets/qr-orientamento.svg'),
-      loadImage('assets/bussola-spazio-condiviso.jpeg'),
-    ]).then(([logo, qr, coverImage]) => ({ logo, qr, coverImage }));
+    ]).then(([logo, qr]) => ({ logo, qr }));
     assets.catch(() => { assets = null; });
   }
-  return assets;
+  // Ogni indirizzo ha la sua illustrazione originale (assets/attestati).
+  illustrations[course] ??= loadImage(`assets/attestati/${course}.svg?v=20261020-illustrazioni`);
+  illustrations[course].catch(() => { delete illustrations[course]; });
+  const [base, illustration] = await Promise.all([assets, illustrations[course]]);
+  return { ...base, illustration };
 }
 
 function font(ctx, size, weight = 400) { ctx.font = `${weight} ${size}px Arial, sans-serif`; }
@@ -81,15 +92,9 @@ export function drawCertificate(canvas, model, name, format, images, scale = 1) 
   const titleRows = lines(ctx, model.course.name, 646).length;
   textBlock(ctx, model.course.name, 354, 337 + extra * .30 - (titleRows - 1) * courseSize * .58,
     646, courseSize, 700, ink, 1.16);
-  // Display the supplied image without distortion, keeping the people and shared space in view.
+  // L'illustrazione dell'indirizzo occupa tutta la fascia (1080 × 500, stesse proporzioni del disegno).
   const photoY = 415 + extra * .35, photoHeight = 500;
-  const photoScale = Math.max(width / images.coverImage.naturalWidth, photoHeight / images.coverImage.naturalHeight);
-  const sourceHeight = photoHeight / photoScale;
-  const sourceTop = (images.coverImage.naturalHeight - sourceHeight) * .40;
-  ctx.drawImage(images.coverImage, 0, sourceTop, images.coverImage.naturalWidth, sourceHeight,
-    0, photoY, width, photoHeight);
-  box(ctx, 800, photoY + photoHeight - 34, 262, 26, 'rgba(18,60,87,.85)', 4);
-  textBlock(ctx, 'Immagine illustrativa', 812, photoY + photoHeight - 15, 238, 17, 400, '#ffffff');
+  ctx.drawImage(images.illustration, 0, photoY, width, photoHeight);
   textBlock(ctx, 'Nelle mie risposte', 48, 956 + extra * .70, 984, 22, 700, color);
   model.traces.forEach((trace, index) => {
     const x = 48 + index * 500, y = 974 + extra * .70;
@@ -110,7 +115,7 @@ export function drawCertificate(canvas, model, name, format, images, scale = 1) 
   box(ctx, 922, footerY + 12, 102, 102, '#ffffff', 7);
   ctx.drawImage(images.qr, 925, footerY + 15, 96, 96);
   textBlock(ctx, model.disclaimer, 48, height - 18, 984, 17, 400, '#566d78');
-  const description = [greeting, 'Indirizzo da approfondire.', 'Rappresentazione illustrativa di uno spazio condiviso con ragazzi seduti ai tavoli e sui divani.',
+  const description = [greeting, 'Indirizzo da approfondire.', ILLUSTRATION_TEXT[model.course.id],
     model.course.name, ...model.traces.map(t => t.label), model.subjects.join(', '), model.shortContext,
     model.school, `Vieni a conoscerci: ${model.email}, telefono ${model.phone}.`, 'Inquadra il QR: indirizzi, attività e iscrizione.', model.disclaimer].filter(Boolean).join(' ');
   canvas.setAttribute('aria-label', description);
@@ -183,7 +188,7 @@ export function openCertificate(item, direction, situations, contacts, trigger) 
     document.body.classList.remove('certificate-open'); trigger?.focus({ preventScroll: true });
   }, { once: true });
   document.body.classList.add('certificate-open'); dialog.showModal();
-  artwork().then(loaded => { images = loaded; redraw(); }).catch(() => {
+  artwork(model.course.id).then(loaded => { images = loaded; redraw(); }).catch(() => {
     if (dialog.isConnected) status.textContent = 'Le immagini non si sono caricate. Controlla la connessione, chiudi e riprova.';
   });
 }
