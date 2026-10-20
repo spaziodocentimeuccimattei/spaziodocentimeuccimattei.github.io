@@ -1,3 +1,4 @@
+import { phoneLabel } from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 // Export content stays separate from the stored journey. No student identity is persisted.
 export function firstName(value = '') {
   return String(value).normalize('NFC').replace(/[^\p{L}\p{M}\s’'-]/gu, '')
@@ -39,7 +40,7 @@ export function certificateModel(item, direction, situations, contacts) {
   return {
     course: item.course, traces, others, context,
     subjects, shortContext,
-    school: contacts.name, email: contacts.orientationEmail,
+    school: contacts.name, email: contacts.orientationEmail, phone: phoneLabel(contacts.phone),
     disclaimer: 'Esito orientativo: interessi espressi, senza valutazione delle capacità.',
     answeredCount: direction.answeredCount,
   };

@@ -48,4 +48,60 @@
   .experience-path [aria-current] { padding-block: 8px; }
   .activity-path { flex-direction: column; gap: 8px; }
 }
-@media print { .experience-path { display: none; } }
+/* «Il prossimo passo»: a fine percorso la scuola resta raggiungibile. */
+.bussola-next-step {
+  margin: 36px 0 12px;
+  padding: clamp(22px, 4vw, 34px);
+  color: #123c57;
+  background: #edf4f4;
+  border: 1px solid #cbdcde;
+  border-left: 6px solid #075d56;
+  border-radius: 22px;
+  font-family: system-ui, sans-serif;
+  text-align: left;
+  box-sizing: border-box;
+}
+.bussola-next-step *, .bussola-next-step *::before, .bussola-next-step *::after { box-sizing: border-box; }
+.bussola-next-step .next-step-kicker {
+  margin: 0 0 6px;
+  color: #075d56;
+  font-size: .85rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.bussola-next-step h2 { margin: 0 0 10px; color: #123c57; font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.2; }
+.bussola-next-step p { margin: 0 0 16px; max-width: 62ch; }
+.next-step-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+.next-step-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  color: #075d56;
+  background: #fff;
+  border: 2px solid #075d56;
+  border-radius: 999px;
+  font-weight: 750;
+  text-decoration: none;
+}
+.next-step-action.primary-action { color: #fff; background: #075d56; }
+.next-step-action:hover { text-decoration: underline; text-underline-offset: 4px; }
+.next-step-action:focus-visible, .bussola-next-step a:focus-visible { outline: 3px solid #006b63; outline-offset: 3px; }
+.bussola-next-step address { font-style: normal; font-weight: 600; margin-bottom: 8px; overflow-wrap: anywhere; }
+.bussola-next-step address span { display: block; }
+.bussola-next-step .next-step-note { margin: 0; color: #4b6070; font-size: .92rem; }
+.bussola-next-step.compact { margin: 0 0 16px; padding: 14px 18px; border-radius: 14px; }
+.bussola-next-step.compact p { margin: 0; }
+.bussola-next-step a { color: #075d56; }
+.bussola-next-step .next-step-action.primary-action { color: #fff; }
+@media (max-width: 520px) {
+  .next-step-actions { flex-direction: column; }
+  .next-step-action { width: 100%; }
+}
+@media print {
+  .experience-path { display: none; }
+  .next-step-actions { display: none; }
+  body.print-certificate .bussola-next-step { display: none !important; }
+}

@@ -2,7 +2,7 @@ import { courseArt, questionArt } from './bussola-visuals.mjs?v=20261010-correzi
 import { freshState, readState, clearState, sanitizeState, summarize, suggestCourses, validateContent } from './bussola-core.mjs';
 import { el, button, link, storage, persist as persistLocal, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs?v=20261010-correzioni';
 import {questionnaireRemote} from './bussola-questionario-remote.mjs?v=20261019-monitor';
-import { openCertificate } from './bussola-attestato.mjs?v=20261010-correzioni';
+import { openCertificate } from './bussola-attestato.mjs?v=20261020-contatti';
 import { activityDestination as rawDestination } from './bussola-navigazione.mjs?v=20261019-accessi';
 
 const intro = document.getElementById('introPanel');

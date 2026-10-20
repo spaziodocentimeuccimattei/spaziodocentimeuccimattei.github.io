@@ -1,5 +1,5 @@
 import { el, button } from './bussola-ui.mjs?v=20261010-correzioni';
-import { firstName, certificateModel, imagePdf } from './bussola-attestato-core.mjs';
+import { firstName, certificateModel, imagePdf } from './bussola-attestato-core.mjs?v=20261020-contatti';
 
 const palettes = {
   afm: ['#123c57', '#e3edf3'], sia: ['#477b00', '#edf8d9'], turismo: ['#006733', '#e0f3e8'],
@@ -104,14 +104,15 @@ export function drawCertificate(canvas, model, name, format, images, scale = 1) 
   const footerY = height - 169;
   box(ctx, 36, footerY, 1008, 126, ink, 16);
   fittedLine(ctx, model.school, 60, footerY + 39, 820, 29, 700, '#ffffff');
-  textBlock(ctx, 'Indirizzi, attività e modalità d’iscrizione', 60, footerY + 75, 820, 25, 400, '#ffffff');
-  textBlock(ctx, 'Inquadra il QR per saperne di più.', 60, footerY + 105, 820, 21, 400, '#c9f981');
+  // Il prossimo passo resta sul file: chi lo conserva o lo stampa sa come raggiungere la scuola.
+  fittedLine(ctx, `Vieni a conoscerci: ${model.email} · Tel. ${model.phone}`, 60, footerY + 75, 840, 25, 400, '#ffffff');
+  textBlock(ctx, 'Inquadra il QR: indirizzi, attività e iscrizione.', 60, footerY + 105, 820, 21, 400, '#c9f981');
   box(ctx, 922, footerY + 12, 102, 102, '#ffffff', 7);
   ctx.drawImage(images.qr, 925, footerY + 15, 96, 96);
   textBlock(ctx, model.disclaimer, 48, height - 18, 984, 17, 400, '#566d78');
   const description = [greeting, 'Indirizzo da approfondire.', 'Rappresentazione illustrativa di uno spazio condiviso con ragazzi seduti ai tavoli e sui divani.',
     model.course.name, ...model.traces.map(t => t.label), model.subjects.join(', '), model.shortContext,
-    model.school, 'Indirizzi, attività e modalità d’iscrizione. Inquadra il QR per saperne di più.', model.disclaimer].filter(Boolean).join(' ');
+    model.school, `Vieni a conoscerci: ${model.email}, telefono ${model.phone}.`, 'Inquadra il QR: indirizzi, attività e iscrizione.', model.disclaimer].filter(Boolean).join(' ');
   canvas.setAttribute('aria-label', description);
 }
 
