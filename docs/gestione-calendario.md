@@ -14,6 +14,8 @@ Per il rilascio: applicare lo script SQL, distribuire la funzione `orientamento`
 
 Il pubblico usa solo `overview` e gli avvisi pubblici del catalogo; le note interne degli appuntamenti compaiono soltanto nella Gestione, dopo l'accesso ordinario tramite `list_contributions`. Nessun cambiamento a sessioni, RLS, schema o funzioni Supabase.
 
+Le attività da verificare si possono annullare sia dalla scheda sia dal modulo di modifica. La richiesta di annullamento appare dentro la pagina e permette di mantenere la registrazione senza scrivere dati. L'annullamento usa `archive_activity`: rimuove la voce dalla verifica e dal registro senza cancellarla fisicamente e senza confermarne lo svolgimento. Un errore lascia disponibile il tentativo successivo; una modifica ad altre registrazioni già in compilazione resta conservata.
+
 Dalla Gestione si apre il modulo esistente della scuola o dell'appuntamento. Una bozza non salvata blocca l'apertura di un altro appuntamento: occorre salvarla o annullarla esplicitamente. I salvataggi, gli identificativi, gli export e le altre aree mantengono la logica precedente. Dalla pagina docenti il comando di disponibilità conserva le altre scelte e il limite di cinque scuole; non invia il modulo.
 
 Gli script delle due pagine sono moduli ES. I pulsanti di invio si attivano dopo il collegamento dei gestori, per impedire invii nativi del modulo durante il caricamento. Se l'API non risponde, il calendario conserva l'ultima vista già caricata oppure indica chiaramente che le date non sono disponibili: non converte un errore in zero appuntamenti.
@@ -23,6 +25,7 @@ Verifica della logica e della protezione della bozza:
 ```sh
 node scripts/verifica-calendario-scuole.mjs
 node scripts/verifica-conferma-visite.mjs
+node --experimental-vm-modules scripts/verifica-annullamento-attivita.mjs
 ```
 
 La prova delle conferme esegue lo stesso handler Edge con database e accessi fittizi in memoria, senza rete o dati reali. Verifica i ruoli, gli stati inviati dal modulo pubblico, la conferma FS esplicita, il blocco delle date future, il passare del tempo senza conferma automatica, la riconferma dopo una modifica e il giorno italiano.

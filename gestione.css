@@ -169,6 +169,10 @@
 .gestione-page .activity-form input:not([type="checkbox"]), .gestione-page .activity-form select, .school-confirm-row input { min-width: 0; max-width: 100%; min-height: 46px; padding: 10px 12px; border-color: #8aa7b4; font-size: 1rem; }
 .gestione-page .activity-form button { min-height: 46px; font-size: 1rem; background: #006733; }
 .gestione-page .activity-form button.act.neutral { color: #123c57; background: #fff; border: 1px solid var(--manage-border); }
+.gestione-page .activity-form button.act.no { color: #94172e; background: #fff; border: 1px solid #cd8d9c; }
+.activity-cancel-prompt { grid-column:1/-1; margin-top:16px; padding:18px; border:1px solid #cd8d9c; border-radius:12px; background:#fff; }
+.activity-cancel-prompt > p { margin:0; font-size:1rem; line-height:1.6; color:#123c57; }
+.activity-cancel-prompt .global-message:not(:empty) { margin-top:12px; }
 .type-tag { font-size: .875rem; }
 .school-confirm-row { padding: 14px; gap: 10px; }
 .school-confirm-row strong { font-size: .9375rem; }

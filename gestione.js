@@ -174,7 +174,7 @@ function renderSummary() {
   const toConfirm = upcoming.filter((item) => item.stato === 'prevista').length;
   document.getElementById('countCalendario').textContent = toConfirm ? String(toConfirm) : '';
   for (const [value, label, hot] of [
-    [pendingActivities, 'attività da confermare', pendingActivities > 0],
+    [pendingActivities, 'attività da verificare', pendingActivities > 0],
     [pendingSupporters, 'disponibilità da assegnare', pendingSupporters > 0],
     [pendingProposals, 'proposte da valutare', pendingProposals > 0],
     [`${visited.size}/${data.scuole.length}`, 'scuole visitate', false],
@@ -361,19 +361,8 @@ function renderActivities(schoolNames) {
     }
     const card = activityCard(item, schoolNames);
     const actions = el('div', 'review-actions');
-    actions.append(actionButton('Modifica o sostituisci', 'neutral', () => editActivity(item)));
-    actions.append(actionButton('Annulla registrazione', 'no', async (button) => {
-      if (!window.confirm('Annullare questa registrazione? Non comparirà più nell’elenco delle attività confermate.')) return;
-      button.disabled = true;
-      try {
-        await api('archive_activity', { id: item.id });
-        activityMessage.textContent = 'Registrazione annullata.';
-        await load();
-      } catch (error) {
-        button.disabled = false;
-        handleError(error, activityMessage);
-      }
-    }));
+    actions.append(actionButton('Annulla registrazione', 'no', () => requestActivityCancellation(item, card, actions)));
+    actions.append(actionButton('Modifica dati o docente', 'neutral', () => editActivity(item)));
     card.append(actions);
     group.append(card);
   }
@@ -495,8 +484,11 @@ function exportCalendar() {
 
 function resetActivityForm() {
   for (const name of ['id', 'nome', 'cognome', 'nota', 'titolo']) activityForm.elements[name].value = '';
-  activityForm.querySelector('button[type="submit"]').textContent = 'Inserisci da confermare';
+  activityForm.querySelector('button[type="submit"]').textContent = 'Inserisci da verificare';
   document.getElementById('activityCancel').hidden = true;
+  document.getElementById('activityDiscard').hidden = true;
+  activityForm.querySelector('.activity-cancel-prompt')?.remove();
+  activityForm.querySelector('.appointment-buttons').hidden = false;
 }
 
 function editActivity(item) {
@@ -507,13 +499,60 @@ function editActivity(item) {
   if (item.scuola_id) activitySchool.value = item.scuola_id;
   activityForm.querySelector('button[type="submit"]').textContent = 'Salva le modifiche';
   document.getElementById('activityCancel').hidden = false;
+  document.getElementById('activityDiscard').hidden = false;
+  activityForm.querySelector('.activity-cancel-prompt')?.remove();
+  activityForm.querySelector('.appointment-buttons').hidden = false;
   activityMessage.textContent = 'Puoi cambiare data, scuola o docente. Dopo il salvataggio l’attività richiede di nuovo la tua conferma di svolgimento.';
   activityForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
   activityForm.elements.nome.focus({ preventScroll: true });
 }
 
+function requestActivityCancellation(item, container, controls) {
+  container.querySelector('.activity-cancel-prompt')?.remove();
+  const prompt = el('div', 'activity-cancel-prompt');
+  prompt.setAttribute('role', 'group');
+  prompt.setAttribute('aria-label', 'Annullamento della registrazione');
+  prompt.append(el('p', '', 'Annullare questa registrazione? Sarà tolta dalle attività da verificare e dal registro, senza confermarne lo svolgimento.'));
+  const actions = el('div', 'review-actions');
+  const message = el('p', 'global-message');
+  message.setAttribute('role', 'status');
+  const keep = actionButton('Mantieni la registrazione', 'neutral', () => {
+    prompt.remove();
+    controls.hidden = false;
+    controls.querySelector('button').focus({preventScroll:true});
+  });
+  const cancel = actionButton('Sì, annulla registrazione', 'no', async () => {
+    cancel.disabled = true;
+    keep.disabled = true;
+    message.textContent = 'Annullamento in corso…';
+    try {
+      await api('archive_activity', {id:item.id});
+      data = {...data, attivita:data.attivita.filter(row => row.id !== item.id), da_confermare:data.da_confermare.filter(row => row.id !== item.id)};
+      prompt.remove();
+      controls.hidden = false;
+      if (activityForm.elements.id.value === item.id) resetActivityForm();
+      render();
+      globalMessage.textContent = 'Registrazione annullata. Nessuna attività è stata confermata.';
+      activityMessage.textContent = 'Registrazione annullata.';
+      await load();
+    } catch (error) {
+      cancel.disabled = false;
+      keep.disabled = false;
+      cancel.textContent = 'Riprova ad annullare';
+      handleError(error, message);
+    }
+  });
+  actions.append(cancel, keep);
+  prompt.append(actions, message);
+  controls.hidden = true;
+  container.append(prompt);
+  prompt.scrollIntoView({block:'nearest',behavior:'instant'});
+  cancel.focus({preventScroll:true});
+}
+
 function activityCard(item, schoolNames, className = 'review-card') {
   const card = el('article', className);
+  card.dataset.activityId = item.id;
     card.append(el('h4', '', `${item.tipo === 'visita' ? 'Visita' : 'Mattinée'} · ${item.nome} ${item.cognome}`),
     el('small', '', `${item.data > today() ? 'In programma il' : item.stato === 'confermata' ? 'Svolta il' : 'Data indicata:'} ${formatDate(`${item.data}T12:00:00`, false)} · registrata il ${formatDate(item.created_at)}`));
   if (item.tipo === 'visita') card.append(line('Scuola', schoolNames.get(item.scuola_id) || item.scuola_id));
@@ -525,10 +564,12 @@ function activityCard(item, schoolNames, className = 'review-card') {
 function renderPending(schoolNames) {
   const list = document.getElementById('pendingList');
   list.replaceChildren();
-  if (!data.da_confermare.length) list.append(el('p', 'empty', 'Nessuna attività da confermare.'));
+  if (!data.da_confermare.length) list.append(el('p', 'empty', 'Nessuna attività da verificare.'));
   for (const item of data.da_confermare) {
     const card = activityCard(item, schoolNames, 'review-card pending');
     const actions = el('div', 'review-actions');
+    actions.append(actionButton('Annulla registrazione', 'no', () => requestActivityCancellation(item, card, actions)));
+    actions.append(actionButton('Modifica dati o docente', 'neutral', () => editActivity(item)));
     const confirmButton = actionButton('Conferma che si è svolta', 'ok', async (button) => {
       button.disabled = true;
       globalMessage.textContent = 'Salvataggio…';
@@ -544,19 +585,6 @@ function renderPending(schoolNames) {
     confirmButton.disabled = item.data > today();
     if (confirmButton.disabled) card.append(el('p', 'panel-help', 'Potrai confermare lo svolgimento dal giorno della visita.'));
     actions.append(confirmButton);
-    actions.append(actionButton('Modifica o sostituisci', 'neutral', () => editActivity(item)));
-    actions.append(actionButton('Scarta registrazione', 'no', async (button) => {
-      if (!window.confirm('Scartare questa registrazione? Non comparirà nell’elenco delle attività confermate.')) return;
-      button.disabled = true;
-      try {
-        await api('archive_activity', { id: item.id });
-        globalMessage.textContent = 'Registrazione scartata.';
-        await load();
-      } catch (error) {
-        button.disabled = false;
-        handleError(error);
-      }
-    }));
     card.append(actions);
     list.append(card);
   }
@@ -676,7 +704,7 @@ activityForm.addEventListener('submit', async (event) => {
   activityMessage.textContent = 'Registrazione in corso…';
   try {
     await api(editing ? 'update_activity' : 'register_activity', payload);
-    activityMessage.textContent = `Attività ${editing ? 'aggiornata' : 'inserita'} per ${payload.nome} ${payload.cognome}. La trovi in «Da confermare»: solo la tua conferma di svolgimento la farà entrare nel registro.`;
+    activityMessage.textContent = `Attività ${editing ? 'aggiornata' : 'inserita'} per ${payload.nome} ${payload.cognome}. La trovi in «Da verificare»: solo la tua conferma di svolgimento la farà entrare nel registro.`;
     resetActivityForm();
     await load();
   } catch (error) {
@@ -733,6 +761,10 @@ passwordForm.addEventListener('submit', async (event) => {
 });
 
 document.getElementById('activityCancel').addEventListener('click', () => { resetActivityForm(); activityMessage.textContent = ''; });
+document.getElementById('activityDiscard').addEventListener('click', () => {
+  const item = [...data.attivita, ...data.da_confermare].find(row => row.id === activityForm.elements.id.value);
+  if (item) requestActivityCancellation(item, activityForm, activityForm.querySelector('.appointment-buttons'));
+});
 refreshButton.addEventListener('click', load);
 document.getElementById('exportButton').addEventListener('click', exportActivities);
 document.getElementById('logoutButton').addEventListener('click', async () => {
