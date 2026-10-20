@@ -16,8 +16,11 @@ function validDate(value) {
   const date = new Date(`${value}T12:00:00Z`);
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
+export function compareAppointments(a,b) {
+  return a.data.localeCompare(b.data) || (a.ora_inizio || '24:00').localeCompare(b.ora_inizio || '24:00');
+}
 function ordered(dates) {
-  return [...dates].sort((a,b) => a.data.localeCompare(b.data) || (a.ora_inizio || '').localeCompare(b.ora_inizio || ''));
+  return [...dates].sort(compareAppointments);
 }
 export function calendarModel(schools, appointments, {start = italyToday().slice(0,7), today = italyToday(), ready = true} = {}) {
   const months = [start, shiftMonth(start,1), shiftMonth(start,2)];
@@ -29,6 +32,13 @@ export function calendarModel(schools, appointments, {start = italyToday().slice
     return {school, all, upcoming, state, cells:months.map(month => all.filter(item => item.data.startsWith(month))), outside:all.filter(item => !months.includes(item.data.slice(0,7)))};
   });
   return {months, rows, counts:{all:rows.length, bookable:ready ? rows.filter(row => row.upcoming.length).length : null}};
+}
+export function chronologicalRows(rows, months, upcomingOnly=false) {
+  return rows.flatMap(row=>{
+    const dates=upcomingOnly?row.upcoming:row.all;
+    if(!dates.length)return upcomingOnly?[]:[row];
+    return dates.map(item=>({...row,all:[item],cells:months.map(month=>item.data.startsWith(month)?[item]:[]),outside:months.includes(item.data.slice(0,7))?[]:[item]}));
+  }).sort((a,b)=>a.all.length&&b.all.length?compareAppointments(a.all[0],b.all[0]):Number(Boolean(b.all.length))-Number(Boolean(a.all.length)));
 }
 const node = (tag, text, className) => {
   const element = document.createElement(tag);
@@ -112,12 +122,11 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
     wrap.replaceChildren();
     if(!schools.length) {wrap.append(node('p','Caricamento dell’elenco delle scuole…','school-calendar__empty'));return;}
     if(!visible.length) {wrap.append(node('p','Nessuna scuola corrisponde a questa ricerca.','school-calendar__empty'),action('Mostra tutte le scuole',()=>{filter='all';term='';search.value='';render();}));return;}
-    const table=node('table');const caption=node('caption','Calendario delle scuole: gli appuntamenti sono collocati nel loro mese.','school-calendar__sr-only');table.append(caption);
+    const table=node('table');const caption=node('caption','Calendario delle scuole: appuntamenti in ordine di giorno e orario.','school-calendar__sr-only');table.append(caption);
     const thead=node('thead'),head=node('tr');const schoolColumn=node('th','Scuola');schoolColumn.scope='col';head.append(schoolColumn);
     for(const key of model.months){const th=node('th',monthTitle(key));th.scope='col';head.append(th);}thead.append(head);table.append(thead);
     const tbody=node('tbody');
-    for(const schoolRow of visible) {
-      const row=filter==='bookable'?{...schoolRow,all:schoolRow.upcoming,cells:schoolRow.cells.map(items=>items.filter(item=>item.data>=today)),outside:schoolRow.outside.filter(item=>item.data>=today)}:schoolRow;
+    for(const row of chronologicalRows(visible,model.months,filter==='bookable')) {
       const tr=node('tr');tr.dataset.school=row.school.id;tr.dataset.calendarState=row.state;tr.append(schoolHeader(row));
       if(!ready || !row.all.length || !row.cells.some(cell=>cell.length)) {
         const td=node('td',null,'school-calendar__gap');td.colSpan=3;

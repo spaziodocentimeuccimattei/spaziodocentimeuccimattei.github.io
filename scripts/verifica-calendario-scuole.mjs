@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {calendarModel,shiftMonth} from '../scuole-calendario.mjs';
+import {calendarModel,shiftMonth,chronologicalRows,compareAppointments} from '../scuole-calendario.mjs';
 const schools=JSON.parse(await readFile(new URL('../scuole-orientamento.json',import.meta.url),'utf8'));
 const base={start:'2026-10',today:'2026-10-14'};
 const appointments=[
@@ -25,6 +25,18 @@ assert.equal(model.rows[0].cells[1][0].ora_inizio,'09:00');
 assert.equal(model.rows[0].outside[0].id,'test-later');
 assert.equal(model.rows[0].all.find(x=>x.id==='test-confirmed').nota,'Nota da preservare');
 assert.equal(JSON.stringify({schools,appointments}),original);
+const entries=chronologicalRows(model.rows,model.months);
+assert.deepEqual(entries.flatMap(row=>row.all).map(item=>item.id),['test-past','test-second','test-confirmed','test-planned','test-later']);
+assert.equal(new Set(entries.map(row=>row.school.id)).size,24);
+assert.equal(entries.filter(row=>!row.all.length).length,21);
+const bookableEntries=chronologicalRows(model.rows,model.months,true);
+assert.deepEqual(bookableEntries.flatMap(row=>row.all).map(item=>item.id),['test-second','test-confirmed','test-planned','test-later']);
+assert.equal(new Set(bookableEntries.map(row=>row.school.id)).size,2);
+assert.equal(bookableEntries.find(row=>row.all[0].id==='test-later').outside[0].id,'test-later');
+assert.equal(chronologicalRows(model.rows,model.months).flatMap(row=>row.all).find(item=>item.id==='test-confirmed').nota,'Nota da preservare');
+assert.equal(JSON.stringify({schools,appointments}),original);
+assert.ok(compareAppointments({data:'2026-11-26',ora_inizio:'08:50'},{data:'2026-11-26',ora_inizio:'10:10'})<0);
+assert.ok(compareAppointments({data:'2026-11-26',ora_inizio:'10:10'},{data:'2026-11-26'})<0);
 model=calendarModel(schools,appointments,{...base,start:'2027-01'});
 assert.equal(model.rows.length,24);
 assert.equal(model.rows[0].cells[0].length,1);

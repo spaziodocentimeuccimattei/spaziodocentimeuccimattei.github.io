@@ -1,4 +1,4 @@
-import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261020-prenotabili';
+import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261020-ordine';
 const managementParams=new URLSearchParams(location.search);
 if(location.hash==='#bussola'&&managementParams.get('strumenti')!=='bussola'){
   const destination=new URL('bussola-docenti.html',location.href);
@@ -428,8 +428,7 @@ function renderAppointments(schoolNames) {
   list.replaceChildren();
   const now = today();
   const items = data.appuntamenti.filter((item) =>
-    filters.calendarioPeriodo === 'tutte' || (filters.calendarioPeriodo === 'prossime' ? item.data >= now : item.data < now));
-  if (filters.calendarioPeriodo === 'passate') items.reverse();
+    filters.calendarioPeriodo === 'tutte' || (filters.calendarioPeriodo === 'prossime' ? item.data >= now : item.data < now)).sort(compareAppointments);
   if (!items.length) {
     list.append(el('p', 'empty', data.appuntamenti.length ? 'Nessuna data in questa sezione.' : 'Il calendario è vuoto: aggiungi la prima data con il modulo qui sopra.'));
     return;
@@ -608,7 +607,7 @@ async function load() {
   refreshButton.disabled = true;
   try {
     const result = await api('list_contributions');
-    data = { ...result, attivita: result.attivita || [], da_confermare: result.da_confermare || [], appuntamenti: result.appuntamenti || [] };
+    data = { ...result, attivita: result.attivita || [], da_confermare: result.da_confermare || [], appuntamenti: [...(result.appuntamenti || [])].sort(compareAppointments) };
     render();
     if (globalMessage.textContent === 'Caricamento…') globalMessage.textContent = '';
   } catch (error) {

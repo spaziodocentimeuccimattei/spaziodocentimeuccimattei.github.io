@@ -1,4 +1,4 @@
-import {createSchoolCalendar} from './scuole-calendario.mjs?v=20261020-prenotabili';
+import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261020-ordine';
 const ORIENTATION_API = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const MAX_SCHOOLS = 5;
 const previewCatalog = document.getElementById('school-preview-data');
@@ -274,10 +274,11 @@ async function loadOverview(schools) {
     overviewLoaded = true;
     schoolStates = new Map(data.scuole.map((school) => [school.id, school.stato]));
     schoolDates = new Map();
-    for (const item of data.appuntamenti || []) schoolDates.set(item.scuola_id, [...(schoolDates.get(item.scuola_id) || []), item]);
+    const appointments=[...(data.appuntamenti || [])].sort(compareAppointments);
+    for (const item of appointments) schoolDates.set(item.scuola_id, [...(schoolDates.get(item.scuola_id) || []), item]);
     for (const [key, value] of Object.entries(data.totali)) setStat(key, value);
     renderMission(data.totali.scuole, data.totali.scuole_visitate, data.totali.scuole_con_disponibilita);
-    schoolCalendar.update(schools, data.appuntamenti || [], schoolStates);
+    schoolCalendar.update(schools, appointments, schoolStates);
   } catch {
     schoolCalendar.setError(schools);
     if (!overviewLoaded) {
