@@ -97,3 +97,30 @@
   .school-calendar__school > button { width:100%; }
   .school-calendar__event { padding:16px; }
 }
+
+/* Gestione: filtri colorati, date definite e da confermare, scuole senza data in grigio. */
+.school-calendar__filters.is-admin { grid-template-columns:repeat(5,minmax(0,1fr)); }
+.school-calendar__filters.is-admin .school-calendar__filter { border-left:6px solid var(--filter,#14384e); }
+.school-calendar__filters.is-admin [data-calendar-filter=all] { --filter:#14384e; }
+.school-calendar__filters.is-admin [data-calendar-filter=bookable] { --filter:#005a53; }
+.school-calendar__filters.is-admin [data-calendar-filter=confirmed] { --filter:#006733; }
+.school-calendar__filters.is-admin [data-calendar-filter=planned] { --filter:#8a5200; }
+.school-calendar__filters.is-admin [data-calendar-filter=undated] { --filter:#4b6170; }
+.school-calendar__filters.is-admin .school-calendar__filter b { color:var(--filter); }
+.school-calendar__filters.is-admin .school-calendar__filter[aria-pressed=true] { color:#fff; background:var(--filter); border-color:var(--filter); }
+.school-calendar__filters.is-admin .school-calendar__filter[aria-pressed=true] b { color:#fff; }
+.school-calendar__legend.is-admin { display:flex; flex-wrap:wrap; gap:8px 16px; margin:0 0 6px; }
+.school-calendar__legend.is-admin span { display:inline-flex; align-items:center; gap:7px; }
+.school-calendar__legend.is-admin span::before { content:""; width:14px; height:14px; border-radius:4px; background:#208558; }
+.school-calendar__legend.is-admin .is-planned::before { background:#ba781f; }
+.school-calendar__legend.is-admin .is-undated::before { background:#8a9ba4; }
+.school-calendar.is-admin .school-calendar__school-state.is-undated { color:#4a626e; border-color:#8a9ba4; }
+.school-calendar.is-admin tr[data-calendar-state=undated] .school-calendar__gap { background:#f5f7f8; }
+.school-calendar.is-admin tr[data-calendar-state=undated] .school-calendar__gap > strong { color:#4a626e; border-color:#8a9ba4; }
+.school-calendar.is-admin tr[data-calendar-state=undated] .school-calendar__gap > p { color:#4a626e; }
+.school-calendar__action.is-primary { color:#fff; background:#006733; border-color:#006733; }
+.school-calendar__action.is-primary:hover { background:#00552a; border-color:#00552a; }
+.school-calendar__action.is-confirm { color:#fff; background:#006733; border-color:#006733; }
+.school-calendar__action.is-confirm:hover { background:#00552a; }
+@media(max-width:1100px) { .school-calendar__filters.is-admin { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:600px) { .school-calendar__filters.is-admin { grid-template-columns:1fr 1fr; } .school-calendar__filters.is-admin [data-calendar-filter=all] { grid-column:1/-1; } }

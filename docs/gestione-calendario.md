@@ -29,3 +29,15 @@ node --experimental-vm-modules scripts/verifica-annullamento-attivita.mjs
 ```
 
 La prova delle conferme esegue lo stesso handler Edge con database e accessi fittizi in memoria, senza rete o dati reali. Verifica i ruoli, gli stati inviati dal modulo pubblico, la conferma FS esplicita, il blocco delle date future, il passare del tempo senza conferma automatica, la riconferma dopo una modifica e il giorno italiano.
+
+## Cruscotto della Gestione (22 ottobre 2026)
+
+Dopo l'accesso FS la Gestione mostra in alto i riquadri colorati (date definite, da confermare con la scuola, scuole senza data, attività da verificare, disponibilità, proposte, scuole visitate, registro): ogni riquadro apre la sezione in cui si agisce. Sotto, nove tasti aprono una sezione alla volta; ogni sezione ha un indirizzo (`#calendario-scuole`, `#date`, `#da-verificare`, `#disponibilita`, `#mattinee`, `#scuole-visite`, `#registro`, `#classi-bussola`, `#excel`). L'indirizzo storico `gestione#bussola` continua a portare all'Area docenti Bussola.
+
+Nel calendario della Gestione ci sono anche i filtri «Date definite» (confermate dalla scuola, da oggi), «Da confermare con la scuola» e «Scuole senza data». «Inserisci la data» compare solo per le scuole senza una data in arrivo; le date presenti si cambiano con «Modifica questa data» e si confermano con «Segna come definita». La pagina docenti mantiene i due soli filtri «Tutte le scuole» e «Date prenotabili».
+
+«Scarica Excel» produce file .xlsx nel browser (`gestione-excel.mjs`, nessuna libreria esterna): date e scuole, elenco per la Dirigente, tutto l'orientamento. Le note interne sono comprese. I CSV precedenti restano.
+
+Con la password della Commissione la Gestione resta chiusa e indica le pagine aperte alla Commissione: calendario delle date, territori e dati Istat, Area docenti Bussola, area della Commissione.
+
+Prova locale con dati finti: aprire `gestione.html?prova` su `localhost` o `127.0.0.1` con un server che risponda a `/__test/orientamento` e `/__test/bussola-gestione`.

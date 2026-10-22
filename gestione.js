@@ -1,11 +1,14 @@
-import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261020-ordine';
+import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261022-definite';
 const managementParams=new URLSearchParams(location.search);
 if(location.hash==='#bussola'&&managementParams.get('strumenti')!=='bussola'){
   const destination=new URL('bussola-docenti.html',location.href);
   for(const key of ['corso','prova'])if(managementParams.has(key))destination.searchParams.set(key,managementParams.get(key));
   location.replace(destination.href);
 }else{
-const API_URL = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
+// Prova in locale con dati finti: http://localhost:…/gestione.html?prova (nessuna chiamata al servizio vero).
+const testing = ['localhost', '127.0.0.1'].includes(location.hostname) && managementParams.has('prova');
+if (testing) document.body.dataset.bussolaTest = 'true';
+const API_URL = testing ? '/__test/orientamento' : 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const SESSION_KEY = 'mattei-gestione-session';
 
 const passwordForm = document.getElementById('passwordForm');
@@ -34,15 +37,14 @@ const appointmentSchool = document.getElementById('appointmentSchool');
 const appointmentMessage = document.getElementById('appointmentMessage');
 const appointmentSubmit = document.getElementById('appointmentSubmit');
 const appointmentCancel = document.getElementById('appointmentCancel');
-const managementTools = document.getElementById('managementTools');
 const schoolCalendar = createSchoolCalendar(document.getElementById('manageSchoolCalendar'), {
   admin: true,
   onAdd: (school) => openCalendarForm(school),
   onEdit: (item) => openCalendarForm(null, item),
+  onConfirm: (item, button) => appointmentAction(button, 'save_appointment', appointmentPayload(item, 'confermata'), `Data del ${item.data.split('-').reverse().join('/')} segnata come definita con la scuola.`, globalMessage),
 });
 function openCalendarForm(school, item) {
   const hasDraft = [...appointmentForm.querySelectorAll('input:not([type="hidden"])')].some(input => input.value);
-  managementTools.open = true;
   document.querySelector('[data-tab="calendario"]').click();
   if (hasDraft) {
     appointmentMessage.textContent = 'Hai una data non ancora salvata. Salvala oppure annulla la bozza prima di aprire un altro appuntamento.';
@@ -60,7 +62,7 @@ function openCalendarForm(school, item) {
     appointmentForm.elements.data.focus({preventScroll:true});
   }
 }
-document.querySelectorAll('.manage-tools-link').forEach(link => link.addEventListener('click', () => { managementTools.open = true; }));
+document.querySelectorAll('[data-go]').forEach(link => link.addEventListener('click', () => showSection(link.dataset.go, { focus: true })));
 
 // Data di oggi in Italia, nel formato delle date salvate (AAAA-MM-GG).
 function today() {
@@ -110,17 +112,30 @@ function showWorkspace() {
   document.getElementById('workspaceTitle').focus({ preventScroll: true });
 }
 
+// Ogni sezione ha il suo indirizzo, così si può tenere nei preferiti (#bussola resta quello storico).
+const SECTION_HASHES = { panoramica: 'calendario-scuole', calendario: 'date', confermare: 'da-verificare', candidature: 'disponibilita', proposte: 'mattinee', scuole: 'scuole-visite', attivita: 'registro', bussola: 'classi-bussola', excel: 'excel' };
+function sectionFromHash() {
+  const hash = location.hash.slice(1);
+  if (hash === 'bussola') return 'bussola';
+  return Object.keys(SECTION_HASHES).find((key) => SECTION_HASHES[key] === hash) || '';
+}
+
+function showSection(key, { focus = false, scroll = true } = {}) {
+  const tab = document.querySelector(`[data-tab="${key}"]`);
+  if (!tab) return;
+  tab.click();
+  if (focus) tab.focus({ preventScroll: true });
+  if (scroll) document.querySelector(`[data-panel="${key}"]`).scrollIntoView({ block: 'start', behavior: 'instant' });
+}
+
 function openRequestedManagementSection() {
-  if (location.hash !== '#bussola') return;
+  const key = sectionFromHash();
+  if (!key) return;
   if (!loginPanel.hidden) {
-    document.getElementById('access-title').textContent = 'Accedi per creare il codice della classe';
+    if (key === 'bussola') document.getElementById('access-title').textContent = 'Accedi per creare il codice della classe';
     return;
   }
-  managementTools.open = true;
-  const tab = document.querySelector('[data-tab="bussola"]');
-  tab.click();
-  tab.focus({preventScroll:true});
-  document.getElementById('bussolaManagement').scrollIntoView({block:'start',behavior:'instant'});
+  showSection(key, { focus: true });
 }
 
 function resetSession() {
@@ -163,31 +178,53 @@ function stateTag(text, state) {
   return el('span', `state state-${state}`, text);
 }
 
+// Riquadri colorati: ogni numero apre la sezione in cui si agisce.
 function renderSummary() {
   const summary = document.getElementById('summary');
   summary.replaceChildren();
+  const now = today();
   const pendingSupporters = data.disponibilita.filter((item) => item.stato === 'ricevuta').length;
   const pendingProposals = data.proposte.filter((item) => ['ricevuta', 'in_valutazione'].includes(item.stato)).length;
   const pendingActivities = data.da_confermare.length;
-  const visited = new Set(data.attivita.filter((item) => item.tipo === 'visita' && item.data <= today()).map((item) => item.scuola_id));
-  const upcoming = data.appuntamenti.filter((item) => item.data >= today());
-  const toConfirm = upcoming.filter((item) => item.stato === 'prevista').length;
-  document.getElementById('countCalendario').textContent = toConfirm ? String(toConfirm) : '';
-  for (const [value, label, hot] of [
-    [pendingActivities, 'attività da verificare', pendingActivities > 0],
-    [pendingSupporters, 'disponibilità da assegnare', pendingSupporters > 0],
-    [pendingProposals, 'proposte da valutare', pendingProposals > 0],
-    [`${visited.size}/${data.scuole.length}`, 'scuole visitate', false],
-    [upcoming.length, 'date in arrivo', false],
-    [data.attivita.length, 'righe a registro', false],
-  ]) {
-    const box = el('div', hot ? 'hot' : '');
-    box.append(el('strong', '', String(value)), el('span', '', label));
+  const visited = new Set(data.attivita.filter((item) => item.tipo === 'visita' && item.data <= now).map((item) => item.scuola_id));
+  const upcoming = data.appuntamenti.filter((item) => item.data >= now);
+  const defined = upcoming.filter((item) => item.stato === 'confermata');
+  const toConfirm = upcoming.filter((item) => item.stato !== 'confermata');
+  const dated = new Set(upcoming.map((item) => item.scuola_id));
+  const undated = data.scuole.filter((school) => !dated.has(school.id)).length;
+  const next = upcoming[0];
+  document.getElementById('nextAppointment').textContent = next ? `Prossimo appuntamento: ${new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(`${next.data}T12:00:00`))}${timeRange(next) ? `, ${timeRange(next)}` : ''} · ${schoolLabel(next.scuola_id)} (${next.stato === 'confermata' ? 'definito' : 'da confermare'})` : 'Nessun appuntamento in arrivo';
+  const tiles = [
+    { tone: 'green', value: defined.length, label: defined.length === 1 ? 'data definita' : 'date definite', hint: 'Confermate dalla scuola', go: ['panoramica', 'confirmed'] },
+    { tone: 'amber', value: toConfirm.length, label: 'da confermare con la scuola', hint: 'Date previste, ancora da fissare', go: ['panoramica', 'planned'], hot: toConfirm.length > 0 },
+    { tone: 'grey', value: `${undated}/${data.scuole.length}`, label: 'scuole senza data', hint: 'Nessun appuntamento in arrivo', go: ['panoramica', 'undated'] },
+    { tone: 'pink', value: pendingActivities, label: 'attività da verificare', hint: 'Conferma lo svolgimento', go: ['confermare'], hot: pendingActivities > 0 },
+    { tone: 'blue', value: pendingSupporters, label: 'disponibilità da assegnare', hint: 'Docenti in attesa di una scuola', go: ['candidature'], hot: pendingSupporters > 0 },
+    { tone: 'violet', value: pendingProposals, label: 'proposte da valutare', hint: 'Mattinée proposte dai docenti', go: ['proposte'], hot: pendingProposals > 0 },
+    { tone: 'teal', value: `${visited.size}/${data.scuole.length}`, label: 'scuole già visitate', hint: 'Visite confermate da te', go: ['scuole'] },
+    { tone: 'navy', value: data.attivita.length, label: 'attività a registro', hint: 'Confermate, docente per docente', go: ['attivita'] },
+  ];
+  for (const tile of tiles) {
+    const box = el('button', `dashboard-tile tone-${tile.tone}${tile.hot ? ' is-hot' : ''}`);
+    box.type = 'button';
+    box.append(el('strong', '', String(tile.value)), el('span', 'dashboard-label', tile.label), el('small', '', tile.hint));
+    box.addEventListener('click', () => {
+      if (tile.go[1]) schoolCalendar.setFilter(tile.go[1]);
+      showSection(tile.go[0], { focus: true });
+    });
     summary.append(box);
   }
-  document.getElementById('countConfermare').textContent = pendingActivities ? String(pendingActivities) : '';
-  document.getElementById('countCandidature').textContent = pendingSupporters ? String(pendingSupporters) : '';
-  document.getElementById('countProposte').textContent = pendingProposals ? String(pendingProposals) : '';
+  const count = (id, value) => { document.getElementById(id).textContent = value ? String(value) : ''; };
+  count('countPanoramica', toConfirm.length);
+  count('countCalendario', toConfirm.length);
+  count('countConfermare', pendingActivities);
+  count('countCandidature', pendingSupporters);
+  count('countProposte', pendingProposals);
+}
+
+function schoolLabel(id) {
+  const school = data?.scuole.find((item) => item.id === id);
+  return school ? `${school.comune} · ${school.etichetta}` : id;
 }
 
 function renderSupporters(schoolNames) {
@@ -389,17 +426,22 @@ function editAppointment(item) {
   appointmentForm.elements.data.focus({ preventScroll: true });
 }
 
-async function appointmentAction(button, action, payload, message) {
+async function appointmentAction(button, action, payload, message, target = appointmentMessage) {
   button.disabled = true;
-  appointmentMessage.textContent = 'Salvataggio…';
+  target.textContent = 'Salvataggio…';
   try {
     await api(action, payload);
-    appointmentMessage.textContent = message;
+    target.textContent = message;
     await load();
   } catch (error) {
     button.disabled = false;
-    handleError(error, appointmentMessage);
+    handleError(error, target);
   }
+}
+
+// Tutti i campi della data restano quelli salvati: cambia soltanto lo stato.
+function appointmentPayload(item, stato) {
+  return { id: item.id, scuola_id: item.scuola_id, tipo: item.tipo, data: item.data, ora_inizio: item.ora_inizio, ora_fine: item.ora_fine, luogo: item.luogo, nota: item.nota, stato };
 }
 
 function renderAppointments(schoolNames) {
@@ -435,16 +477,15 @@ function renderAppointments(schoolNames) {
     const card = el('article', `review-card appointment appointment-${item.tipo}${item.stato === 'prevista' ? ' pending' : ''}`);
     const head = el('div', 'review-head');
     const weekday = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(`${item.data}T12:00:00`));
-    head.append(el('h4', '', weekday), stateTag(APPOINTMENT_STATES[item.stato], item.stato === 'confermata' ? 'assegnata' : 'ricevuta'));
+    head.append(el('h4', '', weekday), stateTag(item.stato === 'confermata' ? 'Definita con la scuola' : 'Da confermare con la scuola', item.stato === 'confermata' ? 'assegnata' : 'ricevuta'));
     card.append(head, el('span', `type-tag type-${item.tipo}`, APPOINTMENT_TYPES[item.tipo]),
       line('Scuola', schoolNames.get(item.scuola_id) || item.scuola_id));
     if (timeRange(item)) card.append(line('Orario', timeRange(item)));
     if (item.luogo) card.append(line('Luogo', item.luogo));
     if (item.nota) card.append(line('Nota', item.nota));
     const actions = el('div', 'review-actions');
-    const payload = { id: item.id, scuola_id: item.scuola_id, tipo: item.tipo, data: item.data, ora_inizio: item.ora_inizio, ora_fine: item.ora_fine, luogo: item.luogo, nota: item.nota };
-    if (item.stato === 'prevista') actions.append(actionButton('Segna come confermata', 'ok', (b) => appointmentAction(b, 'save_appointment', { ...payload, stato: 'confermata' }, 'Data confermata.')));
-    else actions.append(actionButton('Riporta a prevista', 'neutral', (b) => appointmentAction(b, 'save_appointment', { ...payload, stato: 'prevista' }, 'Data riportata a prevista.')));
+    if (item.stato === 'prevista') actions.append(actionButton('Segna come definita', 'ok', (b) => appointmentAction(b, 'save_appointment', appointmentPayload(item, 'confermata'), 'Data definita con la scuola.')));
+    else actions.append(actionButton('Riporta a da confermare', 'neutral', (b) => appointmentAction(b, 'save_appointment', appointmentPayload(item, 'prevista'), 'Data riportata a da confermare.')));
     actions.append(actionButton('Modifica', 'neutral', () => editAppointment(item)));
     actions.append(actionButton('Togli dal calendario', 'no', (b) => {
       if (!window.confirm('Togliere questa data dal calendario?')) return;
@@ -492,7 +533,6 @@ function resetActivityForm() {
 }
 
 function editActivity(item) {
-  managementTools.open = true;
   document.querySelector('[data-tab="attivita"]').click();
   for (const name of ['id', 'nome', 'cognome', 'tipo', 'data', 'nota', 'titolo']) activityForm.elements[name].value = item[name] || '';
   syncActivityType();
@@ -620,6 +660,89 @@ function exportActivities() {
   activityMessage.textContent = rows.length ? `Scaricato l’elenco: ${rows.length} ${rows.length === 1 ? 'attività confermata' : 'attività confermate'}.` : 'Nessuna attività confermata da scaricare.';
 }
 
+// File Excel: le stesse informazioni della pagina, note interne comprese, con righe colorate per stato.
+const romeDay = (value) => value ? new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Rome' }).format(new Date(value)) : '';
+const shortDate = (value) => value.split('-').reverse().join('/');
+const weekday = (value) => new Intl.DateTimeFormat('it-IT', { weekday: 'long' }).format(new Date(`${value}T12:00:00`));
+
+function assignedTeachers(date) {
+  return [...data.attivita, ...data.da_confermare]
+    .filter((item) => item.tipo === 'visita' && item.scuola_id === date.scuola_id && item.data === date.data)
+    .map((item) => `${item.cognome} ${item.nome} (${item.stato === 'confermata' ? 'svolta' : 'da confermare'})`).join(', ');
+}
+
+function datesSheet() {
+  const now = today();
+  const schools = new Map(data.scuole.map((school) => [school.id, school]));
+  return { name: 'Date', title: `Calendario dell’orientamento · aggiornato al ${shortDate(now)}`,
+    columns: [{ header: 'Data', type: 'date', width: 12 }, { header: 'Giorno', width: 11 }, { header: 'Dalle', width: 8 }, { header: 'Alle', width: 8 }, { header: 'Comune', width: 16 }, { header: 'Scuola', width: 24 }, { header: 'Tipo', width: 24 }, { header: 'Stato', width: 26 }, { header: 'Luogo', width: 24 }, { header: 'Nota interna', width: 40 }, { header: 'Docenti assegnati', width: 34 }, { header: 'Quando', width: 11 }],
+    rows: [...data.appuntamenti].sort(compareAppointments).map((item) => ({
+      tone: item.data < now ? 'grey' : item.stato === 'confermata' ? 'green' : 'amber',
+      cells: [item.data, weekday(item.data), (item.ora_inizio || '').slice(0, 5), (item.ora_fine || '').slice(0, 5), schools.get(item.scuola_id)?.comune || '', schools.get(item.scuola_id)?.etichetta || item.scuola_id, APPOINTMENT_TYPES[item.tipo] || item.tipo, item.stato === 'confermata' ? 'Definita con la scuola' : 'Da confermare con la scuola', item.luogo || '', item.nota || '', assignedTeachers(item), item.data < now ? 'Passata' : 'In arrivo'],
+    })) };
+}
+
+function schoolsSheet() {
+  const now = today();
+  return { name: 'Scuole', title: `Le ${data.scuole.length} scuole e la loro situazione`,
+    columns: [{ header: 'Comune', width: 16 }, { header: 'Scuola', width: 24 }, { header: 'Situazione', width: 26 }, { header: 'Prossima data', type: 'date', width: 13 }, { header: 'Orario', width: 12 }, { header: 'Date in arrivo', width: 40 }, { header: 'Date passate', width: 28 }, { header: 'Docenti disponibili', width: 34 }, { header: 'Visite confermate', type: 'number', width: 12 }],
+    rows: data.scuole.map((school) => {
+      const dates = data.appuntamenti.filter((item) => item.scuola_id === school.id).sort(compareAppointments);
+      const upcoming = dates.filter((item) => item.data >= now);
+      const defined = upcoming.some((item) => item.stato === 'confermata');
+      const describe = (item) => `${shortDate(item.data)}${timeRange(item) ? ` ${timeRange(item)}` : ''} (${item.stato === 'confermata' ? 'definita' : 'da confermare'})`;
+      return { tone: defined ? 'green' : upcoming.length ? 'amber' : 'grey', cells: [school.comune, school.etichetta,
+        defined ? 'Data definita' : upcoming.length ? 'Da confermare con la scuola' : 'Senza data in arrivo',
+        upcoming[0]?.data || '', upcoming[0] ? timeRange(upcoming[0]) : '', upcoming.map(describe).join('; '), dates.filter((item) => item.data < now).map(describe).join('; '),
+        data.disponibilita.filter((item) => item.stato !== 'archiviata' && item.scuole.includes(school.id)).map((item) => `${item.cognome} ${item.nome}`).join(', '),
+        data.attivita.filter((item) => item.tipo === 'visita' && item.scuola_id === school.id && item.data <= now).length] };
+    }) };
+}
+
+function activitiesSheet(items, name, title, tone) {
+  const planned = (item) => item.tipo === 'visita' ? data.appuntamenti.filter((date) => date.scuola_id === item.scuola_id && date.data === item.data) : [];
+  return { name, title,
+    columns: [{ header: 'Cognome', width: 16 }, { header: 'Nome', width: 14 }, { header: 'Data', type: 'date', width: 12 }, { header: 'Attività', width: 16 }, { header: 'Scuola o titolo', width: 32 }, { header: 'Tipo di orientamento', width: 24 }, { header: 'Orario in calendario', width: 16 }, { header: 'Note', width: 36 }, { header: 'Registrata il', type: 'date', width: 13 }],
+    rows: [...items].sort(byTeacher).map((item) => ({ tone, cells: [item.cognome, item.nome, item.data, item.tipo === 'visita' ? 'Visita' : 'Mattinée diffusa',
+      item.tipo === 'visita' ? schoolLabel(item.scuola_id) : (item.titolo || ''), planned(item).map((date) => APPOINTMENT_TYPES[date.tipo]).join(' + '), planned(item).map(timeRange).filter(Boolean).join(' + '), item.nota || '', romeDay(item.created_at)] })) };
+}
+
+function dirigenteSheet() {
+  return activitiesSheet(data.attivita.filter((item) => item.data <= today()), 'Elenco per la Dirigente', `Attività di orientamento confermate fino al ${shortDate(today())}`, 'green');
+}
+
+function supportersSheet() {
+  return { name: 'Disponibilità', title: 'Disponibilità dei docenti',
+    columns: [{ header: 'Cognome', width: 16 }, { header: 'Nome', width: 14 }, { header: 'Stato', width: 14 }, { header: 'Scuole indicate', width: 50 }, { header: 'Nota', width: 36 }, { header: 'Ricevuta il', type: 'date', width: 13 }],
+    rows: data.disponibilita.map((item) => ({ tone: item.stato === 'assegnata' ? 'green' : item.stato === 'archiviata' ? 'grey' : 'blue',
+      cells: [item.cognome, item.nome, SUPPORTER_STATES[item.stato] || item.stato, item.scuole.map(schoolLabel).join('; '), item.nota || '', romeDay(item.created_at)] })) };
+}
+
+function proposalsSheet() {
+  return { name: 'Mattinée', title: 'Proposte di Mattinée',
+    columns: [{ header: 'Titolo', width: 30 }, { header: 'Docente', width: 22 }, { header: 'Area', width: 18 }, { header: 'Tipologia', width: 18 }, { header: 'Durata (minuti)', type: 'number', width: 10 }, { header: 'Partecipanti', type: 'number', width: 11 }, { header: 'Che cosa fanno i ragazzi', width: 50 }, { header: 'Spazi e attrezzature', width: 30 }, { header: 'Note', width: 30 }, { header: 'Stato', width: 14 }, { header: 'Ricevuta il', type: 'date', width: 13 }],
+    rows: data.proposte.map((item) => ({ tone: item.stato === 'approvata' ? 'green' : item.stato === 'archiviata' ? 'grey' : 'violet',
+      cells: [item.titolo, `${item.cognome} ${item.nome}`, item.area, PROPOSAL_TYPES[item.tipologia] || item.tipologia, item.durata_minuti, item.partecipanti ?? '', item.descrizione, item.esigenze || '', item.nota || '', PROPOSAL_STATES[item.stato] || item.stato, romeDay(item.created_at)] })) };
+}
+
+// Il modulo Excel si carica solo quando serve.
+async function exportExcel(kind, target) {
+  if (!data) { target.textContent = 'Carica prima i dati con «Aggiorna dati».'; return; }
+  try {
+    const { downloadWorkbook } = await import('./gestione-excel.mjs?v=20261022-cruscotto');
+    const files = {
+      calendario: [[datesSheet(), schoolsSheet()], `calendario-orientamento-${today()}.xlsx`, 'il calendario con date e scuole'],
+      dirigente: [[dirigenteSheet()], `elenco-dirigente-orientamento-${today()}.xlsx`, 'l’elenco per la Dirigente'],
+      tutto: [[datesSheet(), schoolsSheet(), activitiesSheet(data.da_confermare, 'Da verificare', 'Attività in attesa della tua conferma di svolgimento', 'pink'), activitiesSheet(data.attivita, 'Registro confermate', 'Registro delle attività confermate', 'green'), supportersSheet(), proposalsSheet()], `orientamento-completo-${today()}.xlsx`, 'il file con tutto l’orientamento'],
+    };
+    const [sheets, filename, label] = files[kind];
+    downloadWorkbook(sheets, filename);
+    target.textContent = `Scaricato ${label}: ${filename}.`;
+  } catch (error) {
+    target.textContent = `Il file Excel non è stato creato: ${error.message}`;
+  }
+}
+
 function render() {
   const schoolNames = new Map(data.scuole.map((school) => [school.id, `${school.comune} · ${school.etichetta}`]));
   renderSummary();
@@ -637,6 +760,7 @@ async function load() {
     const result = await api('list_contributions');
     data = { ...result, attivita: result.attivita || [], da_confermare: result.da_confermare || [], appuntamenti: [...(result.appuntamenti || [])].sort(compareAppointments) };
     render();
+    document.getElementById('lastUpdate').textContent = `Dati aggiornati alle ${new Intl.DateTimeFormat('it-IT', { timeStyle: 'short' }).format(new Date())}`;
     if (globalMessage.textContent === 'Caricamento…') globalMessage.textContent = '';
   } catch (error) {
     if (error.status !== 401 && error.status !== 403) schoolCalendar.setError(data?.scuole || []);
@@ -650,10 +774,13 @@ async function enter() {
   const session = await api('session');
   if (session.access_level !== 'funzione_strumentale') {
     try { await api('logout'); } catch { /* sessione chiusa comunque */ }
-    const error = new Error('Questa password non dà accesso alla gestione orientamento.');
+    // Ai colleghi della Commissione si indicano le pagine a loro aperte, senza gli strumenti della FS.
+    document.getElementById('commissionLinks').hidden = false;
+    const error = new Error('Con questa password la Gestione non si apre: è riservata alla Funzione Strumentale. Qui sotto trovi le pagine aperte alla Commissione.');
     error.status = 403;
     throw error;
   }
+  document.getElementById('commissionLinks').hidden = true;
   showWorkspace();
   openRequestedManagementSection();
   document.dispatchEvent(new CustomEvent('bussola-gestione-accesso'));
@@ -665,8 +792,15 @@ for (const tab of document.querySelectorAll('[role="tab"]')) {
   tab.addEventListener('click', () => {
     for (const other of document.querySelectorAll('[role="tab"]')) { other.setAttribute('aria-selected', String(other === tab)); other.tabIndex=other===tab?0:-1; }
     for (const panel of document.querySelectorAll('.tab-panel')) panel.hidden = panel.dataset.panel !== tab.dataset.tab;
+    if (!workspacePanel.hidden) history.replaceState(null, '', `#${SECTION_HASHES[tab.dataset.tab]}`);
   });
 }
+const excelMessage = document.getElementById('excelMessage');
+document.getElementById('exportCalendarXlsx').addEventListener('click', () => exportExcel('calendario', excelMessage));
+document.getElementById('exportActivitiesXlsx').addEventListener('click', () => exportExcel('dirigente', excelMessage));
+document.getElementById('exportAllXlsx').addEventListener('click', () => exportExcel('tutto', excelMessage));
+document.getElementById('exportCalendarXlsxInline').addEventListener('click', () => exportExcel('calendario', appointmentMessage));
+document.getElementById('exportActivitiesXlsxInline').addEventListener('click', () => exportExcel('dirigente', activityMessage));
 
 for (const group of document.querySelectorAll('.filters')) {
   group.addEventListener('click', (event) => {

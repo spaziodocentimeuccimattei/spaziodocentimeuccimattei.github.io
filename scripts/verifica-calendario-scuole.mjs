@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {calendarModel,shiftMonth,chronologicalRows,compareAppointments} from '../scuole-calendario.mjs';
+import {calendarModel,shiftMonth,chronologicalRows,compareAppointments,filterCounts,filterDates,ADMIN_FILTERS,TEACHER_FILTERS} from '../scuole-calendario.mjs';
 const schools=JSON.parse(await readFile(new URL('../scuole-orientamento.json',import.meta.url),'utf8'));
 const base={start:'2026-10',today:'2026-10-14'};
 const appointments=[
@@ -50,6 +50,15 @@ for(const stato of ['confermata','prevista']) assert.equal(calendarModel(schools
 assert.equal(shiftMonth('2026-12',1),'2027-01');
 assert.equal(shiftMonth('2027-01',-3),'2026-10');
 assert.equal(calendarModel(schools,[{scuola_id:schools[0].id,data:'2026-02-31',stato:'confermata'}],base).counts.bookable,0);
+// Gestione: date definite (confermate dalla scuola), da confermare e scuole senza data; i docenti restano con due filtri.
+model=calendarModel(schools,appointments,base);
+assert.deepEqual(TEACHER_FILTERS.map(([key])=>key),['all','bookable']);
+assert.deepEqual(filterCounts(model,ADMIN_FILTERS.map(([key])=>key)),{all:24,bookable:2,confirmed:1,planned:2,undated:22});
+assert.deepEqual(chronologicalRows(model.rows.filter(row=>filterDates(row,'confirmed').length),model.months,row=>filterDates(row,'confirmed')).flatMap(row=>row.all).map(item=>item.id),['test-second','test-confirmed']);
+const undatedRows=chronologicalRows(model.rows.filter(row=>!row.upcoming.length),model.months,()=>[]);
+assert.equal(undatedRows.length,22);assert.ok(undatedRows.every(row=>!row.all.length));
+assert.equal(filterCounts(calendarModel(schools,[],{...base,ready:false}),['all','confirmed']).confirmed,null);
+assert.equal(JSON.stringify({schools,appointments}),original);
 console.log('Calendario scuole: conservazione, 24 scuole, stati, ordine, periodi e dati indisponibili verificati.');
 // La nuova apertura non deve mai sovrascrivere una data non ancora salvata.
 const managementSource=await readFile(new URL('../gestione.js',import.meta.url),'utf8');

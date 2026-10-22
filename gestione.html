@@ -8,9 +8,9 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261009-home">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261020-annullamento">
+  <link rel="stylesheet" href="gestione.css?v=20261022-cruscotto">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261014-leggibilita">
-  <link rel="stylesheet" href="scuole-calendario.css?v=20261020-prenotabili">
+  <link rel="stylesheet" href="scuole-calendario.css?v=20261022-definite">
 </head>
 <body class="gestione-page">
   <a class="manage-skip" href="#gestioneMain">Vai al contenuto</a>
@@ -40,6 +40,7 @@
           <p class="step">Accesso personale</p>
           <h2 id="access-title" tabindex="-1">Accedi all’area riservata</h2>
           <p>Usa la password della Funzione Strumentale per aprire il pannello di gestione.</p>
+          <p class="access-note">Sei della Commissione Orientamento? Per creare le classi e i codici della Bussola entra dall’<a href="bussola-docenti.html">Area docenti Bussola</a> con la password della Commissione.</p>
         </div>
         <form class="password-form" id="passwordForm">
           <label for="managePassword">Password personale</label>
@@ -48,34 +49,61 @@
             <button type="submit" disabled>Accedi</button>
           </div>
           <p class="access-message" id="accessMessage" role="status" aria-live="polite"></p>
+          <div class="commission-links" id="commissionLinks" hidden>
+            <a href="una-scuola-da-vivere.html"><strong>Il calendario delle date</strong><span>Tutte le scuole, giorni, orari e luoghi degli appuntamenti</span></a>
+            <a href="territorio.html"><strong>Territori e scuole</strong><span>I dati Istat e le scuole da incontrare</span></a>
+            <a href="bussola-docenti.html"><strong>Area docenti Bussola</strong><span>Crea la classe, codice e QR, lavori degli alunni</span></a>
+            <a href="orientamento.html"><strong>Area della Commissione</strong><span>Documenti condivisi della Commissione</span></a>
+          </div>
         </form>
       </div>
 
       <div class="manage-panel" id="workspacePanel" hidden>
         <div class="manage-top">
-          <div><p class="step">Gestione orientamento</p><h2 id="workspaceTitle" tabindex="-1">Il calendario delle scuole</h2></div>
-          <div class="manage-actions"><a class="manage-tools-link bussola-tools-link" href="#bussola">Classi e codici della Bussola</a><a class="manage-tools-link" href="#managementTools">Attività e attestati ↓</a><button id="refreshButton" type="button">Aggiorna dati</button><button class="logout-button" id="logoutButton" type="button">Esci</button></div>
+          <div><p class="step">Area della Funzione Strumentale</p><h2 id="workspaceTitle" tabindex="-1">Gestione orientamento</h2><p class="manage-updated" id="lastUpdate"></p><p class="manage-next" id="nextAppointment"></p></div>
+          <div class="manage-actions"><button id="refreshButton" type="button">Aggiorna dati</button><button class="logout-button" id="logoutButton" type="button">Esci</button></div>
         </div>
         <p id="globalMessage" class="global-message" role="status" aria-live="polite"></p>
-        <section id="manageSchoolCalendar" aria-label="Calendario completo delle scuole"></section>
-        <details class="management-tools" id="managementTools">
-          <summary>Disponibilità, attività, moduli e attestati</summary>
-        <details class="manage-overview">
-          <summary>Riepilogo delle attività <span>Conteggi, scuole visitate e prossime date</span></summary>
-          <div class="contribution-summary" id="summary"></div>
-        </details>
+        <section class="manage-dashboard" aria-labelledby="dashboardTitle">
+          <h3 id="dashboardTitle" class="manage-section-label">La situazione in un colpo d’occhio <span>Tocca un riquadro per aprire la sezione</span></h3>
+          <div class="dashboard-grid" id="summary"></div>
+        </section>
 
-        <nav class="tabs" role="tablist" aria-label="Sezioni">
-          <button role="tab" data-tab="confermare" aria-selected="true"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M9 3h6v4H9zM9 14l2 2 4-4"/></svg><span class="tab-label">Attività da verificare <span class="count" id="countConfermare"></span></span></button>
-          <button role="tab" data-tab="candidature" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v2"/></svg><span class="tab-label">Disponibilità docenti <span class="count" id="countCandidature"></span></span></button>
-          <button role="tab" data-tab="proposte" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M8 14a6 6 0 1 1 8 0l-1 3H9z"/></svg><span class="tab-label">Proposte Mattinée <span class="count" id="countProposte"></span></span></button>
-          <button role="tab" data-tab="scuole" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12M9 21v-7h6v7M6 10v2M18 10v2M6 16v2M18 16v2"/></svg><span class="tab-label">Scuole</span></button>
-          <button role="tab" data-tab="calendario" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 11h18M7 15h2M15 15h2"/></svg><span class="tab-label">Calendario <span class="count" id="countCalendario"></span></span></button>
-          <button role="tab" data-tab="bussola" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/></svg><span class="tab-label">Classi, codici e attestati</span></button>
-          <button role="tab" data-tab="attivita" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 15l2 2 5-5"/></svg><span class="tab-label">Attività confermate</span></button>
+        <h3 class="manage-section-label" id="sectionsTitle">Che cosa vuoi fare</h3>
+        <nav class="tabs manage-sections" role="tablist" aria-labelledby="sectionsTitle">
+          <button role="tab" class="tone-teal" data-tab="panoramica" aria-selected="true"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 11h18M8 15h3M13 15h3M8 18h3"/></svg><span class="tab-label"><strong>Calendario delle scuole <span class="count" id="countPanoramica"></span></strong><small>Tutte le scuole, date definite e da confermare</small></span></button>
+          <button role="tab" class="tone-green" data-tab="calendario" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 11h18M12 14v5M9.5 16.5h5"/></svg><span class="tab-label"><strong>Inserisci e modifica date <span class="count" id="countCalendario"></span></strong><small>Nuova data, conferma, togli dal calendario</small></span></button>
+          <button role="tab" class="tone-pink" data-tab="confermare" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M9 3h6v4H9zM9 14l2 2 4-4"/></svg><span class="tab-label"><strong>Attività da verificare <span class="count" id="countConfermare"></span></strong><small>Conferma che la visita si è svolta</small></span></button>
+          <button role="tab" class="tone-blue" data-tab="candidature" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v2"/></svg><span class="tab-label"><strong>Disponibilità docenti <span class="count" id="countCandidature"></span></strong><small>Assegna le visite ai colleghi</small></span></button>
+          <button role="tab" class="tone-violet" data-tab="proposte" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M8 14a6 6 0 1 1 8 0l-1 3H9z"/></svg><span class="tab-label"><strong>Proposte Mattinée <span class="count" id="countProposte"></span></strong><small>Valuta e approva le proposte</small></span></button>
+          <button role="tab" class="tone-slate" data-tab="scuole" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12M9 21v-7h6v7M6 10v2M18 10v2M6 16v2M18 16v2"/></svg><span class="tab-label"><strong>Scuole e visite <span class="count" id="countScuole"></span></strong><small>Chi va dove, visite svolte</small></span></button>
+          <button role="tab" class="tone-navy" data-tab="attivita" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 15l2 2 5-5"/></svg><span class="tab-label"><strong>Registro confermate <span class="count" id="countAttivita"></span></strong><small>Docente per docente, elenco per la Dirigente</small></span></button>
+          <button role="tab" class="tone-red" data-tab="bussola" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/></svg><span class="tab-label"><strong>Classi e codici Bussola</strong><small>Crea la classe, codice e QR, attestati</small></span></button>
+          <button role="tab" class="tone-lime" data-tab="excel" aria-selected="false"><svg class="tab-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 12l4 5M12 12l-4 5M14.5 17H17"/></svg><span class="tab-label"><strong>Scarica Excel</strong><small>Calendario, scuole, registro e disponibilità</small></span></button>
         </nav>
 
-        <section class="tab-panel" data-panel="bussola" hidden><div id="bussolaManagement"></div></section>
+        <section class="tab-panel" data-panel="panoramica"><div id="manageSchoolCalendar" aria-label="Calendario completo delle scuole"></div></section>
+
+        <section class="tab-panel" data-panel="excel" hidden>
+          <h3 class="panel-title">Scarica in Excel</h3>
+          <p class="panel-help">I file si aprono con Excel, Numbers o Fogli Google. Ogni foglio ha l’intestazione bloccata, i filtri già attivi e le righe colorate come qui: <b>verde</b> data definita o attività confermata, <b>arancio</b> da confermare, <b>grigio</b> senza data. Contengono i dati caricati con l’ultimo «Aggiorna dati»: le note interne restano nel file, quindi non inoltrarlo fuori dalla Commissione.</p>
+          <div class="excel-grid">
+            <article class="excel-card tone-teal"><h4>Date e scuole</h4><p>Due fogli: tutte le date in ordine di giorno e orario, con scuola, tipo, stato, luogo, nota e docenti assegnati; tutte le scuole con la loro situazione, anche quelle ancora senza data.</p><button type="button" class="act ok" id="exportCalendarXlsx">Scarica date e scuole (.xlsx)</button></article>
+            <article class="excel-card tone-navy"><h4>Elenco per la Dirigente</h4><p>Le sole attività confermate fino a oggi, docente per docente: data, scuola o titolo, tipo e orario del calendario.</p><button type="button" class="act ok" id="exportActivitiesXlsx">Scarica l’elenco (.xlsx)</button></article>
+            <article class="excel-card tone-lime"><h4>Tutto l’orientamento</h4><p>Un solo file con un foglio per sezione: date, scuole, attività da verificare, registro confermato, disponibilità dei docenti e proposte di Mattinée.</p><button type="button" class="act ok" id="exportAllXlsx">Scarica tutto (.xlsx)</button></article>
+            <article class="excel-card tone-red"><h4>Bussola</h4><p>I link individuali degli alunni e gli attestati (ZIP e PDF) si scaricano dalla classe, in «Classi e codici Bussola».</p><button type="button" class="act neutral" data-go="bussola">Vai a Classi e codici Bussola</button></article>
+          </div>
+          <p id="excelMessage" class="global-message" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="tab-panel" data-panel="bussola" hidden>
+          <h3 class="panel-title">Classi e codici della Bussola</h3>
+          <div class="bussola-explain">
+            <p class="panel-help">Qui generi il <b>codice della classe</b> (sei caratteri) e il <b>QR</b> da dare agli alunni delle medie: apri «Crea una classe e genera il codice», compila scuola, comune e classe e premi il pulsante. Se la classe esiste già, scegli indirizzo, scuola e classe per ritrovare il codice, i lavori e gli attestati.</p>
+            <p class="panel-help">I colleghi della Commissione Orientamento non entrano in questa Gestione: con la loro password usano l’<a href="bussola-docenti.html">Area docenti Bussola</a>, dove creano le classi, mostrano codice e QR e seguono i lavori delle classi che hanno creato o aperto con il codice.</p>
+          </div>
+          <div id="bussolaManagement"></div>
+        </section>
 
         <section class="tab-panel" data-panel="confermare">
           <h3 class="panel-title">Attività da verificare</h3>
@@ -117,7 +145,7 @@
           <h3 class="panel-title">Calendario dell’orientamento</h3>
           <div class="export-bar">
             <p class="panel-help">Qui inserisci le date dell’orientamento in ciascuna scuola media. I docenti le vedono subito nella loro pagina, accanto alla scuola, con orario e luogo; la nota la vedi solo tu. Una data resta <b>prevista</b> finché la scuola non la conferma.</p>
-            <button type="button" class="act ok" id="exportCalendarButton">Scarica calendario CSV</button>
+            <div class="export-buttons"><button type="button" class="act ok" id="exportCalendarXlsxInline">Scarica in Excel</button><button type="button" class="act neutral" id="exportCalendarButton">Scarica calendario CSV</button></div>
           </div>
           <form id="appointmentForm" class="activity-form appointment-form">
             <input type="hidden" name="id">
@@ -158,7 +186,7 @@
           <h3 class="panel-title">Registro delle attività confermate</h3>
           <div class="export-bar">
             <p class="panel-help">Qui registri e ritrovi, per ogni docente, quando e dove è andato a fare orientamento. Il pulsante scarica l’elenco per la Dirigente (docente, attività, scuola, data e, se la data è in calendario, tipo di orientamento e orario), da aprire con Excel.</p>
-            <button type="button" class="act ok" id="exportButton">Scarica elenco CSV</button>
+            <div class="export-buttons"><button type="button" class="act ok" id="exportActivitiesXlsxInline">Scarica in Excel</button><button type="button" class="act neutral" id="exportButton">Scarica elenco CSV</button></div>
           </div>
           <p class="panel-help">Puoi inserire o correggere una registrazione: resta in «Da verificare» e non attesta lo svolgimento. Durante la modifica puoi anche <b>annullare la registrazione</b>. Solo la tua conferma di svolgimento la farà entrare nel registro.</p>
           <form id="activityForm" class="activity-form appointment-form">
@@ -186,7 +214,6 @@
           <h3 class="sub-title">Attività confermate, docente per docente</h3>
           <div class="review-list" id="activityList"></div>
         </section>
-        </details>
       </div>
     </section>
   </main>
@@ -195,7 +222,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script type="module" src="gestione.js?v=20261020-annullamento"></script>
+  <script type="module" src="gestione.js?v=20261022-cruscotto"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261020-contatti"></script>
 </body>
 </html>
