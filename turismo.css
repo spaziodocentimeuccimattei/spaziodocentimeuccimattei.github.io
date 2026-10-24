@@ -270,3 +270,12 @@ body .intro button.primary.bussola-start:hover { color: var(--t-navy); backgroun
 body .intro button.primary.bussola-start:focus-visible { outline-color: #fff; }
 footer summary { min-height: 44px; padding-block: 10px; }
 .sim-number button { min-width: 44px; min-height: 44px; }
+
+/* Existing work is described without assuming who is using a shared device. */
+.intro .resume-help{margin:16px 0;font-size:.92rem;line-height:1.6}
+.intro .resume-new{padding:8px 0;min-height:44px;color:#fff;background:transparent;font-weight:750;text-align:left;text-decoration:underline;text-underline-offset:4px}
+.intro .resume-new:hover{color:var(--t-lime)}
+.intro .resume-new:focus-visible{outline-color:#fff}
+#savedActivities h3{margin:20px 0 8px;font-size:1rem}
+#savedActivities ul{margin:0;padding-left:20px}
+#savedActivities a{display:inline-flex;align-items:center;min-height:44px;padding-block:8px}

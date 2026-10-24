@@ -3,10 +3,12 @@ import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261020-contatti';
 import {mountNextStep} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 import {setupTourismRemote} from './turismo-remote.mjs?v=20261019-monitor';
+import {rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 import {KEY as BASE_KEY,LABS,PLACES,QUESTIONS,WELCOMES,PLANS,RAIN,SERVICES,TERMS,TONES,createProject,restore,choose,canAdvance,next,complete,costs} from './turismo-core.mjs?v=20261009-turismo';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');
 const entryAlumno=classEntry().alunno,KEY=BASE_KEY+(entryAlumno?':alunno:'+entryAlumno:'')+(localTest?':prova:'+localTest:'');
+const recoveryKey=KEY+':conservati';
 let storageOK=true,p,remote,classAccess,attestato;
 const requested=new URL(location.href).searchParams.get('progetto');
 try {const id=requested||localStorage.getItem(KEY+'.active');p=id?restore(JSON.parse(localStorage.getItem(KEY+'.'+id)||'null')):null;}catch{storageOK=false;}
@@ -16,6 +18,38 @@ function save(){keep();remote?.changed();}
 const navigation=setupExperienceNavigation(route=>{restoreRoute(route);render();});
 function restoreRoute(route){const n=route==='conclusione'?10:Number(route.match(/^passaggio-(\d+)$/)?.[1])-1;if(p.started&&Number.isInteger(n)&&n>=0&&n<=maxSeen){mode='work';p.screen=n;navigation.enter();}else{mode='intro';navigation.showIntro();}}
 function loaded(project){p=project;maxSeen=Math.max(p.screen,p.choices.maxSeen||0);restoreRoute(navigation.route());keep();render();}
+function savedActivities(){
+ const saved=JSON.parse(localStorage.getItem(recoveryKey)||'[]');
+ if(!Array.isArray(saved))throw new Error('Elenco delle attività non riconosciuto.');
+ return saved;
+}
+function showSavedActivities(){
+ const box=$('savedActivities');box.replaceChildren();
+ try{
+  const entries=savedActivities();if(!entries.length)return;
+  const heading=document.createElement('h3'),list=document.createElement('ul');heading.textContent='Attività conservate';
+  for(const entry of entries){
+   const url=new URL(entry.url,location.href);if(url.origin!==location.origin||url.pathname!==location.pathname)continue;
+   const item=document.createElement('li'),link=document.createElement('a');link.href=url.href;link.textContent=`Riprendi l’attività del ${new Date(entry.date).toLocaleString('it-IT')}`;item.append(link);list.append(item);
+  }
+  box.append(heading,list);
+ }catch{box.textContent='L’elenco delle attività conservate non è disponibile. I lavori restano sul dispositivo.';}
+}
+function newActivity(){
+ keep();
+ try{
+  // Archive the existing URL before changing capability; the original storage and owner stay intact.
+  if(!storageOK)throw new Error();
+  const entries=savedActivities(),oldURL=new URL(location.href);
+  if(oldURL.hash.includes('=')){const params=new URLSearchParams(oldURL.hash.slice(1));params.set('passaggio','ingresso');oldURL.hash=params.toString();}else oldURL.hash='ingresso';
+  const archive=p.started||p.notes.length?[{url:oldURL.href,date:p.updatedAt},...entries.filter(x=>x.url!==oldURL.href)]:entries;
+  const token=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
+  // Carry recovery links into this new activity only, never into “Cambia partecipante”.
+  localStorage.setItem(BASE_KEY+':alunno:'+token+(localTest?':prova:'+localTest:'')+':conservati',JSON.stringify(archive));
+  const url=new URL(location.href),params=new URLSearchParams({alunno:token}),entry=classEntry();if(entry.classe)params.set('classe',entry.classe);
+  url.searchParams.set('progetto',crypto.randomUUID());url.hash=params.toString();rememberParticipant(token,entry.classe);location.assign(url.href);
+ }catch{$('saved').textContent='Non riesco a conservare il lavoro precedente. Resta in questa attività e riprova.';}
+}
 function art(type='map',mini=false){const base=`<svg viewBox="0 0 560 320" role="img" aria-label="${type==='clay'?'Illustrazione di ceramiche e motivi geometrici':type==='camera'?'Illustrazione di un racconto per immagini':'Mappa illustrata di un territorio immaginario'}" xmlns="http://www.w3.org/2000/svg">`;
  if(type==='clay')return base+`<rect width="560" height="320" fill="#dddac5"/><circle cx="400" cy="70" r="115" fill="#bdd4c1"/><path d="M0 265Q180 240 560 278V320H0" fill="#c9b899"/><ellipse cx="265" cy="260" rx="145" ry="25" fill="#778a6a" opacity=".2"/><path d="M210 80h88l-5 48q80 105 17 130h-133q-55-25 27-130z" fill="#bc744b"/><path d="M190 185h123M196 201h112M205 220h89" stroke="#f6e5c9" stroke-width="5"/><path d="M220 159l15 18 15-18 15 18 15-18 15 18" fill="none" stroke="#f6e5c9" stroke-width="5"/><ellipse cx="256" cy="81" rx="43" ry="10" fill="#634634"/><path d="M360 210q38 65 94 0z" fill="#ecb37b"/><path d="M63 211h75v51H63z" fill="#eef0dd"/><path d="M77 216l12 17 12-17 12 17 12-17" fill="none" stroke="#548074" stroke-width="4"/><circle cx="416" cy="137" r="26" fill="none" stroke="#3d7065" stroke-width="4"/><path d="M404 137h24m-12-12v24" stroke="#3d7065" stroke-width="3"/></svg>`;
  if(type==='camera')return base+`<rect width="560" height="320" fill="#d6e1d5"/><rect x="55" y="42" width="175" height="215" rx="7" transform="rotate(-8 142 150)" fill="#fffdf3"/><path d="M73 202l33-62 44 36 34-75 35 95" fill="#9eb9a0"/><circle cx="121" cy="92" r="24" fill="#d59c65"/><rect x="292" y="83" width="196" height="148" rx="18" fill="#244f49"/><path d="M332 83l15-23h76l13 23" fill="#244f49"/><circle cx="390" cy="154" r="47" fill="#dbe4d5"/><circle cx="390" cy="154" r="30" fill="#629488"/><circle cx="452" cy="104" r="7" fill="#e8be85"/><path d="M271 264h203" stroke="#bfa473" stroke-width="5"/><circle cx="286" cy="50" r="18" fill="none" stroke="#558074" stroke-width="3"/></svg>`;
@@ -25,7 +59,7 @@ function selectOptions(items,key,current=p.choices[key]){return `<div class="opt
 function result(text){return `<div class="live-result" role="status" aria-live="polite">${text||''}</div>`;}
 function go(screen,history=true){p.screen=screen;mode='work';navigation.enter();maxSeen=Math.max(maxSeen,screen);save();if(history)historyRoute();render();$('main').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
 function historyRoute(){navigation.write(mode==='work'?p.screen===10?'conclusione':`passaggio-${p.screen+1}`:'ingresso');}
-function intro(){context='Ingresso · presentazione';return `<section class="intro"><div><p class="eyebrow">Turismo · cinque laboratori</p><h1>Come nasce una proposta turistica?</h1><p class="lead">In questo indirizzo impari a conoscere territori e culture, usare le lingue, accogliere persone e organizzare esperienze.</p><p>Qui lavori in uno studio di progettazione turistica: racconti un luogo, accogli due visitatori in inglese, progetti un’esperienza, prepari l’offerta e scrivi l’invito.</p><button class="primary bussola-start" id="enter" type="button">${p.started?'Riprendi il tuo lavoro':'Inizia'} <span aria-hidden="true">→</span></button><p class="help">Fai tutti e cinque i laboratori. Puoi cambiare idea e riprendere da dove eri arrivato.</p></div><div class="studio-art"><div class="art-title"><span>Studio Turismo</span><span>01 — 05</span></div>${art()}<div class="stamp">Cala delle Trame · luogo immaginario</div></div></section><section class="lab-cards" aria-label="Che cosa costruirai">${LABS.map((l,i)=>`<article class="lab-card"><span>0${i+1}</span><h2>${l.label}</h2><p>${['Una storia da far scoprire.','Un’accoglienza in due lingue.','Un’esperienza che può cambiare.','Un’offerta chiara e organizzata.','Un invito con la tua impronta.'][i]}</p></article>`).join('')}</section>`;}
+function intro(){context='Ingresso · presentazione';return `<section class="intro"><div><p class="eyebrow">Turismo · cinque laboratori</p><h1>Come nasce una proposta turistica?</h1><p class="lead">In questo indirizzo impari a conoscere territori e culture, usare le lingue, accogliere persone e organizzare esperienze.</p><p>Qui lavori in uno studio di progettazione turistica: racconti un luogo, accogli due visitatori in inglese, progetti un’esperienza, prepari l’offerta e scrivi l’invito.</p><button class="primary bussola-start" id="enter" type="button">${p.started?'Riprendi l’attività salvata':'Inizia'} <span aria-hidden="true">→</span></button>${p.started?'<p class="resume-help">C’è un’attività già avviata su questo dispositivo.</p><button class="resume-new" type="button" data-new-activity>Inizia una nuova attività</button><p class="help">Il lavoro precedente resterà in «Attività conservate», in fondo alla pagina.</p>':'<p class="help">Fai tutti e cinque i laboratori. Puoi cambiare idea e riprendere da dove eri arrivato.</p>'}</div><div class="studio-art"><div class="art-title"><span>Studio Turismo</span><span>01 — 05</span></div>${art()}<div class="stamp">Cala delle Trame · luogo immaginario</div></div></section><section class="lab-cards" aria-label="Che cosa costruirai">${LABS.map((l,i)=>`<article class="lab-card"><span>0${i+1}</span><h2>${l.label}</h2><p>${['Una storia da far scoprire.','Un’accoglienza in due lingue.','Un’esperienza che può cambiare.','Un’offerta chiara e organizzata.','Un invito con la tua impronta.'][i]}</p></article>`).join('')}</section>`;}
 function labHeader(i,heading,instruction){context=`${i+1}. ${LABS[i].label} · ${p.screen%2+1}/2 · ${heading}`;return `${maxSeen===10?'<div class="review-top"><button id="returnProject" class="text-button" type="button">Torna alla tua proposta →</button></div>':''}<header class="workspace-head"><div><p class="eyebrow"><span class="eyebrow-lab">Laboratorio ${i+1} di 5 · </span>${LABS[i].label}</p><h1>${heading}</h1></div><span class="step-count">Passo ${p.screen%2+1} di 2</span></header><p class="instruction">${instruction}</p>`;}
 function lagoon(season){return `<svg viewBox="0 0 240 110" role="img" aria-label="Illustrazione della laguna in ${season==='estate'?'estate, acqua più bassa e sole alto':'inverno, acqua più alta e cielo nuvoloso'}"><rect width="240" height="110" fill="${season==='estate'?'#eee5c8':'#c9dcd7'}"/><circle cx="185" cy="25" r="16" fill="${season==='estate'?'#d29b58':'#e8eee6'}"/><path d="M0 70q60-23 124-2t116-14v56H0z" fill="#729778"/><path d="M0 ${season==='estate'?88:69}q65-10 123 5t117-7v43H0z" fill="#86bfb6"/><path d="M44 73v-23m-8 8l8-12 8 12" fill="none" stroke="#416c54" stroke-width="3"/><path d="M83 96q15-6 30 0m48-7q14-6 27 0" fill="none" stroke="#cee8dd" stroke-width="2"/></svg>`;}
 function story(){const place=PLACES.find(x=>x.id===p.choices.place),angle=place?.angles.find(x=>x[0]===p.choices.angle);return `<article class="card story-card"><div class="detail-hero">${art(place?.id==='bottega'?'clay':place?.id==='museo'?'camera':'map',true)}</div><div class="story-body"><div class="palette-label"><span class="dot"></span>La tua storia</div><p class="subtle">${esc(place?.name||'Un luogo da scoprire')}</p><h2 id="storyTitle">${esc(p.choices.storyTitle||angle?.[1]||'Che cosa vuoi far notare?')}</h2><p>${esc(angle?.[2]||'Scegli un punto di vista: la tua scheda prenderà forma qui.')}</p><p class="subtle">${esc(place?.detail)}</p>${place?.id==='laguna'&&p.choices.angle==='stagioni'?`<div class="seasons"><figure>${lagoon('estate')}<figcaption>Estate · acqua più bassa</figcaption></figure><figure>${lagoon('inverno')}<figcaption>Inverno · acqua più alta</figcaption></figure></div><p class="subtle">Due illustrazioni dello scenario: puoi far notare questi cambiamenti.</p>`:''}</div></article>`;}
@@ -66,7 +100,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||
  else if(b.id==='notesClose')$('notes').close();
  else if(b.id==='showCertificate'){if(complete(p)){save();attestato.open(b);}}
  
- else if(b.id==='newDemo'){save();const u=new URL(location.href),newP=createProject();try{localStorage.setItem(KEY+'.'+newP.id,JSON.stringify(newP));}catch{}u.searchParams.set('progetto',newP.id);u.hash='ingresso';location.href=u.href;}
+ else if(b.id==='newDemo'||b.hasAttribute('data-new-activity'))newActivity();
 });
 document.addEventListener('input',e=>{if(e.target.id==='storyInput'){p.choices.storyTitle=e.target.value.slice(0,85);$('storyTitle').textContent=p.choices.storyTitle||PLACES.find(x=>x.id===p.choices.place)?.angles.find(x=>x[0]===p.choices.angle)?.[1]||'Che cosa vuoi far notare?';save();}if(e.target.id==='posterInput'){p.choices.posterTitle=e.target.value.slice(0,85);$('posterTitle').textContent=p.choices.posterTitle||TONES.find(x=>x.id===p.choices.tone)?.headline||'Il tuo invito prende forma qui.';save();}});
 function openNotes(){$('noteContext').textContent=context;$('noteMessage').textContent='';$('noteForm').reset();showNotes();$('notes').showModal();}
@@ -77,4 +111,4 @@ classAccess=setupClass({key:KEY,token:()=>remote.token(),ensure:()=>remote.ensur
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());
-restoreRoute(navigation.route());keep();render();if(remote.token())remote.sync();
+restoreRoute(navigation.route());keep();render();showSavedActivities();if(remote.token())remote.sync();

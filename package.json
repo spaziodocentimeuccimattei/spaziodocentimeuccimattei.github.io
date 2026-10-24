@@ -4,7 +4,8 @@
   "scripts": {
     "test:monitoraggio": "node scripts/verifica-bussola-monitoraggio.mjs",
     "preview:monitoraggio": "node scripts/anteprima-bussola-monitoraggio.mjs",
-    "test:interfaccia": "node --experimental-vm-modules scripts/verifica-bussola-interfaccia.mjs"
+    "test:interfaccia": "node --experimental-vm-modules scripts/verifica-bussola-interfaccia.mjs",
+    "test:turismo-ingresso": "node --experimental-vm-modules scripts/verifica-turismo-ingresso.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.14",

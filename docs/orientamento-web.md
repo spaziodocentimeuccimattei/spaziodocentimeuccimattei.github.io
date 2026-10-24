@@ -55,8 +55,8 @@ l’attribuzione al PTOF che la consegna dell’ecosistema indicava come non doc
 
 ## Conservazione e verifiche
 
-Dati, identificativi, campi, logiche di accesso e salvataggio, backend, contenuti
-dei laboratori e immagini originali restano invariati. Il secondo esame modifica
+Fino alla revisione v4, dati, identificativi, campi, logiche di accesso e salvataggio,
+backend, contenuti dei laboratori e immagini originali restano invariati. Il secondo esame modifica
 solo due frasi nei moduli SIA/Turismo e lo stato accessibile delle slide di
 Accoglienza; aggiorna i riferimenti alle risorse cambiate. I contenuti di approfondimento
 delle schede restano disponibili; la motivazione educativa è spostata nel dettaglio.
@@ -101,3 +101,24 @@ Questa copertura non equivale a tutte le combinazioni possibili, a una prova
 con lettore di schermo o dispositivi fisici, né a un accesso con credenziali
 reali alle aree riservate. I controlli di monitoraggio usano un database
 PostgreSQL isolato in memoria e non dati della scuola.
+
+## Ingresso Turismo dopo la v4
+
+Il primo accesso conserva «Inizia». Per un’attività avviata, «Riprendi l’attività
+salvata» descrive lo stato del dispositivo senza attribuire il lavoro alla persona
+che sta navigando. Una spiegazione breve e un comando visibile permettono di
+iniziare una nuova attività.
+
+Corretto anche il comando già presente nel footer: cambiava soltanto il progetto
+locale, poi il recupero online ricaricava il lavoro precedente dello stesso
+partecipante. La nuova attività usa un accesso distinto e conserva il progetto
+precedente con il suo proprietario e un collegamento per riaprirlo. L’elenco di
+recupero non passa a «Cambia partecipante». Se non può essere conservato, il
+cambio si ferma e mostra un messaggio. Backend e campi dei moduli non cambiano.
+
+`npm run test:turismo-ingresso` verifica questo flusso con moduli reali, DOM
+simulato e PostgreSQL isolato, inclusi recupero offline e errore di archiviazione.
+Superati anche i test esistenti Turismo, navigazione, accessi e interfaccia.
+Per questo seguito il browser dell’app non era disponibile: il nuovo testo e
+la nuova azione richiedono ancora un controllo visivo nel browser. Nessuna
+pubblicazione eseguita.
