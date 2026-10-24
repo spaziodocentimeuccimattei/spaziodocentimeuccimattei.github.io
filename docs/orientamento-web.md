@@ -21,6 +21,7 @@ l’azione principale, conservando testi, navigazione e identità della scuola.
 - Tipografia di sistema, titoli con interlinea almeno 1,1; testo almeno 13 px.
 - Riquadri con angoli di 12–18 px, ombre leggere solo quando spiegano un livello.
 - Menu comune visibile anche sul telefono. Il marchio riporta alla home.
+- Barra degli indirizzi blu con sei pulsanti bianchi e testo scuro. Selezione lime con sottolineatura; hover azzurro chiaro con sottolineatura; focus con anello lime esterno.
 
 Il foglio `orientamento-web.css` è collegato dopo i fogli esistenti e usa il
 contesto `orientation-web`. Non cambiare i fogli condivisi dei laboratori per
@@ -66,6 +67,12 @@ dei campi, nessun riferimento locale mancante. Superati i controlli esistenti
 su navigazione, percorsi, accessi e 90 controlli di interfaccia con database
 locale fittizio. Le prove non equivalgono a un test su dispositivi fisici,
 a una verifica con lettore di schermo o a un pilotaggio con famiglie e alunni.
+
+Correzione mirata della barra: verificate le superfici dei pulsanti rispetto al
+fondo, oltre al testo, in stato normale, hover, selezionato e focus da tastiera.
+Contrasto normale bianco/blu 11.6:1; minimo osservato tra gli stati
+9.59:1. Sei salti verificati a 390 px, nessun titolo coperto; pulsanti
+almeno 44 px e nessun overflow a 320, 390, 768 e 1280 px.
 
 Questa revisione è locale: pubblicazione e verifica del sito vivo richiedono
 l’autorizzazione di Salvatore.
