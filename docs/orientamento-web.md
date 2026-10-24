@@ -122,3 +122,22 @@ Superati anche i test esistenti Turismo, navigazione, accessi e interfaccia.
 Per questo seguito il browser dell’app non era disponibile: il nuovo testo e
 la nuova azione richiedono ancora un controllo visivo nel browser. Nessuna
 pubblicazione eseguita.
+
+## Home mobile: etichette fuori dai pulsanti
+
+Lo screenshot iPhone fornito dopo la pubblicazione v5 mostra tre CTA iniziali
+fuori dal fondo bianco. La vecchia regola mobile di `home.css` mantieneva
+`width:44px;height:44px` per i pulsanti che in precedenza mostravano soltanto
+una freccia; il nuovo foglio ripristinava il testo senza ripristinare le dimensioni.
+Le quattro CTA della home ora hanno larghezza e altezza automatiche, larghezza
+massima del contenitore, altezza minima di 44 px e ritorno a capo. Titoli lunghi
+ed email possono andare a capo; le colonne mobili delle schede possono restringersi.
+La versione del foglio viene aggiornata nella home: queste nuove regole sono
+limitate al suo contesto e non cambiano le altre pagine.
+
+Conservati tutti i testi e collegamenti. Verificata la cascata CSS a 13 larghezze,
+inclusi i due lati del limite 700 px che attivava il difetto. Questo controllo
+non misura l’overflow dei singoli elementi: l’assenza di scorrimento laterale
+del documento, usata nel precedente esame, non provava che ogni testo fosse
+contenuto nella propria scheda. Il nuovo controllo visivo su browser resta
+da fare; il browser dell’app non era disponibile. Correzione locale, non pubblicata.

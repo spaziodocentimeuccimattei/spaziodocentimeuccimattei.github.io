@@ -60,7 +60,7 @@
 .home-flow .doors .road { min-height: 120px; padding: 20px; grid-column: auto; grid-template-columns: auto 1fr; grid-template-rows: auto; gap: 12px 14px; color: #fff; background: #214c65; border-color: #7896a5; }
 .home-flow .doors .road-tx strong { color: #fff; font-size: 1.24rem; line-height: 1.2; }
 .home-flow .doors .road-tx span { font-size: .96rem; color: #fff; }
-.home-flow .doors .road-go { grid-column: 2; justify-self: start; justify-content: center; gap: 18px; padding: 10px 14px; min-height: 44px; font-size: .94rem; border-radius: 8px; color: #123c57; background: #fff; }
+.home-flow .doors .road-go { grid-column: 2; justify-self: start; justify-content: center; gap: 18px; width: auto; max-width: 100%; height: auto; min-height: 44px; padding: 10px 14px; font-size: .94rem; line-height: 1.35; white-space: normal; overflow-wrap: anywhere; border-radius: 8px; color: #123c57; background: #fff; }
 .home-flow .doors .road-go svg { width: 21px; height: 21px; }
 .home-flow .doors .road-ic { width: 48px; height: 48px; }
 .home-flow .doors .road-a { border-top: 4px solid #c9f981; background: #00552e; }
@@ -92,6 +92,7 @@
 .home-flow .course b { color: inherit; font-size: 1.8rem; margin: 0 0 8px; }
 .home-flow .course span { color: inherit; font-weight: 450; font-size: .94rem; }
 .home-flow .course .course-go { margin-top: auto; padding-top: 18px; display: flex; justify-content: space-between; gap: 12px; color: inherit; font-size: .9rem; font-weight: 750; border-top: 1px solid currentColor; }
+.home-flow :is(.road-tx, .tile-tx, .course > strong, .course > span, .calm li > span, .place-facts li > span) { min-width: 0; overflow-wrap: anywhere; }
 .home-flow .course:hover { filter: brightness(.94); transform: translateY(-3px); box-shadow: 0 10px 22px rgb(18 60 87 / 15%); }
 .home-flow #t-sede { color: #fff; }
 .contact-caption { padding: 18px 20px 4px; margin: 0; max-width: 76ch; color: var(--web-muted); line-height: 1.55; }
@@ -211,7 +212,7 @@ html:has(.study-layout.orientation-web) { scroll-behavior: auto; }
 @media (max-width: 1050px) {
   .orientation-web .site-header { padding-inline: 24px; }
   .home-opening { gap: 32px; }
-  .home-flow .doors .road { grid-template-columns: 1fr; }
+  .home-flow .doors .road { grid-template-columns: minmax(0, 1fr); }
   .home-flow .doors .road-go { grid-column: 1; }
   .home-flow .doors .road-ic { display: none; }
   .study-opening { gap: 28px; grid-template-columns: 1fr 150px; }
@@ -240,14 +241,14 @@ html:has(.study-layout.orientation-web) { scroll-behavior: auto; }
   .home-campus figcaption span { font-size: .86rem; }
   .home-flow .home-hero .doors-title { margin-top: 24px; }
   .home-flow .doors { grid-template-columns: 1fr; gap: 10px; }
-  .home-flow .doors .road { min-height: 104px; padding: 16px; grid-template-columns: 1fr; }
+  .home-flow .doors .road { min-height: 104px; padding: 16px; grid-template-columns: minmax(0, 1fr); }
   .home-flow .doors .road-b, .home-flow .doors .road-d { min-height: 84px; }
   .home-flow .doors .road-tx strong { color: #fff; font-size: 1.15rem; }
   .home-flow .band { padding: 24px 18px; }
   .home-flow .band-top { grid-template-columns: 1fr; }
   .home-flow .band-figure { display: none; }
   .home-flow .home-courses .courses { grid-template-columns: 1fr; gap: 10px; }
-  .home-flow .home-courses .course { min-height: 0; display: grid; grid-template-columns: 70px 1fr; padding: 18px; column-gap: 16px; border-top: 1px solid var(--web-line); border-left: 4px solid var(--course-ink); border-radius: 0 12px 12px 0; }
+  .home-flow .home-courses .course { min-height: 0; display: grid; grid-template-columns: 70px minmax(0, 1fr); padding: 18px; column-gap: 16px; border-top: 1px solid var(--web-line); border-left: 4px solid var(--course-ink); border-radius: 0 12px 12px 0; }
   .home-flow .course b { grid-row: 1 / 4; margin: 0; font-size: 1.35rem; }
   .home-flow .course .course-go { padding-top: 2px; }
   .home-flow .course:last-child { grid-column: auto; }
