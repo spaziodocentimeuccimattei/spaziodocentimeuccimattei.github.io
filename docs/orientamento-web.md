@@ -6,9 +6,18 @@ riferimento è `indirizzi.html`, per tutti e cinque i diurni e i tre serali.
 
 ## Criterio grafico
 
+La prima proposta chiara del commit `82e3be1` è stata rifiutata da Salvatore:
+fondi, schede e sezioni avevano valori troppo simili e la pagina risultava piatta.
+Un buon contrasto del testo non dimostrava una gerarchia visiva efficace. Questa
+revisione differenzia le superfici secondo il loro ruolo e rende dominante
+l’azione principale, conservando testi, navigazione e identità della scuola.
+
+
 - Logo e fotografia della sede originali, senza ricostruzioni del marchio.
-- Fondo chiaro `#f8f8f3`, titoli `#123c57`, testo `#33495a`.
-- Azione principale verde `#005a35`; un colore scuro distinto per ogni indirizzo.
+- Fondo neutro `#e6edef`; aperture blu `#123c57`, titoli bianchi e accento lime.
+- Pulsante principale lime `#c9f981` su campo scuro; link secondari distinti per forma.
+- Copertine e schede dei cinque corsi con campiture solide di pari risalto; corpi di lettura chiari.
+- La home alterna apertura scura, sezione educativa chiara e schede dei corsi colorate.
 - Tipografia di sistema, titoli con interlinea almeno 1,1; testo almeno 13 px.
 - Riquadri con angoli di 12–18 px, ombre leggere solo quando spiegano un livello.
 - Menu comune visibile anche sul telefono. Il marchio riporta alla home.
