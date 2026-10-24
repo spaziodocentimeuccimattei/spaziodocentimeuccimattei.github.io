@@ -5,7 +5,7 @@ import {mountNextStep} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor';
 import {restore,remoteProject} from './sia-records.mjs?v=20261010-all';
 const COURSE='sia';
-import {FORMAT,STORE as BASE_STORE,LABS,STAGES,PROCESS,FIELDS,BLOCKS,CASES,PARTS,ROLES,find,createProject,move,processRun,processSignature,handoffRun,records,query,programSignature,execute,runProgram,uiSignature,runUI,accessSignature,runAccess,currentRuns,ready,completed,advance,context,addNote,validProject,invalidate} from './sia-core.mjs?v=20261010-all';
+import {FORMAT,STORE as BASE_STORE,LABS,STAGES,PROCESS,FIELDS,BLOCKS,CASES,PARTS,ROLES,find,createProject,move,processRun,processSignature,handoffRun,records,query,programSignature,execute,runProgram,uiSignature,runUI,accessSignature,runAccess,currentRuns,ready,completed,advance,context,addNote,validProject,invalidate} from './sia-core.mjs?v=20261024-esame';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);

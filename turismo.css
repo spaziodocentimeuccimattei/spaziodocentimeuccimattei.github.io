@@ -263,3 +263,10 @@ dialog input,dialog select,dialog textarea{font-weight:500}
  .dialog-head h2{font-size:1.35rem}
  dialog{padding:20px 18px}
 }
+
+/* Azione principale distinguibile dal pannello scuro; comandi utilizzabili al tocco. */
+body .intro button.primary.bussola-start { color: var(--t-navy); background: var(--t-lime); box-shadow: 0 8px 20px rgb(3 24 38 / 18%); }
+body .intro button.primary.bussola-start:hover { color: var(--t-navy); background: #e0ffb5; }
+body .intro button.primary.bussola-start:focus-visible { outline-color: #fff; }
+footer summary { min-height: 44px; padding-block: 10px; }
+.sim-number button { min-width: 44px; min-height: 44px; }

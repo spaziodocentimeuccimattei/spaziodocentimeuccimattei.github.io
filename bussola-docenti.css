@@ -5,3 +5,9 @@
 /* Accesso e uscita restano riconoscibili anche dopo aver scorso i lavori. */
 #teacherHeader{position:sticky;top:0;z-index:10;align-items:center;background:#f5f7f7;box-shadow:0 3px 10px #1732470d}#teacherHeader>a{white-space:nowrap}#teacherHeader>span{flex:1;text-align:center}#teacherLogout{flex-shrink:0;margin:0;min-width:76px}.usage-guide{border:1px solid #c4d5dd;border-radius:10px;background:#edf4f6;padding:14px 18px;margin:16px 0}.usage-guide summary{cursor:pointer;font-weight:650;color:#174b64}.usage-guide ol{padding-left:23px;margin:14px 0 0;max-width:88ch}.usage-guide li+li{margin-top:10px}html{scroll-padding-top:110px}
 @media(max-width:640px){#teacherHeader{display:grid;grid-template-columns:1fr auto;grid-template-areas:"back exit" "school school";gap:8px 12px;padding-top:12px;padding-bottom:12px}#teacherHeader>a{grid-area:back}#teacherHeader>span{grid-area:school;max-width:none;text-align:left;font-size:.76rem}#teacherLogout{grid-area:exit;justify-self:end}.usage-guide{padding:12px 14px}}
+
+/* Filtri, aperture dei dettagli e ritorno al percorso con bersagli di almeno 44 px. */
+summary { min-height: 44px; padding-block: 10px; cursor: pointer; }
+select, input:not([type=checkbox]):not([type=radio]) { min-height: 44px; }
+button { min-width: 44px; }
+#teacherHeader>a { display: inline-flex; align-items: center; min-height: 44px; }

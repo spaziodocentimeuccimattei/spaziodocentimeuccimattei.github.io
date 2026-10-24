@@ -15,7 +15,7 @@ export const STAGES=[
  ['C’è posto per una prenotazione?','Un nuovo cliente: Spazio Mix organizza attività creative. Aggiungi tre blocchi e scegli una regola per le prenotazioni.','Aggiungi tutti e tre i blocchi.','Metti in esecuzione'],
  ['Il tuo programma, in azione.','Prova la regola con due posti e con zero posti disponibili. Osserva il risultato. Puoi cambiare i blocchi e riprovare: ogni prova riparte dai dati che leggi.','Esegui entrambe le prove con la regola attuale.','Disegna la schermata'],
  ['Disegna una schermata che si capisce.','Per Spazio Mix, componi la schermata: sposta i tre elementi, scegli uno stile e dai un nome al comando. Il tuo programma è già collegato.','Puoi usare i testi proposti o personalizzarli.','Usala come un visitatore'],
- ['Ora la tua idea si può usare.','Nella schermata a fianco scegli un’attività e quanti posti chiedere. Premi il tuo pulsante: si esegue il programma che hai costruito.','Fai almeno una prenotazione di prova.','Torna a Officina Ripresa'],
+ ['Ora la tua idea si può usare.','Nel prototipo scegli un’attività e quanti posti chiedere. Premi il tuo pulsante: si esegue il programma che hai costruito.','Fai almeno una prenotazione di prova.','Torna a Officina Ripresa'],
  ['Dai a ciascuno il suo spazio.','Si torna all’archivio di Officina Ripresa. Un permesso stabilisce che cosa si può vedere o cambiare. Modifica la bozza: chi può cambiare l’importo concordato?','Puoi modificare i permessi o conservare la bozza.','Prova i permessi'],
  ['Chi può cambiare il prezzo?','Prova come cliente e come accoglienza: tenta di cambiare l’importo. Poi puoi modificare i permessi e riprovare.','Prova entrambi i ruoli con i permessi attuali.','Raccogli le tue soluzioni']
 ];

@@ -319,3 +319,6 @@
   .hero-stats > div { display: grid; grid-template-columns: 56px 1fr; align-items: center; gap: 8px; }
   .hero-stats span { margin-top: 0; overflow-wrap: normal; hyphens: manual; }
 }
+
+/* Filtri delle scuole utilizzabili al tocco senza cambiare selezioni o dati. */
+.school-filters button { min-height: 44px; }

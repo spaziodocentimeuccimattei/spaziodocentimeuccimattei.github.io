@@ -20,6 +20,11 @@ function closeIndex() {
 
 function goTo(index) {
   current = Math.max(0, Math.min(slides.length - 1, index));
+  slides.forEach((slide, slideIndex) => {
+    const inactive = slideIndex !== current;
+    slide.inert = inactive;
+    slide.setAttribute('aria-hidden', String(inactive));
+  });
   track.style.transform = `translateX(-${current * 100}%)`;
   slides[current].scrollTop = 0;
   currentTitle.textContent = slides[current].dataset.title;
@@ -59,7 +64,9 @@ fullscreenButton.addEventListener('click', async () => {
 document.addEventListener('fullscreenchange', () => {
   const active = Boolean(document.fullscreenElement);
   fullscreenButton.setAttribute('aria-pressed', String(active));
-  fullscreenButton.querySelector('span:last-child').textContent = active ? 'Esci da schermo intero' : 'Schermo intero';
+  const label = active ? 'Esci da schermo intero' : 'Schermo intero';
+  fullscreenButton.querySelector('span:last-child').textContent = label;
+  fullscreenButton.setAttribute('aria-label', label);
 });
 
 document.addEventListener('keydown', (event) => {

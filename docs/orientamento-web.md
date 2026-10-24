@@ -55,8 +55,10 @@ l’attribuzione al PTOF che la consegna dell’ecosistema indicava come non doc
 
 ## Conservazione e verifiche
 
-Moduli JavaScript, dati, identificativi, campi, logiche di accesso, backend,
-laboratori e immagini originali restano invariati. I contenuti di approfondimento
+Dati, identificativi, campi, logiche di accesso e salvataggio, backend, contenuti
+dei laboratori e immagini originali restano invariati. Il secondo esame modifica
+solo due frasi nei moduli SIA/Turismo e lo stato accessibile delle slide di
+Accoglienza; aggiorna i riferimenti alle risorse cambiate. I contenuti di approfondimento
 delle schede restano disponibili; la motivazione educativa è spostata nel dettaglio.
 
 Verifiche: sei pagine a 320, 390, 768 e 1280 px; cinque inviti fino agli ingressi
@@ -76,3 +78,26 @@ almeno 44 px e nessun overflow a 320, 390, 768 e 1280 px.
 
 Questa revisione è locale: pubblicazione e verifica del sito vivo richiedono
 l’autorizzazione di Salvatore.
+
+## Esame dei percorsi interni
+
+Esaminati i 17 HTML della radice a 320, 390, 768 e 1280 px, oltre ai riferimenti
+della pagina conservata in archivio. Percorsi nel browser: dodici domande della
+Bussola, un percorso completo per ciascuno dei cinque indirizzi, attestato
+Turismo e ripresa, sei tappe famiglie e dettagli iscrizione, sette schermate
+Accoglienza, tre viste docenti e report su dati fittizi. Il calendario pubblico
+è stato letto senza inviare moduli; gli stati non caricati nell’anteprima
+isolata non sono stati scambiati per problemi del sito online.
+
+Correzioni emerse dall’uso: nomi dei laboratori SSAS visibili sul telefono e
+numero attivo scuro sul lime; CTA Turismo lime sul pannello scuro; target di
+44 px per dettagli, filtri e comandi prima troppo piccoli; nomi accessibili dei
+comandi a icona di Accoglienza e slide inattive escluse dall’interazione e
+dall’albero accessibile. Tolta una freccia duplicata nel nome del comando
+Indietro di Turismo; consegna SIA riferita al prototipo senza indicazioni
+spaziali che cambiano sul telefono.
+
+Questa copertura non equivale a tutte le combinazioni possibili, a una prova
+con lettore di schermo o dispositivi fisici, né a un accesso con credenziali
+reali alle aree riservate. I controlli di monitoraggio usano un database
+PostgreSQL isolato in memoria e non dati della scuola.
