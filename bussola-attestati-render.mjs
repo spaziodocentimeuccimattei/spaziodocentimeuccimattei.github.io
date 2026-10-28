@@ -1,10 +1,10 @@
-import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261013-ssas';
-import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261013-ssas';
+import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261028-cat42';
+import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261028-cat42';
 import {loadContacts,phoneLabel} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 let imagePromise,qrPromise;
 function logo(){return imagePromise??=new Promise((resolve,reject)=>{const loaded=document.querySelector('img[src="assets/logo-meucci-mattei-decimomannu.jpeg"]');if(loaded?.complete&&loaded.naturalWidth){resolve(loaded);return;}const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{imagePromise=null;reject(new Error('Il logo della scuola non si è caricato. Riprova.'));};img.src='assets/logo-meucci-mattei-decimomannu.jpeg';});}
 // Illustrazione originale e colore di ciascun indirizzo (assets/attestati).
-const ACCENT={afm:'#123c57',sia:'#477b00',turismo:'#006733',ssas:'#c4084f',cat:'#006b63'},illustrations={};
+const ACCENT={afm:'#123c57',sia:'#477b00',turismo:'#006733',ssas:'#c4084f',cat:'#006b63','cat-4plus2':'#006b63'},illustrations={};
 function illustration(course){if(!ACCENT[course])return Promise.resolve(null);return illustrations[course]??=new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{delete illustrations[course];resolve(null);};img.src=`assets/attestati/${course}.svg?v=20261020-illustrazioni`;});}
 function qr(){return qrPromise??=new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{qrPromise=null;reject(new Error('QR non caricato.'));};img.src='assets/qr-orientamento.svg';});}
 // Fascia «Il prossimo passo»: chi conserva o stampa l'attestato ritrova subito la scuola.
@@ -18,7 +18,8 @@ function drawBand(ctx,{c,code}){ctx.save();ctx.textAlign='left';ctx.fillStyle='#
 function lines(ctx,text,maxWidth){const out=[];let line='';for(const word of String(text).split(/\s+/)){if(ctx.measureText(word).width>maxWidth){if(line){out.push(line);line='';}let part='';for(const c of word){if(ctx.measureText(part+c).width>maxWidth){out.push(part);part=c;}else part+=c;}line=part;continue;}if(line&&ctx.measureText(line+' '+word).width>maxWidth){out.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)out.push(line);return out;}
 export async function certificateCanvas(record){
  const s=record.snapshot;if(s?.format!=='bussola-attestato-partecipazione-1')throw new Error('Formato attestato non riconosciuto.');
- const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const ctx=canvas.getContext('2d'),[brand,band,art]=await Promise.all([logo(),contactBand(),illustration(s.corso)]),accent=ACCENT[s.corso]||'#294f40';
+ const courseName=s.corso==='cat'?COURSE_NAMES.cat+(s.percorso==='cat-4plus2'?' · 4+2':' · Archeodesign'):COURSE_NAMES[s.corso]||s.corso;
+ const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const ctx=canvas.getContext('2d'),[brand,band,art]=await Promise.all([logo(),contactBand(),illustration(s.percorso==='cat-4plus2'?'cat-4plus2':s.corso)]),accent=ACCENT[s.corso]||'#294f40';
  ctx.fillStyle='#fcfaf2';ctx.fillRect(0,0,1240,1754);ctx.fillStyle=accent;ctx.fillRect(0,0,1240,32);ctx.strokeStyle='#b5c4aa';ctx.lineWidth=2;ctx.strokeRect(48,65,1144,1610);
  ctx.drawImage(brand,90,115,104,104);ctx.fillStyle='#294f40';ctx.font='600 27px Arial';ctx.fillText('IIS Meucci - Mattei | Decimomannu',218,157);ctx.font='23px Arial';ctx.fillText('Bussola per l’orientamento',218,198);
  ctx.textAlign='center';ctx.font='600 19px Arial';ctx.fillStyle='#93602a';ctx.fillText('UN PERCORSO DI SCOPERTA',620,270);
@@ -29,7 +30,7 @@ export async function certificateCanvas(record){
  const artTop=y+40;y=Math.max(930,y+65);
  // L'illustrazione dell'indirizzo riempie lo spazio sotto il nome; con nomi o scuole molto lunghi si riduce o si omette.
  const room=y-48-artTop,artHeight=Math.min(260,room);if(art&&artHeight>=120){const w=artHeight*2.16,x=620-w/2,top=artTop+(room-artHeight)/2;ctx.save();ctx.beginPath();ctx.roundRect(x,top,w,artHeight,18);ctx.clip();ctx.drawImage(art,x,top,w,artHeight);ctx.restore();ctx.strokeStyle=accent;ctx.lineWidth=3;ctx.beginPath();ctx.roundRect(x,top,w,artHeight,18);ctx.stroke();}
- ctx.fillStyle='#294f40';ctx.font='25px Arial';ctx.fillText('ha completato i cinque laboratori di esplorazione dell’indirizzo',620,y);let courseFont=37;ctx.font=`${courseFont}px Georgia`;while(ctx.measureText(COURSE_NAMES[s.corso]||s.corso).width>1000&&courseFont>25){ctx.font=`${--courseFont}px Georgia`;}ctx.fillStyle=accent;ctx.fillText(COURSE_NAMES[s.corso]||s.corso,620,y+58);
+ ctx.fillStyle='#294f40';ctx.font='25px Arial';ctx.fillText('ha completato i cinque laboratori di esplorazione dell’indirizzo',620,y);let courseFont=37;ctx.font=`${courseFont}px Georgia`;while(ctx.measureText(courseName).width>1000&&courseFont>25){ctx.font=`${--courseFont}px Georgia`;}ctx.fillStyle=accent;ctx.fillText(courseName,620,y+58);
  const colors=['#aa4c48','#456d80','#507354','#79568b','#93602a'];ctx.textAlign='left';ctx.font='600 25px Arial';s.laboratori.forEach((lab,i)=>{const top=y+108+i*50;ctx.fillStyle='#e8eddf';ctx.fillRect(170,top-29,900,42);ctx.fillStyle=colors[i];ctx.fillText(`${i+1}`,198,top+3);ctx.fillStyle='#294f40';ctx.fillText(lab,247,top+3);});
  y+=400;ctx.textAlign='center';ctx.font='600 23px Arial';ctx.fillText(s.curiosita.length?'Ha espresso curiosità per':'Ha esplorato diverse possibilità dell’indirizzo',620,y);let curiosityFont=26;ctx.font='26px Arial';while(lines(ctx,s.curiosita.join(' · '),1000).length>2&&curiosityFont>18)ctx.font=`${--curiosityFont}px Arial`;lines(ctx,s.curiosita.join(' · '),1000).forEach((t,i)=>ctx.fillText(t,620,y+44+i*37));
  ctx.font='22px Arial';ctx.fillStyle='#4f6156';ctx.fillText(new Intl.DateTimeFormat('it-IT',{dateStyle:'long'}).format(new Date(record.created_at)),620,band?1468:1505);if(band)drawBand(ctx,band);ctx.fillStyle='#4f6156';ctx.font='17px Arial';ctx.fillText('Attestato di partecipazione: non è una valutazione delle capacità.',620,band?1638:1568);ctx.font='15px Arial';ctx.fillText(`Identificativo: ${record.id}${record.origine==='percorso_alunno'?'':` · Versione del lavoro: ${s.revision}`}`,620,band?1660:1622);

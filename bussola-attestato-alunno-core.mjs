@@ -1,4 +1,4 @@
-import {completion,courseDetails} from './bussola-records-core.mjs?v=20261013-ssas';
+import {completion,courseDetails} from './bussola-records-core.mjs?v=20261028-cat42';
 import {restoreProject,summaryItems,LABS} from './ssas-labs-core.mjs';
 
 export function certificateName(value){
@@ -13,5 +13,5 @@ export function participantCertificate(project,{identity=null,name='',participan
  if(!/^[0-9a-f-]{36}$/i.test(id)||!Number.isFinite(Date.parse(date)))throw new Error('Riapri l’attestato per prepararlo.');
  const d=courseDetails(project),j=d.journey,a=identity?.alunno,c=identity?.classe;
  const full=certificateName(a?`${a.nome} ${a.cognome}`:name);
- return {id,created_at:date,origine:'percorso_alunno',snapshot:{format:'bussola-attestato-partecipazione-1',alunno_id:a?.id||'',classe_id:a?.classe_id||'',partecipante_id:participant,nome:a?.nome||full,cognome:a?.cognome||'',scuola:c?.scuola||'',comune:c?.comune||'',classe:c?.classe||'',anno:c?.anno||'',corso:d.corso,revision,laboratori:d.labs.map(l=>l.label),lavori:d.works,curiosita:completion({payload:project}).interests,idea:d.idea}};
+ return {id,created_at:date,origine:'percorso_alunno',snapshot:{format:'bussola-attestato-partecipazione-1',alunno_id:a?.id||'',classe_id:a?.classe_id||'',partecipante_id:participant,nome:a?.nome||full,cognome:a?.cognome||'',scuola:c?.scuola||'',comune:c?.comune||'',classe:c?.classe||'',anno:c?.anno||'',corso:d.corso,revision,...(d.corso==='cat'?{percorso:j.journey||'cat-archeodesign'}:{}),laboratori:d.labs.map(l=>l.label),lavori:d.works,curiosita:completion({payload:project}).interests,idea:d.idea}};
 }

@@ -1,6 +1,6 @@
 // File Excel (.xlsx) generati nel browser, senza librerie esterne: fogli con intestazione
 // colorata, righe colorate per stato, filtri automatici e prima riga bloccata.
-import {zipFiles} from './bussola-attestati-files.mjs?v=20261013-ssas';
+import {zipFiles} from './bussola-attestati-files.mjs?v=20261028-cat42';
 
 const encoder = new TextEncoder();
 // Colori delle righe: gli stessi della Gestione.

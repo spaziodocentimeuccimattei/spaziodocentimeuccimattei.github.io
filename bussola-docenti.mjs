@@ -1,5 +1,5 @@
-import {COURSES,STATES,projectView,filterRows} from './bussola-monitor-core.mjs?v=20261019-monitor';
-import {csvCell} from './bussola-records-core.mjs?v=20261013-ssas';
+import {COURSES,STATES,projectView,filterRows} from './bussola-monitor-core.mjs?v=20261028-cat42';
+import {csvCell} from './bussola-records-core.mjs?v=20261028-cat42';
 import {planBoard,viewDrawing,construction,heritage} from './cat-visuals.mjs';
 import qrcode from './assets/vendor/qrcode-generator-2.0.4.mjs';
 const $=id=>document.getElementById(id),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;};

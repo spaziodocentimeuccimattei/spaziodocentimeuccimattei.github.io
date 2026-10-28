@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import {createProject, clone, place, layoutValid, inspectLayout, testLayout, composeSurvey, testWeather, compareHeritage, estimate, testPlan, ready, advance, invalidate, completed, addNote, validProject} from '../cat-core.mjs';
+import {createProject as freshProject, clone, place, layoutValid, inspectLayout, testLayout, composeSurvey, testWeather, compareHeritage, estimate, testPlan, ready, advance, invalidate, completed, addNote, validProject} from '../cat-core.mjs';
+const createProject=()=>freshProject(undefined,'legacy');
 const results=[];
 function check(name,fn){fn();results.push({name,result:'superato'});}
 function fixture(){const p=createProject();p.started=true;p.screen=0;p.survey.measures=['larghezza','profondita','ingresso'];p.survey.views=['pianta','sezione'];composeSurvey(p);place(p,'suono',1,1);place(p,'video',3,1);place(p,'montaggio',2,2);testLayout(p);p.build.roof='opaca';p.build.floor='compatto';testWeather(p,'sole');testWeather(p,'pioggia');p.heritage.observations=['frammenti','misura','mancante'];p.heritage.hypothesis='arco';compareHeritage(p);p.plan.phase='suolo';testPlan(p,'base');testPlan(p,'budget');return p;}

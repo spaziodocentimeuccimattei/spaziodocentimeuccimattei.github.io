@@ -1,6 +1,6 @@
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
-import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261020-contatti';
+import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261028-cat42';
 import {mountNextStep} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 import {setupTourismRemote} from './turismo-remote.mjs?v=20261019-monitor';
 import {rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
