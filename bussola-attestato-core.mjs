@@ -27,7 +27,7 @@ export function certificateModel(item, direction, situations, contacts) {
     sia: { subjects: ['Informatica', 'Economia aziendale'] },
     turismo: { subjects: ['Lingue straniere', 'Geografia turistica'] },
     ssas: { subjects: ['Psicologia generale e applicata', 'Metodologie operative'] },
-    cat: { subjects: ['Progettazione e Costruzioni', 'Topografia'] },
+    cat: { subjects: item.course.subjects.includes('Rilievo e Geomatica') ? ['Progettazione, Costruzioni e Impianti', 'Rilievo e Geomatica'] : ['Progettazione e Costruzioni', 'Topografia'] },
   };
   const portrait = portraits[item.course.id];
   // Short display names retain a direct link to the actual subjects in the course data.

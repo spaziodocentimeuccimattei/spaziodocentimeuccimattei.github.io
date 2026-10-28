@@ -1,6 +1,6 @@
-import {COURSE_NAMES} from './bussola-records-core.mjs?v=20261028-cat42';
-import {certificateName,participantCertificate} from './bussola-attestato-alunno-core.mjs?v=20261028-cat42';
-import {certificateCanvas,downloadCertificate} from './bussola-attestati-render.mjs?v=20261028-cat42';
+import {COURSE_NAMES} from './bussola-records-core.mjs?v=20261028-edificio';
+import {certificateName,participantCertificate} from './bussola-attestato-alunno-core.mjs?v=20261028-edificio';
+import {certificateCanvas,downloadCertificate} from './bussola-attestati-render.mjs?v=20261028-edificio';
 import {nextStep} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 
 export function setupParticipantCertificate(ctx){
@@ -18,7 +18,7 @@ export function setupParticipantCertificate(ctx){
    const record=participantCertificate(ctx.project(),{identity,name,participant:ctx.participant(),revision:ctx.revision(),id:saved.id,date:saved.date});
    const [canvas,file]=await Promise.all([certificateCanvas(record),downloadCertificate(record)]);
    if(turn!==generation||!dialog.open){if(file.url.startsWith('blob:'))URL.revokeObjectURL(file.url);return;}
-   url=file.url;const s=record.snapshot;canvas.setAttribute('role','img');canvas.setAttribute('aria-label',`Attestato di partecipazione di ${name}. Cinque laboratori ${COURSE_NAMES[s.corso]||s.corso}${s.percorso==='cat-4plus2'?' 4+2':''} completati: ${s.laboratori.join(', ')}. Curiosità: ${s.curiosita.join(', ')}.`);
+   url=file.url;const s=record.snapshot;canvas.setAttribute('role','img');canvas.setAttribute('aria-label',`Attestato di partecipazione di ${name}. Cinque laboratori ${COURSE_NAMES[s.corso]||s.corso}${['cat-4plus2','cat-4plus2-edificio'].includes(s.percorso)?' 4+2':''} completati: ${s.laboratori.join(', ')}. Curiosità: ${s.curiosita.join(', ')}.`);
    $('certificateSheet').append(canvas);$('certificateSheet').before(nextStep(s.corso,{compact:true}));$('certificateDownload').href=file.url;$('certificateDownload').download=file.name;
    $('certificateForm').hidden=true;$('certificateResult').hidden=false;$('certificateHeading').focus();message('');
   }catch(e){if(turn!==generation)return;$('certificateForm').hidden=false;message(e.message||'L’attestato non è pronto. Riprova.');}

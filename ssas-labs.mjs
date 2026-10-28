@@ -1,6 +1,6 @@
 import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
-import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261028-cat42';
+import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261028-edificio';
 import {GUIDE,cursor,guideIssues,titleDefaults,storyBranch} from './ssas-guided-core.mjs';
 import {LAB_PRESENTATION,studioArt} from './ssas-labs-visuals.mjs?v=20261010-ssas';
 import {FORMAT,LABS,CONDITIONS,OPENINGS,PARTICIPATION,PERSONS,GOALS,SETTINGS,SERVICES,ACCESS,CHECKS,freshProject,restoreProject,issues,beginRevision,summaryItems,xml} from './ssas-labs-core.mjs?v=20261008';

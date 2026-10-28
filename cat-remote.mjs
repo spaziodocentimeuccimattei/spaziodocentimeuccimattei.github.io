@@ -1,5 +1,5 @@
 import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
-import {restore,remoteProject} from './cat-core.mjs?v=20261028-cat42';
+import {restore,remoteProject} from './cat-core.mjs?v=20261028-edificio';
 
 export function setupCatRemote(ctx){
  const testing=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).has('prova');

@@ -1,5 +1,5 @@
 import { el, button } from './bussola-ui.mjs?v=20261010-correzioni';
-import { firstName, certificateModel, imagePdf } from './bussola-attestato-core.mjs?v=20261020-contatti';
+import { firstName, certificateModel, imagePdf } from './bussola-attestato-core.mjs?v=20261028-edificio';
 
 const palettes = {
   afm: ['#123c57', '#e3edf3'], sia: ['#477b00', '#edf8d9'], turismo: ['#006733', '#e0f3e8'],

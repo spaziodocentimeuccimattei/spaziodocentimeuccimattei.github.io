@@ -1,6 +1,8 @@
-import {COURSES,STATES,projectView,filterRows} from './bussola-monitor-core.mjs?v=20261028-cat42';
-import {csvCell} from './bussola-records-core.mjs?v=20261028-cat42';
-import {planBoard,viewDrawing,construction,heritage} from './cat-visuals.mjs';
+import {isBuilding} from './cat-edificio-core.mjs?v=20261028-edificio';
+import {buildingMonitorVisual} from './cat-edificio.mjs?v=20261028-edificio';
+import {COURSES,STATES,projectView,filterRows} from './bussola-monitor-core.mjs?v=20261028-edificio';
+import {csvCell} from './bussola-records-core.mjs?v=20261028-edificio';
+import {planBoard,viewDrawing,construction,heritage} from './cat-visuals.mjs?v=20261028-edificio';
 import qrcode from './assets/vendor/qrcode-generator-2.0.4.mjs';
 const $=id=>document.getElementById(id),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;};
 const button=(label,fn,cls='secondary')=>{const b=el('button',label,cls);b.type='button';b.addEventListener('click',fn);return b;};
@@ -104,10 +106,11 @@ function renderVisual(card,row,index){
  if(course!=='cat'||!row.view.journey||row.view.labs[index]?.status==='empty')return;
  const p=row.view.journey,visual=el('div');
  // These renderers escape labels and receive a validated project, never arbitrary HTML.
- if(index===0)visual.innerHTML=viewDrawing(p,'pianta');
- if(index===1){visual.innerHTML=planBoard(p,{showRoute:true});const board=visual.querySelector('.plan-grid');if(board){board.className='plan-readonly';for(const b of board.querySelectorAll('[id]'))b.removeAttribute('id');}}
- if(index===2)visual.innerHTML=construction(p);
- if(index===3)visual.innerHTML=heritage(p);
+ if(isBuilding(p))visual.innerHTML=buildingMonitorVisual(p,index);
+ else if(index===0)visual.innerHTML=viewDrawing(p,'pianta');
+ if(!isBuilding(p)&&index===1){visual.innerHTML=planBoard(p,{showRoute:true});const board=visual.querySelector('.plan-grid');if(board){board.className='plan-readonly';for(const b of board.querySelectorAll('[id]'))b.removeAttribute('id');}}
+ if(!isBuilding(p)&&index===2)visual.innerHTML=construction(p);
+ if(!isBuilding(p)&&index===3&&!p.energy)visual.innerHTML=heritage(p);
  const prefix='monitor-visual-'+(++visualSerial)+'-';for(const n of visual.querySelectorAll('[id]')){const old=n.id;n.id=prefix+old;for(const e of visual.querySelectorAll('[fill],[stroke]'))for(const a of ['fill','stroke'])if(e.getAttribute(a)===`url(#${old})`)e.setAttribute(a,`url(#${prefix+old})`);}
  card.append(visual);
 }

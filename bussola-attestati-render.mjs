@@ -1,10 +1,10 @@
-import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261028-cat42';
-import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261028-cat42';
+import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261028-edificio';
+import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261028-edificio';
 import {loadContacts,phoneLabel} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 let imagePromise,qrPromise;
 function logo(){return imagePromise??=new Promise((resolve,reject)=>{const loaded=document.querySelector('img[src="assets/logo-meucci-mattei-decimomannu.jpeg"]');if(loaded?.complete&&loaded.naturalWidth){resolve(loaded);return;}const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{imagePromise=null;reject(new Error('Il logo della scuola non si è caricato. Riprova.'));};img.src='assets/logo-meucci-mattei-decimomannu.jpeg';});}
 // Illustrazione originale e colore di ciascun indirizzo (assets/attestati).
-const ACCENT={afm:'#123c57',sia:'#477b00',turismo:'#006733',ssas:'#c4084f',cat:'#006b63','cat-4plus2':'#006b63'},illustrations={};
+const ACCENT={afm:'#123c57',sia:'#477b00',turismo:'#006733',ssas:'#c4084f',cat:'#006b63','cat-4plus2':'#006b63','cat-edificio':'#006b63'},illustrations={};
 function illustration(course){if(!ACCENT[course])return Promise.resolve(null);return illustrations[course]??=new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{delete illustrations[course];resolve(null);};img.src=`assets/attestati/${course}.svg?v=20261020-illustrazioni`;});}
 function qr(){return qrPromise??=new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{qrPromise=null;reject(new Error('QR non caricato.'));};img.src='assets/qr-orientamento.svg';});}
 // Fascia «Il prossimo passo»: chi conserva o stampa l'attestato ritrova subito la scuola.
@@ -18,8 +18,8 @@ function drawBand(ctx,{c,code}){ctx.save();ctx.textAlign='left';ctx.fillStyle='#
 function lines(ctx,text,maxWidth){const out=[];let line='';for(const word of String(text).split(/\s+/)){if(ctx.measureText(word).width>maxWidth){if(line){out.push(line);line='';}let part='';for(const c of word){if(ctx.measureText(part+c).width>maxWidth){out.push(part);part=c;}else part+=c;}line=part;continue;}if(line&&ctx.measureText(line+' '+word).width>maxWidth){out.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)out.push(line);return out;}
 export async function certificateCanvas(record){
  const s=record.snapshot;if(s?.format!=='bussola-attestato-partecipazione-1')throw new Error('Formato attestato non riconosciuto.');
- const courseName=s.corso==='cat'?COURSE_NAMES.cat+(s.percorso==='cat-4plus2'?' · 4+2':' · Archeodesign'):COURSE_NAMES[s.corso]||s.corso;
- const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const ctx=canvas.getContext('2d'),[brand,band,art]=await Promise.all([logo(),contactBand(),illustration(s.percorso==='cat-4plus2'?'cat-4plus2':s.corso)]),accent=ACCENT[s.corso]||'#294f40';
+ const courseName=s.corso==='cat'?COURSE_NAMES.cat+(['cat-4plus2','cat-4plus2-edificio'].includes(s.percorso)?' · 4+2':' · Archeodesign'):COURSE_NAMES[s.corso]||s.corso;
+ const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const ctx=canvas.getContext('2d'),[brand,band,art]=await Promise.all([logo(),contactBand(),illustration(s.percorso==='cat-4plus2-edificio'?'cat-edificio':['cat-4plus2','cat-4plus2-edificio'].includes(s.percorso)?'cat-4plus2':s.corso)]),accent=ACCENT[s.corso]||'#294f40';
  ctx.fillStyle='#fcfaf2';ctx.fillRect(0,0,1240,1754);ctx.fillStyle=accent;ctx.fillRect(0,0,1240,32);ctx.strokeStyle='#b5c4aa';ctx.lineWidth=2;ctx.strokeRect(48,65,1144,1610);
  ctx.drawImage(brand,90,115,104,104);ctx.fillStyle='#294f40';ctx.font='600 27px Arial';ctx.fillText('IIS Meucci - Mattei | Decimomannu',218,157);ctx.font='23px Arial';ctx.fillText('Bussola per l’orientamento',218,198);
  ctx.textAlign='center';ctx.font='600 19px Arial';ctx.fillStyle='#93602a';ctx.fillText('UN PERCORSO DI SCOPERTA',620,270);
