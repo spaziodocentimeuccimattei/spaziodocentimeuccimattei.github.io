@@ -4,7 +4,7 @@ import {materialExamples,materialCheck,INTEREST_ACTIVITIES} from './ssas-situazi
 import {readEntryState} from './ssas-situazioni-entry-core.mjs?v=20261018-ingresso';
 import {sceneCardArt,sceneFigure,entranceImage} from './ssas-illustrazioni.mjs?v=20261012-scene';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
-import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261028-edificio';
+import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
 import {nextStep} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 import {FORMAT,LABS,CASES,caseById,PRESENTATION as LAB_PRESENTATION,GUIDE,cursor,guideIssues,titleDefaults,freshProject,restoreProject,selectCase,issues,beginRevision,summaryItems,xml} from './ssas-situazioni-core.mjs?v=20261018-testi';
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');

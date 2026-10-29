@@ -1,0 +1,45 @@
+.mission-flight{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:22px;align-items:start}
+.mission-world,.mission-instruments,.mission-catalog,.mission-proposal,.mission-transformation{min-width:0;border:1px solid #8caaa9;border-radius:20px;background:#fffdf8;padding:20px}
+.mission-world{background:#e2ecec}.mission-instruments h2{font-size:28px;margin:8px 0 18px}
+.mission-camera{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.mission-camera button{flex:1;min-height:44px;padding:10px 16px;border:1px solid #587b80;border-radius:100px;background:#fff;color:#123344;font-weight:700}
+.mission-camera button[aria-pressed=true]{background:#123344;color:#fff}
+.mission-scene{line-height:0;border-radius:18px;overflow:hidden}.mission-scene svg,.mission-compare svg{display:block;width:100%;height:auto}
+.mission-caption{font-size:14px;line-height:1.5;margin:12px 0;color:#344e58}
+.mission-pilot{display:grid;grid-template-columns:58px 1fr 58px;gap:12px;align-items:center;margin:16px 0}
+.mission-pilot>button{min-width:48px;min-height:48px;border-radius:50%;font-size:26px;font-weight:700;background:#fff;border:1px solid #315f69;color:#123344}
+.mission-pilot>div{text-align:center}.mission-pilot strong,.mission-pilot span{display:block}.mission-pilot span{font-size:14px;margin-top:4px}
+#mission-capture,#mission-test,#mission-apply{width:100%;margin:8px 0 12px}
+.mission-captures,.mission-status{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.mission-captures span,.mission-status span{padding:7px 12px;border-radius:8px;background:#f4f3e9;border:1px solid #9eb3af;font-weight:700;font-size:15px}
+.mission-captures .captured{background:#d3e7ce;border-color:#477c58;color:#224f38}
+.mission-hotspots{display:grid;gap:12px;margin:20px 0}
+.mission-hotspots button{display:flex;align-items:center;gap:10px;text-align:left;min-height:52px;border:1px solid #3e6670;border-radius:12px;padding:12px;background:#fff;font:inherit;color:#123344}
+.mission-hotspots b{display:grid;place-items:center;min-width:30px;height:30px;border-radius:50%;background:#123344;color:#fff}
+.mission-hotspots .observed{background:#e1edce;border-width:2px}
+.mission-laboratory{display:grid;grid-template-columns:minmax(320px,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
+.mission-options{margin:0 0 24px;padding:0;border:0}.mission-options:last-child{margin-bottom:0}
+.mission-options legend{font-size:21px;font-weight:800;margin:0 0 12px}
+.mission-options .choice{margin-bottom:10px}.mission-options strong{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:17px}.mission-options strong span{white-space:nowrap;color:#245c42}
+.mission-options small{font-size:14px;line-height:1.45}
+.mission-proposal{position:sticky;top:14px;background:#e8efdd}
+.mission-metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.mission-metrics>div{padding:16px;border:1px solid #8aa58d;background:#fff;border-radius:12px;min-width:0}
+.mission-metrics span,.mission-metrics strong,.mission-metrics small{display:block}.mission-metrics span{font-size:14px}.mission-metrics strong{font-size:30px;margin:9px 0;line-height:1.1}.mission-metrics small{font-size:14px}
+.mission-bars{margin:18px 0 24px}.mission-bars p{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:10px 0 6px;font-size:15px}
+.mission-bar{height:15px;background:#d5e2e0;border-radius:5px;overflow:hidden}.mission-bar i{height:100%;display:block;background:#b96848}.mission-bar.after i{background:#306b50}
+.mission-untried{padding:18px;border:1px dashed #56785d;border-radius:12px;font-weight:600}
+.mission-assumptions{margin-top:20px;font-size:15px;line-height:1.55}.mission-assumptions summary{font-weight:700;cursor:pointer}
+.mission-transformation{max-width:1000px;margin:auto;background:#e9efdf}
+.mission-compare{position:relative;overflow:hidden;border-radius:18px;line-height:0;background:#123344}
+.mission-before{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--reveal)) 0 0)}
+.mission-divider{position:absolute;top:0;bottom:0;left:var(--reveal);width:3px;background:#fff;box-shadow:0 0 0 1px #123344;pointer-events:none}
+.mission-before-label,.mission-after-label{position:absolute;top:65px;padding:8px 12px;background:#fffdf8;border-radius:8px;font-size:16px;line-height:1;color:#123344;font-weight:800;pointer-events:none}
+.mission-before-label{left:15px}.mission-after-label{right:15px}
+.mission-slider{display:block;margin:16px 0 24px;font-weight:700}.mission-slider input{display:block;width:100%;height:34px;accent-color:#245f50}
+#savedCatJourneys{display:grid;gap:10px;width:100%;margin-bottom:20px}#savedCatJourneys h3{margin-bottom:0}#savedCatJourneys button{white-space:normal;text-align:left}
+.mission-instruments .feedback{margin-top:14px}.entry-art-cat .entry-drawing svg{width:100%;max-height:none}
+@media(max-width:800px){.mission-flight,.mission-laboratory{grid-template-columns:1fr}.mission-proposal{position:static}.mission-instruments h2{font-size:24px}}
+@media(max-width:480px){.mission-world,.mission-instruments,.mission-catalog,.mission-proposal,.mission-transformation{padding:14px;border-radius:15px}.mission-camera button{padding:10px;font-size:14px}.mission-pilot{grid-template-columns:48px 1fr 48px;gap:8px}.mission-metrics{grid-template-columns:1fr}.mission-metrics strong{font-size:28px}.mission-options strong{font-size:16px}.mission-before-label,.mission-after-label{top:32px;font-size:13px;padding:6px 9px}.mission-caption{font-size:14px}}
+
+#journey.mission-journey{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}#journey.mission-journey button{justify-content:center;min-height:46px}#journey.mission-journey #missionDossier{grid-column:1/-1}
+@media(max-width:480px){.mission-stage-heading{display:block}.mission-stage-heading .step-tag{display:inline-block;margin-top:12px}#journey.mission-journey{gap:5px}#journey.mission-journey button{font-size:13px;line-height:1.2;padding:9px 6px}}

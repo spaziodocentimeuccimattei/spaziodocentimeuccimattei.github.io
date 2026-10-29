@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import * as C from '../cat-core.mjs';
+import * as M from '../cat-missione-core.mjs';
+import {missionActivity,missionCards,missionScene} from '../cat-missione.mjs';
+import {completion,courseDetails} from '../bussola-records-core.mjs';
+import {projectView} from '../bussola-monitor-core.mjs';
+import {participantCertificate} from '../bussola-attestato-alunno-core.mjs';
+import {certificateCSV} from '../bussola-attestati-files.mjs';
+import {isolatedBussola} from './bussola-test-db.mjs';
+let checks=0;const eq=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;},ok=(v,label)=>{assert.ok(v,label);checks++;};
+const p=C.createProject(),m=p.mission;eq(p.journey,M.MISSION_JOURNEY);ok(C.validProject(p));eq(C.advance(p),false);p.started=true;p.screen=0;
+eq(M.observeSpot(m,'telaio'),false,'La fotocamera non misura temperature');
+for(let i=0;i<4;i++){M.captureFacade(m);M.captureFacade(m);M.moveDrone(m,1);}eq(m.captures.length,4);eq(m.position,0);M.moveDrone(m,-1);eq(m.position,3);eq(M.moveDrone(m,5),false);
+eq(C.advance(p),false);m.camera='termica';for(const s of M.HOTSPOTS)ok(M.observeSpot(m,s.id));eq(M.observeSpot(m,'fantasia'),false);ok(C.advance(p));eq(p.screen,1);eq(p.done,[0,1,2,3]);
+eq(projectView({payload:p},'cat').labs[2].status,'working','Materiali visibili durante la seconda fase');
+const scenarios=[];for(const i of M.INSULATIONS)for(const w of M.WINDOWS)for(const f of M.FINISHES){const q=M.newMission();q.insulation=i.id;q.windows=w.id;q.finish=f.id;const r=M.testMission(q);eq(r.total,i.cost+w.cost+f.cost+1000);ok(r.after<=r.before&&r.after>0);eq(r.gap,Math.max(0,r.total-M.MISSION_BUDGET));ok(M.validMission(q));scenarios.push(r);}
+eq(scenarios.length,18);ok(scenarios.some(r=>r.gap));ok(scenarios.some(r=>r.reduction>=60&&!r.gap));
+const base=scenarios.find(r=>r.insulation==='isolamento-assente'&&r.windows==='infissi-attuali');eq(base.saved,0,'La finitura da sola non risparmia energia');
+for(const i of M.INSULATIONS)for(const w of M.WINDOWS){const pair=scenarios.filter(r=>r.insulation===i.id&&r.windows===w.id);eq(pair[0].after,pair[1].after,'VOC separati dal risparmio');ok(pair[0].voc!==pair[1].voc);}
+M.chooseMission(m,'insulation','isolamento-sughero');M.chooseMission(m,'windows','infissi-tripli');M.chooseMission(m,'finish','finitura-bassovoc');M.testMission(m);eq(C.advance(p),false,'Budget da rispettare');eq(M.applyMission(m),null);
+M.chooseMission(m,'insulation','isolamento-minerale');M.chooseMission(m,'windows','infissi-doppi');eq(M.latestMissionRun(m),null,'Scelta nuova da provare');const result=M.testMission(m);eq(result.before,17153);eq(result.after,6226);eq(result.total,22200);eq(result.reduction,64);ok(C.advance(p));eq(p.screen,2);eq(p.done.length,8);eq(C.completed(p),false);eq(C.advance(p),false,'Serve applicare la proposta');ok(M.applyMission(m));ok(C.advance(p));eq(p.screen,3);ok(C.completed(p));eq(completion({corso:'cat',payload:p}).done,5);eq(courseDetails(p).works.length,5);
+p.interests=['termografia','energia'];eq(completion({payload:p}).interests,['Termografia','Progetto energetico']);ok(C.validProject(p));const view=projectView({payload:p},'cat');ok(view.completed);ok(view.labs[2].fields.some(f=>f.value==='Cappotto in lana minerale'));eq(view.labs[4].status,'done');
+for(let s=0;s<3;s++){const html=missionActivity({...p,screen:s});ok(html.includes('stageTitle'));ok(!/undefined|NaN/.test(html));}eq(missionCards(p).length,5);ok(missionScene(m).includes('Vista termica'));
+const changed=C.clone(p);changed.mission.insulation='isolamento-sughero';C.invalidate(changed);eq(changed.done,[0,1,2,3,4,5]);eq(C.completed(changed),false);eq(changed.mission.runs,m.runs,'Tutte le prove restano');
+const cert=participantCertificate(p,{name:'Prova Locale',id:crypto.randomUUID(),date:new Date().toISOString()});eq(cert.snapshot.percorso,M.MISSION_JOURNEY);eq(cert.snapshot.laboratori,M.MISSION_LABS.map(l=>l.label));ok(certificateCSV([cert]).includes('CAT 4+2'));
+for(const mutate of [q=>q.screen=10,q=>q.unlocked=10,q=>q.mission.position=4,q=>q.mission.captures.push('sud'),q=>q.mission.observations.push('inventato'),q=>q.mission.runs[0].after=0,q=>q.mission.compare=200,q=>q.mission.applications[0].signature='inventata',q=>q.mission.finish='futura-non-riconosciuta']){const q=C.clone(p);mutate(q);eq(C.validProject(q),false);}
+const env=await isolatedBussola(),old=C.clone(env.projects.cat);old.extra={keep:['risposta storica']};old.notes=[{id:crypto.randomUUID(),label:'Nota precedente',text:'Conservare anche questa nota.'}];old.identity=null;old.attestato={id:crypto.randomUUID(),date:'2026-10-28T12:00:00Z',name:'Prova Locale'};old._cat_archives=[{futureArchive:{unknown:'non cancellare'}}];
+const fresh=M.startNewMission(old,C.createProject(old.id));ok(C.validProject(fresh));eq(fresh.id,old.id);eq(fresh.attestato.id,undefined,'La nuova missione avrà un attestato distinto');eq(fresh.extra,old.extra);eq(fresh.notes,old.notes);eq(fresh._cat_archives[0],old._cat_archives[0]);const archive=M.savedCatProjects(fresh)[0];const oldExpected=C.clone(old);delete oldExpected._cat_archives;eq(archive.project,oldExpected,'Il contenuto precedente è integro');
+fresh.mission.future={keep:1};fresh.started=true;fresh.mission.insulation='isolamento-minerale';const back=M.restoreCatArchive(fresh,archive.key);ok(C.validProject(back));eq(back.journey,undefined);eq(back.survey,old.survey);eq(back.heritage,old.heritage);eq(back.done,old.done);eq(back.notes,old.notes);eq(back.extra,old.extra);eq(M.savedCatProjects(back)[0].project.mission,fresh.mission);
+const again=M.restoreCatArchive(back,M.savedCatProjects(back)[0].key);ok(C.isMission(again));eq(again.mission,fresh.mission);eq(again._cat_archives[0],old._cat_archives[0]);
+const token=Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString('base64url'),other=Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString('base64url');
+async function call(action,body={},key=token){const r=await env.experiences(new Request('http://127.0.0.1:8885/__test/bussola-esperienze',{method:'POST',headers:{'Content-Type':'application/json','Origin':'http://127.0.0.1:8766','x-bussola-token':key},body:JSON.stringify({action,corso:'cat',...body})}));return {status:r.status,body:await r.json()};}
+eq((await call('start')).status,200);p._cat_archives=fresh._cat_archives;eq((await call('save',{project:p,revision:0})).status,200);const loaded=await call('load');eq(loaded.body.project.payload.mission,p.mission);eq(loaded.body.project.payload._cat_archives,p._cat_archives);ok(C.completed(loaded.body.project.payload));eq((await call('save',{project:p,revision:0})).status,409);eq((await call('start',{},other)).status,200);eq((await call('load',{},other)).body.project,null);
+eq(C.restore({...p,unknown:{keep:'campo futuro'}}).unknown,{keep:'campo futuro'});
+for(const folder of ['bussola-esperienze','bussola-gestione'])for(const name of ['cat-core.mjs','cat-missione-core.mjs'])eq(await readFile(new URL(`../supabase/functions/${folder}/${name}`,import.meta.url),'utf8'),(await readFile(new URL('../'+name,import.meta.url),'utf8')).replace(/\?v=[\w-]+/g,''));
+await env.db.close();console.log(JSON.stringify({status:'superato',checks,scenarios:18,bestExample:{before:result.before,after:result.after,cost:result.total,reduction:result.reduction},savedWork:'versione precedente e missione recuperabili con la stessa identità',database:'isolato'},null,2));

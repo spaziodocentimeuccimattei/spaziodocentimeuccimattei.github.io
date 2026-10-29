@@ -1,8 +1,10 @@
+import {isMission,savedCatProjects} from './cat-missione-core.mjs?v=20261029-missione';
+import {missionMonitorVisual} from './cat-missione.mjs?v=20261029-missione';
 import {isBuilding} from './cat-edificio-core.mjs?v=20261028-edificio';
-import {buildingMonitorVisual} from './cat-edificio.mjs?v=20261028-edificio';
-import {COURSES,STATES,projectView,filterRows} from './bussola-monitor-core.mjs?v=20261028-edificio';
-import {csvCell} from './bussola-records-core.mjs?v=20261028-edificio';
-import {planBoard,viewDrawing,construction,heritage} from './cat-visuals.mjs?v=20261028-edificio';
+import {buildingMonitorVisual} from './cat-edificio.mjs?v=20261029-missione';
+import {COURSES,STATES,projectView,filterRows} from './bussola-monitor-core.mjs?v=20261029-missione';
+import {csvCell} from './bussola-records-core.mjs?v=20261029-missione';
+import {planBoard,viewDrawing,construction,heritage} from './cat-visuals.mjs?v=20261029-missione';
 import qrcode from './assets/vendor/qrcode-generator-2.0.4.mjs';
 const $=id=>document.getElementById(id),el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;};
 const button=(label,fn,cls='secondary')=>{const b=el('button',label,cls);b.type='button';b.addEventListener('click',fn);return b;};
@@ -106,11 +108,12 @@ function renderVisual(card,row,index){
  if(course!=='cat'||!row.view.journey||row.view.labs[index]?.status==='empty')return;
  const p=row.view.journey,visual=el('div');
  // These renderers escape labels and receive a validated project, never arbitrary HTML.
- if(isBuilding(p))visual.innerHTML=buildingMonitorVisual(p,index);
+ if(isMission(p))visual.innerHTML=missionMonitorVisual(p,index);
+ else if(isBuilding(p))visual.innerHTML=buildingMonitorVisual(p,index);
  else if(index===0)visual.innerHTML=viewDrawing(p,'pianta');
- if(!isBuilding(p)&&index===1){visual.innerHTML=planBoard(p,{showRoute:true});const board=visual.querySelector('.plan-grid');if(board){board.className='plan-readonly';for(const b of board.querySelectorAll('[id]'))b.removeAttribute('id');}}
- if(!isBuilding(p)&&index===2)visual.innerHTML=construction(p);
- if(!isBuilding(p)&&index===3&&!p.energy)visual.innerHTML=heritage(p);
+ if(!isMission(p)&&!isBuilding(p)&&index===1){visual.innerHTML=planBoard(p,{showRoute:true});const board=visual.querySelector('.plan-grid');if(board){board.className='plan-readonly';for(const b of board.querySelectorAll('[id]'))b.removeAttribute('id');}}
+ if(!isMission(p)&&!isBuilding(p)&&index===2)visual.innerHTML=construction(p);
+ if(!isMission(p)&&!isBuilding(p)&&index===3&&!p.energy)visual.innerHTML=heritage(p);
  const prefix='monitor-visual-'+(++visualSerial)+'-';for(const n of visual.querySelectorAll('[id]')){const old=n.id;n.id=prefix+old;for(const e of visual.querySelectorAll('[fill],[stroke]'))for(const a of ['fill','stroke'])if(e.getAttribute(a)===`url(#${old})`)e.setAttribute(a,`url(#${prefix+old})`);}
  card.append(visual);
 }
@@ -140,6 +143,7 @@ function renderNotebook(filtered){
  box.append(el('h2',name(row)),el('p',`${className(row)} · Ultimo salvataggio: ${when(row.project?.updated_at)}`,'muted'));
  if(!row.view.valid){box.append(el('p',row.view.error,'empty'));return;}
  const grid=el('div',null,'works-grid');for(const [n] of row.view.labs.entries())grid.append(workCard(row,n));box.append(grid);
+ if(course==='cat'){const archives=savedCatProjects(row.project?.payload);if(archives.length){const collection=el('details');collection.append(el('summary','Attività CAT precedenti conservate ('+archives.length+')'));for(const archive of archives){const v=projectView({payload:archive.project},'cat');if(!v.valid){collection.append(el('p','Attività precedente conservata: formato da verificare.','muted'));continue;}const item=el('details');item.append(el('summary',archive.project.title||'Attività precedente'));item.addEventListener('toggle',()=>{if(!item.open||item.dataset.loaded)return;const g=el('div',null,'works-grid');v.labs.forEach((l,k)=>g.append(workCard({...row,view:v},k,{present:true})));item.append(g);item.dataset.loaded='true';});collection.append(item);}box.append(collection);}}
  if(row.view.interests?.length)box.append(el('p','Vorrei approfondire: '+row.view.interests.join(', ')));if(row.view.idea)box.append(el('p',row.view.idea));
  if(row.partecipante_id){const more=el('details'),content=el('div');more.append(el('summary','Note e versioni conservate'),content);more.addEventListener('toggle',async()=>{
    if(!more.open||more.dataset.loaded)return;const version=requestVersion,identity=authVersion;content.textContent='Caricamento…';

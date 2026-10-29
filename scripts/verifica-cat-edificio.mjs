@@ -9,13 +9,13 @@ import {certificateCSV} from '../bussola-attestati-files.mjs';
 import {projectView} from '../bussola-monitor-core.mjs';
 import {isolatedBussola} from './bussola-test-db.mjs';
 let checks=0;const eq=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;},ok=(a,label)=>{assert.ok(a,label);checks++;};
-const p=C.createProject(),b=p.building;p.started=true;p.screen=0;
+const p=C.createProject(undefined,'edificio'),b=p.building;p.started=true;p.screen=0;
 eq(p.journey,E.BUILDING_JOURNEY);ok(C.validProject(p));eq(C.completed(p),false);
 // Copertura incompleta, correzione, numero massimo e ricalcolo delle dipendenze.
 for(const id of ['A','B','C'])ok(E.toggleShot(b,id));eq(E.toggleShot(b,'D'),false);eq(E.testShots(b).missing,['nord','tetto']);eq(C.ready(p,1),false);
 E.toggleShot(b,'B');E.toggleShot(b,'D');eq(E.shotResult(b).complete,true);eq(C.ready(p,1),false,'La nuova scelta deve essere provata');E.testShots(b);eq(C.ready(p,1),true);
 // Riproduce la correzione del percorso dopo aver già superato la prima schermata.
-const correction=C.createProject();correction.started=true;correction.screen=0;correction.building.points=['A','B','C'];C.advance(correction);E.toggleShot(correction.building,'B');C.invalidate(correction);eq(correction.done,[]);E.toggleShot(correction.building,'D');E.testShots(correction.building);C.advance(correction);ok(correction.done.includes(0)&&correction.done.includes(1),'Il rilievo corretto non blocca l’attestato');
+const correction=C.createProject(undefined,'edificio');correction.started=true;correction.screen=0;correction.building.points=['A','B','C'];C.advance(correction);E.toggleShot(correction.building,'B');C.invalidate(correction);eq(correction.done,[]);E.toggleShot(correction.building,'D');E.testShots(correction.building);C.advance(correction);ok(correction.done.includes(0)&&correction.done.includes(1),'Il rilievo corretto non blocca l’attestato');
 const combinations=[];for(let a=0;a<4;a++)for(let c=a+1;c<5;c++)for(let d=c+1;d<6;d++){
  const q=E.newBuilding();q.points=[E.SHOTS[a].id,E.SHOTS[c].id,E.SHOTS[d].id];const r=E.shotResult(q),union=new Set(q.points.flatMap(id=>E.SHOTS.find(s=>s.id===id).sees));eq(r.complete,E.SURFACES.every(s=>union.has(s)));eq(r.covered.length+r.missing.length,5);combinations.push({points:q.points,complete:r.complete});
 }

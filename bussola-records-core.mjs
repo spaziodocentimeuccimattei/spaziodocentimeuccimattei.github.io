@@ -3,7 +3,7 @@ import {FORMAT as AFM_FORMAT,LABS as AFM_LABS,ready as afmReady,completed as afm
 import {restore as restoreAFM,summaryItems as afmSummary} from './afm-records.mjs?v=20261010-all';
 import {FORMAT as SIA_FORMAT,LABS as SIA_LABS,ready as siaReady,completed as siaCompleted} from './sia-core.mjs?v=20261010-all';
 import {restore as restoreSIA,summaryItems as siaSummary} from './sia-records.mjs?v=20261010-all';
-import {FORMAT as CAT_FORMAT,restore as restoreCat,labsFor as catLabs,summaryItems as catSummary,completed as catCompleted,ready as catReady} from './cat-core.mjs?v=20261028-edificio';
+import {FORMAT as CAT_FORMAT,restore as restoreCat,labsFor as catLabs,summaryItems as catSummary,completed as catCompleted,ready as catReady} from './cat-core.mjs?v=20261029-missione';
 import {FORMAT as TUR_FORMAT,restore as restoreTur,LABS as TUR_LABS,summaryItems as turSummary} from './turismo-core.mjs?v=20261009-cat';
 import {FORMAT,restoreProject,summaryItems,LABS} from './ssas-labs-core.mjs';
 export const COURSE_NAMES={afm:'Amministrazione, Finanza e Marketing',sia:'Sistemi Informativi Aziendali',ssas:'Servizi per la sanità e l’assistenza sociale',turismo:'Turismo',cat:'Costruzioni, Ambiente e Territorio'};

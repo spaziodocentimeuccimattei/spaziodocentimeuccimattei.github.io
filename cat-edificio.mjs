@@ -1,5 +1,5 @@
 import * as E from './cat-edificio-core.mjs?v=20261028-edificio';
-import {esc} from './cat-visuals.mjs?v=20261028-edificio';
+import {esc} from './cat-visuals.mjs?v=20261029-missione';
 const last=(runs,sig)=>runs.findLast(r=>r.signature===sig);
 const money=n=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
 const feedback=(text,warn=false)=>`<div class="feedback ${warn?'warn':''}" role="status"><p>${esc(text)}</p></div>`;

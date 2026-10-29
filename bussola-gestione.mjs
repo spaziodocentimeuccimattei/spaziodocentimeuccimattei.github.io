@@ -1,5 +1,5 @@
-import {certificateSnapshot,csvCell} from './bussola-records-core.mjs?v=20261028-edificio';
-import {downloadCertificates,certificateCanvas} from './bussola-attestati-render.mjs?v=20261028-edificio';
+import {certificateSnapshot,csvCell} from './bussola-records-core.mjs?v=20261029-missione';
+import {downloadCertificates,certificateCanvas} from './bussola-attestati-render.mjs?v=20261029-missione';
 import qrcode from './assets/vendor/qrcode-generator-2.0.4.mjs';
 const $=id=>document.getElementById(id),root=$('bussolaManagement');
 const testing=['localhost','127.0.0.1'].includes(location.hostname)&&document.body.dataset.bussolaTest==='true';

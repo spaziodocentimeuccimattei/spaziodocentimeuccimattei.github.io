@@ -1,5 +1,5 @@
-import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261028-edificio';
-import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261028-edificio';
+import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261029-missione';
+import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261029-missione';
 import {loadContacts,phoneLabel} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 let imagePromise,qrPromise;
 function logo(){return imagePromise??=new Promise((resolve,reject)=>{const loaded=document.querySelector('img[src="assets/logo-meucci-mattei-decimomannu.jpeg"]');if(loaded?.complete&&loaded.naturalWidth){resolve(loaded);return;}const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{imagePromise=null;reject(new Error('Il logo della scuola non si è caricato. Riprova.'));};img.src='assets/logo-meucci-mattei-decimomannu.jpeg';});}
@@ -18,8 +18,8 @@ function drawBand(ctx,{c,code}){ctx.save();ctx.textAlign='left';ctx.fillStyle='#
 function lines(ctx,text,maxWidth){const out=[];let line='';for(const word of String(text).split(/\s+/)){if(ctx.measureText(word).width>maxWidth){if(line){out.push(line);line='';}let part='';for(const c of word){if(ctx.measureText(part+c).width>maxWidth){out.push(part);part=c;}else part+=c;}line=part;continue;}if(line&&ctx.measureText(line+' '+word).width>maxWidth){out.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)out.push(line);return out;}
 export async function certificateCanvas(record){
  const s=record.snapshot;if(s?.format!=='bussola-attestato-partecipazione-1')throw new Error('Formato attestato non riconosciuto.');
- const courseName=s.corso==='cat'?COURSE_NAMES.cat+(['cat-4plus2','cat-4plus2-edificio'].includes(s.percorso)?' · 4+2':' · Archeodesign'):COURSE_NAMES[s.corso]||s.corso;
- const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const ctx=canvas.getContext('2d'),[brand,band,art]=await Promise.all([logo(),contactBand(),illustration(s.percorso==='cat-4plus2-edificio'?'cat-edificio':['cat-4plus2','cat-4plus2-edificio'].includes(s.percorso)?'cat-4plus2':s.corso)]),accent=ACCENT[s.corso]||'#294f40';
+ const courseName=s.corso==='cat'?COURSE_NAMES.cat+(['cat-4plus2','cat-4plus2-edificio','cat-4plus2-missione'].includes(s.percorso)?' · 4+2':' · Archeodesign'):COURSE_NAMES[s.corso]||s.corso;
+ const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const ctx=canvas.getContext('2d'),[brand,band,art]=await Promise.all([logo(),contactBand(),illustration(['cat-4plus2-edificio','cat-4plus2-missione'].includes(s.percorso)?'cat-edificio':['cat-4plus2','cat-4plus2-edificio','cat-4plus2-missione'].includes(s.percorso)?'cat-4plus2':s.corso)]),accent=ACCENT[s.corso]||'#294f40';
  ctx.fillStyle='#fcfaf2';ctx.fillRect(0,0,1240,1754);ctx.fillStyle=accent;ctx.fillRect(0,0,1240,32);ctx.strokeStyle='#b5c4aa';ctx.lineWidth=2;ctx.strokeRect(48,65,1144,1610);
  ctx.drawImage(brand,90,115,104,104);ctx.fillStyle='#294f40';ctx.font='600 27px Arial';ctx.fillText('IIS Meucci - Mattei | Decimomannu',218,157);ctx.font='23px Arial';ctx.fillText('Bussola per l’orientamento',218,198);
  ctx.textAlign='center';ctx.font='600 19px Arial';ctx.fillStyle='#93602a';ctx.fillText('UN PERCORSO DI SCOPERTA',620,270);

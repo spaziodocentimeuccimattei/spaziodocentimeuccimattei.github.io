@@ -1,17 +1,18 @@
+import * as MISSIONE from './cat-missione-core.mjs?v=20261029-missione';
 import * as EDIFICIO from './cat-edificio-core.mjs?v=20261028-edificio';
-import {courseDetails,completion} from './bussola-records-core.mjs?v=20261028-edificio';
+import {courseDetails,completion} from './bussola-records-core.mjs?v=20261029-missione';
 import {caseById} from './ssas-situazioni-core.mjs?v=20261018-testi';
 import * as AFM from './afm-core.mjs';
 import * as SIA from './sia-core.mjs';
 import * as TUR from './turismo-core.mjs';
-import * as CAT from './cat-core.mjs?v=20261028-edificio';
+import * as CAT from './cat-core.mjs?v=20261029-missione';
 export const COURSES={ssas:'SSAS',afm:'AFM',sia:'SIA',turismo:'Turismo',cat:'CAT 4+2',bussola:'Le dodici domande'};
 export const STATES={empty:'Non iniziato',working:'In corso',done:'Concluso'};
-const labels={offer:'Proposta',feature:'Bisogno e caratteristica',order:'Ordine delle azioni',obstacle:'Imprevisto',quantity:'Quantità',price:'Prezzo',payment:'Accordo sui pagamenti',agreement:'Consegna',amendment:'Modifica dell’accordo',tone:'Tono',question:'Domanda',response:'Risposta',headline:'Titolo',place:'Luogo',angle:'Punto di vista',storyTitle:'Titolo del racconto',welcome:'Accoglienza',plan:'Esperienza',rain:'Alternativa con pioggia',service:'Servizio',people:'Partecipanti',terms:'Condizioni',posterTitle:'Titolo dell’invito',repair:'Revisione',handoff:'Passaggio di informazioni',fields:'Campi scelti',merged:'Duplicato riunito',filter:'Filtro',blocks:'Sequenza delle azioni',condition:'Condizione',title:'Titolo',button:'Comando',permissions:'Permessi',view:'Può vedere',edit:'Può modificare',measures:'Misure rilevate',views:'Rappresentazioni',width:'Larghezza',route:'Percorso',zones:'Zone',roof:'Copertura',floor:'Suolo',cover:'Metri quadrati coperti',observations:'Osservazioni',hypothesis:'Ipotesi',encoding:'Rappresentazione',control:'Comando delle luci',consumption:'Consumo annuo (kWh)',saved:'Energia risparmiata (kWh)',hours:'Ore al giorno',phase:'Fasi',reason:'Motivazione',explanation:'Spiegazione',closing:'Conclusione del dialogo',supports:'Sostegni',adaptation:'Adattamento',goal:'Obiettivo',setting:'Formato',ending:'Testo del materiale',activity:'Attività',access:'Accesso',check:'Verifica',name:'Nome',opening:'Apertura',participation:'Partecipazione',focus:'Situazione',points:'Punti di ripresa',facts:'Dati del fabbricato',thermal:'Zone termiche osservate',intervention:'Intervento proposto',suono:'Suono',riprese:'Riprese',sosta:'Sosta'};
+const labels={offer:'Proposta',feature:'Bisogno e caratteristica',order:'Ordine delle azioni',obstacle:'Imprevisto',quantity:'Quantità',price:'Prezzo',payment:'Accordo sui pagamenti',agreement:'Consegna',amendment:'Modifica dell’accordo',tone:'Tono',question:'Domanda',response:'Risposta',headline:'Titolo',place:'Luogo',angle:'Punto di vista',storyTitle:'Titolo del racconto',welcome:'Accoglienza',plan:'Esperienza',rain:'Alternativa con pioggia',service:'Servizio',people:'Partecipanti',terms:'Condizioni',posterTitle:'Titolo dell’invito',repair:'Revisione',handoff:'Passaggio di informazioni',fields:'Campi scelti',merged:'Duplicato riunito',filter:'Filtro',blocks:'Sequenza delle azioni',condition:'Condizione',title:'Titolo',button:'Comando',permissions:'Permessi',view:'Può vedere',edit:'Può modificare',measures:'Misure rilevate',views:'Rappresentazioni',width:'Larghezza',route:'Percorso',zones:'Zone',roof:'Copertura',floor:'Suolo',cover:'Metri quadrati coperti',observations:'Osservazioni',hypothesis:'Ipotesi',encoding:'Rappresentazione',control:'Comando delle luci',consumption:'Consumo annuo (kWh)',saved:'Energia risparmiata (kWh)',hours:'Ore al giorno',phase:'Fasi',reason:'Motivazione',explanation:'Spiegazione',closing:'Conclusione del dialogo',supports:'Sostegni',adaptation:'Adattamento',goal:'Obiettivo',setting:'Formato',ending:'Testo del materiale',activity:'Attività',access:'Accesso',check:'Verifica',name:'Nome',opening:'Apertura',participation:'Partecipazione',focus:'Situazione',captures:'Facciate riprese',insulation:'Isolamento',windows:'Infissi',finish:'Finitura',total:'Costo della proposta',applied:'Proposta applicata al modello',points:'Punti di ripresa',facts:'Dati del fabbricato',thermal:'Zone termiche osservate',intervention:'Intervento proposto',suono:'Suono',riprese:'Riprese',sosta:'Sosta'};
 const ignored=new Set(['before','runs','handoffRuns','signature','id','version','format','revision','identity','notes','updatedAt','createdAt','finished','done','started','guideCursor','guideVersion','visited','step','part','screen','unlocked','_save_operation']);
 Object.assign(labels,{missingDay:'Giorno da completare',searched:'Ricerca eseguita',yes:'Se la condizione è vera',no:'Se la condizione è falsa',activity:'Attività',groupSize:'Posti richiesti',area:'Area scelta',x:'Colonna della griglia',y:'Riga della griglia'});
 function dictionary(source){const out={};function walk(v){if(Array.isArray(v)){if(typeof v[0]==='string'&&typeof v[1]==='string')out[v[0]]=v[1];else v.forEach(walk);}else if(v&&typeof v==='object'){if(v.id)out[v.id]=v.label||v.name||v.title||v.text||v.id;Object.values(v).forEach(walk);}}walk(source);return out;}
-const dicts={afm:dictionary(AFM),sia:dictionary(SIA),turismo:dictionary(TUR),cat:dictionary(CAT),edificio:dictionary(EDIFICIO)};
+const dicts={afm:dictionary(AFM),sia:dictionary(SIA),turismo:dictionary(TUR),cat:dictionary(CAT),edificio:dictionary(EDIFICIO),missione:dictionary(MISSIONE)};
 function fields(value,dict={},prefix=''){
  const out=[];for(const [k,v] of Object.entries(value||{})){
   if(ignored.has(k)||v===null||v===undefined||v===''||!Object.hasOwn(labels,k)&&!Object.hasOwn(dict,k))continue;
@@ -24,6 +25,7 @@ function fields(value,dict={},prefix=''){
 function areas(p,course){
  if(course==='ssas')return ['health','relation','autonomy','creative','service'].map(k=>p[k]);
  if(course==='sia')return [p.process,p.data,p.program,p.ui,p.access];
+ if(course==='cat'&&MISSIONE.isMission(p)){const m=p.mission,r=MISSIONE.latestMissionRun(m);return [{captures:m.captures},{observations:m.observations},{insulation:m.insulation,windows:m.windows,finish:m.finish},r?{consumption:r.after,saved:r.saved,total:r.total}:null,{applied:!!MISSIONE.latestApplication(m)}];}
  if(course==='cat'&&EDIFICIO.isBuilding(p)){const b=p.building;return [{points:b.points},{views:b.views,facts:b.facts},{thermal:b.thermal,intervention:b.intervention},{intervention:b.intervention},{phase:b.phase}];}
  if(course==='cat')return [p.survey,p.layout,p.build,CAT.isFour(p)?p.energy:p.heritage,p.plan];
  const keys=course==='afm'?[['offer','feature'],['order','obstacle'],['quantity','price','payment'],['agreement','amendment'],['tone','headline','question','response']]:[['place','angle','storyTitle'],['question','welcome'],['plan','rain'],['service','people','terms'],['tone','posterTitle','repair']];
@@ -38,11 +40,11 @@ export function projectView(project,course,questions=[]){
  try{
   const d=courseDetails(project.payload),state=completion({...project,corso:course}),j=d.journey;
   if(d.corso!==course)throw new Error('Indirizzo incoerente');
-  const caseData=course==='ssas'?caseById(j.health?.focus):null,dict=caseData?dictionary(caseData):EDIFICIO.isBuilding(j)?dicts.edificio:dicts[course]||{};
+  const caseData=course==='ssas'?caseById(j.health?.focus):null,dict=caseData?dictionary(caseData):MISSIONE.isMission(j)?dicts.missione:EDIFICIO.isBuilding(j)?dicts.edificio:dicts[course]||{};
   const grouped=areas(j,course),done=j.done||[];
   const isSSAS=course==='ssas',isTour=course==='turismo';
   const lastDone=Math.max(-1,...done.map(n=>typeof n==='number'?(isTour?n*2+1:n):-1));
-  const reach=isSSAS?Math.max(0,(j.visited||j.step||0)-1):Math.floor(Math.max(j.screen??-1,j.unlocked??-1,lastDone)/2);
+  const reach=MISSIONE.isMission(j)?(j.screen<1?1:j.screen===1?3:4):isSSAS?Math.max(0,(j.visited||j.step||0)-1):Math.floor(Math.max(j.screen??-1,j.unlocked??-1,lastDone)/2);
   const labs=d.labs.map((l,i)=>{
    const finished=isSSAS?done.includes(l.id):isTour?done.includes(i):done.includes(i*2)&&done.includes(i*2+1);
    const entered=finished||(isSSAS?reach>=i&&Boolean(j.visited||j.step):j.started&&reach>=i);

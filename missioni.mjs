@@ -211,7 +211,7 @@ async function initialize() {
         sia:{title:'Progetta una soluzione digitale',description:'Processi, dati, programmazione, interfacce e responsabilità',url:'bussola-sia.html'},
         turismo:{title:'Crea una proposta turistica',description:'Territorio, lingue e accoglienza, esperienze, impresa e servizi, comunicazione',url:'bussola-turismo.html'},
         ssas:{title:'Ascolta una persona e progetta l’aiuto',description:'Sei storie per provare ascolto, sostegno e attività per persone di età diverse, attraverso cinque laboratori.',url:'bussola-ssas.html'},
-        cat:{title:'CAT 4+2 · Rileva un edificio, ripensa la sua energia',description:'Un fabbricato da rilevare con il drone e interventi energetici da confrontare, in cinque laboratori. Scopri anche il percorso 4+2.',url:'bussola-cat.html'}
+        cat:{title:'CAT 4+2 · Missione Aurora',description:'Pilota un drone virtuale, osserva i punti deboli e scegli come riqualificare un edificio. Scopri anche il percorso 4+2.',url:'bussola-cat.html'}
       }[course.id];
       card.id = `prova-${course.id}`;
       card.append(el('p',course.code === 'TUR' ? 'Turismo' : course.code,'explore-kicker'),el('h2',entry?.title||mission.title),el('p',course.name,'activity-course-name'),el('p',entry?.description||mission.subject),entry?link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`,personalDestination(activityDestination(location.href,course.id))):button(`Prova ${course.code}`,()=>openMission(course.id)));

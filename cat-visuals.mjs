@@ -1,4 +1,4 @@
-import {dimensions,grid,ZONES,find,routeCells} from './cat-core.mjs?v=20261028-edificio';
+import {dimensions,grid,ZONES,find,routeCells} from './cat-core.mjs?v=20261029-missione';
 export const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const svg=(label,body)=>`<svg viewBox="0 0 400 270" role="img" aria-label="${esc(label)}" xmlns="http://www.w3.org/2000/svg"><title>${esc(label)}</title>${body.replace(/font-size="(\d+)"/g,(_,n)=>`font-size="${Math.max(22,Number(n))}"`)}</svg>`;
 const text=(x,y,t,size=13)=>`<text x="${x}" y="${y}" font-size="${size}" fill="#123344" font-family="system-ui,sans-serif">${esc(t)}</text>`;
