@@ -1,0 +1,19 @@
+/* Stessa fotografia originale: meno ingrandimento, colori naturali e titolo separato. */
+#imparare{background:var(--deep)}
+#imparare .question-photo{position:absolute;inset:0;width:100%;height:63%;object-fit:cover;object-position:50% 50%;filter:brightness(1.08) contrast(1.04) saturate(1.10)}
+#imparare .question-shade{background:linear-gradient(180deg,transparent 0%,transparent 57%,var(--deep) 63%,var(--deep) 100%)}
+#imparare .question-top{top:36px;left:76px;max-width:calc(100% - 152px);padding:12px 18px;background:#092b43ed;border-left:5px solid var(--lime);font-size:23px;line-height:1.25}
+#imparare .question-copy{left:76px;right:76px;bottom:35px}
+#imparare .question-copy h2{font-size:130px;line-height:1;max-width:1260px;text-shadow:none}
+#imparare .question-copy h2 span{color:#c4f48f}
+#imparare .question-mark{right:75px;bottom:4px;font-size:430px;color:#ffffff08}
+@media(min-width:760px){body:has(#imparare.active) .console{top:14px;bottom:auto;left:auto;right:16px;transform:none}}
+@media(max-width:900px){
+  body.explore #imparare{height:560px;padding:0}
+  body.explore #imparare .question-photo{height:55%;object-position:50% 50%}
+  body.explore #imparare .question-shade{background:linear-gradient(180deg,transparent 0%,transparent 47%,var(--deep) 55%,var(--deep) 100%)}
+  body.explore #imparare .question-top{top:20px;left:24px;max-width:calc(100% - 48px);padding:10px 12px;font-size:16px}
+  body.explore #imparare .question-copy{left:24px;right:24px;bottom:35px}
+  body.explore #imparare .question-copy h2{font-size:clamp(44px,12vw,72px);line-height:1.04}
+  body.explore #imparare .question-mark{right:22px;bottom:20px;font-size:250px}
+}

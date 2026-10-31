@@ -1,0 +1,12 @@
+/* Cinque riquadri riconoscibili con la palette della scuola. */
+#indirizzi .course-strip{gap:12px;border:0}
+#indirizzi .course-door{background:var(--tile-bg);color:var(--tile-ink);border:0;transition:filter .2s,box-shadow .2s}
+#indirizzi .course-door:before{display:none}
+#indirizzi .course-door .code{color:inherit}
+#indirizzi .course-door[data-jump="afm"]{--tile-bg:#00823f;--tile-ink:#fff}
+#indirizzi .course-door[data-jump="sia"]{--tile-bg:#58bba9;--tile-ink:#092b43}
+#indirizzi .course-door[data-jump="turismo"]{--tile-bg:#cc0752;--tile-ink:#fff}
+#indirizzi .course-door[data-jump="cat"]{--tile-bg:#79cf1b;--tile-ink:#092b43}
+#indirizzi .course-door[data-jump="ssas"]{--tile-bg:#123c57;--tile-ink:#fff}
+#indirizzi .course-door:hover{filter:brightness(1.04);box-shadow:0 7px 0 #092b4326}
+@media(max-width:900px){body.explore #indirizzi .course-strip{gap:12px}body.explore #indirizzi .course-door{border:0}}

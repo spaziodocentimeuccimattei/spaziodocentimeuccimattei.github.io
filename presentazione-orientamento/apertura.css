@@ -1,0 +1,37 @@
+/* Avvio digitale originale; il marchio resta integro. Arrivo sonoro a 1,76 s. */
+.boot-screen{position:absolute;inset:0;background:var(--deep);z-index:4;overflow:hidden;opacity:0;pointer-events:none}
+.boot-grid{position:absolute;inset:0;background-image:linear-gradient(#58bba916 1px,transparent 1px),linear-gradient(90deg,#58bba916 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse,black,transparent 78%)}
+.boot-circuits{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:var(--teal);stroke-width:3;opacity:.85;filter:drop-shadow(0 0 9px #58bba9)}
+.boot-circuits path{stroke-dasharray:1200;stroke-dashoffset:1200}
+.boot-circuits path:nth-child(2n){stroke:var(--lime)}
+.boot-circuits path:nth-child(3n){stroke:var(--pink)}
+.boot-core{position:absolute;left:50%;top:43%;width:225px;height:225px;transform:translate(-50%,-50%)}
+.boot-core i{position:absolute;inset:0;border:3px solid #58bba94d;border-left-color:var(--teal);border-right-color:var(--teal);border-radius:50%}
+.boot-core i:nth-child(2){inset:27px;border-color:#79cf1b33;border-top-color:var(--lime);border-bottom-color:var(--lime)}
+.boot-core i:nth-child(3){inset:59px;border-color:#ef0b6222;border-right-color:var(--pink);border-width:4px}
+.boot-core:after{content:'';position:absolute;inset:96px;background:#b6f390;border-radius:50%;box-shadow:0 0 35px 12px #79cf1b66}
+.boot-charge{position:absolute;top:62%;left:35%;width:30%;height:4px;background:#ffffff16;overflow:hidden}
+.boot-charge:after{content:'';display:block;background:var(--teal);height:100%;transform:scaleX(0);transform-origin:left;box-shadow:0 0 14px var(--teal)}
+.centered-cover.active .cover-logo{animation:none}
+@media(min-width:760px){body:has(#benvenuti.active) .console{top:14px;bottom:auto;left:auto;right:16px;transform:none}}
+.centered-cover.started .boot-screen{animation:boot-surface 4.2s linear both}
+.centered-cover.started .boot-circuits path{animation:boot-trace 1.62s cubic-bezier(.2,.6,.5,1) both}
+.centered-cover.started .boot-circuits path:nth-child(2n){animation-delay:.12s}
+.centered-cover.started .boot-core i{animation:boot-spin 1.76s cubic-bezier(.1,.4,.7,1) both}
+.centered-cover.started .boot-core i:nth-child(2){animation-direction:reverse}
+.centered-cover.started .boot-core i:nth-child(3){animation-duration:1.4s}
+.centered-cover.started .boot-charge:after{animation:boot-charge 1.7s cubic-bezier(.3,.04,.75,.5) both}
+.centered-cover.started .cover-logo{animation:boot-logo 4.2s cubic-bezier(.18,.75,.3,1) both}
+.centered-cover.started .cover-iis,.centered-cover.started h1,.centered-cover.started #start-actions{animation:boot-caption 4.2s ease-out both}
+.centered-cover.started .burst i:nth-child(n){background:transparent;border:18px solid var(--green);animation:boot-wave 1.4s ease-out 1.76s both}
+.centered-cover.started .burst i:nth-child(2){border-color:var(--pink);animation-delay:1.82s}
+.centered-cover.started .burst i:nth-child(3){border-color:var(--teal);animation-delay:1.88s}
+.centered-cover.started .burst i:nth-child(4){border-color:var(--lime);animation-delay:1.94s}
+@keyframes boot-surface{0%,39%{opacity:1}48%,100%{opacity:0}}
+@keyframes boot-trace{0%{stroke-dashoffset:1200;opacity:.1}100%{stroke-dashoffset:0;opacity:1}}
+@keyframes boot-spin{from{transform:rotate(-40deg) scale(.65);opacity:.2}to{transform:rotate(400deg) scale(1.25);opacity:1}}
+@keyframes boot-charge{0%{transform:scaleX(0)}35%{transform:scaleX(.15)}70%{transform:scaleX(.55)}100%{transform:scaleX(1)}}
+@keyframes boot-logo{0%,39%{opacity:0;transform:scale(.64);filter:blur(10px)}47%{opacity:1;transform:scale(1.075);filter:blur(0)}60%,100%{opacity:1;transform:none;filter:none}}
+@keyframes boot-caption{0%,44%{opacity:0;transform:translateY(12px)}61%,100%{opacity:1;transform:none}}
+@keyframes boot-wave{0%{width:150px;height:150px;opacity:.65;transform:translate(-50%,-50%)}100%{width:2400px;height:2400px;opacity:0;transform:translate(-50%,-50%)}}
+@media(prefers-reduced-motion:reduce){.centered-cover.started .boot-screen{opacity:0}.boot-screen *{animation:none!important}.centered-cover.started .cover-logo,.centered-cover.started .cover-iis,.centered-cover.started h1,.centered-cover.started #start-actions{opacity:1;filter:none;transform:none;animation:none!important}}

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123c57">
+  <title>IIS Meucci - Mattei | Decimomannu · Conoscere la scuola</title>
+  <meta name="description" content="Conosci gli indirizzi, i laboratori e le esperienze dell’IIS Meucci - Mattei di Decimomannu.">
+  <link rel="icon" href="assets/logo.jpeg">
+  <link rel="stylesheet" href="stile.css">
+  <link rel="stylesheet" href="bussola-palco.css">
+  <link rel="stylesheet" href="apertura.css">
+  <link rel="stylesheet" href="fotografia-sede.css">
+  <link rel="stylesheet" href="indirizzi-colori.css">
+  <link rel="stylesheet" href="agora-esempio.css">
+  <link rel="stylesheet" href="incontri-autore.css">
+  <link rel="stylesheet" href="accoglienza.css">
+  <link rel="stylesheet" href="materiali-recenti.css">
+</head>
+<body>
+  <main id="stage" aria-label="Presentazione della scuola">
+    <div id="slides"></div>
+    <footer class="contact-ribbon" aria-label="Contatti della sede">
+      <span class="save-invite">Segna i nostri contatti</span>
+      <a href="tel:+390704657043">070 4657043</a>
+      <span class="ribbon-dot" aria-hidden="true"></span>
+      <a href="mailto:orientamattei@gmail.com">orientamattei@gmail.com</a>
+      <button id="save-contact" class="ribbon-save" title="Scarica il contatto della scuola">Salva contatto ↓</button>
+    </footer>
+    <div class="progress-line" aria-hidden="true"><span id="progress"></span></div>
+  </main>
+  <nav class="console" aria-label="Comandi della presentazione">
+    <button id="index-button" title="Indice (I)" aria-label="Apri l’indice">☰</button>
+    <span id="counter">01 / 28</span>
+    <button id="previous" title="Indietro (←)" aria-label="Schermata precedente">←</button>
+    <button id="next" title="Avanti (→ o spazio)" aria-label="Schermata successiva">→</button>
+    <span class="console-separator"></span>
+    <button id="music-button" aria-label="Impostazioni audio" aria-expanded="false" title="Audio (M)">♫</button>
+    <button id="explore-button" title="Lettura libera">Esplora</button>
+    <button id="notes-button" title="Finestra relatore (N)" aria-label="Apri note in una finestra separata">N</button>
+    <button id="fullscreen" title="Schermo intero (F)" aria-label="Schermo intero">⛶</button>
+  </nav>
+  <section id="sound-panel" class="sound-panel" hidden aria-label="Regolazione del sottofondo">
+    <strong>Sottofondo</strong><label class="track-label">Scegli il brano<select id="music-track"><option value="going">Going Higher · Energico</option><option value="adventure">Adventure · Cinematografico</option><option value="original">Base originale · Discreta</option></select></label><button id="music-toggle">Attiva musica</button>
+    <div class="sound-levels"><button data-mix="talk" aria-pressed="true">Parla il docente</button><button data-mix="media" aria-pressed="false">Solo immagini</button></div>
+    <label>Volume <input id="music-volume" aria-label="Volume musica" type="range" min="0" max="100" value="55"></label>
+    <button id="sound-test">Prova il suono d’apertura ▶</button><button data-music-credits>Crediti musicali</button><small>Si abbassa durante le clip. M per attivare o spegnere.</small>
+  </section>
+  <dialog id="index-dialog" class="index-dialog"><header><h2>Conosci la scuola</h2><button data-close="index-dialog" aria-label="Chiudi indice">×</button></header><div id="index-list"></div></dialog>
+  <dialog id="viewer" class="viewer"><button class="viewer-close" data-close="viewer" aria-label="Chiudi immagine o video">×</button><div id="viewer-content"></div><div class="viewer-contact"><a href="tel:+390704657043">070 4657043</a><span>•</span><a href="mailto:orientamattei@gmail.com">orientamattei@gmail.com</a></div></dialog>
+  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+  <script src="contenuti.js"></script>
+  <script src="musica.js"></script>
+  <script src="scuola-oggi.js"></script>
+  <script src="approfondimenti.js"></script>
+  <script src="territorio-ragazzi.js"></script>
+  <script src="metodo-scuola.js"></script>
+  <script src="bussola-palco-dati.js"></script>
+  <script src="bussola-palco-core.js"></script>
+  <script src="bussola-palco.js"></script>
+  <script src="accoglienza.js"></script>
+  <script src="presentazione.js"></script>
+  <script src="sequenze.js"></script>
+  <script src="crediti-musicali.js"></script>
+  <script src="agora-esempio.js"></script>
+  <script src="materiali-recenti.js"></script>
+</body>
+</html>
