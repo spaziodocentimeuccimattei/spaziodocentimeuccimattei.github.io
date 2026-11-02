@@ -48,12 +48,13 @@
   const media=$('history-video'), viewer=$('viewer');
   function resize(){document.documentElement.style.setProperty('--scale',Math.min(innerWidth/1600,innerHeight/900))}
   function updateNotes(){
-    try{localStorage.setItem('mattei-v02-relatore',JSON.stringify({index:current,total:sections.length,title:sections[current].title,note:sections[current].note,say:sections[current].say,chapter:`${sections[current].chapter+1} · ${window.PERCORSO.chapters[sections[current].chapter].label}`,next:sections[current+1]?.title||'Fine',updated:Date.now()}))}catch(_){}
+    try{localStorage.setItem('mattei-v02-relatore',JSON.stringify({index:current,total:sections.length,title:sections[current].title,note:sections[current].note,say:sections[current].say,minutes:window.PERCORSO.minutes[sections[current].id]||0,plannedStart:sections.slice(0,current).reduce((t,x)=>t+(window.PERCORSO.minutes[x.id]||0),0),optional:window.PERCORSO.optional.includes(sections[current].id),chapter:`${sections[current].chapter+1} · ${window.PERCORSO.chapters[sections[current].chapter].label}`,next:sections[current+1]?.title||'Fine',updated:Date.now()}))}catch(_){}
   }
   function show(index,{scroll=true}={}){
     index=Math.max(0,Math.min(sections.length-1,index));
     if(index!==current)document.querySelectorAll('.scene video').forEach(v=>v.pause());
     if(current===0&&index!==current){Sottofondo.stopIntro();$('benvenuti').classList.remove('started')}
+    if(current===0&&index>0){try{if(!localStorage.getItem('mattei-v02-start'))localStorage.setItem('mattei-v02-start',String(Date.now()))}catch(_){}}
     current=index;
     const focused=document.activeElement;if(!explore&&focused&&focused.closest('.scene')!==nodes[current]&&focused.closest('.scene'))focused.blur();
     nodes.forEach((node,i)=>{node.classList.toggle('active',i===current);node.setAttribute('aria-hidden',String(!explore&&i!==current));node.inert=!explore&&i!==current});
@@ -65,7 +66,7 @@
     $('announcer').textContent=`${current+1} di ${sections.length}: ${sections[current].title}`;
     if(explore&&scroll)nodes[current].scrollIntoView({behavior:'smooth',block:'start'});
   }
-  $('index-list').innerHTML=window.PERCORSO.chapters.map((c,n)=>`<h3 class="index-act"><span>${n+1}</span>${escape(c.label)}</h3>${sections.map((s,i)=>s.chapter===n?`<button data-section="${i}"><span>${String(i+1).padStart(2,'0')}</span>${escape(s.title)}</button>`:'').join('')}`).join('');
+  $('index-list').innerHTML=window.PERCORSO.chapters.map((c,n)=>`<h3 class="index-act"><span>${n+1}</span>${escape(c.label)}<em>${String(c.ids.reduce((t,id)=>t+(window.PERCORSO.minutes[id]||0),0)).replace('.',',')} min</em></h3>${sections.map((s,i)=>s.chapter===n?`<button data-section="${i}"><span>${String(i+1).padStart(2,'0')}</span>${escape(s.title)}</button>`:'').join('')}`).join('');
   document.querySelector('.progress-line').insertAdjacentHTML('beforeend',window.PERCORSO.chapters.slice(1).map(c=>`<i style="left:${sections.findIndex(s=>s.id===c.ids[0])/sections.length*100}%"></i>`).join(''));
   function toggleExplore(){explore=!explore;document.body.classList.toggle('explore',explore);$('explore-button').textContent=explore?'Presenta':'Esplora';if(!explore)window.scrollTo(0,0);show(current)}
   function flashControls(){document.body.classList.add('controls-visible');clearTimeout(controlsTimer);controlsTimer=setTimeout(()=>document.body.classList.remove('controls-visible'),2800)}
@@ -102,6 +103,7 @@
       const cover=$('benvenuti');
       if(b.dataset.start==='audio'){try{await Sottofondo.intro()}catch(_){}}
       else {Sottofondo.stopIntro();await Sottofondo.setEnabled(false)}
+      try{localStorage.removeItem('mattei-v02-start')}catch(_){}
       cover.classList.remove('started');void cover.offsetWidth;cover.classList.add('started');
       if(b.dataset.start==='audio'){try{await Sottofondo.setEnabled(true)}catch(_){}}
       soundUI();
