@@ -4,8 +4,8 @@
   'use strict';
   const k=t=>`<p class="kicker">${t}</p>`;
 
-  /* Studiare nell'epoca dell'IA · tre temi comuni a Linee guida MIM sull'IA a scuola (2025),
-     Linee guida per l'educazione civica (D.M. 183/2024) e UNESCO (2024): capire, verificare, decidere. */
+  /* Studiare nell'epoca dell'IA · tre questioni di fondo (imparare, verità, responsabilità) fondate su Linee guida MIM sull'IA a scuola (2025),
+     Linee guida per l'educazione civica (D.M. 183/2024) e UNESCO (2024). */
   const iaDomanda={id:'ia-domanda',title:'L’IA risponde in un secondo. Ci possiamo fidare?',class:'navy ia-hook',
     note:'Esempio costruito apposta: indagine e numero sono inventati e lo si dichiara nella risposta svelata. Serve a mostrare l’errore tipico di un chatbot (risposta plausibile, fonte inventata). Far votare per alzata di mano prima di svelare.',
     html:`<div class="ia-hook-copy">${k('Studiare nell’epoca dell’IA')}<h2 class="enter">L’IA risponde<br>in un secondo.<br><span class="lime">Ci possiamo fidare?</span></h2><p class="ia-hook-hint">Leggete la risposta. Alzate la mano: ci credete?</p></div>
@@ -17,15 +17,14 @@
       <small class="ia-chat-note">Esempio costruito per la presentazione</small>
     </div>`};
 
-  const iaScuola={id:'ia-scuola',title:'Imparare serve ancora · Che cosa insegniamo sull’IA',class:'paper ia-school',
-    note:'Tre temi per introdurre e studiare l’IA a scuola, comuni alle fonti: Linee guida MIM per l’introduzione dell’IA nelle istituzioni scolastiche (2025), § 4.4 (potenzialità e limiti, «allucinazioni», senso critico, uso che non danneggi il proprio apprendimento) e § 3.1 (intervento e sorveglianza umana, trasparenza, dati); Linee guida per l’educazione civica, D.M. 183/2024, cittadinanza digitale (valutare fonti, dichiarare ciò che è prodotto dal programma, proteggere i dati); UNESCO, AI competency framework for students (2024). Le attività «In classe» generalizzano a tutti gli indirizzi tre attività del programma dei contenuti IA (smistamento IA/non IA, verifica di una risposta generata, bozza personale con nota d’uso). Non citare progetti interni.',
-    html:`<div class="ia-school-head">${k('Studiare nell’epoca dell’IA')}<h2 class="enter">Imparare serve ancora.<br><span>Anzi, serve di più.</span></h2></div>
-    <div class="ia-pillars">
-      <div class="ia-pillar enter"><small>01</small><h3>Capire</h3><p><b>Potenzialità e limiti.</b> Non cerca, <b>genera</b>: impara dai dati e può inventare con sicurezza.</p><div class="ia-class"><span>In classe</span><b>IA o non IA?</b> Smistiamo strumenti di tutti i giorni (navigatore, traduttore, assistente vocale) e scopriamo da quali dati imparano.</div></div>
-      <div class="ia-pillar enter"><small>02</small><h3>Verificare</h3><p><b>Controllare le fonti</b> prima di fidarsi. <b>Proteggere i dati</b>, propri e degli altri.</p><div class="ia-class"><span>In classe</span><b>Caccia all’errore.</b> Una risposta del chatbot, le fonti vere: ogni frase si segna come confermata, falsa o incerta.</div></div>
-      <div class="ia-pillar enter"><small>03</small><h3>Decidere</h3><p><b>L’ultima parola è di una persona.</b> Dichiari quando l’IA ti ha aiutato.</p><div class="ia-class"><span>In classe</span><b>Prima la tua bozza.</b> Poi il confronto con l’IA, la revisione motivata e una nota che dichiara l’aiuto ricevuto.</div></div>
-    </div>
-    <div class="ia-work"><strong>Come la affrontiamo</strong><span><b>Prima il tuo lavoro</b>, poi l’IA: serve a imparare, non a saltare la fatica.</span><span><b>Con la guida del docente</b>, a ogni età il suo passo.</span><span><b>Ne parliamo insieme</b>: studenti, docenti e famiglie.</span></div>`};
+  const iaScuola={id:'ia-scuola',title:'Tre domande che l’IA pone alla scuola',class:'paper ia-school',
+    note:'Tre questioni di fondo per la scuola: didattica (che cosa vuol dire imparare se la risposta è già pronta), di verità (le risposte plausibili e le «allucinazioni»), etica (decisione e responsabilità umana). Fonti: Linee guida MIM per l’introduzione dell’IA nelle istituzioni scolastiche (2025), § 4.4 (potenzialità e limiti, senso critico, uso che non danneggi lo sviluppo delle proprie conoscenze) e § 3.1 (intervento e sorveglianza umana, trasparenza, dati); Linee guida per l’educazione civica, D.M. 183/2024, cittadinanza digitale; UNESCO, AI competency framework for students (2024), approccio centrato sulla persona. Non citare progetti interni.',
+    html:`${k('Studiare nell’epoca dell’IA')}<h2 class="enter">Tre domande che l’IA<br><span>pone alla scuola.</span></h2>
+    <div class="ia-questions">
+      <div class="ia-q enter"><small>Imparare</small><h3>Se l’IA risponde a tutto, perché imparare?</h3><p><span>Come la affrontiamo</span>Capire non si delega. <b>Prima pensi tu, poi l’IA</b>: conta il percorso, non solo il risultato.</p></div>
+      <div class="ia-q enter"><small>Verità</small><h3>Se una risposta suona vera, è vera?</h3><p><span>Come la affrontiamo</span>Non sempre. A scuola si impara a <b>dubitare e verificare</b>: fonti, prove, confronto.</p></div>
+      <div class="ia-q enter"><small>Responsabilità</small><h3>Chi decide: la macchina o la persona?</h3><p><span>Come la affrontiamo</span><b>La persona.</b> Si dichiara l’aiuto ricevuto, si proteggono i dati, si risponde delle proprie scelte.</p></div>
+    </div>`};
 
   /* Il prossimo passo: Open Day, Bussola e iscrizione in un’unica schermata. */
   const prossimiPassi={id:'prossimipassi',title:'Il prossimo passo · Visite, Bussola, iscrizione',class:'navy nextsteps nextsteps-compact',
@@ -80,7 +79,7 @@
     benvenuti:'Avvia con o senza audio. Presentati in una frase e annuncia: «Oggi partiamo da una domanda».',
     imparare:'Fai la domanda e aspetta. Raccogli due risposte dal pubblico. Poi: «E se lo chiedessimo a un’intelligenza artificiale?»',
     'ia-domanda':'Leggi la domanda al chatbot, poi la risposta. Fai votare per alzata di mano, poi svela. «Sembrava vero. Ecco perché a scuola si impara anche questo.»',
-    'ia-scuola':'Tre parole: capire, verificare, decidere. «Non vietiamo l’IA e non la lasciamo fare da sola: la insegniamo.» Per ogni tema leggi l’attività «In classe»: è quello che faranno davvero. Chiudi con la riga in basso: prima il tuo lavoro, con la guida del docente, insieme alle famiglie.',
+    'ia-scuola':'Leggi una domanda alla volta e lascia un attimo di silenzio. Poi la risposta: come la affrontiamo a scuola. La seconda l’hanno appena vista con il chatbot. Chiudi: «Non vietiamo l’IA e non la lasciamo fare da sola: ci pensiamo insieme».',
     coetanei:'Fai scegliere la risposta. «Non siete soli: tanti ragazzi della vostra età vivono qui intorno.»',
     storia:'Una clip, al massimo due. «Siamo nati come ragioneria: oggi gli indirizzi sono cinque.»',
     convegno:'«Ci chiediamo che cosa serve alla scuola di oggi»: indica i quattro temi, compreso quello sull’IA appena visto.',
