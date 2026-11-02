@@ -48,29 +48,24 @@ window.SCUOLA = {
     cat:{file:'pcto-cat.jpg',caption:'PCTO CAT · Stage, catamarano e rilievo con drone',group:'Esperienze'}
   },
   courses:[
-    {id:'afm',code:'AFM',name:'Amministrazione, Finanza e Marketing',field:'Economia, risorse, decisioni',question:'Come trasformi un’idea in un’attività?',color:'#00823f',panels:[
+    {id:'afm',code:'AFM',name:'Amministrazione, Finanza e Marketing',field:'Economia, risorse, decisioni',question:'Come trasformi un’idea in un’attività?',color:'#00823f',subjects:['Economia aziendale','Diritto','Economia politica','Informatica','Due lingue straniere'],panels:[
       '<p>Leggi dati economici, organizzi risorse, confronti costi e prendi decisioni.</p><p>Impari a capire come funziona un’impresa.</p>',
-      '<p>Economia aziendale · Diritto · Economia politica · Informatica · Lingue.</p><p class="small-note">Analisi dei dati, organizzazione, comunicazione e lavoro di gruppo.</p>',
       '<p>Università in ambito economico e giuridico, ITS Academy, attività amministrative e aziendali.</p><p class="small-note">Uffici contabili, aziende finanziarie, assicurazioni e pubblica amministrazione: accessi e mansioni richiedono i rispettivi requisiti.</p>'
     ]},
-    {id:'sia',code:'SIA',name:'Sistemi Informativi Aziendali',field:'Dati, programmi, soluzioni',question:'Come può un programma semplificare un’attività?',color:'#58bba9',photo:'informatica',visual:'Informatica + economia',panels:[
+    {id:'sia',code:'SIA',name:'Sistemi Informativi Aziendali',field:'Dati, programmi, soluzioni',question:'Come può un programma semplificare un’attività?',color:'#58bba9',photo:'informatica',visual:'Informatica + economia',subjects:['Informatica','Economia aziendale','Diritto','Economia politica','Lingue straniere'],panels:[
       '<p>Organizzi informazioni, descrivi processi e progetti soluzioni digitali per le organizzazioni.</p><p class="small-note">SIA si sceglie dal terzo anno, dopo il biennio AFM. In prima ci si iscrive ad AFM.</p>',
-      '<p>Informatica · Economia aziendale · Diritto · Economia politica · Lingue.</p><p class="small-note">Programmazione, archivi di dati, problem solving e processi aziendali.</p>',
       '<p>Università in ambito informatico ed economico-giuridico, ITS Academy e sistemi informativi aziendali.</p><p class="small-note">Software, elaborazione dati, assistenza informatica, credito, assicurazioni e pubblica amministrazione, secondo i requisiti dei ruoli.</p>'
     ]},
-    {id:'turismo',code:'Turismo',name:'Indirizzo tecnico · settore economico',field:'Lingue, luoghi, accoglienza',question:'Come fai scoprire un luogo a chi non lo conosce?',color:'#ef0b62',photo:'romanico1',visual:'Lingue + territorio',panels:[
+    {id:'turismo',code:'Turismo',name:'Indirizzo tecnico · settore economico',field:'Lingue, luoghi, accoglienza',question:'Come fai scoprire un luogo a chi non lo conosce?',color:'#ef0b62',photo:'romanico1',visual:'Lingue + territorio',subjects:['Discipline turistiche e aziendali','Diritto e legislazione turistica','Geografia turistica','Arte e territorio','Tre lingue straniere'],panels:[
       '<p>Progetti itinerari, racconti il patrimonio e prepari esperienze di accoglienza.</p><p>Conosci luoghi e culture attraverso le lingue.</p>',
-      '<p>Discipline turistiche e aziendali · Diritto e legislazione turistica · Arte e territorio · Geografia turistica · Seconda e terza lingua comunitaria.</p>',
       '<p>Università in ambito linguistico ed economico-giuridico, ITS Academy e servizi turistici.</p><p class="small-note">Accoglienza, marketing e promozione, tour operator, crociere e strutture ricettive. Alcune professioni richiedono ulteriori titoli o abilitazioni.</p>'
     ]},
-    {id:'cat',code:'CAT 4+2',name:'Costruzioni, Ambiente e Territorio',field:'Spazi, sostenibilità, progetto',question:'Come progetti spazi che funzionano meglio?',color:'#79cf1b',photo:'cat',visual:'Rilievo + progetto + energia',panels:[
+    {id:'cat',code:'CAT 4+2',name:'Costruzioni, Ambiente e Territorio',field:'Spazi, sostenibilità, progetto',question:'Come progetti spazi che funzionano meglio?',color:'#79cf1b',photo:'cat',visual:'Rilievo + progetto + energia',subjects:['Progettazione, costruzioni e impianti','Rilievo e geomatica','Estimo','Cantiere e sicurezza','Tecnologie digitali e BIM'],panels:[
       '<p>Misuri, rappresenti e progetti. Usi strumenti digitali, rilievo e modelli per leggere edifici e territorio.</p><p class="small-note">Diploma in 4 anni. Il successivo +2 all’ITS Academy è facoltativo.</p>',
-      '<p>Progettazione, costruzioni e impianti · Rilievo e geomatica · Estimo · Cantiere e sicurezza · Tecnologie digitali e BIM.</p><p class="small-note">Edifici, energia e ambiente; esperienze di rilievo e documentazione del patrimonio.</p>',
       '<p>Dopo il diploma quadriennale: università, ITS Academy o lavoro. Il diploma ha lo stesso valore legale del corrispondente quinquennale.</p><p class="small-note">Ingegneria, architettura, agraria, studi tecnici e costruzioni. La libera professione richiede il percorso e l’abilitazione previsti.</p>'
     ]},
-    {id:'ssas',code:'SSAS',name:'Servizi per la Sanità e l’Assistenza Sociale',field:'Persone, salute, comunità',question:'Come aiuti una persona a partecipare e stare meglio?',color:'#ef0b62',photo:'moRelazioni',visual:'Ascolto + metodo + cura',panels:[
+    {id:'ssas',code:'SSAS',name:'Servizi per la Sanità e l’Assistenza Sociale',field:'Persone, salute, comunità',question:'Come aiuti una persona a partecipare e stare meglio?',color:'#ef0b62',photo:'moRelazioni',visual:'Ascolto + metodo + cura',subjects:['Metodologie operative','Psicologia generale e applicata','Igiene e cultura medico-sanitaria','Scienze umane e sociali','Diritto, economia e tecnica amministrativa'],panels:[
       '<p>Osservi i bisogni, costruisci relazioni e progetti attività per il benessere e la partecipazione.</p><p>La cura si impara anche attraverso l’esperienza.</p>',
-      '<p>Scienze umane e sociali · Igiene e cultura medico-sanitaria · Metodologie operative · Psicologia generale e applicata · Diritto ed economia.</p>',
       '<p>Università e formazione in ambito sociale, educativo, psicologico, sanitario e della riabilitazione; servizi al cittadino, cooperative e strutture sociali.</p><p class="small-note">Il diploma non assegna automaticamente qualifiche come OSS, infermiere, educatore o assistente sociale.</p>'
     ]}
   ],
