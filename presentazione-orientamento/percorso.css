@@ -27,7 +27,7 @@
 .ia-pillar small{font-size:24px;font-weight:700;color:#608752}
 .ia-pillar h3{font-size:66px;margin:6px 0 16px}
 .ia-pillar p{font-size:27px;line-height:1.4;color:#2d4f63}.ia-pillar b{color:var(--navy)}
-.ia-work{display:grid;grid-template-columns:230px repeat(3,1fr);gap:28px;margin-top:46px;padding-top:22px;border-top:1px solid #bbc9cf;font-size:20px;line-height:1.4;color:#3d5a69}
+.ia-work b{color:var(--navy)}.ia-work{display:grid;grid-template-columns:230px repeat(3,1fr);gap:28px;margin-top:46px;padding-top:22px;border-top:1px solid #bbc9cf;font-size:20px;line-height:1.4;color:#3d5a69}
 .ia-work strong{font-size:17px;letter-spacing:.07em;text-transform:uppercase;color:var(--pink);line-height:1.5}
 
 /* Materie di indirizzo, sempre visibili */
@@ -82,7 +82,7 @@ body.explore .ia-chat{margin-top:40px}
 .launch h2{font-size:104px;line-height:1}
 .launch-url{margin-top:38px;background:var(--navy);color:#fff;padding:24px 30px;display:grid;gap:8px}
 .launch-url span{font-size:19px;color:#c9dde6}
-.launch-url strong{font-size:38px;letter-spacing:-.025em;line-height:1.15}.launch-url b{color:var(--lime)}
+.launch-url strong{font-size:44px;letter-spacing:-.025em;line-height:1.15}.launch-url em{font-style:normal;font-size:24px;color:#d6e5eb}.launch-url em b{color:var(--lime)}.launch-url b{color:var(--lime)}
 .launch-actions{display:flex;gap:28px;align-items:center;margin-top:30px}
 .launch-actions .btn{font-size:22px}
 .launch-actions img{width:118px;height:118px;background:#fff;padding:6px}
