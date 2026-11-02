@@ -18,12 +18,12 @@
     </div>`};
 
   const iaScuola={id:'ia-scuola',title:'Imparare serve ancora · Che cosa insegniamo sull’IA',class:'paper ia-school',
-    note:'Tre temi per introdurre e studiare l’IA a scuola, comuni alle fonti: Linee guida MIM per l’introduzione dell’IA nelle istituzioni scolastiche (2025), § 4.4 (potenzialità e limiti, «allucinazioni», senso critico, uso che non danneggi il proprio apprendimento) e § 3.1 (intervento e sorveglianza umana, trasparenza, dati); Linee guida per l’educazione civica, D.M. 183/2024, cittadinanza digitale (valutare fonti, dichiarare ciò che è prodotto dal programma, proteggere i dati); UNESCO, AI competency framework for students (2024). Non citare progetti interni.',
+    note:'Tre temi per introdurre e studiare l’IA a scuola, comuni alle fonti: Linee guida MIM per l’introduzione dell’IA nelle istituzioni scolastiche (2025), § 4.4 (potenzialità e limiti, «allucinazioni», senso critico, uso che non danneggi il proprio apprendimento) e § 3.1 (intervento e sorveglianza umana, trasparenza, dati); Linee guida per l’educazione civica, D.M. 183/2024, cittadinanza digitale (valutare fonti, dichiarare ciò che è prodotto dal programma, proteggere i dati); UNESCO, AI competency framework for students (2024). Le attività «In classe» generalizzano a tutti gli indirizzi tre attività del programma dei contenuti IA (smistamento IA/non IA, verifica di una risposta generata, bozza personale con nota d’uso). Non citare progetti interni.',
     html:`<div class="ia-school-head">${k('Studiare nell’epoca dell’IA')}<h2 class="enter">Imparare serve ancora.<br><span>Anzi, serve di più.</span></h2></div>
     <div class="ia-pillars">
-      <div class="ia-pillar enter"><small>01</small><h3>Capire</h3><p><b>Potenzialità e limiti.</b> Non cerca, <b>genera</b>: impara dai dati e può inventare con sicurezza.</p></div>
-      <div class="ia-pillar enter"><small>02</small><h3>Verificare</h3><p><b>Controllare le fonti</b> prima di fidarsi. <b>Proteggere i dati</b>, propri e degli altri.</p></div>
-      <div class="ia-pillar enter"><small>03</small><h3>Decidere</h3><p><b>L’ultima parola è di una persona.</b> Dichiari quando l’IA ti ha aiutato.</p></div>
+      <div class="ia-pillar enter"><small>01</small><h3>Capire</h3><p><b>Potenzialità e limiti.</b> Non cerca, <b>genera</b>: impara dai dati e può inventare con sicurezza.</p><div class="ia-class"><span>In classe</span><b>IA o non IA?</b> Smistiamo strumenti di tutti i giorni (navigatore, traduttore, assistente vocale) e scopriamo da quali dati imparano.</div></div>
+      <div class="ia-pillar enter"><small>02</small><h3>Verificare</h3><p><b>Controllare le fonti</b> prima di fidarsi. <b>Proteggere i dati</b>, propri e degli altri.</p><div class="ia-class"><span>In classe</span><b>Caccia all’errore.</b> Una risposta del chatbot, le fonti vere: ogni frase si segna come confermata, falsa o incerta.</div></div>
+      <div class="ia-pillar enter"><small>03</small><h3>Decidere</h3><p><b>L’ultima parola è di una persona.</b> Dichiari quando l’IA ti ha aiutato.</p><div class="ia-class"><span>In classe</span><b>Prima la tua bozza.</b> Poi il confronto con l’IA, la revisione motivata e una nota che dichiara l’aiuto ricevuto.</div></div>
     </div>
     <div class="ia-work"><strong>Come la affrontiamo</strong><span><b>Prima il tuo lavoro</b>, poi l’IA: serve a imparare, non a saltare la fatica.</span><span><b>Con la guida del docente</b>, a ogni età il suo passo.</span><span><b>Ne parliamo insieme</b>: studenti, docenti e famiglie.</span></div>`};
 
@@ -67,8 +67,8 @@
   ];
 
   /* Scaletta da 30 minuti (in minuti per schermata); le facoltative si saltano se si è in ritardo. */
-  const minutes={benvenuti:.5,imparare:1,'ia-domanda':2,'ia-scuola':1.5,
-    coetanei:1,storia:1.5,convegno:.5,abitare:1,metodo:1,
+  const minutes={benvenuti:.5,imparare:1,'ia-domanda':2,'ia-scuola':2,
+    coetanei:1,storia:1,convegno:.5,abitare:1,metodo:1,
     indirizzi:.5,afm:1.5,sia:1,turismo:1.5,cat:1.5,ssas:1.5,serali:.5,
     laboratori:.5,metodologie:1.5,fsl:1,'fuori-aula':1,erasmus:1,tecnologie:.5,
     inclusione:1,vita:.5,
@@ -80,7 +80,7 @@
     benvenuti:'Avvia con o senza audio. Presentati in una frase e annuncia: «Oggi partiamo da una domanda».',
     imparare:'Fai la domanda e aspetta. Raccogli due risposte dal pubblico. Poi: «E se lo chiedessimo a un’intelligenza artificiale?»',
     'ia-domanda':'Leggi la domanda al chatbot, poi la risposta. Fai votare per alzata di mano, poi svela. «Sembrava vero. Ecco perché a scuola si impara anche questo.»',
-    'ia-scuola':'Tre parole: capire, verificare, decidere. «Non vietiamo l’IA e non la lasciamo fare da sola: la insegniamo.» Chiudi con la riga in basso: prima il tuo lavoro, con la guida del docente, insieme alle famiglie.',
+    'ia-scuola':'Tre parole: capire, verificare, decidere. «Non vietiamo l’IA e non la lasciamo fare da sola: la insegniamo.» Per ogni tema leggi l’attività «In classe»: è quello che faranno davvero. Chiudi con la riga in basso: prima il tuo lavoro, con la guida del docente, insieme alle famiglie.',
     coetanei:'Fai scegliere la risposta. «Non siete soli: tanti ragazzi della vostra età vivono qui intorno.»',
     storia:'Una clip, al massimo due. «Siamo nati come ragioneria: oggi gli indirizzi sono cinque.»',
     convegno:'«Ci chiediamo che cosa serve alla scuola di oggi»: indica i quattro temi, compreso quello sull’IA appena visto.',

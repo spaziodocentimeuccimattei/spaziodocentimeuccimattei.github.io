@@ -20,14 +20,14 @@
 .ia-chat-note{font-size:15px;color:#6b8290;text-align:center}
 
 /* IA · che cosa insegniamo */
-.ia-school h2{font-size:84px}.ia-school h2 span{color:#006b43}
-.ia-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:44px}
-.ia-pillar{border-top:9px solid var(--green);padding-top:24px}
+.ia-school h2{font-size:70px}.ia-school h2 span{color:#006b43}
+.ia-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:30px}
+.ia-pillar{border-top:9px solid var(--green);padding-top:16px;display:flex;flex-direction:column}
 .ia-pillar:nth-child(2){border-color:var(--teal)}.ia-pillar:nth-child(3){border-color:var(--pink)}
 .ia-pillar small{font-size:24px;font-weight:700;color:#608752}
-.ia-pillar h3{font-size:66px;margin:6px 0 16px}
-.ia-pillar p{font-size:27px;line-height:1.4;color:#2d4f63}.ia-pillar b{color:var(--navy)}
-.ia-work b{color:var(--navy)}.ia-work{display:grid;grid-template-columns:230px repeat(3,1fr);gap:28px;margin-top:46px;padding-top:22px;border-top:1px solid #bbc9cf;font-size:20px;line-height:1.4;color:#3d5a69}
+.ia-pillar h3{font-size:54px;margin:2px 0 10px}
+.ia-pillar p{font-size:24px;line-height:1.38;color:#2d4f63}.ia-class{margin-top:auto;padding:14px 16px 15px;background:#fff;border-left:6px solid var(--green);font-size:20px;line-height:1.38;color:#2d4f63}.ia-class span{display:block;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);margin-bottom:5px}.ia-class b{color:var(--navy)}.ia-pillar:nth-child(2) .ia-class{border-color:var(--teal)}.ia-pillar:nth-child(3) .ia-class{border-color:var(--pink)}.ia-pillar>p{margin-bottom:14px}.ia-pillar b{color:var(--navy)}
+.ia-work b{color:var(--navy)}.ia-work{display:grid;grid-template-columns:230px repeat(3,1fr);gap:28px;margin-top:22px;padding-top:16px;border-top:1px solid #bbc9cf;font-size:20px;line-height:1.4;color:#3d5a69}
 .ia-work strong{font-size:17px;letter-spacing:.07em;text-transform:uppercase;color:var(--pink);line-height:1.5}
 
 /* Materie di indirizzo, sempre visibili */
@@ -68,7 +68,7 @@ body.explore .ia-chat{margin-top:40px}
   body.explore .ia-hook h2,body.explore .ia-school h2{font-size:48px}
   body.explore .ia-msg{font-size:20px}
   body.explore .ia-pillars,body.explore .ia-work{grid-template-columns:1fr;gap:20px}
-  body.explore .ia-pillar h3{font-size:44px}body.explore .ia-pillar p{font-size:21px}
+  body.explore .ia-pillar h3{font-size:44px}body.explore .ia-pillar p{font-size:21px}body.explore .ia-class{font-size:18px}
   body.explore .course-subjects li{font-size:18px}
   body.explore .erasmus-langs{flex-wrap:wrap;gap:14px}
   body.explore .nextsteps-compact .mini-qr img{width:110px;height:110px}
