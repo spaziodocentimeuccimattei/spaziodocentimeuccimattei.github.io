@@ -1,0 +1,78 @@
+/* Percorso in sei atti, sezione IA, materie di indirizzo, finale compatto. */
+
+/* IA · l'aggancio */
+.ia-hook{display:grid;grid-template-columns:1fr 660px;gap:70px;align-items:center}
+.ia-hook h2{font-size:100px;line-height:1.02}
+.ia-hook-hint{font-size:27px;line-height:1.4;color:#d2e4eb;margin-top:34px;max-width:640px}
+.ia-chat{background:var(--paper);color:var(--navy);padding:32px 30px 22px;border-radius:24px;display:grid;gap:18px;box-shadow:14px 16px 0 #0d4a6b}
+.ia-msg{font-size:26px;line-height:1.38;padding:18px 22px;border-radius:20px}
+.ia-user{background:var(--navy);color:#fff;justify-self:end;max-width:88%;border-bottom-right-radius:4px}
+.ia-bot{background:#fff;border:1px solid #d4dce0;max-width:94%;border-bottom-left-radius:4px}
+.ia-bot-name{display:block;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.scene.active .ia-user{animation:ia-in .5s .35s both}.scene.active .ia-bot{animation:ia-in .5s 1.3s both}.scene.active .ia-vote{animation:ia-in .5s 2s both}
+@keyframes ia-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.ia-vote{display:flex;gap:14px;justify-content:center;margin-top:4px}
+.ia-vote button{font-size:24px;font-weight:700;padding:14px 28px;background:var(--lime);color:var(--deep)}
+.ia-vote button+button{background:var(--pink);color:#fff}
+.ia-vote button[aria-pressed=true]{outline:4px solid var(--navy);outline-offset:3px}
+.ia-reveal{background:#fff;border-left:7px solid var(--pink);padding:18px 22px;display:grid;gap:8px;animation:ia-in .4s both}
+.ia-reveal strong{font-size:29px;letter-spacing:-.03em}.ia-reveal p{font-size:22px;line-height:1.4}
+.ia-chat-note{font-size:15px;color:#6b8290;text-align:center}
+
+/* IA · che cosa insegniamo */
+.ia-school h2{font-size:84px}.ia-school h2 span{color:#006b43}
+.ia-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:44px}
+.ia-pillar{border-top:9px solid var(--green);padding-top:24px}
+.ia-pillar:nth-child(2){border-color:var(--teal)}.ia-pillar:nth-child(3){border-color:var(--pink)}
+.ia-pillar small{font-size:24px;font-weight:700;color:#608752}
+.ia-pillar h3{font-size:66px;margin:6px 0 16px}
+.ia-pillar p{font-size:27px;line-height:1.4;color:#2d4f63}.ia-pillar b{color:var(--navy)}
+.ia-work{display:grid;grid-template-columns:230px repeat(3,1fr);gap:28px;margin-top:46px;padding-top:22px;border-top:1px solid #bbc9cf;font-size:20px;line-height:1.4;color:#3d5a69}
+.ia-work strong{font-size:17px;letter-spacing:.07em;text-transform:uppercase;color:var(--pink);line-height:1.5}
+
+/* Materie di indirizzo, sempre visibili */
+.course-question{font-size:64px;margin:10px 0 22px}
+.course-subjects{margin-bottom:6px}
+.subjects-label{font-size:16px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px;opacity:.75}
+.course-subjects ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.course-subjects li{font-size:23px;font-weight:700;letter-spacing:-.01em;padding:10px 16px;background:color-mix(in srgb,var(--course) 15%,transparent);border-left:6px solid var(--course)}
+.course-scene[data-course=sia] .course-subjects li{background:#ffffff1c}
+.course-panel{min-height:0;padding-top:18px;font-size:25px}
+
+/* Erasmus e lingue */
+.erasmus-langs{display:flex;gap:30px}.erasmus-langs b{color:var(--lime);margin-right:8px}
+
+/* Il prossimo passo */
+.nextsteps-compact .mini-qr{display:flex;gap:22px;align-items:center;margin-top:46px}
+.nextsteps-compact .mini-qr img{width:150px;height:150px;background:#fff;padding:10px}
+.nextsteps-compact .mini-qr p{font-size:22px;line-height:1.4;color:#d6e5eb}.nextsteps-compact .mini-qr b{color:#fff;font-size:26px}
+.nextsteps-compact .nextsteps-item .text-button{display:inline-block;margin-top:12px;font-size:21px;color:#c0ee8c}
+
+/* Info pratiche */
+.info-scene .reach-copy h2{font-size:86px}.info-scene .accent{color:#006b43}
+.info-rows{margin:32px 0 22px}
+.info-rows div{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #c9d4d8;padding:15px 0}
+.info-rows span{font-size:24px}.info-rows strong{font-size:40px;letter-spacing:-.03em;color:#006b43}
+.info-transport{font-size:23px;line-height:1.45;color:#3d5a69;margin-bottom:6px}.info-transport b{color:var(--navy);font-size:26px}
+.info-scene .btn-row{gap:28px}
+
+/* Atti: indice e barra di avanzamento */
+.index-act{grid-column:1/-1;font-size:20px;letter-spacing:-.01em;display:flex;gap:10px;align-items:center;margin:12px 0 2px}
+.index-act:first-child{margin-top:0}
+.index-act span{background:var(--navy);color:#fff;width:28px;height:28px;display:grid;place-items:center;font-size:15px}
+.progress-line i{position:absolute;top:-3px;width:3px;height:10px;background:#ffffffaa}
+
+body.explore .ia-hook,body.explore .ia-school{display:block}
+body.explore .ia-chat{margin-top:40px}
+@media(max-width:900px){
+  body.explore .ia-hook h2,body.explore .ia-school h2{font-size:48px}
+  body.explore .ia-msg{font-size:20px}
+  body.explore .ia-pillars,body.explore .ia-work{grid-template-columns:1fr;gap:20px}
+  body.explore .ia-pillar h3{font-size:44px}body.explore .ia-pillar p{font-size:21px}
+  body.explore .course-subjects li{font-size:18px}
+  body.explore .erasmus-langs{flex-wrap:wrap;gap:14px}
+  body.explore .nextsteps-compact .mini-qr img{width:110px;height:110px}
+  body.explore .info-rows div{display:block}body.explore .info-rows strong{display:block;font-size:30px;margin-top:4px}
+  .counter-act{display:none}
+}
+#counter{white-space:nowrap}
