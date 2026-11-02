@@ -4,8 +4,8 @@
   'use strict';
   const k=t=>`<p class="kicker">${t}</p>`;
 
-  /* Studiare nell'epoca dell'IA · spunti dalla proposta «Programma dei contenuti IA
-     nel quinquennio SSAS» (bozza v0.4, 17/10/2026): capire, verificare, decidere. */
+  /* Studiare nell'epoca dell'IA · tre temi comuni a Linee guida MIM sull'IA a scuola (2025),
+     Linee guida per l'educazione civica (D.M. 183/2024) e UNESCO (2024): capire, verificare, decidere. */
   const iaDomanda={id:'ia-domanda',title:'L’IA risponde in un secondo. Ci possiamo fidare?',class:'navy ia-hook',
     note:'Esempio costruito apposta: indagine e numero sono inventati e lo si dichiara nella risposta svelata. Serve a mostrare l’errore tipico di un chatbot (risposta plausibile, fonte inventata). Far votare per alzata di mano prima di svelare.',
     html:`<div class="ia-hook-copy">${k('Studiare nell’epoca dell’IA')}<h2 class="enter">L’IA risponde<br>in un secondo.<br><span class="lime">Ci possiamo fidare?</span></h2><p class="ia-hook-hint">Leggete la risposta. Alzate la mano: ci credete?</p></div>
@@ -18,14 +18,14 @@
     </div>`};
 
   const iaScuola={id:'ia-scuola',title:'Imparare serve ancora · Che cosa insegniamo sull’IA',class:'paper ia-school',
-    note:'Tre macro-argomenti ricavati dalla proposta per l’indirizzo SSAS (competenze IA1 comprendere, IA2 valutare, IA3 decidere un uso responsabile, IA4 trasparenza), validi per tutti gli indirizzi. La proposta è una bozza in discussione nel Dipartimento: presentarla come lavoro in corso, non come curricolo approvato. Fonti della proposta: UNESCO AI competency framework for students (2024), OCSE/UE Empowering Learners for the Age of AI, D.M. 183/2024, AI Act, L. 132/2025.',
+    note:'Tre temi per introdurre e studiare l’IA a scuola, comuni alle fonti: Linee guida MIM per l’introduzione dell’IA nelle istituzioni scolastiche (2025), § 4.4 (potenzialità e limiti, «allucinazioni», senso critico, uso che non danneggi il proprio apprendimento) e § 3.1 (intervento e sorveglianza umana, trasparenza, dati); Linee guida per l’educazione civica, D.M. 183/2024, cittadinanza digitale (valutare fonti, dichiarare ciò che è prodotto dal programma, proteggere i dati); UNESCO, AI competency framework for students (2024). Non citare progetti interni.',
     html:`<div class="ia-school-head">${k('Studiare nell’epoca dell’IA')}<h2 class="enter">Imparare serve ancora.<br><span>Anzi, serve di più.</span></h2></div>
     <div class="ia-pillars">
-      <div class="ia-pillar enter"><small>01</small><h3>Capire</h3><p>Come funziona: non cerca, <b>genera</b>. Impara dai <b>dati</b> e può sbagliare con sicurezza.</p></div>
+      <div class="ia-pillar enter"><small>01</small><h3>Capire</h3><p><b>Potenzialità e limiti.</b> Non cerca, <b>genera</b>: impara dai dati e può inventare con sicurezza.</p></div>
       <div class="ia-pillar enter"><small>02</small><h3>Verificare</h3><p><b>Controllare le fonti</b> prima di fidarsi. <b>Proteggere i dati</b>, propri e degli altri.</p></div>
-      <div class="ia-pillar enter"><small>03</small><h3>Decidere</h3><p><b>Prima pensi tu</b>, poi l’IA. Dichiari quando ti ha aiutato. <b>L’ultima parola è di una persona.</b></p></div>
+      <div class="ia-pillar enter"><small>03</small><h3>Decidere</h3><p><b>L’ultima parola è di una persona.</b> Dichiari quando l’IA ti ha aiutato.</p></div>
     </div>
-    <div class="ia-work"><strong>Come ci stiamo lavorando</strong><span>Ne discutiamo tra docenti e nel convegno sulla scuola di oggi.</span><span>Una proposta di percorso dalla prima alla quinta, a partire da SSAS.</span><span>Nella proposta, in prima l’IA si usa insieme al docente.</span></div>`};
+    <div class="ia-work"><strong>Come la affrontiamo</strong><span><b>Prima il tuo lavoro</b>, poi l’IA: serve a imparare, non a saltare la fatica.</span><span><b>Con la guida del docente</b>, a ogni età il suo passo.</span><span><b>Ne parliamo insieme</b>: studenti, docenti e famiglie.</span></div>`};
 
   /* Il prossimo passo: Open Day, Bussola e iscrizione in un’unica schermata. */
   const prossimiPassi={id:'prossimipassi',title:'Il prossimo passo · Visite, Bussola, iscrizione',class:'navy nextsteps nextsteps-compact',
@@ -49,10 +49,10 @@
 
   /* Ultima schermata: resta proiettata mentre i ragazzi lavorano sui Chromebook. */
   const bussolaVia={id:'bussola-via',title:'Ora tocca a voi · La Bussola sul Chromebook',class:'paper launch',
-    note:'Ultima schermata: resta proiettata durante il lavoro individuale sui Chromebook. «Proviamo insieme» apre la dimostrazione dal palco (nessun nominativo, nessun salvataggio): bastano una o due domande, poi si passa ai Chromebook. Non ci sono codici: si entra dall’indirizzo. Se il Chromebook è già stato usato da un altro ragazzo, compare «Riprendi la tua Bussola»: va scelto «Inizia una nuova Bussola». La Bussola non assegna un indirizzo: dà indicazioni motivate da approfondire.',
-    html:`<div class="launch-copy">${k('Ora tocca a voi')}<h2 class="enter">Prendete<br>il Chromebook.</h2><div class="launch-url"><span>Scrivi nella barra degli indirizzi</span><strong>spaziodocentimeuccimattei.github.io<wbr><b>/bussola</b></strong></div><div class="launch-actions"><button class="btn" id="open-demo">Proviamo insieme la prima domanda →</button><img src="assets/qr-bussola.svg" alt="QR per aprire la Bussola"></div></div>
+    note:'Ultima schermata: resta proiettata durante il lavoro individuale sui Chromebook. «Proviamo insieme» apre la dimostrazione dal palco (nessun nominativo, nessun salvataggio): bastano una o due domande, poi si passa ai Chromebook. Non ci sono codici: si scrive l’indirizzo principale del sito e si sceglie «La Bussola» nel menu. Se il Chromebook è già stato usato da un altro ragazzo, compare «Riprendi la tua Bussola»: va scelto «Inizia una nuova Bussola». La Bussola non assegna un indirizzo: dà indicazioni motivate da approfondire.',
+    html:`<div class="launch-copy">${k('Ora tocca a voi')}<h2 class="enter">Prendete<br>il Chromebook.</h2><div class="launch-url"><span>Scrivi nella barra degli indirizzi</span><strong>spaziodocentimeuccimattei<wbr>.github.io</strong><em>poi nel menu scegli <b>La Bussola</b></em></div><div class="launch-actions"><button class="btn" id="open-demo">Proviamo insieme la prima domanda →</button><img src="assets/qr-bussola.svg" alt="QR per aprire la Bussola"></div></div>
     <ol class="launch-steps">
-      <li><small>01</small><div><h3>Apri la Bussola</h3><p>Chromebook già usato da un altro? Scegli <b>«Inizia una nuova Bussola»</b>.</p></div></li>
+      <li><small>01</small><div><h3>Apri la Bussola</h3><p>Dal sito, voce <b>La Bussola</b> nel menu. Chromebook già usato da un altro? Scegli <b>«Inizia una nuova Bussola»</b>.</p></div></li>
       <li><small>02</small><div><h3>Rispondi a 12 domande</h3><p>Non ci sono risposte giuste. <b>Al tuo ritmo.</b></p></div></li>
       <li><small>03</small><div><h3>Prova le attività</h3><p>Degli indirizzi che ti incuriosiscono. <b>Le ragioni restano a te.</b></p></div></li>
     </ol>`};
@@ -80,7 +80,7 @@
     benvenuti:'Avvia con o senza audio. Presentati in una frase e annuncia: «Oggi partiamo da una domanda».',
     imparare:'Fai la domanda e aspetta. Raccogli due risposte dal pubblico. Poi: «E se lo chiedessimo a un’intelligenza artificiale?»',
     'ia-domanda':'Leggi la domanda al chatbot, poi la risposta. Fai votare per alzata di mano, poi svela. «Sembrava vero. Ecco perché a scuola si impara anche questo.»',
-    'ia-scuola':'Tre parole: capire, verificare, decidere. «Non vietiamo l’IA e non la lasciamo fare da sola: la insegniamo.» Chiudi sul cantiere aperto: ci stiamo lavorando insieme.',
+    'ia-scuola':'Tre parole: capire, verificare, decidere. «Non vietiamo l’IA e non la lasciamo fare da sola: la insegniamo.» Chiudi con la riga in basso: prima il tuo lavoro, con la guida del docente, insieme alle famiglie.',
     coetanei:'Fai scegliere la risposta. «Non siete soli: tanti ragazzi della vostra età vivono qui intorno.»',
     storia:'Una clip, al massimo due. «Siamo nati come ragioneria: oggi gli indirizzi sono cinque.»',
     convegno:'«Ci chiediamo che cosa serve alla scuola di oggi»: indica i quattro temi, compreso quello sull’IA appena visto.',
@@ -104,7 +104,7 @@
     prossimipassi:'Tre passi: vieni a vedere, prova la Bussola, iscriviti. «La Bussola la provate tra due minuti.»',
     info:'Orari e come arrivare, in trenta secondi.',
     contatti:'«Segnate il numero e l’email, anche per i vostri genitori.» Raccogli una o due domande, poi passa all’ultima schermata.',
-    'bussola-via':'«Ora tocca a voi.» Fai insieme la prima domanda dal palco, poi tutti sul Chromebook. Lascia questa schermata proiettata finché lavorano.'
+    'bussola-via':'«Ora tocca a voi.» Fai insieme la prima domanda dal palco. Poi tutti sul Chromebook: scrivono l’indirizzo del sito e li guidi a «La Bussola» nel menu. Lascia questa schermata proiettata finché lavorano.'
   };
 
   window.PERCORSO={chapters,say,scenes:{'ia-domanda':iaDomanda,'ia-scuola':iaScuola,prossimipassi:prossimiPassi,info,'bussola-via':bussolaVia},minutes,optional,
