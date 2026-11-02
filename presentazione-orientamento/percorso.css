@@ -19,16 +19,15 @@
 .ia-reveal strong{font-size:29px;letter-spacing:-.03em}.ia-reveal p{font-size:22px;line-height:1.4}
 .ia-chat-note{font-size:15px;color:#6b8290;text-align:center}
 
-/* IA · che cosa insegniamo */
-.ia-school h2{font-size:70px}.ia-school h2 span{color:#006b43}
-.ia-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:30px}
-.ia-pillar{border-top:9px solid var(--green);padding-top:16px;display:flex;flex-direction:column}
-.ia-pillar:nth-child(2){border-color:var(--teal)}.ia-pillar:nth-child(3){border-color:var(--pink)}
-.ia-pillar small{font-size:24px;font-weight:700;color:#608752}
-.ia-pillar h3{font-size:54px;margin:2px 0 10px}
-.ia-pillar p{font-size:24px;line-height:1.38;color:#2d4f63}.ia-class{margin-top:auto;padding:14px 16px 15px;background:#fff;border-left:6px solid var(--green);font-size:20px;line-height:1.38;color:#2d4f63}.ia-class span{display:block;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);margin-bottom:5px}.ia-class b{color:var(--navy)}.ia-pillar:nth-child(2) .ia-class{border-color:var(--teal)}.ia-pillar:nth-child(3) .ia-class{border-color:var(--pink)}.ia-pillar>p{margin-bottom:14px}.ia-pillar b{color:var(--navy)}
-.ia-work b{color:var(--navy)}.ia-work{display:grid;grid-template-columns:230px repeat(3,1fr);gap:28px;margin-top:22px;padding-top:16px;border-top:1px solid #bbc9cf;font-size:20px;line-height:1.4;color:#3d5a69}
-.ia-work strong{font-size:17px;letter-spacing:.07em;text-transform:uppercase;color:var(--pink);line-height:1.5}
+/* IA · tre domande alla scuola */
+.ia-school h2{font-size:76px}.ia-school h2 span{color:#006b43}
+.ia-questions{display:grid;gap:0;margin-top:34px}
+.ia-q{display:grid;grid-template-columns:200px 1fr 520px;gap:30px;align-items:baseline;border-top:2px solid #c9d4d8;padding:22px 0}
+.ia-q small{font-size:20px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--green)}
+.ia-q:nth-child(2) small{color:#2c8f7c}.ia-q:nth-child(3) small{color:var(--pink)}
+.ia-q h3{font-size:44px;line-height:1.1}
+.ia-q p{font-size:23px;line-height:1.38;color:#2d4f63}.ia-q p b{color:var(--navy)}
+.ia-q p span{display:block;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a8f99;margin-bottom:4px}
 
 /* Materie di indirizzo, sempre visibili */
 .course-question{font-size:64px;margin:10px 0 22px}
@@ -67,8 +66,8 @@ body.explore .ia-chat{margin-top:40px}
 @media(max-width:900px){
   body.explore .ia-hook h2,body.explore .ia-school h2{font-size:48px}
   body.explore .ia-msg{font-size:20px}
-  body.explore .ia-pillars,body.explore .ia-work{grid-template-columns:1fr;gap:20px}
-  body.explore .ia-pillar h3{font-size:44px}body.explore .ia-pillar p{font-size:21px}body.explore .ia-class{font-size:18px}
+  body.explore .ia-q{grid-template-columns:1fr;gap:8px}
+  body.explore .ia-q h3{font-size:30px}body.explore .ia-q p{font-size:19px}
   body.explore .course-subjects li{font-size:18px}
   body.explore .erasmus-langs{flex-wrap:wrap;gap:14px}
   body.explore .nextsteps-compact .mini-qr img{width:110px;height:110px}
