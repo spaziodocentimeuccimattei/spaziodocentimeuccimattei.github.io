@@ -124,3 +124,15 @@
 .school-calendar__action.is-confirm:hover { background:#00552a; }
 @media(max-width:1100px) { .school-calendar__filters.is-admin { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media(max-width:600px) { .school-calendar__filters.is-admin { grid-template-columns:1fr 1fr; } .school-calendar__filters.is-admin [data-calendar-filter=all] { grid-column:1/-1; } }
+
+/* Pagina docenti: paesi con almeno una data confermata in arrivo, evidenziati in giallo fluo uguale per tutti. */
+.school-calendar__school.is-confirmed { background:#eaff3d; border-right-color:#c4d900; }
+.school-calendar__school.is-confirmed > .school-calendar__town { display:inline-block; padding:2px 10px; border-radius:8px; color:#fff; background:#14384e; font-size:1.5rem; letter-spacing:-.02em; }
+.school-calendar__school.is-confirmed > span:not(.school-calendar__school-state) { color:#14384e; font-weight:650; }
+.school-calendar__school.is-confirmed .school-calendar__school-state { color:#14384e; border-color:#14384e; }
+.school-calendar__school.is-confirmed .school-calendar__participation,
+.school-calendar__school.is-confirmed .school-calendar__notice p { color:#14384e; }
+@media(max-width:900px) {
+  .school-calendar tbody tr.is-confirmed { border:3px solid #c4d900; }
+  .school-calendar tbody tr.is-confirmed > th { border-radius:11px 11px 0 0; }
+}

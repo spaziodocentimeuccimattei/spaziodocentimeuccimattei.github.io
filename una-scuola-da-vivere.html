@@ -21,7 +21,7 @@
   <link rel="apple-touch-icon" href="assets/icona-180.png">
   <link rel="stylesheet" href="portal.css?v=20261009-home">
   <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261024-esame">
-  <link rel="stylesheet" href="scuole-calendario.css?v=20261020-prenotabili">
+  <link rel="stylesheet" href="scuole-calendario.css?v=20261103-fluo">
 </head>
 <body class="school-calendar-page">
   <header class="site-header">
@@ -129,17 +129,7 @@
         </div>
         <fieldset class="school-fieldset">
           <legend>Scegli fino a cinque scuole <span class="optional" id="schoolCounter">0 di 5 scelte</span></legend>
-          <p class="school-help">Puoi scegliere da una a cinque scuole. Lo stato serve soltanto a distribuire meglio le disponibilità. Dove sono già fissate, sotto la scuola trovi le date dell’orientamento.</p>
-          <div class="school-toolbar">
-            <label class="school-search">Cerca una scuola<input id="schoolSearch" type="search" placeholder="Scrivi il comune o il nome della scuola" autocomplete="off"></label>
-            <div class="school-filters" aria-label="Filtra l'elenco delle scuole">
-              <button type="button" data-school-filter="all" aria-pressed="true">Tutte</button>
-              <button type="button" data-school-filter="libera" aria-pressed="false">Senza disponibilità</button>
-              <button type="button" data-school-filter="in_arrivo" aria-pressed="false">Con disponibilità</button>
-              <button type="button" data-school-filter="visitata" aria-pressed="false">Già visitate</button>
-            </div>
-          </div>
-          <p class="school-results" id="schoolResults" aria-live="polite"></p>
+          <p class="school-help">Puoi scegliere da una a cinque scuole. Lo stato serve soltanto a distribuire meglio le disponibilità. Date, orari, luoghi e indicazioni delle scuole sono nel calendario in alto.</p>
           <div id="schoolChoices" class="school-choices"></div>
           <p id="schoolError" class="field-error" role="alert" hidden>Seleziona almeno una scuola, fino a un massimo di cinque.</p>
         </fieldset>
@@ -235,6 +225,6 @@
   </main>
 
   <footer class="site-footer"><p>IIS Meucci - Mattei, sede di Decimomannu</p><p>Spazio curato dai docenti · Non sostituisce il <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a></p></footer>
-  <script type="module" src="una-scuola-da-vivere.js?v=20261020-ordine"></script>
+  <script type="module" src="una-scuola-da-vivere.js?v=20261103-fluo"></script>
 </body>
 </html>

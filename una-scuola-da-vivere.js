@@ -1,4 +1,4 @@
-import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261020-ordine';
+import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261103-fluo';
 const ORIENTATION_API = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const MAX_SCHOOLS = 5;
 const previewCatalog = document.getElementById('school-preview-data');
@@ -11,14 +11,8 @@ const reportSchool = document.getElementById('reportSchool');
 const schoolChoices = document.getElementById('schoolChoices');
 const schoolError = document.getElementById('schoolError');
 const schoolCounter = document.getElementById('schoolCounter');
-const schoolSearch = document.getElementById('schoolSearch');
-const schoolResults = document.getElementById('schoolResults');
-const schoolFilterButtons = [...document.querySelectorAll('[data-school-filter]')];
 
 let schoolStates = new Map();
-let schoolDates = new Map();
-const DATE_TYPES = { aule: 'nelle aule', stand: 'open day con stand' };
-let schoolFilter = 'all';
 let overviewLoaded = false;
 const schoolCalendar = createSchoolCalendar(document.getElementById('teacherSchoolCalendar'), {
   onChoose(school) {
@@ -79,47 +73,11 @@ function applySchoolStates() {
     option.dataset.state = state;
     const tag = option.querySelector('.school-tag');
     tag.textContent = !overviewLoaded ? 'Stato non disponibile' : state === 'visitata' ? 'Già visitata' : state === 'in_arrivo' ? 'Disponibilità presente' : 'Nessuna disponibilità';
-    // Date inserite dalla Funzione Strumentale: il docente le vede prima di candidarsi.
-    option.querySelector('.school-dates')?.remove();
-    const dates = schoolDates.get(option.dataset.school) || [];
-    if (dates.length) {
-      const list = document.createElement('span');
-      list.className = 'school-dates';
-      for (const item of dates) {
-        const day = new Intl.DateTimeFormat('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(`${item.data}T12:00:00`));
-        const start = (item.ora_inizio || '').slice(0, 5);
-        const end = (item.ora_fine || '').slice(0, 5);
-        const time = start && end ? `, ${start}–${end}` : start ? `, dalle ${start}` : '';
-        const row = document.createElement('b');
-        row.textContent = `${day}${time} · ${DATE_TYPES[item.tipo] || item.tipo}${item.luogo ? ` · ${item.luogo}` : ''}${item.stato === 'confermata' ? '' : ' (data prevista)'}`;
-        list.append(row);
-      }
-      tag.after(list);
-    }
   }
-  filterSchoolChoices();
 }
 
 function normalize(value) {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-}
-
-function filterSchoolChoices() {
-  const term = normalize(schoolSearch?.value.trim() || '');
-  let visible = 0;
-  for (const option of schoolChoices.querySelectorAll('.school-option')) {
-    const state = schoolStates.get(option.dataset.school) || 'libera';
-    const matchesText = !term || option.dataset.search.includes(term);
-    const matchesState = schoolFilter === 'all' || state === schoolFilter;
-    option.hidden = !(matchesText && matchesState);
-    if (!option.hidden) visible += 1;
-  }
-  for (const group of schoolChoices.querySelectorAll('.school-group')) {
-    group.hidden = !group.querySelector('.school-option:not([hidden])');
-  }
-  if (schoolResults) {
-    schoolResults.textContent = visible === 1 ? '1 scuola visibile' : `${visible} scuole visibili`;
-  }
 }
 
 function renderSchools(schools) {
@@ -155,19 +113,6 @@ function renderSchools(schools) {
       const tag = document.createElement('em');
       tag.className = 'school-tag';
       copy.append(town, name, tag);
-      if (school.avviso) {
-        const notice = document.createElement('span');
-        notice.className = 'school-notice';
-        const title = document.createElement('b');
-        title.textContent = school.avviso.titolo;
-        notice.append(title);
-        for (const text of school.avviso.indicazioni) {
-          const line = document.createElement('span');
-          line.textContent = text;
-          notice.append(line);
-        }
-        copy.append(notice);
-      }
       label.append(input, copy);
       grid.append(label);
     }
@@ -180,7 +125,6 @@ function renderSchools(schools) {
     schoolError.hidden = selectedSchools().length > 0;
     updateSchoolCounter();
   });
-  filterSchoolChoices();
 }
 
 function fillReportSchools(schools) {
@@ -273,9 +217,7 @@ async function loadOverview(schools) {
     const data = await send('overview', {});
     overviewLoaded = true;
     schoolStates = new Map(data.scuole.map((school) => [school.id, school.stato]));
-    schoolDates = new Map();
     const appointments=[...(data.appuntamenti || [])].sort(compareAppointments);
-    for (const item of appointments) schoolDates.set(item.scuola_id, [...(schoolDates.get(item.scuola_id) || []), item]);
     for (const [key, value] of Object.entries(data.totali)) setStat(key, value);
     renderMission(data.totali.scuole, data.totali.scuole_visitate, data.totali.scuole_con_disponibilita);
     schoolCalendar.update(schools, appointments, schoolStates);
@@ -353,14 +295,6 @@ supporterForm.addEventListener('submit', (event) => submitForm(event, 'submit_su
 proposalForm.addEventListener('submit', (event) => submitForm(event, 'submit_proposal', 'proposalMessage'));
 reportForm.addEventListener('submit', (event) => submitForm(event, 'report_activity', 'reportMessage'));
 reportType.addEventListener('change', syncReportType);
-schoolSearch.addEventListener('input', filterSchoolChoices);
-for (const button of schoolFilterButtons) {
-  button.addEventListener('click', () => {
-    schoolFilter = button.dataset.schoolFilter;
-    for (const other of schoolFilterButtons) other.setAttribute('aria-pressed', String(other === button));
-    filterSchoolChoices();
-  });
-}
 for (const panel of document.querySelectorAll('.action-panel')) {
   const label = panel.querySelector('.summary-action span');
   const syncLabel = () => { label.textContent = panel.open ? 'Chiudi il modulo' : 'Apri il modulo'; };

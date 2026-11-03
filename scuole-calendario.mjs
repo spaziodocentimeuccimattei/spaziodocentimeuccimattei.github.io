@@ -123,9 +123,11 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
   }
   function schoolHeader(row) {
     const th=node('th',null,'school-calendar__school');th.scope='row';
-    th.append(node('strong',row.school.comune),node('span',row.school.etichetta));
+    th.append(node('strong',row.school.comune,'school-calendar__town'),node('span',row.school.etichetta));
     const labels={bookable:'Date prenotabili',undated:'Data da concordare',unknown:'Date non disponibili'};
     const upcoming=upcomingBySchool.get(row.school.id)||[];
+    // Pagina docenti: il paese con almeno una data confermata, da oggi in poi, viene evidenziato in giallo fluo.
+    if(!admin&&upcoming.some(item=>item.stato==='confermata')){th.classList.add('is-confirmed');}
     if(admin&&row.state==='bookable'){const defined=upcoming.some(item=>item.stato==='confermata');th.append(node('span',defined?'Data definita':'Data da confermare con la scuola',`school-calendar__school-state is-${defined?'bookable':'planned'}`));}
     else th.append(node('span',admin&&row.state==='undated'?'Senza data in arrivo':labels[row.state],`school-calendar__school-state is-${row.state}`));
     const participation=states.get(row.school.id);
@@ -158,7 +160,7 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
     for(const key of model.months){const th=node('th',monthTitle(key));th.scope='col';head.append(th);}thead.append(head);table.append(thead);
     const tbody=node('tbody');
     for(const row of chronologicalRows(visible,model.months,filter==='all'?false:filter==='bookable'?true:item=>filterDates(item,filter))) {
-      const tr=node('tr');tr.dataset.school=row.school.id;tr.dataset.calendarState=row.state;tr.append(schoolHeader(row));
+      const tr=node('tr');tr.dataset.school=row.school.id;tr.dataset.calendarState=row.state;const header=schoolHeader(row);if(header.classList.contains('is-confirmed'))tr.classList.add('is-confirmed');tr.append(header);
       if(!ready || !row.all.length || !row.cells.some(cell=>cell.length)) {
         const td=node('td',null,'school-calendar__gap');td.colSpan=3;
         if(!ready)td.append(node('strong','Le date non sono ancora disponibili'),node('p','Aggiorna la pagina per ricaricare il calendario.'));
