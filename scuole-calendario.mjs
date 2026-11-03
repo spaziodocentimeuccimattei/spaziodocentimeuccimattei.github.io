@@ -126,7 +126,7 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
     th.append(node('strong',row.school.comune,'school-calendar__town'),node('span',row.school.etichetta));
     const labels={bookable:'Date prenotabili',undated:'Data da concordare',unknown:'Date non disponibili'};
     const upcoming=upcomingBySchool.get(row.school.id)||[];
-    // Pagina docenti: il paese con almeno una data confermata, da oggi in poi, viene evidenziato in giallo fluo.
+    // Pagina docenti: il paese con almeno una data confermata, da oggi in poi, viene evidenziato in rosa.
     if(!admin&&upcoming.some(item=>item.stato==='confermata')){th.classList.add('is-confirmed');}
     if(admin&&row.state==='bookable'){const defined=upcoming.some(item=>item.stato==='confermata');th.append(node('span',defined?'Data definita':'Data da confermare con la scuola',`school-calendar__school-state is-${defined?'bookable':'planned'}`));}
     else th.append(node('span',admin&&row.state==='undated'?'Senza data in arrivo':labels[row.state],`school-calendar__school-state is-${row.state}`));
