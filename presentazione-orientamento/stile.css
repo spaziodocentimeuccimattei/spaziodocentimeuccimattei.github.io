@@ -78,3 +78,6 @@ body.explore .project-layout{min-height:700px}
 @media(max-width:900px){body.explore #storia .history-head h2{font-size:49px}body.explore #storia .history-layout{display:block}.viewer-contact{font-size:15px}.viewer-contact span{margin:0 8px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 @media print{body{overflow:visible}#stage{transform:none;position:static;width:100%;height:auto}#slides{position:static}.scene{position:relative;visibility:visible;opacity:1;height:900px;page-break-after:always}.console,.contact-ribbon,.sound-panel{display:none}}
+/* Telefoni e tablet in modalità presentazione: si tiene in memoria solo la schermata attiva.
+   Su iPhone tenere vive tutte le 28 schermate da 1600×900 fa chiudere la scheda per memoria. */
+@media (pointer:coarse) and (max-width:1366px){body:not(.explore) .scene:not(.active){display:none}body:not(.explore) .scene{transition:none;transform:none}}

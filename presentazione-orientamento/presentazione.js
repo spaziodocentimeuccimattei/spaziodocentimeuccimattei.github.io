@@ -82,7 +82,8 @@
   }
   // «Presenta»: dalla lettura libera si torna alla presentazione vera, a schermo intero, con animazioni e musica
   async function startPresentation(){
-    try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen()}catch(_){}
+    // lo schermo intero solo dove il browser lo consente (su iPhone non c'è per le pagine)
+    try{const el=document.documentElement;if(!document.fullscreenElement&&typeof el.requestFullscreen==='function'&&!matchMedia('(pointer:coarse) and (max-width:900px)').matches)await el.requestFullscreen()}catch(_){}
     if(current===0){show(0);await startCover('audio');return}
     const node=nodes[current];node.classList.remove('active');void node.offsetWidth;show(current);
     try{if(!Sottofondo.enabled)await Sottofondo.setEnabled(true)}catch(_){}
