@@ -49,7 +49,7 @@
 
   /* Ultima schermata: resta proiettata mentre i ragazzi lavorano sui Chromebook. */
   const bussolaVia={id:'bussola-via',title:'Ora tocca a voi · La Bussola sul Chromebook',class:'paper launch',
-    note:'Ultima schermata: resta proiettata durante il lavoro individuale sui Chromebook. «Proviamo insieme» apre la dimostrazione dal palco (nessun nominativo, nessun salvataggio): bastano una o due domande, poi si passa ai Chromebook. Non ci sono codici: si scrive l’indirizzo principale del sito e si sceglie «La Bussola» nel menu. Se il Chromebook è già stato usato da un altro ragazzo, compare «Riprendi la tua Bussola»: va scelto «Inizia una nuova Bussola». La Bussola non assegna un indirizzo: dà indicazioni motivate da approfondire.',
+    note:'Resta proiettata durante il lavoro individuale sui Chromebook; dopo, si chiude con la schermata «Grazie». «Proviamo insieme» apre la dimostrazione dal palco (nessun nominativo, nessun salvataggio): bastano una o due domande, poi si passa ai Chromebook. Non ci sono codici: si scrive l’indirizzo principale del sito e si sceglie «La Bussola» nel menu. Se il Chromebook è già stato usato da un altro ragazzo, compare «Riprendi la tua Bussola»: va scelto «Inizia una nuova Bussola». La Bussola non assegna un indirizzo: dà indicazioni motivate da approfondire.',
     html:`<div class="launch-copy">${k('Ora tocca a voi')}<h2 class="enter">Prendete<br>il Chromebook.</h2><div class="launch-url"><span>Scrivi nella barra degli indirizzi</span><strong>spaziodocentimeuccimattei<wbr>.github.io</strong><em>poi nel menu scegli <b>La Bussola</b></em></div><div class="launch-actions"><button class="btn" id="open-demo">Proviamo insieme la prima domanda →</button><img src="assets/qr-bussola.svg" alt="QR per aprire la Bussola"></div></div>
     <ol class="launch-steps">
       <li><small>01</small><div><h3>Apri la Bussola</h3><p>Dal sito, voce <b>La Bussola</b> nel menu. Chromebook già usato da un altro? Scegli <b>«Inizia una nuova Bussola»</b>.</p></div></li>
@@ -57,13 +57,35 @@
       <li><small>03</small><div><h3>Prova le attività</h3><p>Degli indirizzi che ti incuriosiscono. <b>Le ragioni restano a te.</b></p></div></li>
     </ol>`};
 
+  /* Schermata finale: ringraziamento e inviti all'azione per i ragazzi. Riprende i contatti della vecchia schermata «Salva telefono ed email». */
+  const grazie={id:'grazie',title:'Grazie · Segna i contatti e parlane a casa',class:'navy finale-scene',
+    note:'Ultima schermata: resta proiettata mentre i ragazzi escono o fanno domande. Invitare esplicitamente a segnare telefono ed email adesso, sul diario o sul telefono, e a darli ai genitori. Il QR salva in rubrica la vCard con il numero della SEDE di Decimomannu (non quello della sede centrale). Riunisce i contenuti della vecchia schermata «Salva telefono ed email».',
+    html:`<div class="finale-rings" aria-hidden="true"><svg viewBox="0 0 600 600"><circle cx="300" cy="300" r="270"/><circle cx="300" cy="300" r="225"/><circle cx="300" cy="300" r="180"/><circle cx="300" cy="300" r="135"/></svg></div>
+    <div class="finale-layout">
+      <div class="finale-copy">${k('Grazie per l’ascolto')}<h2 class="finale-title">Grazie.<br><span class="lime">Ti aspettiamo.</span></h2>
+        <ol class="finale-steps">
+          <li><b>1</b><div><h3>Segna numero ed email</h3><p>Adesso: sul diario o sul telefono.</p></div></li>
+          <li><b>2</b><div><h3>Dalli ai tuoi genitori</h3><p>La scelta si fa insieme, a casa.</p></div></li>
+          <li><b>3</b><div><h3>Contattaci</h3><p>Per una visita, una domanda o per iscriverti.</p></div></li>
+        </ol>
+      </div>
+      <div class="finale-card">
+        <img class="finale-logo" src="assets/logo.jpeg" alt="Logo IIS Meucci - Mattei | Decimomannu">
+        <p class="finale-school">IIS Meucci - Mattei <span>| Decimomannu</span></p>
+        <a class="finale-phone" href="tel:+390704657043">070 4657043</a>
+        <a class="finale-mail" href="mailto:orientamattei@gmail.com">orientamattei@gmail.com</a>
+        <div class="finale-qr"><img src="assets/qr-contatti.svg" alt="QR per salvare i contatti della sede"><p><b>Inquadra.</b><br>La scuola entra<br>in rubrica.</p></div>
+        <button class="btn finale-save" data-save-contact>Salva il contatto ↓</button>
+      </div>
+    </div>`};
+
   const chapters=[
     {label:'La domanda',ids:['benvenuti','imparare','ia-domanda','ia-scuola']},
     {label:'Chi siamo',ids:['coetanei','storia','convegno','abitare','metodo']},
     {label:'Che cosa studi',ids:['indirizzi','afm','sia','turismo','cat','ssas','serali']},
     {label:'Come si impara',ids:['laboratori','metodologie','fsl','fuori-aula','erasmus','tecnologie']},
     {label:'Per ciascuno',ids:['inclusione','vita']},
-    {label:'Il prossimo passo',ids:['prossimipassi','info','contatti','bussola-via']}
+    {label:'Il prossimo passo',ids:['prossimipassi','info','bussola-via','grazie']}
   ];
 
   /* Scaletta da 30 minuti (in minuti per schermata); le facoltative si saltano se si è in ritardo. */
@@ -72,11 +94,12 @@
     indirizzi:.5,afm:1.5,sia:1,turismo:1.5,cat:1.5,ssas:1.5,serali:.5,
     laboratori:.5,metodologie:1.5,fsl:1,'fuori-aula':1,erasmus:1,tecnologie:.5,
     inclusione:1,vita:.5,
-    prossimipassi:3,info:.5,contatti:.5,'bussola-via':3};
+    prossimipassi:3,info:.5,'bussola-via':3,grazie:1};
   const optional=['convegno','serali','fuori-aula','tecnologie','vita'];
 
   /* Che cosa dire: una battuta e il passaggio alla schermata successiva. */
   const say={
+    grazie:'«Grazie a tutti.» Poi i tre gesti, uno per uno: segnate numero ed email adesso, dateli ai vostri genitori, scriveteci o chiamateci per una visita o per iscrivervi. Lascia la schermata proiettata mentre escono.',
     benvenuti:'Avvia con o senza audio. Presentati in una frase e annuncia: «Oggi partiamo da una domanda».',
     imparare:'Fai la domanda e aspetta. Raccogli due risposte dal pubblico. Poi: «E se lo chiedessimo a un’intelligenza artificiale?»',
     'ia-domanda':'Leggi la domanda al chatbot, poi la risposta. Fai votare per alzata di mano, poi svela. «Sembrava vero. Ecco perché a scuola si impara anche questo.»',
@@ -107,7 +130,7 @@
     'bussola-via':'«Ora tocca a voi.» Fai insieme la prima domanda dal palco. Poi tutti sul Chromebook: scrivono l’indirizzo del sito e li guidi a «La Bussola» nel menu. Lascia questa schermata proiettata finché lavorano.'
   };
 
-  window.PERCORSO={chapters,say,scenes:{'ia-domanda':iaDomanda,'ia-scuola':iaScuola,prossimipassi:prossimiPassi,info,'bussola-via':bussolaVia},minutes,optional,
+  window.PERCORSO={chapters,say,scenes:{'ia-domanda':iaDomanda,'ia-scuola':iaScuola,prossimipassi:prossimiPassi,info,'bussola-via':bussolaVia,grazie},minutes,optional,
     order:chapters.flatMap(c=>c.ids),chapterOf:id=>chapters.findIndex(c=>c.ids.includes(id))};
 
   document.addEventListener('click',event=>{

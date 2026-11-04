@@ -56,6 +56,7 @@
     if(current===0&&index!==current){Sottofondo.stopIntro();$('benvenuti').classList.remove('started')}
     if(current===0&&index>0){try{if(!localStorage.getItem('mattei-v02-start'))localStorage.setItem('mattei-v02-start',String(Date.now()))}catch(_){}}
     current=index;
+    document.body.classList.toggle('on-finale',sections[current].id==='grazie');
     const focused=document.activeElement;if(!explore&&focused&&focused.closest('.scene')!==nodes[current]&&focused.closest('.scene'))focused.blur();
     nodes.forEach((node,i)=>{node.classList.toggle('active',i===current);node.setAttribute('aria-hidden',String(!explore&&i!==current));node.inert=!explore&&i!==current});
     $('counter').innerHTML=`${String(current+1).padStart(2,'0')} / ${sections.length}<span class="counter-act"> · ${escape(window.PERCORSO.chapters[sections[current].chapter].label)}</span>`;
