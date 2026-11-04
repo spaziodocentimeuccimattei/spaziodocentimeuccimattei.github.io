@@ -124,6 +124,7 @@
     if(b.dataset.jump){show(sections.findIndex(s=>s.id===b.dataset.jump));return}
     if(b.dataset.section!==undefined){$('index-dialog').close();show(+b.dataset.section);return}
     if(b.dataset.start){await startCover(b.dataset.start);return}
+    if(b.dataset.playVideo){try{await $(b.dataset.playVideo).play()}catch(_){}return}
     if(b.dataset.chapter!==undefined){loadChapter(+b.dataset.chapter);return}
     if(b.dataset.courseTab){const c=D.courses.find(c=>c.id===b.dataset.courseTab),i=+b.dataset.tab,panel=$(`panel-${c.id}`);panel.innerHTML=c.panels[i];panel.setAttribute('aria-labelledby',b.id);document.querySelectorAll(`[data-course-tab="${c.id}"]`).forEach(tab=>{tab.setAttribute('aria-selected',String(tab===b));tab.tabIndex=tab===b?0:-1});return}
     if(b.dataset.gallery){const g=$(b.dataset.gallery),pages=[...g.children],page=(+g.dataset.page+(+b.dataset.direction)+pages.length)%pages.length;g.dataset.page=page;pages.forEach((p,i)=>{p.classList.toggle('active',i===page);p.inert=i!==page});document.querySelector(`[data-count="${g.id}"]`).textContent=`${page+1} / ${pages.length}`;return}
@@ -152,6 +153,8 @@
   $('music-volume').addEventListener('input',event=>Sottofondo.setVolume(+event.target.value/100));
   media.addEventListener('play',()=>{$('history-play').hidden=true;duck(true)});
   media.addEventListener('pause',()=>{duck(false)});media.addEventListener('ended',()=>{duck(false);$('play-label').textContent='Riguarda il video';$('history-play').hidden=false});
+  // video con pulsante in sovrimpressione (schermata finale): la musica si abbassa mentre parla la voce
+  document.querySelectorAll('video[data-overlay]').forEach(v=>{const o=$(v.dataset.overlay);v.addEventListener('play',()=>{o.hidden=true;duck(true)});v.addEventListener('pause',()=>duck(false));v.addEventListener('ended',()=>{duck(false);o.hidden=false})});
   // mentre il video scorre, si accende il capitolo che si sta guardando
   media.addEventListener('timeupdate',()=>{const t=media.currentTime;let k=0;D.chapters.forEach((c,i)=>{if(t>=c.start-0.3)k=i});if(k!==chapter)showChapter(k)});
   viewer.addEventListener('close',()=>{viewer.querySelectorAll('video').forEach(v=>{v.pause();v.removeAttribute('src');v.load()});$('viewer-content').innerHTML='';duck(false);if(viewerPreviousMix!==null){Sottofondo.setMode(viewerPreviousMix);viewerPreviousMix=null}});

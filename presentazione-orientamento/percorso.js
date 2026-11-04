@@ -28,8 +28,9 @@
 
   /* Il prossimo passo: Open Day, Bussola e iscrizione in un’unica schermata. */
   const prossimiPassi={id:'prossimipassi',title:'Il prossimo passo · Visite, Bussola, iscrizione',class:'navy nextsteps nextsteps-compact',
-    note:'Riunisce le vecchie schermate Bussola e Open Day; la Bussola qui è solo annunciata, si apre nell’ultima schermata. Date di Open Day e iscrizioni: si seguono sul sito ufficiale, non inventare scadenze 2027/28. SIA: in prima si sceglie AFM.',
-    html:`<div class="nextsteps-left">${k('Il prossimo passo')}<h2 class="enter">Vieni a vedere.<br>Prova.<br><span class="lime">Scegli.</span></h2></div>
+    note:'Il video è «La scuola che vogliamo costruire» (Video 2, 1:51, voce Isabella, sottotitoli): chiude con «E tu, ci sarai?», l’invito prima dei tre passi. Riunisce le vecchie schermate Bussola e Open Day; la Bussola qui è solo annunciata, si apre nell’ultima schermata. Date di Open Day e iscrizioni: si seguono sul sito ufficiale, non inventare scadenze 2027/28. SIA: in prima si sceglie AFM.',
+    html:`<div class="nextsteps-left">${k('Il prossimo passo')}<h2 class="enter">Vieni a vedere.<br>Prova.<br><span class="lime">Scegli.</span></h2>
+      <div class="video-frame nextsteps-video"><video id="finale-video" src="assets/scuola-costruire.mp4" poster="assets/scuola-costruire-poster.jpg" controls playsinline preload="metadata" data-overlay="finale-play" aria-label="La scuola che vogliamo costruire"></video><button id="finale-play" class="play-overlay" data-play-video="finale-video"><span class="play-pill"><b aria-hidden="true">▶</b> La scuola che vogliamo costruire · 1:51</span></button></div></div>
     <div class="nextsteps-list">
       <div class="nextsteps-item"><small>01</small><div><h3>Vieni a vedere</h3><p>Open Day e visite su appuntamento.</p><a class="text-button" href="mailto:orientamattei@gmail.com?subject=Orientamento%20-%20Visita%20alla%20sede">Chiedi una visita ↗</a></div></div>
       <div class="nextsteps-item"><small>02</small><div><h3>Prova la Bussola</h3><p>Tra poco, sul tuo Chromebook. Poi anche a casa, con la famiglia.</p></div></div>
@@ -71,7 +72,7 @@
     indirizzi:.5,afm:1.5,sia:1,turismo:1.5,cat:1.5,ssas:1.5,serali:.5,
     laboratori:.5,metodologie:1.5,fsl:1,'fuori-aula':1,erasmus:1,tecnologie:.5,
     inclusione:1,vita:.5,
-    prossimipassi:1,info:.5,contatti:.5,'bussola-via':3};
+    prossimipassi:3,info:.5,contatti:.5,'bussola-via':3};
   const optional=['convegno','serali','fuori-aula','tecnologie','vita'];
 
   /* Che cosa dire: una battuta e il passaggio alla schermata successiva. */
@@ -83,7 +84,7 @@
     coetanei:'Fai scegliere la risposta. «Non siete soli: tanti ragazzi della vostra età vivono qui intorno.»',
     storia:'Il video completo dura 1 minuto e 39 secondi; se sei in ritardo, fallo partire da «Oggi». «Siamo nati come ragioneria: oggi gli indirizzi sono cinque.»',
     convegno:'«Ci chiediamo che cosa serve alla scuola di oggi»: indica i quattro temi, compreso quello sull’IA appena visto.',
-    abitare:'Gli studenti partecipano alle scelte sugli spazi. Fai vedere un esempio: l’Agorà.',
+    abitare:'Gli studenti partecipano alle scelte sugli spazi. Il video parte dal piano di quest’anno. Se chiedono dell’orto: c’è già, il video parla della sua versione inclusiva. Fai vedere un esempio: l’Agorà.',
     metodo:'Scegli una sola delle quattro voci, quella più vicina al pubblico. «Si impara anche abitando bene la scuola.»',
     indirizzi:'«Cinque domande diverse: quale vi incuriosisce?» Puoi cliccare l’indirizzo che il pubblico sceglie.',
     afm:'Leggi la domanda. Muovi il cursore dei costi. Indica le materie di indirizzo in evidenza.',
@@ -100,7 +101,7 @@
     tecnologie:'Dal disegno all’oggetto: stampa 3D, drone, modelli digitali.',
     inclusione:'Una scuola per ciascuno: scegli una delle quattro domande.',
     vita:'Chiudi la parte delle esperienze con le persone: progetti, incontri, amicizie.',
-    prossimipassi:'Tre passi: vieni a vedere, prova la Bussola, iscriviti. «La Bussola la provate tra due minuti.»',
+    prossimipassi:'Fai partire il video (1:51): finisce con «E tu, ci sarai?». Poi i tre passi: vieni a vedere, prova la Bussola, iscriviti. «La Bussola la provate tra due minuti.»',
     info:'Orari e come arrivare, in trenta secondi.',
     contatti:'«Segnate il numero e l’email, anche per i vostri genitori.» Raccogli una o due domande, poi passa all’ultima schermata.',
     'bussola-via':'«Ora tocca a voi.» Fai insieme la prima domanda dal palco. Poi tutti sul Chromebook: scrivono l’indirizzo del sito e li guidi a «La Bussola» nel menu. Lascia questa schermata proiettata finché lavorano.'

@@ -45,6 +45,8 @@
 .nextsteps-compact .mini-qr{display:flex;gap:22px;align-items:center;margin-top:46px}
 .nextsteps-compact .mini-qr img{width:150px;height:150px;background:#fff;padding:10px}
 .nextsteps-compact .mini-qr p{font-size:22px;line-height:1.4;color:#d6e5eb}.nextsteps-compact .mini-qr b{color:#fff;font-size:26px}
+.nextsteps-compact .nextsteps-video{margin-top:34px;max-width:640px}
+.nextsteps-compact .nextsteps-video video{width:100%;display:block}
 .nextsteps-compact .nextsteps-item .text-button{display:inline-block;margin-top:12px;font-size:21px;color:#c0ee8c}
 
 /* Info pratiche */
