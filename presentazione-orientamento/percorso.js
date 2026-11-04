@@ -81,7 +81,7 @@
     'ia-domanda':'Leggi la domanda al chatbot, poi la risposta. Fai votare per alzata di mano, poi svela. «Sembrava vero. Ecco perché a scuola si impara anche questo.»',
     'ia-scuola':'Leggi una domanda alla volta e lascia un attimo di silenzio. Poi la risposta: come la affrontiamo a scuola. La seconda l’hanno appena vista con il chatbot. Chiudi: «Non vietiamo l’IA e non la lasciamo fare da sola: ci pensiamo insieme».',
     coetanei:'Fai scegliere la risposta. «Non siete soli: tanti ragazzi della vostra età vivono qui intorno.»',
-    storia:'Una clip, al massimo due. «Siamo nati come ragioneria: oggi gli indirizzi sono cinque.»',
+    storia:'Il video completo dura 1 minuto e 39 secondi; se sei in ritardo, fallo partire da «Oggi». «Siamo nati come ragioneria: oggi gli indirizzi sono cinque.»',
     convegno:'«Ci chiediamo che cosa serve alla scuola di oggi»: indica i quattro temi, compreso quello sull’IA appena visto.',
     abitare:'Gli studenti partecipano alle scelte sugli spazi. Fai vedere un esempio: l’Agorà.',
     metodo:'Scegli una sola delle quattro voci, quella più vicina al pubblico. «Si impara anche abitando bene la scuola.»',

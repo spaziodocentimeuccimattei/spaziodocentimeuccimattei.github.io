@@ -69,10 +69,12 @@ window.SCUOLA = {
       '<p>Università e formazione in ambito sociale, educativo, psicologico, sanitario e della riabilitazione; servizi al cittadino, cooperative e strutture sociali.</p><p class="small-note">Il diploma non assegna automaticamente qualifiche come OSS, infermiere, educatore o assistente sociale.</p>'
     ]}
   ],
+  // Un solo video, quello definitivo (Video 1 · «Il Mattei di Decimomannu, dal 1977», 1:39, voce Isabella, sottotitoli impressi).
+  // I tre capitoli non sono clip separate: portano il video al momento giusto (start in secondi).
   chapters:[
-    {year:'1977',title:'Le origini',copy:'Si parte dalla ragioneria. Nel 1982/83 nasce l’istituto autonomo Enrico Mattei.',file:'storia-origini.mp4',seconds:'28',playLabel:'Guarda le origini',map:'<span>All’inizio</span><strong>Ragioneria</strong>'},
-    {year:'1996–2018',title:'Gli indirizzi cambiano',copy:'Arrivano turismo e programmazione. La riforma ridefinisce gli indirizzi; nel 2018 si aggiunge SSAS.',file:'storia-indirizzi.mp4',seconds:'36',playLabel:'Guarda il cambiamento',map:'<span>Dalla ragioneria ai percorsi di oggi</span><strong>AFM · SIA · Turismo<br>CAT · SSAS</strong>'},
-    {year:'Oggi',title:'Chi siamo',copy:'Una scuola legata al territorio, alle conoscenze, alle competenze e alla crescita delle persone.',file:'storia-oggi.mp4',seconds:'23',playLabel:'La nostra idea di scuola',map:'<span>Una formazione che tiene insieme</span><strong>Cultura · Esperienza<br>Persone · Professioni</strong>'}
+    {year:'1977',title:'Le origini',copy:'Nasce a Decimomannu una sezione staccata del «Pietro Martini». Nel 1982/83 diventa l’istituto autonomo Enrico Mattei: dieci classi, un solo corso per ragionieri.',start:8.5,playLabel:'Guarda dalle origini',map:'<span>All’inizio</span><strong>Ragioneria</strong>'},
+    {year:'1992–2018',title:'Gli indirizzi cambiano',copy:'Arrivano geometri e corso serale. Con la riforma del 2010 nascono AFM, SIA, Turismo e CAT; nel 2018 si aggiunge SSAS.',start:42.9,playLabel:'Guarda il cambiamento',map:'<span>Dalla ragioneria ai percorsi di oggi</span><strong>AFM · SIA · Turismo<br>CAT · SSAS</strong>'},
+    {year:'Oggi',title:'La sede oggi',copy:'Una scuola legata al territorio, alle conoscenze, alle competenze e alla crescita delle persone.',start:72.9,playLabel:'Guarda la sede oggi',map:'<span>Una formazione che tiene insieme</span><strong>Cultura · Esperienza<br>Persone · Professioni</strong>'}
   ],
   demo:[
     {label:'Persone e benessere',detail:'Capire come si sentono le persone e che cosa può aiutarle nella vita di tutti i giorni.'},
