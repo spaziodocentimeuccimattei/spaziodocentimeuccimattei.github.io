@@ -82,6 +82,7 @@
   }
   // «Presenta»: dalla lettura libera si torna alla presentazione vera, a schermo intero, con animazioni e musica
   async function startPresentation(){
+    {const h=document.querySelector('.ruota-hint');if(h){h.style.animation='none';void h.offsetWidth;h.style.animation=''}}
     // lo schermo intero solo dove il browser lo consente (su iPhone non c'è per le pagine)
     try{const el=document.documentElement;if(!document.fullscreenElement&&typeof el.requestFullscreen==='function'&&!matchMedia('(pointer:coarse) and (max-width:900px)').matches)await el.requestFullscreen()}catch(_){}
     if(current===0){show(0);await startCover('audio');return}
