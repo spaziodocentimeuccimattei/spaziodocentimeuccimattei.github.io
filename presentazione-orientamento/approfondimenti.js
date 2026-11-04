@@ -16,7 +16,7 @@ window.InformazioniScuola=(()=>{
     if(!viewer.open)viewer.showModal();Sottofondo.duck(false);
   }
   function localize(root=document){
-    root.querySelectorAll('a[href^="https://"]').forEach(a=>{
+    root.querySelectorAll('a[href^="https://"]:not([data-esterno])').forEach(a=>{
       const url=a.getAttribute('href');let key='domande',label='Domande sulla scuola';
       if(url.includes('orario-lezioni')){key='orari';label='La settimana e le ricreazioni'}
       else if(url.includes('#iscrizione')){key='iscrizione';label='Come iscriversi'}

@@ -52,3 +52,4 @@ body.on-finale #slides{bottom:0}
 @media(max-width:900px){body.explore .finale-layout{display:block}body.explore .finale-title{font-size:64px;margin-bottom:28px}body.explore .finale-steps h3{font-size:28px}body.explore .finale-steps p{font-size:20px}body.explore .finale-card{margin-top:34px;padding:26px 20px}body.explore .finale-phone{font-size:44px}body.explore .finale-mail{font-size:22px}body.explore .finale-rings{width:420px;height:420px;right:-200px;top:120px;transform:none;opacity:.35}}
 #grazie .closing-credits{color:#466372;border-bottom-color:#9fb3bd;font-size:16px;margin-top:16px;padding:4px 0}
 @media(max-width:900px){body.explore .finale-steps li{grid-template-columns:48px 1fr;gap:14px}body.explore .finale-steps b{width:48px;height:48px;font-size:24px}}
+a.finale-url{text-decoration:none;border-bottom:2px solid #79cf1b66}

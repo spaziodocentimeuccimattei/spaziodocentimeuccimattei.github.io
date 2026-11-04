@@ -28,12 +28,11 @@
 
   /* Il prossimo passo: Open Day, Bussola e iscrizione in un’unica schermata. */
   const prossimiPassi={id:'prossimipassi',title:'Il prossimo passo · Visite, Bussola, iscrizione',class:'navy nextsteps nextsteps-compact',
-    note:'Il video è «La scuola che vogliamo costruire» (Video 2, 1:51, voce Isabella, sottotitoli): chiude con «E tu, ci sarai?», l’invito prima dei tre passi. Riunisce le vecchie schermate Bussola e Open Day; la Bussola qui è solo annunciata, si apre nell’ultima schermata. Date di Open Day e iscrizioni: si seguono sul sito ufficiale, non inventare scadenze 2027/28. SIA: in prima si sceglie AFM.',
-    html:`<div class="nextsteps-left">${k('Il prossimo passo')}<h2 class="enter">Vieni a vedere.<br>Prova.<br><span class="lime">Scegli.</span></h2>
-      <div class="video-frame nextsteps-video"><video id="finale-video" src="assets/scuola-costruire.mp4" poster="assets/scuola-costruire-poster.jpg" controls playsinline preload="metadata" data-overlay="finale-play" aria-label="La scuola che vogliamo costruire"></video><button id="finale-play" class="play-overlay" data-play-video="finale-video"><span class="play-pill"><b aria-hidden="true">▶</b> La scuola che vogliamo costruire · 1:51</span></button></div></div>
+    note:'Riunisce le vecchie schermate Bussola e Open Day; la Bussola qui è solo annunciata, si apre nell’ultima schermata. Date di Open Day e iscrizioni: si seguono sul sito ufficiale, non inventare scadenze 2027/28. SIA: in prima si sceglie AFM.',
+    html:`<div class="nextsteps-left">${k('Il prossimo passo')}<h2 class="enter">Vieni a vedere.<br>Prova.<br><span class="lime">Scegli.</span></h2></div>
     <div class="nextsteps-list">
       <div class="nextsteps-item"><small>01</small><div><h3>Vieni a vedere</h3><p>Open Day e visite su appuntamento.</p><a class="text-button" href="mailto:orientamattei@gmail.com?subject=Orientamento%20-%20Visita%20alla%20sede">Chiedi una visita ↗</a></div></div>
-      <div class="nextsteps-item"><small>02</small><div><h3>Prova la Bussola</h3><p>Tra poco, sul tuo Chromebook. Poi anche a casa, con la famiglia.</p></div></div>
+      <div class="nextsteps-item"><small>02</small><div><h3>Prova la Bussola</h3><p>Tra poco, sul tuo Chromebook. Poi anche a casa, con la famiglia.</p><a class="text-button" data-esterno href="https://spaziodocentimeuccimattei.github.io/bussola.html" target="_blank" rel="noopener">Apri la Bussola completa ↗</a></div></div>
       <div class="nextsteps-item"><small>03</small><div><h3>Iscriviti online</h3><p>Domanda su Unica. Per SIA si sceglie AFM.</p><a class="text-button" href="https://spaziodocentimeuccimattei.github.io/famiglie.html#iscrizione" target="_blank" rel="noopener">Come iscriversi ↗</a></div></div>
     </div>`};
 
@@ -50,7 +49,7 @@
   /* Ultima schermata: resta proiettata mentre i ragazzi lavorano sui Chromebook. */
   const bussolaVia={id:'bussola-via',title:'Ora tocca a voi · La Bussola sul Chromebook',class:'paper launch',
     note:'Resta proiettata durante il lavoro individuale sui Chromebook; dopo, si chiude con la schermata «Grazie». «Proviamo insieme» apre la dimostrazione dal palco (nessun nominativo, nessun salvataggio): bastano una o due domande, poi si passa ai Chromebook. Non ci sono codici: si scrive l’indirizzo principale del sito e si sceglie «La Bussola» nel menu. Se il Chromebook è già stato usato da un altro ragazzo, compare «Riprendi la tua Bussola»: va scelto «Inizia una nuova Bussola». La Bussola non assegna un indirizzo: dà indicazioni motivate da approfondire.',
-    html:`<div class="launch-copy">${k('Ora tocca a voi')}<h2 class="enter">Prendete<br>il Chromebook.</h2><div class="launch-url"><span>Scrivi nella barra degli indirizzi</span><strong>spaziodocentimeuccimattei<wbr>.github.io</strong><em>poi nel menu scegli <b>La Bussola</b></em></div><div class="launch-actions"><button class="btn" id="open-demo">Proviamo insieme la prima domanda →</button><img src="assets/qr-bussola.svg" alt="QR per aprire la Bussola"></div></div>
+    html:`<div class="launch-copy">${k('Ora tocca a voi')}<h2 class="enter">Prendete<br>il Chromebook.</h2><div class="launch-url"><span>Scrivi nella barra degli indirizzi</span><strong>spaziodocentimeuccimattei<wbr>.github.io</strong><em>poi nel menu scegli <b>La Bussola</b></em></div><div class="launch-actions"><button class="btn" id="open-demo">Proviamo insieme la prima domanda →</button><a class="btn launch-full" data-esterno href="https://spaziodocentimeuccimattei.github.io/bussola.html" target="_blank" rel="noopener">Apri la Bussola completa ↗</a><img src="assets/qr-bussola.svg" alt="QR per aprire la Bussola"></div></div>
     <ol class="launch-steps">
       <li><small>01</small><div><h3>Apri la Bussola</h3><p>Dal sito, voce <b>La Bussola</b> nel menu. Chromebook già usato da un altro? Scegli <b>«Inizia una nuova Bussola»</b>.</p></div></li>
       <li><small>02</small><div><h3>Rispondi a 12 domande</h3><p>Non ci sono risposte giuste. <b>Al tuo ritmo.</b></p></div></li>
@@ -66,7 +65,7 @@
         <ol class="finale-steps">
           <li><b>1</b><div><h3>Segna numero ed email</h3><p>Adesso: sul diario o sul telefono.</p></div></li>
           <li><b>2</b><div><h3>Dalli ai tuoi genitori</h3><p>La scelta si fa insieme, a casa.</p></div></li>
-          <li><b>3</b><div><h3>Prova la Bussola a casa</h3><p>Con la tua famiglia: <span class="finale-url">spaziodocentimeuccimattei.github.io</span> → La Bussola.</p></div></li>
+          <li><b>3</b><div><h3>Prova la Bussola a casa</h3><p>Con la tua famiglia: <a class="finale-url" data-esterno href="https://spaziodocentimeuccimattei.github.io/bussola.html" target="_blank" rel="noopener">spaziodocentimeuccimattei.github.io</a> → La Bussola.</p></div></li>
           <li><b>4</b><div><h3>Contattaci</h3><p>Per una visita, una domanda o per iscriverti.</p></div></li>
         </ol>
       </div>
@@ -86,7 +85,7 @@
     {label:'Che cosa studi',ids:['indirizzi','afm','sia','turismo','cat','ssas','serali']},
     {label:'Come si impara',ids:['laboratori','metodologie','fsl','fuori-aula','erasmus','tecnologie']},
     {label:'Per ciascuno',ids:['inclusione','vita']},
-    {label:'Il prossimo passo',ids:['prossimipassi','info','bussola-via','grazie']}
+    {label:'Il prossimo passo',ids:['prossimipassi','info','bussola','bussola-via','grazie']}
   ];
 
   /* Scaletta da 30 minuti (in minuti per schermata); le facoltative si saltano se si è in ritardo. */
@@ -95,11 +94,12 @@
     indirizzi:.5,afm:1.5,sia:1,turismo:1.5,cat:1.5,ssas:1.5,serali:.5,
     laboratori:.5,metodologie:1.5,fsl:1,'fuori-aula':1,erasmus:1,tecnologie:.5,
     inclusione:1,vita:.5,
-    prossimipassi:3,info:.5,'bussola-via':3,grazie:1};
-  const optional=['convegno','serali','fuori-aula','tecnologie','vita'];
+    prossimipassi:1,info:.5,bussola:2,'bussola-via':3,grazie:1};
+  const optional=['convegno','serali','fuori-aula','tecnologie','vita','bussola'];
 
   /* Che cosa dire: una battuta e il passaggio alla schermata successiva. */
   const say={
+    bussola:'Fai salire un ragazzo qualsiasi: «Proviamo insieme». Risponde a voce con il numero, tu selezioni e confermi; bastano le 4 domande della prova breve. Poi: «Avete visto com’è fatta: a casa la rifate tutta, con la vostra famiglia» e indica il QR. Nelle classi con i Chromebook si può passare subito alla schermata successiva.',
     grazie:'«Grazie a tutti.» Poi i quattro gesti, uno per uno: segnate numero ed email adesso, dateli ai vostri genitori, rifate la Bussola a casa con la famiglia, scriveteci o chiamateci per una visita o per iscrivervi. Lascia la schermata proiettata mentre escono.',
     benvenuti:'Avvia con o senza audio. Presentati in una frase e annuncia: «Oggi partiamo da una domanda».',
     imparare:'Fai la domanda e aspetta. Raccogli due risposte dal pubblico. Poi: «E se lo chiedessimo a un’intelligenza artificiale?»',
@@ -125,7 +125,7 @@
     tecnologie:'Dal disegno all’oggetto: stampa 3D, drone, modelli digitali.',
     inclusione:'Una scuola per ciascuno: scegli una delle quattro domande.',
     vita:'Chiudi la parte delle esperienze con le persone: progetti, incontri, amicizie.',
-    prossimipassi:'Fai partire il video (1:51): finisce con «E tu, ci sarai?». Poi i tre passi: vieni a vedere, prova la Bussola, iscriviti. «La Bussola la provate tra due minuti.»',
+    prossimipassi:'Tre passi: vieni a vedere, prova la Bussola, iscriviti. «La Bussola la provate tra due minuti.»',
     info:'Orari e come arrivare, in trenta secondi.',
     contatti:'«Segnate il numero e l’email, anche per i vostri genitori.» Raccogli una o due domande, poi passa all’ultima schermata.',
     'bussola-via':'«Ora tocca a voi.» Fai insieme la prima domanda dal palco. Poi tutti sul Chromebook: scrivono l’indirizzo del sito e li guidi a «La Bussola» nel menu. Lascia questa schermata proiettata finché lavorano.'
