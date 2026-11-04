@@ -66,7 +66,8 @@
         <ol class="finale-steps">
           <li><b>1</b><div><h3>Segna numero ed email</h3><p>Adesso: sul diario o sul telefono.</p></div></li>
           <li><b>2</b><div><h3>Dalli ai tuoi genitori</h3><p>La scelta si fa insieme, a casa.</p></div></li>
-          <li><b>3</b><div><h3>Contattaci</h3><p>Per una visita, una domanda o per iscriverti.</p></div></li>
+          <li><b>3</b><div><h3>Prova la Bussola a casa</h3><p>Con la tua famiglia: <span class="finale-url">spaziodocentimeuccimattei.github.io</span> → La Bussola.</p></div></li>
+          <li><b>4</b><div><h3>Contattaci</h3><p>Per una visita, una domanda o per iscriverti.</p></div></li>
         </ol>
       </div>
       <div class="finale-card">
@@ -99,7 +100,7 @@
 
   /* Che cosa dire: una battuta e il passaggio alla schermata successiva. */
   const say={
-    grazie:'«Grazie a tutti.» Poi i tre gesti, uno per uno: segnate numero ed email adesso, dateli ai vostri genitori, scriveteci o chiamateci per una visita o per iscrivervi. Lascia la schermata proiettata mentre escono.',
+    grazie:'«Grazie a tutti.» Poi i quattro gesti, uno per uno: segnate numero ed email adesso, dateli ai vostri genitori, rifate la Bussola a casa con la famiglia, scriveteci o chiamateci per una visita o per iscrivervi. Lascia la schermata proiettata mentre escono.',
     benvenuti:'Avvia con o senza audio. Presentati in una frase e annuncia: «Oggi partiamo da una domanda».',
     imparare:'Fai la domanda e aspetta. Raccogli due risposte dal pubblico. Poi: «E se lo chiedessimo a un’intelligenza artificiale?»',
     'ia-domanda':'Leggi la domanda al chatbot, poi la risposta. Fai votare per alzata di mano, poi svela. «Sembrava vero. Ecco perché a scuola si impara anche questo.»',

@@ -11,14 +11,16 @@ body.on-finale #slides{bottom:0}
 .finale-rings circle:nth-child(4){stroke:var(--lime);stroke-dasharray:520 330}
 .finale-layout{position:relative;z-index:2;display:grid;grid-template-columns:1fr 500px;gap:70px;align-items:center;height:100%}
 .finale-copy .kicker{font-size:22px}
-.finale-title{font-size:122px;line-height:.98;margin:6px 0 46px}
-.finale-steps{list-style:none;margin:0;padding:0;display:grid;gap:22px}
-.finale-steps li{display:grid;grid-template-columns:70px 1fr;gap:22px;align-items:center}
-.finale-steps b{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;font-size:34px;color:var(--deep);background:var(--lime)}
+.finale-title{font-size:112px;line-height:.98;margin:4px 0 34px}
+.finale-steps{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.finale-steps li{display:grid;grid-template-columns:62px 1fr;gap:20px;align-items:center}
+.finale-steps b{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-size:34px;color:var(--deep);background:var(--lime)}
 .finale-steps li:nth-child(2) b{background:var(--teal)}
-.finale-steps li:nth-child(3) b{background:var(--pink);color:#fff}
-.finale-steps h3{font-size:40px;margin:0 0 6px}
-.finale-steps p{font-size:25px;line-height:1.3;color:#d6e5eb;margin:0}
+.finale-steps li:nth-child(3) b{background:var(--green);color:#fff}
+.finale-steps li:nth-child(4) b{background:var(--pink);color:#fff}
+.finale-url{color:var(--lime);font-weight:700}
+.finale-steps h3{font-size:36px;margin:0 0 4px}
+.finale-steps p{font-size:23px;line-height:1.3;color:#d6e5eb;margin:0}
 .finale-card{background:#fff;color:var(--navy);padding:34px 40px 36px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 30px 70px #0006;border-top:10px solid var(--green)}
 .finale-logo{width:150px;height:150px;object-fit:contain}
 .finale-school{font-size:22px;font-weight:700;margin:8px 0 18px;letter-spacing:-.01em}.finale-school span{color:var(--green)}
@@ -39,6 +41,7 @@ body.on-finale #slides{bottom:0}
 #grazie.active .finale-steps li:nth-child(1){animation-delay:.6s}
 #grazie.active .finale-steps li:nth-child(2){animation-delay:.9s}
 #grazie.active .finale-steps li:nth-child(3){animation-delay:1.2s}
+#grazie.active .finale-steps li:nth-child(4){animation-delay:1.5s}
 #grazie.active .finale-card{animation:finale-card .9s cubic-bezier(.2,.8,.2,1) .35s both}
 @keyframes finale-ring{from{stroke-dashoffset:1800;transform:rotate(-120deg) scale(.7);opacity:0}to{stroke-dashoffset:0;transform:none;opacity:1}}
 @keyframes finale-spin{to{transform:rotate(360deg)}}
