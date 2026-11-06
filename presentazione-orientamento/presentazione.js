@@ -83,7 +83,7 @@
     document.body.classList.toggle('on-finale',sections[current].id==='grazie');
     const focused=document.activeElement;if(!explore&&focused&&focused.closest('.scene')!==nodes[current]&&focused.closest('.scene'))focused.blur();
     nodes.forEach((node,i)=>{node.classList.toggle('active',i===current);node.setAttribute('aria-hidden',String(!explore&&i!==current));node.inert=!explore&&i!==current});
-    $('counter').innerHTML=`${current<LIN?`${String(current+1).padStart(2,'0')} / ${LIN}`:'Approfondimento'}<span class="counter-act"> · ${escape(window.PERCORSO.chapters[sections[current].chapter].label)}</span>`;
+    $('counter').innerHTML=`${current<LIN?`${String(current+1).padStart(2,'0')} / ${LIN}<span class="counter-act"> · ${escape(window.PERCORSO.chapters[sections[current].chapter].label)}</span>`:'Approfondimento · solo in Esplora'}`;
     $('progress').style.width=`${Math.min(1,(current+1)/LIN)*100}%`;
     $('previous').disabled=current===0;$('next').disabled=current===LIN-1||current===sections.length-1;
     document.querySelectorAll('#index-list button').forEach((b,i)=>{b.setAttribute('aria-current',String(i===current))});

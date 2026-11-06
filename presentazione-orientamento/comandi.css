@@ -1,0 +1,17 @@
+/* Barra dei comandi in un punto fisso: in fondo a destra, dentro la fascia dei contatti.
+   Segue il palco (si ridimensiona con --scale) e non si sposta più da una schermata all'altra. */
+body:not(.explore) .contact-ribbon{justify-content:flex-start;padding-left:30px}
+body:not(.explore) .console{
+  position:fixed!important;top:auto!important;left:auto!important;
+  right:calc((100vw - 1600px * var(--scale)) / 2 + 10px * var(--scale))!important;
+  bottom:calc((100vh - 900px * var(--scale)) / 2 + 5.5px * var(--scale))!important;
+  transform:scale(var(--scale))!important;transform-origin:right bottom;
+  opacity:.92;border-color:#ffffff22;box-shadow:none}
+body:not(.explore) .console:hover,body:not(.explore) .console:focus-within{opacity:1}
+body:not(.explore) .sound-panel{left:auto;transform:none;
+  right:calc((100vw - 1600px * var(--scale)) / 2 + 10px * var(--scale));
+  bottom:calc((100vh - 900px * var(--scale)) / 2 + 66px * var(--scale))}
+/* In Esplora la barra resta sempre in basso al centro, qualunque schermata sia attiva */
+body.explore .console{top:auto!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important}
+/* contatore a larghezza fissa: la barra non cambia misura quando cambia il nome del capitolo */
+body:not(.explore) .console #counter{display:inline-block;width:250px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
