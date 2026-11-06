@@ -27,7 +27,7 @@
     </div>`};
 
   /* «Tocca a voi»: dopo ogni video, domande leggere per coinvolgere la sala. Una domanda per clic (stesso tasto delle slide);
-     nessuna risposta a schermo: il collegamento con l'indirizzo è nelle note del relatore. La terza domanda è facoltativa. */
+     nessuna risposta a schermo: il collegamento con l'indirizzo è nelle note del relatore. L’ultima domanda è facoltativa. */
   const MODI={mano:['✋','Alzate la mano'],voce:['💬','Rispondete a voce'],scelta:['↔','Scegliete']};
   const TOCCA={
     cat:{code:'CAT',color:'#79cf1b',q:[
@@ -48,11 +48,12 @@
       ['scelta','Viaggio dei sogni: mare, montagna o città d’arte?','«Dietro ogni viaggio c’è qualcuno che lo progetta, lo racconta e accoglie: tour operator, enti, strutture ricettive.»']]},
     ssas:{code:'SSAS',color:'#ef0b62',q:[
       ['mano','Alzi la mano chi, quando un amico è giù, è quello a cui va a raccontarlo.','«Avete già uno strumento del mestiere: l’ascolto. In SSAS lo allenate in laboratorio, con i giochi di ruolo.»'],
-      ['scelta','Superpotere: capire cosa prova una persona solo guardandola, oppure riuscire a farla ridere quando è triste?','«In questo indirizzo si allenano tutti e due: si chiamano empatia e animazione.»'],
+      ['voce','Superpotere: capire cosa prova una persona solo guardandola. Come si chiama questa capacità?','«Si chiama empatia, ed è la base di chi lavora con le persone: in SSAS la studiate in Psicologia e la allenate in laboratorio.»'],
+      ['mano','Chi ha mai provato a far ridere qualcuno che era triste?','«Far stare meglio le persone con il gioco e la creatività è un lavoro vero: si chiama animazione, e in SSAS si impara in Metodologie operative.»'],
       ['voce','Nel vostro paese c’è una signora anziana che vive da sola e non esce quasi mai. Avete un pomeriggio: che cosa vi inventate?','«È quello che chiamiamo invecchiamento attivo: non assistere, ma far tornare a partecipare.»']]}
   };
   const toccaScenes=Object.fromEntries(Object.entries(TOCCA).map(([id,t])=>[`tocca-${id}`,{id:`tocca-${id}`,title:`Tocca a voi · ${t.code}`,class:'tocca-scene',course:`${id}`,color:t.color,
-    note:`Una domanda per clic, con lo stesso tasto delle slide: la domanda precedente sfuma e arriva la successiva. Nessuna risposta a schermo. Lascia rispondere due o tre ragazzi, poi il collegamento. ${t.q.map((x,i)=>`${i+1}${i===2?' (facoltativa, si salta se si è in ritardo)':''}: ${x[2]}`).join(' ')}`,
+    note:`Una domanda per clic, con lo stesso tasto delle slide: la domanda precedente sfuma e arriva la successiva. Nessuna risposta a schermo. Lascia rispondere due o tre ragazzi, poi il collegamento. ${t.q.map((x,i)=>`${i+1}${i===t.q.length-1?' (facoltativa, si salta se si è in ritardo)':''}: ${x[2]}`).join(' ')}`,
     html:`<div class="tocca-head">${k('Tocca a voi')}<span class="tocca-tag">${t.code}</span></div>
     <div class="tocca-stage">${t.q.map((x,i)=>`<div class="tocca-q${i===0?' on':''}" data-step="${i}"><span class="tocca-mode"><i aria-hidden="true">${MODI[x[0]][0]}</i>${MODI[x[0]][1]}</span><p>${x[1]}</p></div>`).join('')}</div>
     <div class="tocca-foot"><div class="tocca-dots" aria-hidden="true">${t.q.map((_,i)=>`<span class="${i===0?'on':''}"></span>`).join('')}</div><span class="tocca-count">Domanda 1 di ${t.q.length}</span></div>`}]));
@@ -165,7 +166,7 @@
     'tocca-afm':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
     'tocca-sia':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
     'tocca-turismo':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
-    'tocca-ssas':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
+    'tocca-ssas':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La quarta domanda è facoltativa.',
     'bussola-via':'«Ora tocca a voi.» Fai insieme la prima domanda dal palco. Poi tutti sul Chromebook: scrivono l’indirizzo del sito e li guidi a «La Bussola» nel menu. Lascia questa schermata proiettata finché lavorano.'
   };
 
