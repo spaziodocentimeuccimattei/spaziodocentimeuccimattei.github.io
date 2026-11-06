@@ -80,3 +80,13 @@ body.explore .tocca-foot{display:none}
   body.explore .course-video .play-pill{padding:14px 18px;border-radius:50%}
   body.explore .course-video .play-pill span{display:none}
 }
+/* In Esplora l'approfondimento è chiuso dietro un tasto: dopo il video si passa subito alle domande */
+body.explore .course-extra{padding-top:0;border-top:0;margin-top:26px}
+.course-extra-open{list-style:none;display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;cursor:pointer;padding:16px 20px;border:2px solid var(--course);background:color-mix(in srgb,var(--course) 10%,#fff);color:var(--navy);font-weight:700;font-size:21px}
+.course-extra-open::-webkit-details-marker{display:none}
+.course-extra-open small{font-weight:500;font-size:16px;opacity:.7}
+.course-extra-open b{margin-left:auto;font-size:24px;color:var(--navy);transition:transform .2s}
+.course-extra[open] .course-extra-open b{transform:rotate(45deg)}
+.course-extra[open] .course-extra-open{margin-bottom:30px}
+.course-extra-open:focus-visible{outline:4px solid var(--navy);outline-offset:3px}
+@media(max-width:900px){.course-extra-open{font-size:18px;padding:14px 16px}.course-extra-open small{font-size:14px;flex-basis:100%;order:3}}
