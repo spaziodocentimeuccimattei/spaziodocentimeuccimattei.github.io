@@ -1,0 +1,82 @@
+/* Schermate degli indirizzi con il video, e schermate «Tocca a voi» dopo ogni video. */
+
+/* --- Indirizzo: a sinistra nome e avvio, a destra il video --- */
+.course-scene{padding:54px 64px 46px}
+.course-video-layout{display:grid;grid-template-columns:330px 1fr;gap:44px;height:100%;align-items:center}
+.course-video-head{display:flex;flex-direction:column;align-items:flex-start;gap:0}
+.course-video-head .course-meta{flex-direction:column;align-items:flex-start;gap:14px;margin-bottom:22px}
+.course-video-head .course-code{font-size:58px;line-height:1;border-bottom-width:8px;padding-bottom:12px}
+.course-video-head .course-name{font-size:27px;max-width:330px}
+.course-video-field{font-size:21px;line-height:1.35;opacity:.78;margin:0 0 38px}
+.course-video-start{display:inline-flex;align-items:center;gap:14px;background:var(--course);color:#fff;border:0;padding:17px 24px;font:inherit;font-size:23px;font-weight:700;cursor:pointer;box-shadow:0 6px 0 #00000022}
+.course-video-start b{font-size:22px}
+.course-video-start span{font-weight:500;opacity:.85;font-size:19px;border-left:1px solid #ffffff88;padding-left:14px}
+.course-scene[data-course=cat] .course-video-start,.course-scene[data-course=sia] .course-video-start{color:#092b43}
+.course-scene[data-course=cat] .course-video-start span,.course-scene[data-course=sia] .course-video-start span{border-color:#092b4366}
+.course-video-start:hover{filter:brightness(1.05)}
+.course-video-start:focus-visible{outline:4px solid var(--navy);outline-offset:4px}
+.course-video-hint{margin-top:22px;font-size:18px;opacity:.6}
+.course-video{width:100%;max-height:100%;box-shadow:0 16px 40px #092b4326;border-bottom:7px solid var(--course)}
+.course-video .play-overlay{background:#092b4326;cursor:pointer}
+.course-video .play-pill{background:var(--course);border:0}
+.course-scene[data-course=cat] .course-video .play-pill,.course-scene[data-course=sia] .course-video .play-pill{color:#092b43}
+.course-scene[data-course=sia] .course-video-hint,.course-scene[data-course=sia] .course-video-field{color:#d2e8ee}
+/* l'approfondimento resta solo in Esplora */
+.course-extra{display:none}
+body.explore .course-extra{display:block;margin-top:44px;padding-top:30px;border-top:2px solid color-mix(in srgb,var(--course) 55%,transparent)}
+.course-extra-label{font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--course);margin:0 0 20px}
+.course-scene[data-course=cat] .course-extra-label{color:#3f7a06}
+body.explore .course-video-layout{height:auto}
+@media(max-width:900px){
+  body.explore .course-video-layout{display:block}
+  body.explore .course-video-head{margin-bottom:22px}
+  body.explore .course-video-head .course-meta{flex-direction:row;align-items:center;margin-bottom:10px}
+  body.explore .course-video-head .course-code{font-size:34px;border-bottom-width:6px;padding-bottom:7px}
+  body.explore .course-video-head .course-name{font-size:19px}
+  body.explore .course-video-field{font-size:17px;margin-bottom:16px}
+  body.explore .course-video-start{font-size:18px;padding:13px 18px}
+  body.explore .course-video-start span{font-size:16px}
+  body.explore .course-video-hint{display:none}
+}
+
+/* --- Tocca a voi: una domanda alla volta, nel colore dell'indirizzo --- */
+.tocca-scene{background:var(--paper);display:grid;grid-template-rows:auto 1fr auto;padding:58px 76px 48px}
+.tocca-scene:before{content:"";position:absolute;right:-170px;top:-170px;width:620px;height:620px;border-radius:50%;background:var(--course);opacity:.12}
+.tocca-scene:after{content:"";position:absolute;right:120px;bottom:-230px;width:420px;height:420px;border-radius:50%;border:34px solid var(--course);opacity:.18}
+.tocca-head{position:relative;z-index:1;display:flex;align-items:center;gap:18px}
+.tocca-head .kicker{margin:0}
+.tocca-head .kicker:before{background:var(--course)}
+.tocca-tag{background:var(--course);color:#fff;font-weight:700;font-size:20px;padding:6px 14px}
+.tocca-scene[data-course=cat] .tocca-tag,.tocca-scene[data-course=sia] .tocca-tag{color:#092b43}
+.tocca-stage{position:relative;z-index:1;align-self:center}
+.tocca-q{position:absolute;left:0;right:120px;top:50%;transform:translate(40px,-50%);opacity:0;visibility:hidden;transition:opacity .45s,transform .55s cubic-bezier(.2,.8,.2,1),visibility .55s}
+.tocca-q.on{opacity:1;visibility:visible;transform:translate(0,-50%)}
+.tocca-q.via{transform:translate(-40px,-50%)}
+.tocca-mode{display:inline-flex;align-items:center;gap:10px;font-size:22px;font-weight:700;color:var(--course);margin-bottom:22px}
+.tocca-scene[data-course=cat] .tocca-mode{color:#3f7a06}
+.tocca-scene[data-course=sia] .tocca-mode{color:#2f8e7d}
+.tocca-mode i{font-style:normal;font-size:30px}
+.tocca-q p{font-size:66px;line-height:1.1;font-weight:700;letter-spacing:-.02em;color:var(--navy);margin:0;max-width:1220px}
+.tocca-foot{position:relative;z-index:1;display:flex;align-items:center;gap:14px;font-size:19px;color:#123c57aa}
+.tocca-dots{display:flex;gap:10px}
+.tocca-dots span{width:14px;height:14px;border-radius:50%;background:#123c5726;transition:background .3s}
+.tocca-dots span.on{background:var(--course)}
+.tocca-next{margin-left:auto;background:none;border:2px solid var(--course);color:var(--navy);font:inherit;font-size:19px;font-weight:700;padding:9px 18px;cursor:pointer}
+/* In Esplora le domande si leggono tutte, una sotto l'altra */
+body.explore .tocca-scene{display:block}
+body.explore .tocca-stage{margin:34px 0}
+body.explore .tocca-q{position:relative;top:auto;left:auto;right:auto;transform:none;opacity:1;visibility:visible;margin-bottom:34px}
+body.explore .tocca-q p{font-size:40px}
+body.explore .tocca-foot{display:none}
+@media(max-width:900px){body.explore .tocca-q p{font-size:25px}body.explore .tocca-mode{font-size:16px;margin-bottom:10px}body.explore .tocca-scene:before,body.explore .tocca-scene:after{display:none}}
+@media(prefers-reduced-motion:reduce){.tocca-q{transition:opacity .2s,visibility .2s;transform:translate(0,-50%)}}
+/* il pulsante sul video sta in basso: la copertina mostra la domanda dell'indirizzo */
+.course-video .play-overlay{align-items:flex-end;padding-bottom:9%;background:linear-gradient(to top,#092b4359,transparent 45%)}
+.course-video .play-pill{font-size:22px;padding:15px 24px;box-shadow:0 8px 24px #00000033}
+/* nell'approfondimento il nome dell'indirizzo è già sopra il video */
+.course-extra .course-meta{display:none}
+@media(max-width:900px){
+  body.explore .course-video .play-overlay{padding-bottom:0;align-items:center;background:#092b4326}
+  body.explore .course-video .play-pill{padding:14px 18px;border-radius:50%}
+  body.explore .course-video .play-pill span{display:none}
+}

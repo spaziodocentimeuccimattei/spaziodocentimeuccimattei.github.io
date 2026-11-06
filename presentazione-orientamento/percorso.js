@@ -26,6 +26,37 @@
       <div class="ia-q enter"><small>Responsabilità</small><h3>Chi decide: la macchina o la persona?</h3><p><span>Come la affrontiamo</span><b>La persona.</b> Si dichiara l’aiuto ricevuto, si proteggono i dati, si risponde delle proprie scelte.</p></div>
     </div>`};
 
+  /* «Tocca a voi»: dopo ogni video, domande leggere per coinvolgere la sala. Una domanda per clic (stesso tasto delle slide);
+     nessuna risposta a schermo: il collegamento con l'indirizzo è nelle note del relatore. La terza domanda è facoltativa. */
+  const MODI={mano:['✋','Alzate la mano'],voce:['💬','Rispondete a voce'],scelta:['↔','Scegliete']};
+  const TOCCA={
+    cat:{code:'CAT',color:'#79cf1b',q:[
+      ['mano','Alzi la mano chi, da piccolo, costruiva case con i Lego o su Minecraft.','«Progettare è la stessa cosa, ma con regole vere: misure, materiali, sicurezza.»'],
+      ['voce','Potete ridisegnare un posto del vostro paese: quale scegliete, e che cosa ci fate?','«È il lavoro di chi studia CAT: leggere un luogo, rilevarlo e progettare come farlo funzionare meglio.»'],
+      ['scelta','Casa sull’albero o casa sott’acqua: quale progettereste?','«In tutti e due i casi servono rilievo, calcolo e i materiali giusti: le materie che avete visto nel video.»']]},
+    afm:{code:'AFM',color:'#00823f',q:[
+      ['voce','Avete cento euro per aprire un’attività nel vostro paese: che cosa aprite?','«Avete appena fatto la prima domanda di AFM: come si trasforma un’idea in un’attività.»'],
+      ['mano','Alzi la mano chi, quando si ordina la pizza con gli amici, è quello che fa i conti.','«Tenere i conti è il cuore di Economia aziendale, la materia più ampia di AFM.»'],
+      ['scelta','Meglio inventare il prodotto, o convincere tutti a comprarlo?','«Servono tutte e due le cose: la seconda si chiama marketing, ed è la M di AFM.»']]},
+    sia:{code:'SIA',color:'#58bba9',q:[
+      ['mano','Alzi la mano chi ha pensato almeno una volta: «Questa app la farei meglio io».','«In SIA si impara proprio questo: progettare programmi che semplificano il lavoro.»'],
+      ['voce','Una cosa noiosa che fate ogni giorno e che fareste fare a un programma?','«Ordini, magazzino, fatture: in un’azienda le cose ripetitive sono tante, e un programma le può organizzare.»'],
+      ['voce','Siete l’informatico di una pizzeria: che cosa fate fare al computer?','«Ordini, magazzino, conti e dati dei clienti protetti: è un piccolo sistema informativo aziendale.»']]},
+    turismo:{code:'Turismo',color:'#d35400',q:[
+      ['voce','Un turista arriva nel vostro paese per un giorno solo: dove lo portate?','«Avete appena progettato un itinerario: è il primo lavoro di chi studia Turismo.»'],
+      ['voce','Chi sa dire «benvenuto» in tre lingue? Proviamo.','«In Turismo le lingue sono tre: inglese, francese e spagnolo.»'],
+      ['scelta','Viaggio dei sogni: mare, montagna o città d’arte?','«Dietro ogni viaggio c’è qualcuno che lo progetta, lo racconta e accoglie: tour operator, enti, strutture ricettive.»']]},
+    ssas:{code:'SSAS',color:'#ef0b62',q:[
+      ['mano','Alzi la mano chi, quando un amico è giù, è quello a cui va a raccontarlo.','«Avete già uno strumento del mestiere: l’ascolto. In SSAS lo allenate in laboratorio, con i giochi di ruolo.»'],
+      ['scelta','Superpotere: capire cosa prova una persona solo guardandola, oppure riuscire a farla ridere quando è triste?','«In questo indirizzo si allenano tutti e due: si chiamano empatia e animazione.»'],
+      ['voce','Nel vostro paese c’è una signora anziana che vive da sola e non esce quasi mai. Avete un pomeriggio: che cosa vi inventate?','«È quello che chiamiamo invecchiamento attivo: non assistere, ma far tornare a partecipare.»']]}
+  };
+  const toccaScenes=Object.fromEntries(Object.entries(TOCCA).map(([id,t])=>[`tocca-${id}`,{id:`tocca-${id}`,title:`Tocca a voi · ${t.code}`,class:'tocca-scene',course:`${id}`,color:t.color,
+    note:`Una domanda per clic, con lo stesso tasto delle slide: la domanda precedente sfuma e arriva la successiva. Nessuna risposta a schermo. Lascia rispondere due o tre ragazzi, poi il collegamento. ${t.q.map((x,i)=>`${i+1}${i===2?' (facoltativa, si salta se si è in ritardo)':''}: ${x[2]}`).join(' ')}`,
+    html:`<div class="tocca-head">${k('Tocca a voi')}<span class="tocca-tag">${t.code}</span></div>
+    <div class="tocca-stage">${t.q.map((x,i)=>`<div class="tocca-q${i===0?' on':''}" data-step="${i}"><span class="tocca-mode"><i aria-hidden="true">${MODI[x[0]][0]}</i>${MODI[x[0]][1]}</span><p>${x[1]}</p></div>`).join('')}</div>
+    <div class="tocca-foot"><div class="tocca-dots" aria-hidden="true">${t.q.map((_,i)=>`<span class="${i===0?'on':''}"></span>`).join('')}</div><span class="tocca-count">Domanda 1 di ${t.q.length}</span></div>`}]));
+
   /* Il prossimo passo: Open Day, Bussola e iscrizione in un’unica schermata. */
   const prossimiPassi={id:'prossimipassi',title:'Il prossimo passo · Visite, Bussola, iscrizione',class:'navy nextsteps nextsteps-compact',
     note:'Riunisce le vecchie schermate Bussola e Open Day; la Bussola qui è solo annunciata, si apre nell’ultima schermata. Date di Open Day e iscrizioni: si seguono sul sito ufficiale, non inventare scadenze 2027/28. SIA: in prima si sceglie AFM.',
@@ -82,20 +113,22 @@
   const chapters=[
     {label:'La domanda',ids:['benvenuti','imparare','ia-domanda','ia-scuola']},
     {label:'Chi siamo',ids:['coetanei','storia','convegno','abitare','metodo']},
-    {label:'Che cosa studi',ids:['indirizzi','afm','sia','turismo','cat','ssas','serali']},
-    {label:'Come si impara',ids:['laboratori','metodologie','fsl','fuori-aula','erasmus','tecnologie']},
+    {label:'Che cosa studi',ids:['indirizzi','cat','tocca-cat','afm','tocca-afm','sia','tocca-sia','turismo','tocca-turismo','ssas','tocca-ssas','serali']},
+    {label:'Come si impara',ids:['fsl','erasmus']},
     {label:'Per ciascuno',ids:['inclusione','vita']},
-    {label:'Il prossimo passo',ids:['prossimipassi','info','bussola','bussola-via','grazie']}
+    {label:'Il prossimo passo',ids:['prossimipassi','info','bussola','bussola-via','grazie']},
+    /* Fuori dal percorso lineare: il loro contenuto è ora nei video degli indirizzi. Si leggono in Esplora, dopo «Grazie». */
+    {label:'Approfondimenti · in Esplora',extra:true,ids:['laboratori','metodologie','fuori-aula','tecnologie']}
   ];
 
-  /* Scaletta da 30 minuti (in minuti per schermata); le facoltative si saltano se si è in ritardo. */
+  /* Scaletta di circa 33 minuti (in minuti per schermata); le facoltative si saltano se si è in ritardo. */
   const minutes={benvenuti:.5,imparare:1,'ia-domanda':2,'ia-scuola':2,
     coetanei:1,storia:1,convegno:.5,abitare:1,metodo:1,
-    indirizzi:.5,afm:1.5,sia:1,turismo:1.5,cat:1.5,ssas:1.5,serali:.5,
-    laboratori:.5,metodologie:1.5,fsl:1,'fuori-aula':1,erasmus:1,tecnologie:.5,
+    indirizzi:.5,cat:1.75,'tocca-cat':.75,afm:1.75,'tocca-afm':.75,sia:1.75,'tocca-sia':.75,turismo:1.5,'tocca-turismo':.75,ssas:1.75,'tocca-ssas':.75,serali:.5,
+    fsl:.5,erasmus:1,
     inclusione:1,vita:.5,
     prossimipassi:1,info:.5,bussola:2,'bussola-via':3,grazie:1};
-  const optional=['convegno','serali','fuori-aula','tecnologie','vita','bussola'];
+  const optional=['convegno','serali','vita','bussola'];
 
   /* Che cosa dire: una battuta e il passaggio alla schermata successiva. */
   const say={
@@ -110,16 +143,16 @@
     convegno:'«Ci chiediamo che cosa serve alla scuola di oggi»: indica i quattro temi, compreso quello sull’IA appena visto.',
     abitare:'Gli studenti partecipano alle scelte sugli spazi. Il video parte dal piano di quest’anno. Se chiedono dell’orto: c’è già, il video parla della sua versione inclusiva. Fai vedere un esempio: l’Agorà.',
     metodo:'Scegli una sola delle quattro voci, quella più vicina al pubblico. «Si impara anche abitando bene la scuola.»',
-    indirizzi:'«Cinque domande diverse: quale vi incuriosisce?» Puoi cliccare l’indirizzo che il pubblico sceglie.',
-    afm:'Leggi la domanda. Muovi il cursore dei costi. Indica le materie di indirizzo in evidenza.',
-    sia:'Ricorda: in prima ci si iscrive ad AFM, SIA si sceglie dal terzo anno. Indica le materie.',
-    turismo:'Leggi la domanda e indica le tre lingue. Le giovani guide del Romanico sono studenti della scuola.',
-    cat:'Diploma in quattro anni, con lo stesso valore del quinquennale. Il +2 all’ITS è facoltativo.',
-    ssas:'Leggi la domanda. Indica le materie di indirizzo, Metodologie operative in testa. Il diploma non dà da solo qualifiche come OSS o educatore.',
+    indirizzi:'«Cinque indirizzi, cinque domande diverse. Ve li facciamo raccontare da cinque brevi video, e dopo ognuno tocca a voi.» Si parte da CAT. Puoi anche cliccare l’indirizzo che sceglie il pubblico.',
+    afm:'«Come si trasforma un’idea in un’attività? Ve lo racconta AFM.» Premi «Guarda il video». Il video si chiude presentando SIA, che vedete subito dopo.',
+    sia:'«In prima ci si iscrive ad AFM; dal terzo anno si può scegliere SIA.» Premi «Guarda il video».',
+    turismo:'«Come fai scoprire un luogo a chi non lo conosce? Ecco Turismo.» Premi «Guarda il video».',
+    cat:'«Si comincia da CAT: Costruzioni, Ambiente e Territorio, diploma in quattro anni.» Premi «Guarda il video» e lascia parlare il video. Questo video non ha sottotitoli: tieni l’audio acceso. Alla fine, avanti: tocca a loro.',
+    ssas:'«Come aiuti una persona a partecipare e stare meglio? Ecco SSAS.» Premi «Guarda il video».',
     serali:'Un minuto per le famiglie: anche gli adulti possono riprendere gli studi.',
     laboratori:'Lascia parlare le foto. Premi «Guarda» se vuoi la sequenza.',
     metodologie:'«Qui si impara facendo»: avvia la sequenza delle foto e commenta due attività.',
-    fsl:'Quello che studi incontra il lavoro: stage presso imprese, enti e servizi.',
+    fsl:'Trenta secondi: «Stage e uscite li avete visti in tutti i video: è la formazione scuola-lavoro, comune a ogni indirizzo».',
     'fuori-aula':'Il territorio è un’aula: musei, patrimonio, uscite.',
     erasmus:'Europa e lingue insieme: mobilità Erasmus+ e certificazioni in inglese, francese e spagnolo.',
     tecnologie:'Dal disegno all’oggetto: stampa 3D, drone, modelli digitali.',
@@ -128,11 +161,16 @@
     prossimipassi:'Tre passi: vieni a vedere, prova la Bussola, iscriviti. «La Bussola la provate tra due minuti.»',
     info:'Orari e come arrivare, in trenta secondi.',
     contatti:'«Segnate il numero e l’email, anche per i vostri genitori.» Raccogli una o due domande, poi passa all’ultima schermata.',
+    'tocca-cat':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
+    'tocca-afm':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
+    'tocca-sia':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
+    'tocca-turismo':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
+    'tocca-ssas':'Una domanda per clic. Lascia rispondere due o tre ragazzi, poi il collegamento che trovi nelle note. La terza domanda è facoltativa.',
     'bussola-via':'«Ora tocca a voi.» Fai insieme la prima domanda dal palco. Poi tutti sul Chromebook: scrivono l’indirizzo del sito e li guidi a «La Bussola» nel menu. Lascia questa schermata proiettata finché lavorano.'
   };
 
-  window.PERCORSO={chapters,say,scenes:{'ia-domanda':iaDomanda,'ia-scuola':iaScuola,prossimipassi:prossimiPassi,info,'bussola-via':bussolaVia,grazie},minutes,optional,
-    order:chapters.flatMap(c=>c.ids),chapterOf:id=>chapters.findIndex(c=>c.ids.includes(id))};
+  window.PERCORSO={chapters,say,scenes:{...toccaScenes,'ia-domanda':iaDomanda,'ia-scuola':iaScuola,prossimipassi:prossimiPassi,info,'bussola-via':bussolaVia,grazie},minutes,optional,
+    order:chapters.flatMap(c=>c.ids),extra:chapters.filter(c=>c.extra).flatMap(c=>c.ids),chapterOf:id=>chapters.findIndex(c=>c.ids.includes(id))};
 
   document.addEventListener('click',event=>{
     const b=event.target.closest('[data-ia-vote]');if(!b)return;
