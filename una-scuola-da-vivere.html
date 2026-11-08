@@ -20,7 +20,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icona-32.png">
   <link rel="apple-touch-icon" href="assets/icona-180.png">
   <link rel="stylesheet" href="portal.css?v=20261009-home">
-  <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261024-esame">
+  <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261108-doppioni">
   <link rel="stylesheet" href="scuole-calendario.css?v=20261103-rosa">
 </head>
 <body class="school-calendar-page">
@@ -42,8 +42,6 @@
         <h1 id="page-title">Il calendario<br><span>delle scuole</span></h1>
         <p class="hero-lead">Tutte le scuole, quando andare e dove. Consulta le date confermate e quelle ancora da concordare, poi offri la tua disponibilità.</p>
         <div class="hero-stats" id="heroStats" aria-live="polite">
-          <div><strong data-stat="scuole_visitate">–</strong><span>scuole già raggiunte</span></div>
-          <div><strong data-stat="scuole_con_disponibilita">–</strong><span>scuole con disponibilità</span></div>
           <div><strong data-stat="mattinee_proposte">–</strong><span>proposte ricevute</span></div>
         </div>
       </div>
@@ -89,7 +87,7 @@
         <li><span class="how-num">1</span><div><h3>Dai la disponibilità</h3><p>Scegli fino a cinque scuole e invia il modulo <a href="#scuole">Disponibilità per le visite</a>.</p></div></li>
         <li><span class="how-num">2</span><div><h3>Ricevi l’assegnazione</h3><p>La Funzione Strumentale ti assegna una o più scuole e concorda con te data e orario della visita.</p></div></li>
         <li><span class="how-num">3</span><div><h3>Svolgi la visita</h3><p>Presenti il nostro istituto ai ragazzi con i materiali della Commissione Orientamento.</p></div></li>
-        <li class="how-key"><span class="how-num">4</span><div><h3>Segnala l’attività svolta</h3><p>Lo stesso giorno, o al più tardi il giorno dopo, compila il modulo <a href="#visita">Registra un’attività svolta</a>. La visita entra nel riepilogo destinato alla Dirigente dopo la conferma della Funzione Strumentale.</p></div></li>
+        <li class="how-key"><span class="how-num">4</span><div><h3>Segnala l’attività svolta</h3><p>Lo stesso giorno, o al più tardi il giorno dopo, compila il modulo <a href="#visita">Registra un’attività svolta</a>.</p></div></li>
       </ol>
       <p class="how-note">Se eravate in due, ciascuno registra la propria visita. Vale lo stesso per le Mattinée: dopo averla realizzata, registrala con lo stesso modulo.</p>
     </section>
@@ -112,13 +110,6 @@
       </ul>
     </section>
 
-    <aside class="process-note" aria-label="Che cosa succede dopo l'invio">
-      <strong>Che cosa succede dopo l’invio</strong>
-      <span>La Commissione riceve la richiesta.</span>
-      <span>La Funzione Strumentale ti ricontatta.</span>
-      <span>Data, orario e assegnazione vengono concordati insieme.</span>
-    </aside>
-
     <details class="support-section action-panel" id="scuole" open>
       <summary class="support-heading"><span class="section-number">01</span><span class="summary-copy"><span class="eyebrow">Prima fase · circa 2 minuti</span><strong id="scuole-title">Disponibilità per le visite</strong><small>Indica le scuole in cui potresti presentare il nostro istituto.</small></span><span class="summary-action"><span>Apri il modulo</span><b aria-hidden="true">⌄</b></span></summary>
       <div class="action-panel-body">
@@ -129,7 +120,7 @@
         </div>
         <fieldset class="school-fieldset">
           <legend>Scegli fino a cinque scuole <span class="optional" id="schoolCounter">0 di 5 scelte</span></legend>
-          <p class="school-help">Puoi scegliere da una a cinque scuole. Lo stato serve soltanto a distribuire meglio le disponibilità. Date, orari, luoghi e indicazioni delle scuole sono nel calendario in alto.</p>
+          <p class="school-help">Lo stato serve soltanto a distribuire meglio le disponibilità. Date, orari, luoghi e indicazioni delle scuole sono nel calendario in alto.</p>
           <div id="schoolChoices" class="school-choices"></div>
           <p id="schoolError" class="field-error" role="alert" hidden>Seleziona almeno una scuola, fino a un massimo di cinque.</p>
         </fieldset>
@@ -221,11 +212,11 @@
       </div>
     </details>
 
-    <aside class="coordination-note"><strong>Coordinamento</strong><span>Prof. Salvatore Picconi · Funzione Strumentale per l’orientamento</span><span>Ricorda: una visita non registrata non risulta nell’elenco per la Dirigente.</span></aside>
+    <aside class="coordination-note"><strong>Coordinamento</strong><span>Prof. Salvatore Picconi · Funzione Strumentale per l’orientamento</span></aside>
   </main>
 
   <footer class="site-footer"><p>IIS Meucci - Mattei, sede di Decimomannu</p><p>Spazio curato dai docenti · Non sostituisce il <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a></p></footer>
-  <script type="module" src="una-scuola-da-vivere.js?v=20261103-rosa"></script>
+  <script type="module" src="una-scuola-da-vivere.js?v=20261108-doppioni"></script>
   <!-- Cloudflare Web Analytics: conteggio delle pagine pubbliche -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"59b3a938ff634bfaaa1caa774a713401","spa":false}'></script>
 </body>

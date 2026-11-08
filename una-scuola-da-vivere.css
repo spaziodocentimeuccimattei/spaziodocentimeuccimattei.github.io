@@ -322,3 +322,7 @@
 
 /* Filtri delle scuole utilizzabili al tocco senza cambiare selezioni o dati. */
 .school-filters button { min-height: 44px; }
+
+/* 8/11/2026 · doppioni tolti: nell'apertura resta solo il riquadro «proposte ricevute»
+   (scuole raggiunte e disponibilità sono nell'«Obiettivo di squadra»). */
+.school-calendar-page .hero-stats { grid-template-columns: minmax(0, 220px); }

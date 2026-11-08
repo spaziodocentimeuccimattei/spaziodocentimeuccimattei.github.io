@@ -113,7 +113,9 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
     const dateCopy=node('span');dateCopy.append(node('b',monthTitle(item.data.slice(0,7))),node('span',new Intl.DateTimeFormat('it-IT',{weekday:'long'}).format(new Date(`${item.data}T12:00:00`))));date.append(number,dateCopy);card.append(date);
     card.append(node('p',timeRange(item),'school-calendar__time'));
     // In Gestione si vede se la data è già definita con la scuola; i docenti vedono solo se è prenotabile.
-    card.append(node('p',admin?`${upcoming?'':'Data trascorsa · '}${planned?'Da confermare con la scuola':'Data definita con la scuola'}`:upcoming?'Data prenotabile':'Data trascorsa','school-calendar__badge'));
+    // Pagina docenti: «Date prenotabili» è già scritto accanto alla scuola, sulla scheda resta solo «Data trascorsa».
+    if(admin)card.append(node('p',`${upcoming?'':'Data trascorsa · '}${planned?'Da confermare con la scuola':'Data definita con la scuola'}`,'school-calendar__badge'));
+    else if(!upcoming)card.append(node('p','Data trascorsa','school-calendar__badge'));
     card.append(node('p',item.tipo==='stand'?'Open day con stand':'Orientamento nelle aule','school-calendar__type'));
     card.append(node('p',item.luogo || 'Luogo da definire','school-calendar__place'));
     if(admin && item.nota) {const note=node('div',null,'school-calendar__note');note.append(node('strong','Nota interna'),node('p',item.nota));card.append(note);}
@@ -163,8 +165,9 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
       const tr=node('tr');tr.dataset.school=row.school.id;tr.dataset.calendarState=row.state;const header=schoolHeader(row);if(header.classList.contains('is-confirmed'))tr.classList.add('is-confirmed');tr.append(header);
       if(!ready || !row.all.length || !row.cells.some(cell=>cell.length)) {
         const td=node('td',null,'school-calendar__gap');td.colSpan=3;
-        if(!ready)td.append(node('strong','Le date non sono ancora disponibili'),node('p','Aggiorna la pagina per ricaricare il calendario.'));
-        else if(!row.all.length) {td.append(node('strong',states.get(row.school.id)==='visitata'?'Visita già registrata':'Data da concordare'),node('p',states.get(row.school.id)==='visitata'?'Nessun nuovo appuntamento in arrivo.':'Appuntamento e orario non ancora inseriti.'));}
+        // Pagina docenti: il titolo della cella ripeterebbe lo stato già scritto accanto alla scuola, resta solo la spiegazione.
+        if(!ready){if(admin)td.append(node('strong','Le date non sono ancora disponibili'));td.append(node('p','Aggiorna la pagina per ricaricare il calendario.'));}
+        else if(!row.all.length) {const visited=states.get(row.school.id)==='visitata';if(admin)td.append(node('strong',visited?'Visita già registrata':'Data da concordare'));td.append(node('p',visited?'Nessun nuovo appuntamento in arrivo.':'Appuntamento e orario non ancora inseriti.'));}
         else {td.append(node('strong','Appuntamenti fuori dal periodo visualizzato'));for(const item of row.outside)td.append(eventCard(item));}
         tr.append(td);
       } else {

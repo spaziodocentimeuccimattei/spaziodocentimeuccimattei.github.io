@@ -1,4 +1,4 @@
-import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261103-rosa';
+import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261108-doppioni';
 const ORIENTATION_API = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const MAX_SCHOOLS = 5;
 const previewCatalog = document.getElementById('school-preview-data');
@@ -183,11 +183,14 @@ function setStat(name, value) {
 function renderLights(schools) {
   const container = document.getElementById('schoolLights');
   container.replaceChildren();
+  // Nei comuni con più scuole (Assemini) il solo nome del comune comparirebbe due volte: si aggiunge la scuola.
+  const perTown = new Map();
+  for (const school of schools) perTown.set(school.comune, (perTown.get(school.comune) || 0) + 1);
   for (const school of schools) {
     const light = document.createElement('span');
     const state = schoolStates.get(school.id) || 'libera';
     light.className = `light ${state === 'visitata' ? 'lit' : state === 'in_arrivo' ? 'warm' : ''}`;
-    light.textContent = school.comune;
+    light.textContent = perTown.get(school.comune) > 1 ? `${school.comune} · ${school.etichetta}` : school.comune;
     light.title = `${school.comune} · ${school.etichetta}`;
     container.append(light);
   }
