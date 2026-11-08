@@ -1,4 +1,4 @@
-import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261108-doppioni';
+import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261108-nomi';
 const ORIENTATION_API = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const MAX_SCHOOLS = 5;
 const previewCatalog = document.getElementById('school-preview-data');
@@ -13,6 +13,7 @@ const schoolError = document.getElementById('schoolError');
 const schoolCounter = document.getElementById('schoolCounter');
 
 let schoolStates = new Map();
+let schoolNames = new Map();
 let overviewLoaded = false;
 const schoolCalendar = createSchoolCalendar(document.getElementById('teacherSchoolCalendar'), {
   onChoose(school) {
@@ -72,7 +73,8 @@ function applySchoolStates() {
     const state = schoolStates.get(option.dataset.school) || 'libera';
     option.dataset.state = state;
     const tag = option.querySelector('.school-tag');
-    tag.textContent = !overviewLoaded ? 'Stato non disponibile' : state === 'visitata' ? 'Già visitata' : state === 'in_arrivo' ? 'Disponibilità presente' : 'Nessuna disponibilità';
+    const who = schoolNames.get(option.dataset.school) || [];
+    tag.textContent = !overviewLoaded ? 'Stato non disponibile' : state === 'visitata' ? 'Già visitata' : state === 'in_arrivo' ? (who.length ? `Già data da ${who.join(', ')}` : 'Disponibilità presente') : 'Nessuna disponibilità';
   }
 }
 
@@ -191,7 +193,8 @@ function renderLights(schools) {
     const state = schoolStates.get(school.id) || 'libera';
     light.className = `light ${state === 'visitata' ? 'lit' : state === 'in_arrivo' ? 'warm' : ''}`;
     light.textContent = perTown.get(school.comune) > 1 ? `${school.comune} · ${school.etichetta}` : school.comune;
-    light.title = `${school.comune} · ${school.etichetta}`;
+    const who = schoolNames.get(school.id) || [];
+    light.title = `${school.comune} · ${school.etichetta}${who.length ? ` · disponibilità: ${who.join(', ')}` : ''}`;
     container.append(light);
   }
 }
@@ -220,10 +223,11 @@ async function loadOverview(schools) {
     const data = await send('overview', {});
     overviewLoaded = true;
     schoolStates = new Map(data.scuole.map((school) => [school.id, school.stato]));
+    schoolNames = new Map(data.scuole.map((school) => [school.id, Array.isArray(school.docenti) ? school.docenti : []]));
     const appointments=[...(data.appuntamenti || [])].sort(compareAppointments);
     for (const [key, value] of Object.entries(data.totali)) setStat(key, value);
     renderMission(data.totali.scuole, data.totali.scuole_visitate, data.totali.scuole_con_disponibilita);
-    schoolCalendar.update(schools, appointments, schoolStates);
+    schoolCalendar.update(schools, appointments, schoolStates, schoolNames);
   } catch {
     schoolCalendar.setError(schools);
     if (!overviewLoaded) {

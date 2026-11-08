@@ -76,7 +76,7 @@ function action(text, handler, className='school-calendar__action') {
 }
 
 export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose, onConfirm} = {}) {
-  let schools=[], appointments=[], states=new Map(), ready=false, start=italyToday().slice(0,7), filter='all', term='', upcomingBySchool=new Map();
+  let schools=[], appointments=[], states=new Map(), names=new Map(), ready=false, start=italyToday().slice(0,7), filter='all', term='', upcomingBySchool=new Map();
   root.classList.add('school-calendar');
   const heading=node('div',null,'school-calendar__heading');
   const copy=node('div');copy.append(node('p','Orientamento · tutte le scuole','school-calendar__eyebrow'),node('h2','Scuole e calendario'),node('p','Date, orari e luoghi per ciascuna scuola. Le scuole senza appuntamenti restano nell’elenco.','school-calendar__lead'));
@@ -134,7 +134,7 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
     else th.append(node('span',admin&&row.state==='undated'?'Senza data in arrivo':labels[row.state],`school-calendar__school-state is-${row.state}`));
     const participation=states.get(row.school.id);
     if(participation==='visitata')th.append(node('small','Visita già registrata','school-calendar__participation'));
-    else if(participation==='in_arrivo')th.append(node('small','Disponibilità docente presente','school-calendar__participation'));
+    else if(participation==='in_arrivo'){const who=names.get(row.school.id)||[];th.append(node('small',who.length?`Disponibilità già data da ${who.join(', ')}`:'Disponibilità docente presente','school-calendar__participation'));}
     if(row.school.avviso) {
       const detail=node('details',null,'school-calendar__notice');detail.append(node('summary','Indicazioni della scuola'));
       detail.append(node('strong',row.school.avviso.titolo));
@@ -183,8 +183,9 @@ export function createSchoolCalendar(root, {admin=false, onAdd, onEdit, onChoose
   render();
   return {
     setFilter(key) {if(buttons.has(key)){filter=key;term='';search.value='';render();}},
-    update(nextSchools,nextAppointments,nextStates=new Map()) {schools=nextSchools;appointments=nextAppointments;states=nextStates;ready=true;message.textContent='';message.classList.remove('is-error');render();},
+    // nextNames: per scuola i colleghi che hanno dato disponibilità («M. Rossi»), solo nella pagina docenti.
+    update(nextSchools,nextAppointments,nextStates=new Map(),nextNames=new Map()) {schools=nextSchools;appointments=nextAppointments;states=nextStates;names=nextNames;ready=true;message.textContent='';message.classList.remove('is-error');render();},
     setError(nextSchools=schools) {schools=nextSchools;message.textContent=ready?'Impossibile aggiornare il calendario. Sono ancora visibili le ultime date caricate.':'Le date non sono disponibili: non è possibile stabilire quali scuole abbiano un appuntamento. Riprova con Aggiorna calendario.';message.classList.add('is-error');render();},
-    clear() {schools=[];appointments=[];states=new Map();ready=false;message.textContent='';render();},
+    clear() {schools=[];appointments=[];states=new Map();names=new Map();ready=false;message.textContent='';render();},
   };
 }

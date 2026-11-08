@@ -12,6 +12,13 @@ salva in tabelle con RLS attivo e nessun accesso diretto per `anon` o
 Strumentale) può leggere i contributi e aggiornarne lo stato in `gestione.html` (area di gestione separata dall’area documenti). I livelli `orientatore` e `supporter`
 dell’area riservata non leggono questi dati.
 
+Eccezione decisa da Salvatore l’8/11/2026: chi dà disponibilità deve vedere chi l’ha
+già data. L’azione pubblica `overview` restituisce per ogni scuola `docenti`, l’elenco
+dei colleghi con disponibilità non archiviata, in ordine di invio, nella forma «M. Rossi»
+(iniziale del nome e cognome). Note, date di invio e nomi completi restano riservati.
+La pagina lo dichiara sotto il modulo e mostra i nomi sotto ciascuna scuola, nel
+calendario e nell’elenco delle caselle.
+
 L’elenco delle 24 scuole/sedi in 23 comuni deriva dal DOCX operativo la cui
 ultima modifica interna è del 23 luglio 2026. Le denominazioni vanno confermate
 prima della pubblicazione. Il catalogo pubblico `scuole-orientamento.json` e il

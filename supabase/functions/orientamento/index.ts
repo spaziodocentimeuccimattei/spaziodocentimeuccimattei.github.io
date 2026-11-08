@@ -273,6 +273,32 @@ function personKey(nome: string, cognome: string) {
   return `${nome} ${cognome}`.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/\s+/g, " ").trim();
 }
 
+// Forma pubblica del nome: iniziale del nome e cognome («M. Rossi»), con le maiuscole sistemate.
+function shortName(nome: string, cognome: string) {
+  const tidy = (value: string) => value.trim().replace(/\s+/g, " ");
+  const capital = (value: string) => value === value.toLowerCase() || value === value.toUpperCase()
+    ? value.toLowerCase().replace(/(^|[\s'’-])(\p{L})/gu, (_, start, letter) => start + letter.toUpperCase())
+    : value;
+  const initial = tidy(nome).charAt(0).toUpperCase();
+  return `${initial}. ${capital(tidy(cognome))}`;
+}
+
+// Per ogni scuola i colleghi che hanno dato disponibilità, in ordine di invio, una volta sola.
+function supportersBySchool(supporters: Supporter[]) {
+  const bySchool = new Map<string, Map<string, string>>();
+  const ordered = [...supporters].filter((item) => item.stato !== "archiviata")
+    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  for (const item of ordered) {
+    const key = personKey(item.nome, item.cognome);
+    for (const id of item.scuole ?? []) {
+      if (!bySchool.has(id)) bySchool.set(id, new Map());
+      const names = bySchool.get(id)!;
+      if (!names.has(key)) names.set(key, shortName(item.nome, item.cognome));
+    }
+  }
+  return new Map([...bySchool].map(([id, names]) => [id, [...names.values()]]));
+}
+
 function localToday() {
   return new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date());
 }
@@ -308,6 +334,8 @@ async function overview(request: Request) {
     for (const item of data.supporters as Supporter[]) if (item.stato !== "archiviata") participants.add(personKey(item.nome, item.cognome));
     for (const item of data.proposals as Proposal[]) if (item.stato !== "archiviata") participants.add(personKey(item.nome, item.cognome));
     for (const item of data.activities as Activity[]) participants.add(personKey(item.nome, item.cognome));
+    // Decisione di Salvatore dell'8/11/2026: chi dà disponibilità vede chi l'ha già data (iniziale e cognome, mai la nota).
+    const names = supportersBySchool(data.supporters as Supporter[]);
     return json(request, {
       totali: {
         docenti: participants.size,
@@ -323,6 +351,7 @@ async function overview(request: Request) {
         comune: school.comune,
         etichetta: school.etichetta,
         stato: visited.has(school.id) ? "visitata" : offered.has(school.id) ? "in_arrivo" : "libera",
+        docenti: names.get(school.id) ?? [],
       })),
       // Date da oggi in poi, senza la nota: è ciò che i docenti vedono prima di candidarsi.
       appuntamenti: data.appointments.filter((item) => item.data >= today).map((item) => ({
