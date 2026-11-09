@@ -26,6 +26,7 @@ Verifica della logica e della protezione della bozza:
 node scripts/verifica-calendario-scuole.mjs
 node scripts/verifica-conferma-visite.mjs
 node --experimental-vm-modules scripts/verifica-annullamento-attivita.mjs
+node scripts/verifica-modifica-invii.mjs
 ```
 
 La prova delle conferme esegue lo stesso handler Edge con database e accessi fittizi in memoria, senza rete o dati reali. Verifica i ruoli, gli stati inviati dal modulo pubblico, la conferma FS esplicita, il blocco delle date future, il passare del tempo senza conferma automatica, la riconferma dopo una modifica e il giorno italiano.

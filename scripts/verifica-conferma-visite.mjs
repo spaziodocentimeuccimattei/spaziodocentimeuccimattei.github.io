@@ -25,6 +25,7 @@ export async function isolatedOrientation({now = '2026-10-16T12:00:00Z', seed = 
     constructor(table) {this.table=table; this.filters=[]; this.operation='select';}
     select() {return this;}
     eq(k,v) {this.filters.push(r=>r[k]===v); return this;}
+    in(k,values) {this.filters.push(r=>values.includes(r[k])); return this;}
     gt(k,v) {this.filters.push(r=>r[k]>v); return this;}
     lt(k,v) {this.filters.push(r=>r[k]<v); return this;}
     lte(k,v) {this.filters.push(r=>r[k]<=v); return this;}

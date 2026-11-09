@@ -227,6 +227,117 @@ function schoolLabel(id) {
   return school ? `${school.comune} · ${school.etichetta}` : id;
 }
 
+// Chi invia senza password non può più correggere: la Funzione Strumentale corregge tutto dalla scheda (9/11/2026).
+// Stato, codice e data di invio non cambiano; la nota resta visibile solo qui.
+function editorField(label, name, value, {type = 'text', min, max, required = true, multiline = false, wide = false, hint = '', options = null, optional = 'facoltativo'} = {}) {
+  const field = el('label', wide ? 'submission-wide' : '');
+  const title = el('span', 'editor-label', label);
+  if (!required) title.append(el('span', '', ` ${optional}`));
+  field.append(title);
+  let input;
+  if (options) {
+    input = document.createElement('select');
+    for (const [key, text] of options) { const option = el('option', '', text); option.value = key; input.append(option); }
+  } else if (multiline) {
+    input = document.createElement('textarea');
+    input.rows = 4;
+  } else {
+    input = document.createElement('input');
+    input.type = type;
+  }
+  input.name = name;
+  input.value = value ?? '';
+  input.required = required;
+  if (type === 'number') { if (min !== undefined) input.min = String(min); if (max !== undefined) input.max = String(max); }
+  else { if (min) input.minLength = min; if (max) input.maxLength = max; }
+  field.append(input);
+  if (hint) field.append(el('small', '', hint));
+  return field;
+}
+
+function openSubmissionEditor(card, item, kind) {
+  const original = [...card.childNodes];
+  const form = el('form', 'activity-form submission-editor');
+  const message = el('p', 'global-message submission-wide');
+  message.setAttribute('role', 'status');
+  form.append(el('h4', 'submission-wide', kind === 'supporter' ? `Modifica la disponibilità di ${item.nome} ${item.cognome}` : `Modifica la proposta «${item.titolo}»`));
+  form.append(editorField('Nome', 'nome', item.nome, {min: 2, max: 80}), editorField('Cognome', 'cognome', item.cognome, {min: 2, max: 80}));
+  if (kind === 'supporter') {
+    const box = el('fieldset', 'submission-wide submission-schools');
+    box.append(el('legend', '', 'Scuole (da una a cinque)'));
+    for (const school of data.scuole) {
+      const option = el('label', 'submission-school');
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.name = 'scuole';
+      input.value = school.id;
+      input.checked = item.scuole.includes(school.id);
+      option.append(input, document.createTextNode(` ${school.comune} · ${school.etichetta}`));
+      box.append(option);
+    }
+    box.addEventListener('change', (event) => {
+      if (box.querySelectorAll('input:checked').length > 5) { event.target.checked = false; message.textContent = 'Al massimo cinque scuole.'; }
+    });
+    form.append(box);
+  } else {
+    form.append(
+      editorField('Titolo', 'titolo', item.titolo, {min: 3, max: 160, wide: true}),
+      editorField('Indirizzo o area', 'area', item.area, {min: 2, max: 120}),
+      editorField('Tipologia', 'tipologia', item.tipologia, {options: Object.entries(PROPOSAL_TYPES)}),
+      editorField('Durata', 'durata_minuti', String(item.durata_minuti), {options: [30, 45, 60, 90].map((n) => [String(n), `${n} minuti`])}),
+      editorField('Partecipanti indicativi', 'partecipanti', item.partecipanti ?? '', {type: 'number', min: 1, max: 200, required: false}),
+      editorField('Che cosa fanno i ragazzi', 'descrizione', item.descrizione, {min: 10, max: 1200, multiline: true, wide: true}),
+      editorField('Spazi e attrezzature', 'esigenze', item.esigenze, {max: 600, multiline: true, required: false, wide: true, optional: 'facoltativi'}));
+  }
+  form.append(editorField('Nota', 'nota', item.nota, {max: 600, multiline: true, required: false, wide: true, optional: 'facoltativa',
+    hint: 'Visibile solo nella Gestione: non compare nella pagina dei docenti. Massimo 600 caratteri.'}));
+  const buttons = el('div', 'submission-wide editor-buttons');
+  const save = el('button', 'act ok', 'Salva le modifiche');
+  save.type = 'submit';
+  const cancel = el('button', 'act neutral', 'Annulla');
+  cancel.type = 'button';
+  buttons.append(save, cancel);
+  form.append(buttons, message);
+  form.addEventListener('input', () => { form.dataset.dirty = 'true'; });
+  form.addEventListener('change', () => { form.dataset.dirty = 'true'; });
+  cancel.addEventListener('click', () => { card.replaceChildren(...original); card.querySelector('.act.edit')?.focus({preventScroll: true}); });
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    const values = Object.fromEntries(new FormData(form).entries());
+    const payload = {...values, id: item.id};
+    if (kind === 'supporter') {
+      payload.scuole = [...form.querySelectorAll('input[name="scuole"]:checked')].map((input) => input.value);
+      if (payload.scuole.length < 1 || payload.scuole.length > 5) { message.textContent = 'Scegli da una a cinque scuole.'; return; }
+    } else {
+      payload.durata_minuti = Number(values.durata_minuti);
+      payload.partecipanti = values.partecipanti ? Number(values.partecipanti) : null;
+    }
+    const renamed = personKey(payload) !== personKey(item);
+    const linked = renamed && [...data.attivita, ...data.da_confermare].some((visit) => personKey(visit) === personKey(item));
+    save.disabled = true;
+    cancel.disabled = true;
+    message.textContent = 'Salvataggio…';
+    try {
+      await api(kind === 'supporter' ? 'edit_supporter' : 'edit_proposal', payload);
+      delete form.dataset.dirty;
+      globalMessage.textContent = `Modifiche salvate per ${payload.nome} ${payload.cognome}.${linked ? ` Le attività già registrate a nome di ${item.nome} ${item.cognome} restano con il nome di prima: correggile in «Registro».` : ''}`;
+      await load();
+    } catch (error) {
+      save.disabled = false;
+      cancel.disabled = false;
+      handleError(error, message);
+    }
+  });
+  card.replaceChildren(form);
+  form.elements.nome.focus({preventScroll: true});
+  form.scrollIntoView({block: 'nearest', behavior: 'instant'});
+}
+
+function unsavedEditor() {
+  return document.querySelector('.submission-editor[data-dirty]');
+}
+
 function renderSupporters(schoolNames) {
   const list = document.getElementById('supporterList');
   list.replaceChildren();
@@ -263,6 +374,7 @@ function renderSupporters(schoolNames) {
     }
     card.append(rows);
     const actions = el('div', 'review-actions');
+    actions.append(actionButton(item.nota ? 'Modifica' : 'Modifica o aggiungi una nota', 'neutral edit', () => openSubmissionEditor(card, item, 'supporter')));
     if (item.stato !== 'archiviata') actions.append(actionButton('Archivia', 'no', (b) => setState('supporter', item, 'archiviata', b)));
     if (item.stato !== 'ricevuta') actions.append(actionButton('Riporta tra quelle da assegnare', 'neutral', (b) => setState('supporter', item, 'ricevuta', b)));
     card.append(actions);
@@ -303,6 +415,7 @@ function renderProposals() {
     if (item.esigenze) card.append(line('Spazi e attrezzature', item.esigenze));
     if (item.nota) card.append(line('Note', item.nota));
     const actions = el('div', 'review-actions');
+    actions.append(actionButton(item.nota ? 'Modifica' : 'Modifica o aggiungi una nota', 'neutral edit', () => openSubmissionEditor(card, item, 'proposta')));
     if (item.stato !== 'approvata') actions.append(actionButton('Approva proposta', 'ok', (b) => setState('proposta', item, 'approvata', b)));
     if (item.stato === 'ricevuta') actions.append(actionButton('Segna in valutazione', 'neutral', (b) => setState('proposta', item, 'in_valutazione', b)));
     if (item.stato !== 'archiviata') actions.append(actionButton('Archivia', 'no', (b) => setState('proposta', item, 'archiviata', b)));
@@ -899,7 +1012,12 @@ document.getElementById('activityDiscard').addEventListener('click', () => {
   const item = [...data.attivita, ...data.da_confermare].find(row => row.id === activityForm.elements.id.value);
   if (item) requestActivityCancellation(item, activityForm, activityForm.querySelector('.appointment-buttons'));
 });
-refreshButton.addEventListener('click', load);
+// Aggiornare la pagina chiuderebbe una modifica non salvata: prima si salva o si annulla.
+refreshButton.addEventListener('click', () => {
+  const draft = unsavedEditor();
+  if (draft) { globalMessage.textContent = 'Hai una modifica non salvata: salvala o annullala prima di aggiornare.'; draft.scrollIntoView({block: 'nearest', behavior: 'instant'}); return; }
+  load();
+});
 document.getElementById('exportButton').addEventListener('click', exportActivities);
 document.getElementById('logoutButton').addEventListener('click', async () => {
   try { await api('logout'); } catch { /* la sessione locale viene chiusa comunque */ }

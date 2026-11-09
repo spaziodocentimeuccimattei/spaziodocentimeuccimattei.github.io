@@ -30,6 +30,15 @@ Commissione può segnare un supporter come `assegnata` e una proposta come
 `in_valutazione` o `approvata`. Date e orari saranno aggiunti soltanto quando
 verranno definiti.
 
+Chi invia senza password non può più correggere il proprio invio. Dal 9/11/2026 la
+Funzione Strumentale corregge tutto dalla Gestione, con «Modifica o aggiungi una nota»
+sulla scheda: nella disponibilità nome, cognome, scuole (da una a cinque) e nota; nella
+proposta tutti i campi del modulo. Azioni `edit_supporter` ed `edit_proposal`, riservate
+alla sessione `funzione_strumentale`, con gli stessi controlli del modulo pubblico. Stato,
+codice e data di invio non cambiano. La nota resta visibile solo nella Gestione. Se si
+corregge nome o cognome, le attività già registrate a nome di prima vanno corrette nel
+Registro. Prova: `node scripts/verifica-modifica-invii.mjs`.
+
 ## Ordine di pubblicazione
 
 1. Verificare e correggere le denominazioni delle scuole e sedi nel catalogo e nel seed SQL.

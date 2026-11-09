@@ -209,25 +209,31 @@ async function publicQuota(request: Request) {
   return data === true;
 }
 
+// Campi di una disponibilità: gli stessi controlli per l’invio pubblico e per la correzione della Funzione Strumentale.
+async function supporterFields(payload: Record<string, unknown>) {
+  const nome = publicName(payload.nome);
+  const cognome = publicName(payload.cognome);
+  const scuole = payload.scuole;
+  if (!Array.isArray(scuole) || scuole.length < 1 || scuole.length > 5 ||
+    scuole.some((id) => typeof id !== "string" || !/^[a-z0-9-]{3,80}$/.test(id)) ||
+    new Set(scuole).size !== scuole.length) {
+    throw new Error("Seleziona da una a cinque scuole.");
+  }
+  const nota = publicText(payload.nota ?? "", 0, 600);
+  const { data: valid, error: schoolError } = await admin.from("orientamento_scuole")
+    .select("id").in("id", scuole).eq("attiva", true);
+  if (schoolError) throw new PublicServiceError();
+  if (!valid || valid.length !== scuole.length) throw new Error("L’elenco delle scuole è cambiato. Ricarica la pagina.");
+  return { nome, cognome, scuole: scuole as string[], nota };
+}
+
 async function submitSupporter(request: Request, payload: Record<string, unknown>) {
   try {
     if (payload.website) return json(request, { ok: true, codice: "RICEVUTA" });
-    const nome = publicName(payload.nome);
-    const cognome = publicName(payload.cognome);
-    const scuole = payload.scuole;
-    if (!Array.isArray(scuole) || scuole.length < 1 || scuole.length > 5 ||
-      scuole.some((id) => typeof id !== "string" || !/^[a-z0-9-]{3,80}$/.test(id)) ||
-      new Set(scuole).size !== scuole.length) {
-      throw new Error("Seleziona da una a cinque scuole.");
-    }
-    const nota = publicText(payload.nota ?? "", 0, 600);
-    const { data: valid, error: schoolError } = await admin.from("orientamento_scuole")
-      .select("id").in("id", scuole).eq("attiva", true);
-    if (schoolError) throw new PublicServiceError();
-    if (!valid || valid.length !== scuole.length) throw new Error("L’elenco delle scuole è cambiato. Ricarica la pagina.");
+    const fields = await supporterFields(payload);
     if (!await publicQuota(request)) return json(request, { error: "Troppe richieste da questa connessione. Riprova domani." }, 429);
     const { data, error } = await admin.from("orientamento_disponibilita")
-      .insert({ nome, cognome, scuole, nota }).select("id").single();
+      .insert(fields).select("id").single();
     if (error || !data) throw new PublicServiceError();
     return json(request, { ok: true, codice: confirmationCode(data.id) }, 201);
   } catch (error) {
@@ -235,27 +241,33 @@ async function submitSupporter(request: Request, payload: Record<string, unknown
   }
 }
 
+// Campi di una proposta di Mattinée: gli stessi controlli per l’invio pubblico e per la correzione della Funzione Strumentale.
+function proposalFields(payload: Record<string, unknown>) {
+  const nome = publicName(payload.nome);
+  const cognome = publicName(payload.cognome);
+  const titolo = publicText(payload.titolo, 3, 160);
+  const area = publicText(payload.area, 2, 120);
+  const descrizione = publicText(payload.descrizione, 10, 1200);
+  const esigenze = publicText(payload.esigenze ?? "", 0, 600);
+  const nota = publicText(payload.nota ?? "", 0, 600);
+  if (typeof payload.tipologia !== "string" || !PROPOSAL_TYPES.has(payload.tipologia)) throw new Error("Seleziona una tipologia di attività.");
+  if (typeof payload.durata_minuti !== "number" || !PROPOSAL_DURATIONS.has(payload.durata_minuti)) throw new Error("Seleziona una durata indicativa.");
+  const rawPartecipanti = payload.partecipanti;
+  const partecipanti = rawPartecipanti === null || rawPartecipanti === "" || rawPartecipanti === undefined ? null : rawPartecipanti;
+  if (partecipanti !== null && (typeof partecipanti !== "number" || !Number.isInteger(partecipanti) || partecipanti < 1 || partecipanti > 200)) {
+    throw new Error("Il numero di partecipanti non è valido.");
+  }
+  return { nome, cognome, titolo, area, tipologia: payload.tipologia, descrizione,
+    durata_minuti: payload.durata_minuti, partecipanti, esigenze, nota };
+}
+
 async function submitProposal(request: Request, payload: Record<string, unknown>) {
   try {
     if (payload.website) return json(request, { ok: true, codice: "RICEVUTA" });
-    const nome = publicName(payload.nome);
-    const cognome = publicName(payload.cognome);
-    const titolo = publicText(payload.titolo, 3, 160);
-    const area = publicText(payload.area, 2, 120);
-    const descrizione = publicText(payload.descrizione, 10, 1200);
-    const esigenze = publicText(payload.esigenze ?? "", 0, 600);
-    const nota = publicText(payload.nota ?? "", 0, 600);
-    if (typeof payload.tipologia !== "string" || !PROPOSAL_TYPES.has(payload.tipologia)) throw new Error("Seleziona una tipologia di attività.");
-    if (typeof payload.durata_minuti !== "number" || !PROPOSAL_DURATIONS.has(payload.durata_minuti)) throw new Error("Seleziona una durata indicativa.");
-    const rawPartecipanti = payload.partecipanti;
-    const partecipanti = rawPartecipanti === null || rawPartecipanti === "" || rawPartecipanti === undefined ? null : rawPartecipanti;
-    if (partecipanti !== null && (typeof partecipanti !== "number" || !Number.isInteger(partecipanti) || partecipanti < 1 || partecipanti > 200)) {
-      throw new Error("Il numero di partecipanti non è valido.");
-    }
+    const fields = proposalFields(payload);
     if (!await publicQuota(request)) return json(request, { error: "Troppe richieste da questa connessione. Riprova domani." }, 429);
     const { data, error } = await admin.from("orientamento_proposte")
-      .insert({ nome, cognome, titolo, area, tipologia: payload.tipologia, descrizione,
-        durata_minuti: payload.durata_minuti, partecipanti, esigenze, nota })
+      .insert(fields)
       .select("id").single();
     if (error || !data) throw new PublicServiceError();
     return json(request, { ok: true, codice: confirmationCode(data.id) }, 201);
@@ -512,6 +524,24 @@ async function archiveAppointment(request: Request, payload: Record<string, unkn
     .eq("id", id).select("id").maybeSingle();
   if (error || !data) return json(request, { error: "Eliminazione non riuscita." }, 500);
   return json(request, { ok: true });
+}
+
+// Chi invia senza password non può più correggere: la Funzione Strumentale corregge tutto ciò che è stato scritto
+// (decisione di Salvatore del 9/11/2026). Lo stato e la data di invio restano quelli di prima.
+async function editSubmission(request: Request, payload: Record<string, unknown>, kind: "supporter" | "proposta") {
+  try {
+    const id = payload.id;
+    if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Voce non valida.");
+    const fields = kind === "supporter" ? await supporterFields(payload) : proposalFields(payload);
+    const table = kind === "supporter" ? "orientamento_disponibilita" : "orientamento_proposte";
+    const { data, error } = await admin.from(table).update({ ...fields, updated_at: new Date().toISOString() })
+      .eq("id", id).select("id").maybeSingle();
+    if (error) throw new PublicServiceError();
+    if (!data) throw new Error("Voce non trovata: aggiorna la pagina.");
+    return json(request, { ok: true, id: data.id });
+  } catch (error) {
+    return json(request, { error: error instanceof Error ? error.message : "Modifica non riuscita." }, error instanceof PublicServiceError ? 503 : 400);
+  }
 }
 
 async function updateContribution(request: Request, payload: Record<string, unknown>) {
@@ -789,11 +819,13 @@ Deno.serve(async (request: Request) => {
   if (action === "list") return await listDocuments(request, session.accessLevel);
   if (action === "view_presentation") return await viewPresentation(request, payload, session.accessLevel);
   // La gestione di candidature, proposte, attività e calendario è riservata alla password personale della Funzione Strumentale.
-  if (["list_contributions", "update_contribution", "register_activity", "update_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment"].includes(action) && session.accessLevel !== "funzione_strumentale") {
+  if (["list_contributions", "update_contribution", "edit_supporter", "edit_proposal", "register_activity", "update_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment"].includes(action) && session.accessLevel !== "funzione_strumentale") {
     return json(request, { error: "Accesso riservato alla Funzione Strumentale." }, 403);
   }
   if (action === "list_contributions") return await listContributions(request);
   if (action === "update_contribution") return await updateContribution(request, payload);
+  if (action === "edit_supporter") return await editSubmission(request, payload, "supporter");
+  if (action === "edit_proposal") return await editSubmission(request, payload, "proposta");
   if (action === "register_activity") return await registerActivity(request, payload);
   if (action === "update_activity") return await updateActivity(request, payload);
   if (action === "archive_activity") return await archiveActivity(request, payload);

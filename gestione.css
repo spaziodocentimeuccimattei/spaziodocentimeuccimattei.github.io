@@ -290,3 +290,19 @@
 .manage-next { margin:8px 0 0; color:#fff; font-size:1rem; font-weight:650; }
 .manage-next:empty { display:none; }
 .manage-next::before { content:""; display:inline-block; width:10px; height:10px; margin-right:8px; border-radius:50%; background:#d7f79a; }
+
+/* 9/11/2026 · Correzione di disponibilità e proposte già inviate, dentro la scheda. */
+.gestione-page .submission-editor { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; }
+.gestione-page .submission-editor h4 { margin: 0; }
+.gestione-page .submission-editor .editor-label { color: var(--navy); }
+.gestione-page .submission-editor .editor-label span { display: inline; color: var(--manage-muted, #4a6170); font-weight: 500; }
+.gestione-page .submission-editor .submission-wide { grid-column: 1 / -1; }
+.gestione-page .submission-editor textarea { width: 100%; min-height: 96px; padding: 10px 12px; border: 1px solid #8aa7b4; border-radius: 9px; color: var(--ink); background: #fff; font: inherit; font-size: 1rem; resize: vertical; }
+.gestione-page .submission-editor label small { color: var(--manage-muted, #4a6170); font-size: .875rem; font-weight: 500; }
+.gestione-page .submission-schools { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px 14px; margin: 0; padding: 14px; border: 1px solid #ccd9de; border-radius: 12px; background: #fff; }
+.gestione-page .submission-schools legend { padding: 0 6px; color: var(--navy); font-weight: 800; }
+.gestione-page .submission-school { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: .9375rem; }
+.gestione-page .submission-school input { width: 20px; height: 20px; }
+.gestione-page .submission-editor .editor-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+.gestione-page .submission-editor .editor-buttons button { grid-column: auto; }
+@media (max-width: 650px) { .gestione-page .submission-editor { grid-template-columns: 1fr; } }
