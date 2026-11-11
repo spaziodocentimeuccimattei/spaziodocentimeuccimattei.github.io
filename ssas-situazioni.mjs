@@ -152,10 +152,11 @@ function progress(){
  bar.append(ticks);nav.append(bar);
 }
 function intro(){
- const j=journey(),s=node('section',null,'tm-intro'),started=j.visited>0,c=caseById(j.health.focus);
+ const j=journey(),s=node('section',null,'tm-intro'),c=caseById(j.health.focus);
+ const entered=j.visited>0,started=entered&&Boolean(c);
  const title=node('h1','Che cosa fa chi aiuta le persone?');title.id='ssasEntryTitle';s.setAttribute('aria-labelledby',title.id);
- const line=started&&c?`Hai iniziato la storia di ${c.person}. Puoi continuare da dove avevi lasciato.`:'Scegli una storia e prova a capire, ascoltare e aiutare una persona, in cinque passi.';
- const start=btn(started?'Riprendi':'Inizia',e=>started?resume():classUI.begin(e.currentTarget),'tm-start');
+ const line=started?`Hai iniziato la storia di ${c.person}. Puoi continuare da dove avevi lasciato.`:'Scegli una storia e prova a capire, ascoltare e aiutare una persona, in cinque passi.';
+ const start=btn(started?'Riprendi':'Inizia',e=>entered?resume():classUI.begin(e.currentTarget),'tm-start');
  const art=node('div',null,'tm-intro-art');art.append(entranceImage());
  s.append(node('p','Servizi per la Sanità e l’Assistenza Sociale','tm-kicker'),title,node('p',line,'tm-lead'),start,art);
  mount.append(s);
