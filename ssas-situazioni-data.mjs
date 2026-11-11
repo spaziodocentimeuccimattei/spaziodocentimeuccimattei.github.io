@@ -1,4 +1,5 @@
 import {reviseCase} from './ssas-situazioni-revisione.mjs';
+// ATTENZIONE: i testi che il ragazzo legge sono riscritti e sovrascritti da ssas-situazioni-revisione.mjs (reviseCase). Si modifichino lì.
 // Casi inventati per l’orientamento. Adattamenti delle UDA, per ragazzi di 13–14 anni.
 export const CASES = [
  {
