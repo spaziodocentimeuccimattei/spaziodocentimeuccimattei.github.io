@@ -64,7 +64,7 @@
     html:`<div class="nextsteps-left">${k('Il prossimo passo')}<h2 class="enter">Vieni a vedere.<br>Prova.<br><span class="lime">Scegli.</span></h2></div>
     <div class="nextsteps-list">
       <div class="nextsteps-item"><small>01</small><div><h3>Vieni a vedere</h3><p>Open Day e visite su appuntamento.</p><a class="text-button" href="mailto:orientamattei@gmail.com?subject=Orientamento%20-%20Visita%20alla%20sede">Chiedi una visita ↗</a></div></div>
-      <div class="nextsteps-item"><small>02</small><div><h3>Prova la Bussola</h3><p>Tra poco, sul tuo Chromebook. Poi anche a casa, con la famiglia.</p><a class="text-button" data-esterno href="https://spaziodocentimeuccimattei.github.io/bussola.html" target="_blank" rel="noopener">Apri la Bussola completa ↗</a></div></div>
+      <div class="nextsteps-item"><small>02</small><div><h3>Prova la Bussola</h3><p class="guided-copy">Tra poco, sul tuo Chromebook. Poi anche a casa, con la famiglia.</p><p class="play-copy">Esplora i percorsi e confrontali anche a casa, con la famiglia.</p><a class="text-button" data-esterno href="https://spaziodocentimeuccimattei.github.io/bussola.html" target="_blank" rel="noopener">Apri la Bussola completa ↗</a></div></div>
       <div class="nextsteps-item"><small>03</small><div><h3>Iscriviti online</h3><p>Domanda su Unica. Per SIA si sceglie AFM.</p><a class="text-button" href="https://spaziodocentimeuccimattei.github.io/famiglie.html#iscrizione" target="_blank" rel="noopener">Come iscriversi ↗</a></div></div>
     </div>`};
 
@@ -131,6 +131,14 @@
     prossimipassi:1,info:.5,bussola:2,'bussola-via':3,grazie:1};
   const optional=['convegno','serali','vita','bussola'];
 
+  // Durate in secondi per la riproduzione continua, compreso il tempo per inquadrare i QR.
+  const autoplaySeconds={
+    benvenuti:8, metodo:13, indirizzi:12,
+    cat:12, afm:12, sia:12, turismo:12, ssas:12,
+    fsl:12, erasmus:12, inclusione:13, vita:11,
+    prossimipassi:14, bussola:22, grazie:17
+  };
+
   /* Che cosa dire: una battuta e il passaggio alla schermata successiva. */
   const say={
     bussola:'Fai salire un ragazzo qualsiasi: «Proviamo insieme». Risponde a voce con il numero, tu selezioni e confermi; bastano le 4 domande della prova breve. Poi: «Avete visto com’è fatta: a casa la rifate tutta, con la vostra famiglia» e indica il QR. Nelle classi con i Chromebook si può passare subito alla schermata successiva.',
@@ -170,7 +178,7 @@
     'bussola-via':'«Ora tocca a voi.» Fai insieme la prima domanda dal palco. Poi tutti sul Chromebook: scrivono l’indirizzo del sito e li guidi a «La Bussola» nel menu. Lascia questa schermata proiettata finché lavorano.'
   };
 
-  window.PERCORSO={chapters,say,scenes:{...toccaScenes,'ia-domanda':iaDomanda,'ia-scuola':iaScuola,prossimipassi:prossimiPassi,info,'bussola-via':bussolaVia,grazie},minutes,optional,
+  window.PERCORSO={chapters,say,scenes:{...toccaScenes,'ia-domanda':iaDomanda,'ia-scuola':iaScuola,prossimipassi:prossimiPassi,info,'bussola-via':bussolaVia,grazie},minutes,optional,autoplaySeconds,
     order:chapters.flatMap(c=>c.ids),extra:chapters.filter(c=>c.extra).flatMap(c=>c.ids),chapterOf:id=>chapters.findIndex(c=>c.ids.includes(id))};
 
   document.addEventListener('click',event=>{

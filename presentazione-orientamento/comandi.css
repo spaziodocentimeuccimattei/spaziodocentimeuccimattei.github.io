@@ -15,3 +15,36 @@ body:not(.explore) .sound-panel{left:auto;transform:none;
 body.explore .console{top:auto!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important}
 /* contatore a larghezza fissa: la barra non cambia misura quando cambia il nome del capitolo */
 body:not(.explore) .console #counter{display:inline-block;width:250px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.console #play-button{
+  min-width:68px;background:#79cf1b;color:#092b43;font-size:15px;font-weight:700;white-space:nowrap
+}
+.console #play-button:hover{background:#a4e65e}
+.console #play-button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.auto-playing .console #play-button{background:#fff}
+.auto-playing .console #play-button:hover{background:#e7ecee}
+.auto-playing .progress-line i{display:none}
+.auto-playing #start-actions{visibility:hidden}
+.play-copy,.play-course,.auto-playing .guided-copy,.auto-playing .course-video-layout{display:none}
+.auto-playing .play-copy{display:block}
+.auto-playing .play-course{
+  height:100%;display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1.65fr);gap:44px;align-items:center
+}
+.play-course-copy h2{font-size:78px;line-height:1;margin:0 0 26px}
+.play-course-copy p{font-size:34px;font-weight:700;line-height:1.2}
+.play-course-copy ul{margin:30px 0 0;padding:22px 0 0;list-style:none;border-top:6px solid var(--course)}
+.play-course-copy li{font-size:27px;line-height:1.25;margin:0 0 12px}
+.play-course img{display:block;width:100%;border-bottom:7px solid var(--course)}
+
+@media (max-width:759px) and (orientation:portrait){
+  .console #play-button{min-width:60px;height:44px}
+  body:not(.explore) .console{
+    left:50%!important;right:auto!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;
+    transform:translateX(-50%)!important
+  }
+  body:not(.explore) .console #counter{width:55px}
+  body:not(.explore) .sound-panel{
+    left:50%;right:auto;bottom:calc(70px + env(safe-area-inset-bottom));transform:translateX(-50%)
+  }
+  .sound-panel{width:min(360px,calc(100vw - 20px));max-height:calc(100dvh - 180px);overflow:auto}
+}

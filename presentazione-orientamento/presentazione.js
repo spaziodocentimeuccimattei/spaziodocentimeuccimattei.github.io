@@ -13,7 +13,15 @@
     const v=c.video;
     // In presentazione l'indirizzo lo racconta il video; materie, attività e dopo il diploma restano come approfondimento in Esplora.
     const filmato=`<div class="course-video-layout"><div class="course-video-head"><div class="course-meta"><span class="course-code">${c.code}</span><span class="course-name">${c.name}</span></div><p class="course-video-field">${c.field}</p><button class="course-video-start" data-play-video="video-${c.id}"><b aria-hidden="true">▶</b> Guarda il video<span>${v.durata}</span></button><p class="course-video-hint">Dopo il video, tocca a voi.</p></div><div class="video-frame course-video"><video id="video-${c.id}" playsinline preload="none" poster="${v.poster}" src="${v.src}" controls data-overlay="play-${c.id}" aria-label="Video dell’indirizzo ${escape(c.code)} · ${v.durataEstesa}"></video><button id="play-${c.id}" class="play-overlay" data-play-video="video-${c.id}" aria-label="Guarda il video dell’indirizzo ${escape(c.code)}"><span class="play-pill"><b aria-hidden="true">▶</b> <span>Guarda il video · ${v.durataEstesa}</span></span></button></div></div>`;
-    return `${filmato}<details class="course-extra"><summary class="course-extra-open"><span>Approfondisci ${c.code}</span><small>materie, che cosa fai, dopo il diploma</small><b aria-hidden="true">＋</b></summary><div class="course-layout"><div class="course-copy"><div class="course-meta"><span class="course-code">${c.code}</span><span class="course-name">${c.name}</span></div><h2 class="course-question enter">${c.question}</h2><div class="course-subjects enter"><p class="subjects-label">Materie di indirizzo</p><ul>${c.subjects.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="course-tabs" role="tablist" aria-label="Conosci ${c.code}">${['Che cosa fai','Dopo il diploma'].map((label,i)=>`<button role="tab" id="tab-${c.id}-${i}" data-course-tab="${c.id}" data-tab="${i}" aria-selected="${i===0}" aria-controls="panel-${c.id}" tabindex="${i===0?'0':'-1'}">${label}</button>`).join('')}</div><div class="course-panel" id="panel-${c.id}" role="tabpanel" aria-labelledby="tab-${c.id}-0">${c.panels[0]}</div></div><div class="course-visual enter">${visual}</div></div></details>`;
+    const playCard=`<div class="play-course">
+      <div class="play-course-copy enter">
+        <h2>${escape(c.code)}</h2>
+        ${c.id==='turismo'?'':`<p>${escape(c.name)}</p>`}
+        <ul aria-label="Alcune materie">${c.subjects.slice(0,3).map(subject=>`<li>${escape(subject)}</li>`).join('')}</ul>
+      </div>
+      <img class="enter" src="${v.poster}" alt="${escape(c.question)}">
+    </div>`;
+    return `${filmato}${playCard}<details class="course-extra"><summary class="course-extra-open"><span>Approfondisci ${c.code}</span><small>materie, che cosa fai, dopo il diploma</small><b aria-hidden="true">＋</b></summary><div class="course-layout"><div class="course-copy"><div class="course-meta"><span class="course-code">${c.code}</span><span class="course-name">${c.name}</span></div><h2 class="course-question enter">${c.question}</h2><div class="course-subjects enter"><p class="subjects-label">Materie di indirizzo</p><ul>${c.subjects.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="course-tabs" role="tablist" aria-label="Conosci ${c.code}">${['Che cosa fai','Dopo il diploma'].map((label,i)=>`<button role="tab" id="tab-${c.id}-${i}" data-course-tab="${c.id}" data-tab="${i}" aria-selected="${i===0}" aria-controls="panel-${c.id}" tabindex="${i===0?'0':'-1'}">${label}</button>`).join('')}</div><div class="course-panel" id="panel-${c.id}" role="tabpanel" aria-labelledby="tab-${c.id}-0">${c.panels[0]}</div></div><div class="course-visual enter">${visual}</div></div></details>`;
   }
   const sections=[
     {id:'benvenuti',title:'IIS Meucci - Mattei | Decimomannu',class:'cover centered-cover',note:'Il logo originale è centrale e grande. Avvia con audio riproduce un crescendo musicale stereo di 4,2 secondi: parte piano, cresce rapidamente insieme al logo e termina con una coda dolce. Non è un avvio di computer e non contiene bip o colpi percussivi. La musica entra alla fine; senza audio conserva la sola animazione. Riprova l’apertura permette di regolare le casse. Il browser richiede questo gesto esplicito. Si passa alla domanda con Avanti. La musica è facoltativa e ha due volumi: docente e immagini.',html:`<div class="bottom-rule"><i></i><i></i><i></i><i></i></div><div class="burst" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="cover-centered"><p class="cover-iis">Istituto di Istruzione Superiore</p><img class="cover-logo" src="assets/logo.jpeg" alt="Logo originale IIS Meucci - Mattei | Decimomannu"><h1>IIS Meucci - Mattei <span>| Decimomannu</span></h1><div class="btn-row" id="start-actions"><button class="btn" data-start="audio">Avvia con audio <span aria-hidden="true">▶</span></button><button class="quiet-start" data-start="silent">Senza audio</button></div></div><div class="cover-bottom"><span>Conoscere la scuola</span><span>Orientamento · 2026–2027</span></div>`},
@@ -51,6 +59,79 @@
   const media=$('history-video'), viewer=$('viewer');
   // Le schermate «Approfondimenti» stanno dopo «Grazie» e si leggono in Esplora: il percorso lineare finisce a LIN-1.
   const EXTRA=window.PERCORSO.extra||[], LIN=sections.filter(s=>!EXTRA.includes(s.id)).length;
+  const autoplaySlides=sections.flatMap((section,index)=>{
+    const seconds=window.PERCORSO.autoplaySeconds[section.id];
+    return seconds?[{index,seconds}]:[];
+  });
+  const playButton=$('play-button');
+  let autoplayPosition=-1, autoplayTimer, autoplayMusic=true, coverRequest=0;
+
+  function updateProgress(){
+    const playing=autoplayPosition>=0;
+    const position=playing?autoplayPosition:current;
+    const total=playing?autoplaySlides.length:LIN;
+    const label=playing?'Play':window.PERCORSO.chapters[sections[current].chapter].label;
+    $('counter').innerHTML=position<total?`${String(position+1).padStart(2,'0')} / ${total}<span class="counter-act"> · ${escape(label)}</span>`:'Approfondimento · solo in Esplora';
+    $('progress').style.width=`${Math.min(1,(position+1)/total)*100}%`;
+  }
+
+  function scheduleAutoplay(){
+    clearTimeout(autoplayTimer);
+    if(autoplayPosition<0||document.hidden)return;
+    autoplayTimer=setTimeout(()=>{
+      autoplayPosition=(autoplayPosition+1)%autoplaySlides.length;
+      show(autoplaySlides[autoplayPosition].index,{automatic:true});
+      scheduleAutoplay();
+    },autoplaySlides[autoplayPosition].seconds*1000);
+  }
+
+  function setPlayButton(playing){
+    const label=playing?'Stop':'Play';
+    const action=playing?'Ferma la presentazione automatica':'Avvia la presentazione automatica';
+    playButton.innerHTML=`<span aria-hidden="true">${playing?'■':'▶'}</span> ${label}`;
+    playButton.title=playing?`${action} (Esc)`:action;
+    playButton.setAttribute('aria-label',`${label}: ${action.toLowerCase()}`);
+  }
+
+  function startAutoplay(){
+    coverRequest++;
+    document.querySelectorAll('.scene video').forEach(video=>video.pause());
+    explore=false;
+    document.body.classList.remove('explore');
+    document.body.classList.add('auto-playing');
+    $('explore-button').textContent='Esplora';
+    window.scrollTo(0,0);
+    autoplayPosition=0;
+    show(autoplaySlides[0].index,{automatic:true});
+    setPlayButton(true);
+    const cover=$('benvenuti');
+    cover.classList.remove('started');
+    void cover.offsetWidth;
+    cover.classList.add('started');
+    if(autoplayMusic){
+      Sottofondo.intro().catch(()=>{});
+      Sottofondo.setEnabled(true).then(soundUI).catch(soundUnavailable);
+    }else{
+      Sottofondo.stopIntro();
+      Sottofondo.setEnabled(false,{immediate:true});
+      soundUI();
+    }
+    scheduleAutoplay();
+  }
+
+  function stopAutoplay(){
+    if(autoplayPosition<0)return;
+    clearTimeout(autoplayTimer);
+    autoplayPosition=-1;
+    document.body.classList.remove('auto-playing');
+    $('benvenuti').classList.remove('started');
+    Sottofondo.stopIntro();
+    Sottofondo.setEnabled(false,{immediate:true});
+    setSoundPanel(false);
+    setPlayButton(false);
+    soundUI();
+    updateProgress();
+  }
   // «Tocca a voi»: una domanda alla volta; avanti e indietro scorrono le domande prima di cambiare schermata.
   function toccaSet(i,step){
     const node=nodes[i],qs=[...node.querySelectorAll('.tocca-q')];if(!qs.length)return;
@@ -60,6 +141,7 @@
     const c=node.querySelector('.tocca-count');if(c)c.textContent=`Domanda ${step+1} di ${qs.length}`;
   }
   function advance(dir){
+    stopAutoplay();
     if(!explore){
       const node=nodes[current],qs=node.querySelectorAll('.tocca-q');
       if(qs.length){const st=+(node.dataset.step||0);
@@ -73,7 +155,8 @@
   function updateNotes(){
     try{localStorage.setItem('mattei-v02-relatore',JSON.stringify({index:current,total:LIN,title:sections[current].title,note:sections[current].note,say:sections[current].say,minutes:window.PERCORSO.minutes[sections[current].id]||0,plannedStart:sections.slice(0,current).reduce((t,x)=>t+(window.PERCORSO.minutes[x.id]||0),0),optional:window.PERCORSO.optional.includes(sections[current].id),chapter:`${sections[current].chapter+1} · ${window.PERCORSO.chapters[sections[current].chapter].label}`,next:sections[current+1]?.title||'Fine',updated:Date.now()}))}catch(_){}
   }
-  function show(index,{scroll=true}={}){
+  function show(index,{scroll=true,automatic=false}={}){
+    if(!automatic)stopAutoplay();
     index=Math.max(0,Math.min(sections.length-1,index));
     if(index!==current)document.querySelectorAll('.scene video').forEach(v=>v.pause());
     if(current===0&&index!==current){Sottofondo.stopIntro();$('benvenuti').classList.remove('started')}
@@ -83,8 +166,7 @@
     document.body.classList.toggle('on-finale',sections[current].id==='grazie');
     const focused=document.activeElement;if(!explore&&focused&&focused.closest('.scene')!==nodes[current]&&focused.closest('.scene'))focused.blur();
     nodes.forEach((node,i)=>{node.classList.toggle('active',i===current);node.setAttribute('aria-hidden',String(!explore&&i!==current));node.inert=!explore&&i!==current});
-    $('counter').innerHTML=`${current<LIN?`${String(current+1).padStart(2,'0')} / ${LIN}<span class="counter-act"> · ${escape(window.PERCORSO.chapters[sections[current].chapter].label)}</span>`:'Approfondimento · solo in Esplora'}`;
-    $('progress').style.width=`${Math.min(1,(current+1)/LIN)*100}%`;
+    updateProgress();
     $('previous').disabled=current===0;$('next').disabled=current===LIN-1||current===sections.length-1;
     document.querySelectorAll('#index-list button').forEach((b,i)=>{b.setAttribute('aria-current',String(i===current))});
     history.replaceState(null,'',`#${current+1}`);updateNotes();
@@ -93,14 +175,17 @@
   }
   $('index-list').innerHTML=window.PERCORSO.chapters.map((c,n)=>`<h3 class="index-act"><span>${n+1}</span>${escape(c.label)}<em>${c.extra?'in Esplora':`${String(c.ids.reduce((t,id)=>t+(window.PERCORSO.minutes[id]||0),0)).replace('.',',')} min`}</em></h3>${sections.map((s,i)=>s.chapter===n?`<button data-section="${i}"><span>${String(i+1).padStart(2,'0')}</span>${escape(s.title)}</button>`:'').join('')}`).join('');
   document.querySelector('.progress-line').insertAdjacentHTML('beforeend',window.PERCORSO.chapters.slice(1).filter(c=>!c.extra).map(c=>`<i style="left:${sections.findIndex(s=>s.id===c.ids[0])/LIN*100}%"></i>`).join(''));
-  function toggleExplore(){explore=!explore;document.body.classList.toggle('explore',explore);$('explore-button').textContent=explore?'Presenta':'Esplora';if(!explore){window.scrollTo(0,0);startPresentation()}else show(current)}
+  function toggleExplore(){stopAutoplay();explore=!explore;document.body.classList.toggle('explore',explore);$('explore-button').textContent=explore?'Presenta':'Esplora';if(!explore){window.scrollTo(0,0);startPresentation()}else show(current)}
   async function startCover(kind){
+    const request=++coverRequest;
     const cover=$('benvenuti');
     if(kind==='audio'){try{await Sottofondo.intro()}catch(_){}}
     else {Sottofondo.stopIntro();await Sottofondo.setEnabled(false)}
+    if(request!==coverRequest)return;
     try{localStorage.removeItem('mattei-v02-start')}catch(_){}
     cover.classList.remove('started');void cover.offsetWidth;cover.classList.add('started');
     if(kind==='audio'){try{await Sottofondo.setEnabled(true)}catch(_){}}
+    if(request!==coverRequest)return;
     soundUI();
     $('start-actions').innerHTML='<button class="btn" data-jump="imparare">Scopri la scuola <span aria-hidden="true">→</span></button><button class="quiet-start" data-start="audio">Riprova l’apertura ↻</button>';
   }
@@ -109,6 +194,7 @@
     {const h=document.querySelector('.ruota-hint');if(h){h.style.animation='none';void h.offsetWidth;h.style.animation=''}}
     // lo schermo intero solo dove il browser lo consente (su iPhone non c'è per le pagine)
     try{const el=document.documentElement;if(!document.fullscreenElement&&typeof el.requestFullscreen==='function'&&!matchMedia('(pointer:coarse) and (max-width:900px)').matches)await el.requestFullscreen()}catch(_){}
+    if(autoplayPosition>=0)return;
     if(current===0){show(0);await startCover('audio');return}
     const node=nodes[current];node.classList.remove('active');void node.offsetWidth;show(current);
     try{if(!Sottofondo.enabled)await Sottofondo.setEnabled(true)}catch(_){}
@@ -121,7 +207,19 @@
     $('music-toggle').textContent=Sottofondo.enabled?'Spegni musica':'Attiva musica';$('music-button').style.color=Sottofondo.enabled?'#b6e68d':'#fff';
     $('music-button').setAttribute('aria-label',Sottofondo.enabled?'Musica attiva: impostazioni audio':'Musica spenta: impostazioni audio');
   }
-  async function musicToggle(){try{await Sottofondo.setEnabled(!Sottofondo.enabled);soundUI()}catch(_){$('music-toggle').textContent='Audio non disponibile'}}
+  function setSoundPanel(open){
+    const panel=$('sound-panel'), button=$('music-button');
+    if(!open&&panel.contains(document.activeElement))button.focus();
+    panel.hidden=!open;
+    button.setAttribute('aria-expanded',String(open));
+  }
+  function soundUnavailable(){soundUI();$('music-toggle').textContent='Audio non disponibile'}
+  async function musicToggle(){
+    autoplayMusic=!Sottofondo.enabled;
+    if(!autoplayMusic)Sottofondo.stopIntro();
+    try{await Sottofondo.setEnabled(autoplayMusic,{immediate:!autoplayMusic});soundUI()}catch(_){soundUnavailable()}
+  }
+  function openIndex(){stopAutoplay();$('index-dialog').showModal()}
   function duck(value){musicDucked=value;Sottofondo.duck(value)}
   function showChapter(index){
     chapter=index;const c=D.chapters[index];
@@ -144,6 +242,14 @@
   function openDemo(){window.BussolaPalco.open()}
   function saveContact(){const a=document.createElement('a');a.href='assets/scuola.vcf';a.download='IIS-Meucci-Mattei-Decimomannu.vcf';a.click()}
   function openNotes(){updateNotes();const win=window.open('relatore.html','mattei-relatore','width=740,height=800');if(win)win.focus()}
+  // Una scelta nella schermata restituisce il controllo prima che si apra un dettaglio.
+  $('slides').addEventListener('click',event=>{
+    if(event.target.closest('button,a,input,select,summary,video'))stopAutoplay();
+  },true);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden&&autoplayPosition>=0)Sottofondo.stopIntro();
+    scheduleAutoplay();
+  });
   document.addEventListener('click',async event=>{
     const b=event.target.closest('button');if(!b)return;
     if(b.dataset.close){$(b.dataset.close).close();return}
@@ -163,15 +269,16 @@
     switch(b.id){
       case'next':advance(1);break;case'previous':advance(-1);break;
       case'fullscreen':fullscreen();break;case'explore-button':toggleExplore();break;
-      case'index-button':$('index-dialog').showModal();break;
+      case'index-button':openIndex();break;
+      case'play-button':if(autoplayPosition>=0)stopAutoplay();else startAutoplay();break;
       case'notes-button':openNotes();break;
       case'history-play':try{await media.play()}catch(_){}break;
       
       case'sound-test':try{await Sottofondo.intro()}catch(_){}break;
       case'open-library':case'back-library':openLibrary();break;
       case'open-demo':openDemo();break;
-      case'music-button':$('sound-panel').hidden=!$('sound-panel').hidden;b.setAttribute('aria-expanded',String(!$('sound-panel').hidden));break;
-      case'music-toggle':await musicToggle();break;
+      case'music-button':setSoundPanel($('sound-panel').hidden);break;
+      case'music-toggle':if(autoplayPosition>=0)setSoundPanel(false);await musicToggle();break;
       case'evening-details':openViewer('<div class="demo-modal"><h2>Riprendere gli studi, la sera.</h2><p class="demo-context">I percorsi di secondo livello si articolano in tre periodi didattici. Riconoscono crediti formali, non formali e informali e costruiscono un patto formativo personalizzato.</p><p class="demo-context">Sono rivolti agli adulti, anche lavoratori o persone che hanno interrotto gli studi. Per eventuali ammissioni dai 16 anni, riconoscimento dei crediti, attivazione dei corsi e orario del proprio percorso occorre rivolgersi alla scuola.</p><a class="btn" href="mailto:orientamattei@gmail.com?subject=Informazioni%20corsi%20serali">Chiedi informazioni ↗</a></div>');break;
       case'technology-details':openViewer('<div class="demo-modal"><h2>Strumenti per esplorare e progettare.</h2><p class="demo-context">Stampa 3D, rilievo aerofotogrammetrico con drone e modelli digitali collegano osservazione, rappresentazione e progetto.</p><p class="demo-context">Tra i temi dei progetti presentati dalla scuola compaiono anche realtà virtuale e realtà aumentata. Puoi chiedere ai docenti quali esperienze sono previste nel percorso che ti interessa.</p><p class="demo-context">Nel CAT si incontrano anche la lettura degli edifici, l’energia e la documentazione del patrimonio.</p></div>');break;
     }
@@ -188,18 +295,19 @@
   viewer.addEventListener('click',event=>{if(event.target===viewer)viewer.close()});
   document.addEventListener('keydown',event=>{
     const target=event.target;
+    if(event.key==='Escape'&&autoplayPosition>=0)stopAutoplay();
     if(target.closest('[role=tablist]')&&['ArrowRight','ArrowLeft','Home','End'].includes(event.key)){
       event.preventDefault();const tabs=[...target.closest('[role=tablist]').querySelectorAll('button')],i=tabs.indexOf(target),n=event.key==='Home'?0:event.key==='End'?tabs.length-1:(i+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs[n].click();tabs[n].focus();return;
     }
     if(target.matches('input,textarea,select')||target.isContentEditable)return;
     if(viewer.open||$('index-dialog').open)return;
-    if(event.key==='Escape'){$('sound-panel').hidden=true;$('music-button').setAttribute('aria-expanded','false');return}
+    if(event.key==='Escape'){setSoundPanel(false);return}
     if(event.key===' '&&target.closest('button,a,video'))return;
     if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();advance(1)}
     if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();advance(-1)}
     if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(LIN-1)}
     if(event.key.toLowerCase()==='f')fullscreen();if(event.key.toLowerCase()==='n')openNotes();
-    if(event.key.toLowerCase()==='i')$('index-dialog').showModal();if(event.key.toLowerCase()==='m')musicToggle();
+    if(event.key.toLowerCase()==='i')openIndex();if(event.key.toLowerCase()==='m')musicToggle();
   });
   window.addEventListener('resize',resize);window.addEventListener('hashchange',()=>show(hashIndex()));
   window.addEventListener('mousemove',flashControls,{passive:true});window.addEventListener('touchstart',flashControls,{passive:true});

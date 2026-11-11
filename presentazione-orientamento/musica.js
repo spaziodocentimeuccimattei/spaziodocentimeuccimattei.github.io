@@ -4,14 +4,31 @@ window.Sottofondo = (() => {
   let track='going';
   const music=new Audio(tracks[track]),impact=new Audio('assets/apertura-crescendo.wav');
   music.loop=true;music.preload='auto';impact.preload='auto';impact.volume=.9;
-  let enabled=false,mode='talk',volume=.55,ducked=false,introPlaying=false,fade;
+  let enabled=false,mode='talk',volume=.55,ducked=false,introPlaying=false,fade,playRequest=0;
   const target=()=>enabled&&!introPlaying?Math.min(1,volume*(mode==='talk'?.40:.95)*(ducked?.05:1)):0;
   function update(){
     clearInterval(fade);const from=music.volume,to=target(),start=performance.now();
-    fade=setInterval(()=>{const t=Math.min(1,(performance.now()-start)/600);music.volume=from+(to-from)*t;if(t===1){clearInterval(fade);if(!enabled)music.pause()}},30);
+    fade=setInterval(()=>{const t=Math.max(0,Math.min(1,(performance.now()-start)/600));music.volume=from+(to-from)*t;if(t===1){clearInterval(fade);if(!enabled)music.pause()}},30);
   }
-  async function setEnabled(value){
-    if(value){music.volume=0;await music.play();enabled=true}else enabled=false;
+  async function setEnabled(value,{immediate=false}={}){
+    const request=++playRequest;
+    enabled=value;
+    if(!value&&immediate){
+      clearInterval(fade);
+      music.pause();
+      music.volume=0;
+      return enabled;
+    }
+    if(value){
+      clearInterval(fade);
+      music.volume=0;
+      try{await music.play()}catch(error){
+        if(request!==playRequest)return enabled;
+        enabled=false;
+        throw error;
+      }
+      if(request!==playRequest)return enabled;
+    }
     update();return enabled;
   }
   async function intro(){
