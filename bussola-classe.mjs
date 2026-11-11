@@ -4,6 +4,7 @@ const TOKEN=/^[A-Za-z0-9_-]{43}$/;
 export function classEntry(){const p=new URLSearchParams(location.hash.slice(1));return {classe:classCode(p.get('classe')),alunno:TOKEN.test(p.get('alunno'))?p.get('alunno'):''};}
 export function setupClass(ctx){
  const $=id=>document.getElementById(id),dialog=$('classDialog'),form=$('classForm'),codeInput=form.elements.link;
+ const offerGuest=ctx.offerGuest!==false;
  const testing=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).has('prova');
  const API=testing?'/__test/bussola-gestione':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-gestione';
  let entry=classEntry(),access=entry.classe,info=null,identity=null,returnFocus=null,startMode=false,lookupVersion=0,pendingLookup=null;
@@ -12,9 +13,10 @@ export function setupClass(ctx){
  function keep(){try{localStorage.setItem(ctx.key+':classe',JSON.stringify({code:access}));}catch{}}
  async function api(action,payload={}){const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-bussola-token':ctx.token()},body:JSON.stringify({action,...payload}),signal:ctrl.signal});const b=await r.json();if(!r.ok)throw Object.assign(new Error(b.error||'Classe non disponibile.'),{status:r.status});return b;}finally{clearTimeout(timer);}}
  function show(){
-  const panel=$('classSummary');panel.replaceChildren();$('classTitle').textContent=startMode?'Come vuoi iniziare?':'Il tuo lavoro e la tua classe';
-  $('classSubmit').textContent=startMode?'Inizia con la mia classe':'Collega il mio lavoro';
-  $('classGuestBox').hidden=!startMode||!!entry.classe||!!identity?.alunno;
+  const panel=$('classSummary');panel.replaceChildren();
+  $('classTitle').textContent=startMode?(offerGuest?'Come vuoi iniziare?':'Entra con la classe'):'Il tuo lavoro e la tua classe';
+  $('classSubmit').textContent=startMode?(offerGuest?'Inizia con la mia classe':'Continua con la classe'):'Collega il mio lavoro';
+  $('classGuestBox').hidden=!offerGuest||!startMode||!!entry.classe||!!identity?.alunno;
   if(identity?.alunno){
    const text=document.createElement('span');text.textContent=`${identity.alunno.nome} ${identity.alunno.cognome} · ${identity.classe.classe} · ${identity.classe.scuola}`;panel.append(text);
    $('openClass').textContent='La mia classe';$('classIdentity').textContent=text.textContent;form.hidden=true;$('classResume').hidden=false;
@@ -66,7 +68,7 @@ export function setupClass(ctx){
    rememberParticipant(ctx.token(),access);if(startMode)start();else dialog.close();
   }catch(e){$('classMessage').textContent=e.message;}finally{submit.disabled=false;}
  });
- $('classGuest').addEventListener('click',()=>{if(!startMode||entry.classe||identity?.alunno)return;access='';info=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}start();});
+ $('classGuest').addEventListener('click',()=>{if(!offerGuest||!startMode||entry.classe||identity?.alunno)return;access='';info=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}start();});
  const changePerson=document.createElement('button');changePerson.type='button';changePerson.className='secondary';changePerson.textContent='Cambia partecipante';changePerson.title='Il lavoro attuale resta conservato. L’altra persona entrerà con il proprio nome.';
  changePerson.addEventListener('click',()=>{
   const nextToken=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');

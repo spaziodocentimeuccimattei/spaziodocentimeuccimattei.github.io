@@ -4,7 +4,7 @@ import {materialExamples,materialCheck,INTEREST_ACTIVITIES} from './ssas-situazi
 import {readEntryState} from './ssas-situazioni-entry-core.mjs?v=20261018-ingresso';
 import {sceneImage,entranceImage} from './ssas-illustrazioni.mjs?v=20261012-scene';
 import {scenePanel,paintScene} from './ssas-scena-visiva.mjs?v=20261111-scene';
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261111-inizia-diretto';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
 import {nextStep} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
 import {FORMAT,LABS,CASES,caseById,GUIDE,cursor,guideIssues,titleDefaults,freshProject,restoreProject,selectCase,beginRevision,summaryItems,xml} from './ssas-situazioni-core.mjs?v=20261018-testi';
@@ -24,6 +24,7 @@ const copy=x=>JSON.parse(JSON.stringify(x));
 const fileCache=new Map();
 function fileURL(content,type){const previous=fileCache.get(type);if(previous?.content===content)return previous.url;const url=URL.createObjectURL(new Blob([content],{type}));fileCache.set(type,{content,url});if(previous)setTimeout(()=>URL.revokeObjectURL(previous.url),60000);return url;}
 let localOK=true, connected=false, syncing=false, conflict=false, clock=0, timer, epoch=0, noteTrigger;
+let pendingConnection;
 // Il passaggio di mano tra il laboratorio 2 e il 3 è solo presentazione: non si salva e non ha una rotta.
 let handoff=false;
 let state={project:freshProject(),token:'',participant:'',revision:0,dirty:false,notes:[],draft:null};
@@ -50,9 +51,18 @@ async function call(action,payload={}){
   const body=await r.json();if(!r.ok){const e=new Error(body.error||'Salvataggio non disponibile.');e.code=r.status;throw e;}return body;
  }finally{clearTimeout(timeout);}
 }
-async function connect(){
+function connect(){
+ const generation=epoch;
+ if(pendingConnection?.generation===generation)return pendingConnection.promise;
+ const promise=openConnection(generation).finally(()=>{
+  if(pendingConnection?.promise===promise)pendingConnection=null;
+ });
+ pendingConnection={generation,promise};
+ return promise;
+}
+async function openConnection(generation){
  if(!state.token){state.token=newToken();keep();}
- rememberParticipant(state.token);const generation=epoch,reply=await call('start');if(generation!==epoch)return;
+ rememberParticipant(state.token);const reply=await call('start');if(generation!==epoch)return;
  if(reply.project&&state.dirty&&reply.project.revision!==state.revision){
   if(state.lastOp&&reply.project.payload?._save_operation===state.lastOp)state.revision=reply.project.revision;
   else{conflict=true;throw Object.assign(new Error('Il progetto è cambiato in un’altra finestra. Scarica il tuo lavoro prima di ricaricare.'),{code:409});}
@@ -61,6 +71,19 @@ async function connect(){
  if(reply.project&&!state.dirty){state.project=restoreProject(reply.project.payload);state.revision=reply.project.revision;restoreRoute(navigation.route());render(false);}
  state.notes=unique([...state.notes.filter(n=>n.pending),...(reply.notes||[]).map(n=>({...n,pending:false}))]);
  connected=true;keep();renderNotes();
+}
+async function startExperience(){
+ const generation=epoch;
+ try{if(state.token&&!connected)await connect();}
+ catch{
+  if(generation!==epoch)return;
+  const message='Il lavoro salvato non è ancora disponibile. Riprova.';
+  status(message,true);
+  const feedback=$('ssasStartMessage');
+  if(feedback)feedback.textContent=message;
+  return;
+ }
+ if(generation===epoch&&navigation.isIntro())resume();
 }
 async function sync(){
  if(syncing||conflict)return;
@@ -155,11 +178,25 @@ function progress(){
 function intro(){
  const j=journey(),s=node('section',null,'tm-intro'),c=caseById(j.health.focus);
  const entered=j.visited>0,started=entered&&Boolean(c);
+ const classLink=Boolean(classEntry().classe);
  const title=node('h1','Che cosa fa chi aiuta le persone?');title.id='ssasEntryTitle';s.setAttribute('aria-labelledby',title.id);
  const line=started?`Hai iniziato la storia di ${c.person}. Puoi continuare da dove avevi lasciato.`:'Scegli una storia e prova a capire, ascoltare e aiutare una persona, in cinque passi.';
- const start=btn(started?'Riprendi':'Inizia',e=>entered?resume():classUI.begin(e.currentTarget),'tm-start');
+ const label=started?'Riprendi':classLink&&!entered?'Entra con la classe':'Inizia';
+ const feedback=node('p',null,'tm-start-message');feedback.id='ssasStartMessage';feedback.setAttribute('role','status');
+ const start=btn(label,async e=>{
+  if(entered){resume();return;}
+  const trigger=e.currentTarget;
+  if(classLink){classUI.begin(trigger);return;}
+  feedback.textContent='';
+  trigger.disabled=true;
+  trigger.textContent='Apertura…';
+  try{await startExperience();}
+  finally{trigger.disabled=false;trigger.textContent=label;}
+ },'tm-start');
  const art=node('div',null,'tm-intro-art');art.append(entranceImage());
- s.append(node('p','Servizi per la Sanità e l’Assistenza Sociale','tm-kicker'),title,node('p',line,'tm-lead'),start,art);
+ s.append(node('p','Servizi per la Sanità e l’Assistenza Sociale','tm-kicker'),title,node('p',line,'tm-lead'),start,feedback);
+ if(!started&&!classLink)s.append(btn('Entra con la classe',e=>classUI.begin(e.currentTarget),'tm-class-start'));
+ s.append(art);
  mount.append(s);
 }
 function stories(){
@@ -366,7 +403,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!pageMenu.hidden&&!
 document.addEventListener('click',e=>{if(!pageMenu.hidden&&!pageMenu.contains(e.target)&&!menuToggle.contains(e.target))setMenu(false);});
 pageMenu.addEventListener('click',e=>{const item=e.target.closest('button,a');if(item&&item.id!=='retrySave')setMenu(false);});
 for(const d of document.querySelectorAll('dialog'))d.addEventListener('close',()=>setTimeout(()=>{if(document.activeElement===document.body||!document.activeElement?.offsetParent)menuToggle.focus({preventScroll:true});}));
-const classUI=setupClass({key:KEY,isIntro:()=>navigation.isIntro()||journey().step===0,start:async()=>{if(state.token&&!connected){try{await connect();}catch{status('Il lavoro salvato non è ancora disponibile. Riprova il collegamento.',true);return;}}resume();},token:()=>state.token,ensure:async()=>{if(!connected)await connect();if(!state.participant)throw new Error('Il collegamento non è riuscito. Riprova tra poco.');}});
+const classUI=setupClass({key:KEY,offerGuest:false,isIntro:()=>navigation.isIntro()||journey().step===0,start:startExperience,token:()=>state.token,ensure:async()=>{if(!connected)await connect();if(!state.participant)throw new Error('Il collegamento non è riuscito. Riprova tra poco.');}});
 const certificateUI=setupParticipantCertificate({project:()=>state.project,journey:()=>journey(),participant:()=>state.participant,revision:()=>state.revision,identity:()=>classUI.identity(),save:()=>changed(false,true)});
 const courseLabel=document.querySelector('.experience-path [aria-current]');if(localTest&&courseLabel)courseLabel.textContent='SSAS · prova locale';
 restoreRoute(navigation.route());render(false);if(state.token)sync();

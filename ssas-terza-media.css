@@ -115,6 +115,9 @@ body #stepNav button.tm-tick:not(:disabled):hover .tm-tick-bar{transform:scaleY(
 .tm-page .tm-intro h1{margin:0 0 12px;font:800 clamp(30px,8vw,40px)/1.12 var(--tm-font);letter-spacing:-.02em}
 .tm-page .tm-lead{margin:0 0 20px;color:var(--tm-ink);font-size:18px;line-height:1.45}
 .tm-intro .tm-start{width:100%;min-height:60px;font-size:20px}
+.tm-page .tm-class-start{display:flex;align-items:center;justify-content:center;min-height:44px;margin:6px auto 0;padding:0 12px;border:0;background:none;color:var(--tm-ink);font:700 16px var(--tm-font);text-decoration:underline;text-underline-offset:4px}
+.tm-page .tm-start-message{margin:8px 0 0;color:#8f1d1d;font-size:15px}
+.tm-page .tm-start-message:empty{margin:0}
 .tm-intro-art{margin-top:20px;overflow:hidden;border-radius:22px;background:#153c51}
 .tm-intro-art .entrance-art{display:block;width:100%;height:auto;max-height:36dvh;object-fit:cover}
 
@@ -202,9 +205,7 @@ body #stepNav button.tm-tick:not(:disabled):hover .tm-tick-bar{transform:scaleY(
 .tm-page dialog{border:0;border-radius:22px;color:var(--tm-ink);font-family:var(--tm-font)}
 .tm-page dialog h2{font-family:var(--tm-font);font-weight:800}
 .tm-page dialog .primary{background:var(--tm-ink);color:#fff;border-radius:999px;min-height:48px}
-.tm-page #classDialog #classGuest{background:var(--tm-pink-strong);box-shadow:0 8px 20px rgb(196 9 79/24%)}
-.tm-page #classDialog #classGuest:hover{background:#a8073f}
-.tm-page #classDialog .class-guest-help,.tm-page #classDialog .field-help{font-size:15px}
+.tm-page #classDialog .field-help{font-size:15px}
 
 .tm-page .bussola-next-step .next-step-kicker{text-transform:none;letter-spacing:0;font-size:15px}
 .tm-page .bussola-next-step{border-left-color:var(--tm-pink)}
