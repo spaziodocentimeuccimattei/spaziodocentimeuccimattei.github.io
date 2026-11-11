@@ -28,6 +28,7 @@ if (['afm','sia','turismo','ssas','cat'].includes(entryCourse)) {
 
 function hidePanels() {
   for (const panel of [intro, resume, questions, results, contactsMount]) panel.hidden = true;
+  document.getElementById('bussolaVideo')?.pause(); // il video della prima pagina si ferma quando si esce dall'apertura
   skipActivities.parentElement.hidden = false;
   announcements.textContent = '';
 }

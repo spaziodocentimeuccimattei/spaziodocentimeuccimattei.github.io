@@ -470,3 +470,8 @@
   .missioni-page .activity-heading .course-art { display: none; }
   .missioni-page .mission-card .course-art { width: 64px; height: 64px; }
 }
+
+/* Video della Bussola nella prima pagina: occupa tutta la larghezza del riquadro di apertura, parte solo al clic e riparte da solo. */
+.bussola-page .compass-video { grid-column: 1 / -1; margin: 0; background: #092b43; }
+.bussola-page .compass-video video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #092b43; }
+.bussola-page .compass-video figcaption { padding: 10px clamp(20px,4vw,48px) 14px; color: #fff; background: #092b43; font-size: .9375rem; }
