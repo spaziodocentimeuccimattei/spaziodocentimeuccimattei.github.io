@@ -3,6 +3,7 @@ import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-fl
 import {materialExamples,materialCheck,INTEREST_ACTIVITIES} from './ssas-situazioni-revisione.mjs';
 import {readEntryState} from './ssas-situazioni-entry-core.mjs?v=20261018-ingresso';
 import {sceneImage,entranceImage} from './ssas-illustrazioni.mjs?v=20261012-scene';
+import {scenePanel,paintScene} from './ssas-scena-visiva.mjs?v=20261111-scene';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
 import {nextStep} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
@@ -199,8 +200,21 @@ function replyContent(){
  if(o.type==='check'){const chosen=o.list.filter(x=>value.includes(x.id));const x=chosen.find(v=>v.id===lastToggled)||chosen.at(-1);return x?current.reply(x):null;}
  const x=o.list.find(v=>v.id===value);return x?current.reply(x):null;
 }
-function updateReply(){
- const box=$('tmReply');if(!box)return;const r=replyContent(),c=caseById(journey().health.focus);box.replaceChildren();
+function selectedArt(options,j){
+ const value=j[options.area][options.key];
+ if(options.type==='example'){
+  if(!value.trim())return [];
+  const index=options.texts.indexOf(value);
+  return [index<0?'proprio':index];
+ }
+ return options.list.flatMap((item,index)=>(options.type==='check'?value.includes(item.id):value===item.id)?[index]:[]);
+}
+function updateReply(animateArt=false){
+ const box=$('tmReply');if(!box)return;
+ const j=journey(),c=caseById(j.health.focus),options=current.options;
+ const format=c.formats.findIndex(item=>item.id===j.creative.setting);
+ paintScene($('tmStepArt'),c.id,options.key,selectedArt(options,j),animateArt,format);
+ const r=replyContent();box.replaceChildren();
  if(!r)return;
  if(r.quote){box.append(bubble(c,r.quote,{label:r.reader||whoOf(c),reader:!!r.reader,cls:'tm-reaction'}));}
  if(r.note){const p=node('p',null,'tm-note');if(!r.reader)p.append(node('span','✓ ','tm-note-mark'));p.append(r.note);box.append(p);}
@@ -218,7 +232,7 @@ function optionsBox(o){
    if(o.type==='check'){const now=journey()[o.area][o.key];lastToggled=input.checked?item.id:null;edit(o.area,o.key,input.checked?[...now,item.id]:now.filter(x=>x!==item.id),false);}
    else if(o.type==='example'){if(o.area==='creative'&&o.key==='ending')journey().creative.editedBranch=i;edit(o.area,o.key,item.label,false);const ta=$(`${o.area}-${o.key}-testo`);if(ta)ta.value=item.label;}
    else edit(o.area,o.key,item.id,false);
-   updateReply();
+   updateReply(true);
   });
   const l=node('label',null,'tm-option');l.htmlFor=input.id;l.append(input,node('span',item.label,'tm-option-text'),node('span',null,'tm-check'));fs.append(l);
  });
@@ -239,21 +253,25 @@ function step(){
  const j=journey(),c=caseById(j.health.focus),n=cursor(j);if(!c){stories();return;}
  current=screen(j,c,n);lastToggled=null;
  const s=node('section',null,'tm-step');
- if(j.step===1&&c.role)s.append(node('p',`Tu sei ${c.role}.`,'tm-role'));
- if(current.context)s.append(node('p',current.context,'tm-role'));
- if(current.lead)s.append(bubble(c,current.lead,{label:current.leadLabel,ai:current.ai}));
- const q=node('h1',current.question,'tm-question');q.id='tmQuestion';s.append(q);
- if(current.hint)s.append(node('p',current.hint,'tm-hint'));
- s.append(optionsBox(current.options));
- if(current.options.type==='example')s.append(writer(current.options));
- const reply=node('div',null,'tm-reply');reply.id='tmReply';reply.setAttribute('aria-live','polite');s.append(reply);
+ const lead=node('div',null,'tm-step-lead');
+ if(j.step===1&&c.role)lead.append(node('p',`Tu sei ${c.role}.`,'tm-role'));
+ if(current.context)lead.append(node('p',current.context,'tm-role'));
+ if(current.lead)lead.append(bubble(c,current.lead,{label:current.leadLabel,ai:current.ai}));
+ const q=node('h1',current.question,'tm-question');q.id='tmQuestion';lead.append(q);
+ const art=scenePanel(c.id);art.id='tmStepArt';
+ const choices=node('div',null,'tm-step-choices');
+ if(current.hint)choices.append(node('p',current.hint,'tm-hint'));
+ choices.append(optionsBox(current.options));
+ if(current.options.type==='example')choices.append(writer(current.options));
+ const reply=node('div',null,'tm-reply');reply.id='tmReply';reply.setAttribute('aria-live','polite');choices.append(reply);
+ s.append(lead,art,choices);
  mount.append(s);updateReply();
 }
 function handoffActive(){const j=journey();return handoff&&j.step===3&&cursor(j)===0&&!!caseById(j.health.focus)?.handoff;}
 function handoffScreen(){
  const c=caseById(journey().health.focus),s=node('section',null,'tm-handoff');
- const art=node('div',null,'tm-handoff-art');const img=sceneImage(c.id,{decorative:true,className:'tm-handoff-img'});if(img)art.append(img);
- const title=node('h1','Passaggio di mano');s.append(art,title,node('p',c.handoff,'tm-handoff-text'));mount.append(s);
+ const art=scenePanel(c.id);paintScene(art,c.id,'handoff',[],true);
+ const title=node('h1','Passaggio di mano');s.append(title,node('p',c.handoff,'tm-handoff-text'),art);mount.append(s);
 }
 function bottomBar(){
  const j=journey(),c=cursor(j),bar=node('div',null,'tm-bottom'),inner=node('div',null,'tm-bottom-inner');

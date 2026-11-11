@@ -131,10 +131,52 @@ body #stepNav button.tm-tick:not(:disabled):hover .tm-tick-bar{transform:scaleY(
 
 /* Passaggio di mano */
 .tm-handoff{padding-top:6px}
-.tm-handoff-art{overflow:hidden;border-radius:20px;background:#e5ece6}
-.tm-handoff-img{display:block;width:100%;height:auto;max-height:34dvh;object-fit:cover}
 .tm-page .tm-handoff h1{margin:18px 0 8px;font:800 24px/1.2 var(--tm-font)}
 .tm-page .tm-handoff-text{margin:0;font-size:18px;line-height:1.5}
+
+/* Scena associata alla domanda e alle opzioni. Su telefono resta nella colonna di lettura. */
+.tm-scene-panel{overflow:hidden;margin:0 0 12px;border:1px solid #e1ded3;border-radius:18px;background:#f9f5ec}
+.tm-scene-context{display:none}
+.tm-scene-drawing{aspect-ratio:360/145}
+.tm-scene-drawing svg{display:block;width:100%;height:100%;background:var(--scene-paper)}
+.tm-handoff .tm-scene-panel{margin-top:16px}
+.tm-step-choices .tm-hint{margin:0 0 8px}
+.tm-action-animated .tm-action-arrive{animation:tm-action-arrive 300ms ease-out var(--arrival-delay) both}
+.tm-action-animated .tm-action-left{animation:tm-action-left 340ms ease-out}
+.tm-action-animated .tm-action-right{animation:tm-action-right 340ms ease-out}
+.tm-action-animated .tm-action-time{animation:tm-action-time 420ms ease-out}
+.tm-action-animated .tm-action-table{animation:tm-action-table 360ms ease-out}
+.tm-action-animated .tm-action-note{animation:tm-action-note 360ms ease-out}
+@keyframes tm-action-arrive{from{opacity:.35;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes tm-action-left{from{transform:translateX(13px)}to{transform:none}}
+@keyframes tm-action-right{from{transform:translateX(-13px)}to{transform:none}}
+@keyframes tm-action-time{from{transform:translateY(-48px)}to{transform:none}}
+@keyframes tm-action-table{from{transform:translateY(-17px)}to{transform:none}}
+@keyframes tm-action-note{from{transform:translateY(-13px)}to{transform:none}}
+
+@media(max-width:799px){
+ .tm-scene-panel[data-context=true] .tm-scene-context{display:block;width:100%;aspect-ratio:360/145;height:auto;object-fit:cover;object-position:center 62%}
+ .tm-scene-panel[data-context=true] .tm-scene-drawing{display:none}
+ .tm-handoff .tm-scene-context{display:block;width:100%;max-height:32dvh;object-fit:cover}
+ .tm-handoff .tm-scene-drawing{display:none}
+}
+@media(max-height:700px) and (max-width:799px){
+ .tm-scene-drawing,.tm-scene-panel[data-context=true] .tm-scene-context{height:clamp(105px,17.5dvh,122px);aspect-ratio:auto}
+ .tm-step-lead .tm-speaker{margin-top:6px}
+ .tm-page main h1.tm-question{margin-top:11px}
+ .tm-step .tm-scene-panel{margin-bottom:8px}
+ .tm-step .tm-options{gap:8px}
+ .tm-step .tm-reply{margin-top:8px}
+}
+@media(min-width:800px){
+ .tm-page[data-view=passo] main{max-width:1040px;padding-inline:24px}
+ .tm-step{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.86fr);grid-template-rows:auto 1fr;grid-template-areas:"lead scene" "choices scene";column-gap:30px;align-items:start}
+ .tm-step-lead{grid-area:lead}
+ .tm-step-choices{grid-area:choices}
+ .tm-step .tm-scene-panel{grid-area:scene;margin-top:10px}
+ .tm-scene-context{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover}
+ .tm-handoff .tm-scene-panel{display:grid;grid-template-columns:1fr 1fr;align-items:center;background:#f9f5ec}
+}
 
 /* Conclusione */
 .tm-summary-head{display:flex;align-items:center;gap:12px;margin:12px 0}
@@ -180,6 +222,7 @@ body #stepNav button.tm-tick:not(:disabled):hover .tm-tick-bar{transform:scaleY(
 }
 @media(prefers-reduced-motion:reduce){
  .tm-appear{animation:none}
+ .tm-scene-panel .tm-action-animated *{animation:none}
  .tm-option,.tm-story{transition:none}
  body #stepNav button.tm-tick:not(:disabled):hover .tm-tick-bar{transform:none}
 }
