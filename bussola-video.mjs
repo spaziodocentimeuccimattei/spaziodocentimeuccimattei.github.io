@@ -5,10 +5,11 @@ const pause = document.getElementById('bussolaVideoPause');
 const full = document.getElementById('bussolaVideoFull');
 if (video && play && pause && full) {
   const aggiorna = () => { play.hidden = !video.paused; pause.hidden = video.paused; };
-  const avvia = () => { const p = video.play(); if (p && p.catch) p.catch(() => { video.controls = true; }); };
+  const avvia = () => { const p = video.play(); if (p && p.catch) p.catch(() => {}); };
   play.addEventListener('click', avvia);
   pause.addEventListener('click', () => video.pause());
-  video.addEventListener('click', () => { if (video.controls) return; if (video.paused) avvia(); else video.pause(); });
+  video.controls = false;
+  video.addEventListener('click', () => { if (video.paused) avvia(); else video.pause(); });
   for (const evento of ['play', 'playing', 'pause', 'ended']) video.addEventListener(evento, aggiorna);
   full.addEventListener('click', () => {
     if (video.paused) avvia();

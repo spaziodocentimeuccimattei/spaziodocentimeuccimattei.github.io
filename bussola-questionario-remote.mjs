@@ -26,7 +26,7 @@ export function questionnaireRemote({status,loaded,links}){
   async init(){
    if(!token)return null;
    try{const old=JSON.parse(localStorage.getItem(key()));if(old){revision=old.revision||0;dirty=old.dirty===true;snapshot=old.state;operation=old.operation||crypto.randomUUID();}}catch{}
-   try{await connect();if(dirty){loaded(snapshot);sync();}return snapshot;}catch{if(snapshot)loaded(snapshot);status('La copia sul dispositivo è conservata; il collegamento online è da riprovare.',true,{conflict});return snapshot;}
+   try{await connect();if(dirty){loaded(snapshot);sync();}return snapshot;}catch{if(snapshot)loaded(snapshot);return snapshot;}
   },
   changed(state){if(!token){token=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');rememberParticipant(token);links(personalDestination);}version++;snapshot=structuredClone(state);dirty=true;operation=crypto.randomUUID();keep();clearTimeout(timer);timer=setTimeout(sync,600);},
   retry:sync,

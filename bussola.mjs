@@ -1,7 +1,7 @@
 import { courseArt, questionArt } from './bussola-visuals.mjs?v=20261010-correzioni';
 import { freshState, readState, clearState, sanitizeState, summarize, suggestCourses, validateContent } from './bussola-core.mjs';
 import { el, button, link, storage, persist as persistLocal, loadData, focusHeading, setJourney, contactsPanel, choice } from './bussola-ui.mjs?v=20261010-correzioni';
-import {questionnaireRemote} from './bussola-questionario-remote.mjs?v=20261019-monitor';
+import {questionnaireRemote} from './bussola-questionario-remote.mjs?v=20261112';
 import { openCertificate } from './bussola-attestato.mjs?v=20261028-edificio';
 import { activityDestination as rawDestination } from './bussola-navigazione.mjs?v=20261019-accessi';
 
@@ -221,8 +221,8 @@ async function initialize() {
     situations = b.situations; dimensions = d.dimensions; courses = c.courses; contacts = contactData;
     state = readState(storage(), situations, missionIds);
     const syncText=el('span','Le risposte si salvano mentre procedi. Nell’area docenti possono consultarle solo le persone autorizzate.');
-    const retry=button('Riprova il salvataggio',()=>remoteQuestion?.retry(),'explore-link'),copy=button('Scarica la bozza',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(remoteQuestion.copy(),null,2)],{type:'application/json'})),a=el('a');a.href=url;a.download='bussola-risposte.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);},'explore-link'),online=button('Apri la versione online',async()=>{try{await remoteQuestion.reload();}catch(e){syncText.textContent=e.message;}},'explore-link');retry.hidden=copy.hidden=online.hidden=true;status.replaceChildren(syncText,document.createTextNode(' '),retry,document.createTextNode(' '),copy,document.createTextNode(' '),online);
-    remoteQuestion=questionnaireRemote({status:(message,error=false,details={})=>{syncText.textContent=message;retry.hidden=!error||details.conflict;copy.hidden=!error;online.hidden=!details.conflict;},loaded:value=>{const next=sanitizeState({...value,missions:{...state?.missions,...value.missions}},situations,missionIds);if(next){state=next;persistLocal(state);if(!questions.hidden){if(state.stage==='results')renderResults();else renderQuestion();}else if(!results.hidden)renderResults();}},links:personal=>{for(const a of document.querySelectorAll('a[href]')){const u=new URL(a.href);if(u.origin===location.origin&&/(?:missioni|bussola-(?:afm|sia|turismo|ssas|cat))\.html$/.test(u.pathname))a.href=personal(a.href);}}});
+    status.replaceChildren(syncText);
+    remoteQuestion=questionnaireRemote({status:()=>{},loaded:value=>{const next=sanitizeState({...value,missions:{...state?.missions,...value.missions}},situations,missionIds);if(next){state=next;persistLocal(state);if(!questions.hidden){if(state.stage==='results')renderResults();else renderQuestion();}else if(!results.hidden)renderResults();}},links:personal=>{for(const a of document.querySelectorAll('a[href]')){const u=new URL(a.href);if(u.origin===location.origin&&/(?:missioni|bussola-(?:afm|sia|turismo|ssas|cat))\.html$/.test(u.pathname))a.href=personal(a.href);}}});
     start.disabled = false;
     if (state && Object.keys(state.answers).length) { intro.hidden = true; resume.hidden = false; }
     else state = freshState();
