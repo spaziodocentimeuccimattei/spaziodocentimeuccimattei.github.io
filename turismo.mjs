@@ -1,7 +1,7 @@
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {COURSE_VIDEO_NOTICE,mountNextStep} from './bussola-prossimo-passo.mjs?v=20261112-avviso-video';
+import {COURSE_VIDEO_NOTICE,mountNextStep} from './bussola-prossimo-passo.mjs?v=20261112-open-day';
 import {setupTourismRemote} from './turismo-remote.mjs?v=20261019-monitor';
 import {rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 import {KEY as BASE_KEY,LABS,PLACES,QUESTIONS,WELCOMES,PLANS,RAIN,SERVICES,TERMS,TONES,createProject,restore,choose,canAdvance,next,complete,costs} from './turismo-core.mjs?v=20261009-turismo';

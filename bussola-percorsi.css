@@ -116,6 +116,82 @@ p.bussola-video-notice {
   border-color: #c9f981;
   background: #214c65;
 }
+.bussola-page .compass-intro .open-day-jump {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+#open-day { scroll-margin-top: 20px; }
+.bussola-open-day {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(108px, 17vw, 158px);
+  grid-template-areas: "title poster" "dates poster" "place poster";
+  align-items: start;
+  gap: 14px 20px;
+  margin: 20px 0 28px;
+  padding: clamp(14px, 3vw, 24px);
+  border-radius: 18px;
+  background: #123c57;
+  color: #fff;
+}
+.bussola-open-day .open-day-heading { grid-area: title; }
+.bussola-open-day .open-day-heading p {
+  margin: 0 0 6px;
+  color: #c9f981;
+  font-size: .9rem;
+  font-weight: 750;
+}
+.bussola-open-day h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.4rem, 3.2vw, 2rem);
+  line-height: 1.12;
+}
+.bussola-open-day .open-day-schedule { grid-area: dates; }
+.bussola-open-day .open-day-schedule h3 { margin: 0 0 8px; color: #fff; font-size: 1rem; }
+.bussola-open-day .open-day-schedule ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bussola-open-day .open-day-schedule li {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: #eef5f1;
+  color: #123c57;
+  font-size: .9rem;
+  line-height: 1.3;
+}
+.bussola-open-day time { font-weight: 800; }
+.bussola-open-day .open-day-place { grid-area: place; margin: 0; color: #fff; font-size: .9rem; }
+.bussola-open-day .open-day-poster {
+  grid-area: poster;
+  align-self: center;
+  display: grid;
+  gap: 5px;
+  color: #fff;
+  font-size: .85rem;
+  line-height: 1.25;
+  text-underline-offset: 3px;
+}
+.bussola-open-day .open-day-poster:focus-visible { outline: 3px solid #c9f981; outline-offset: 4px; }
+.bussola-open-day .open-day-poster img { display: block; width: 100%; height: auto; border-radius: 8px; }
+@media (max-width: 560px) {
+  .bussola-open-day {
+    grid-template-columns: minmax(0, 1fr) 82px;
+    grid-template-areas: "title poster" "dates dates" "place place";
+    column-gap: 10px;
+  }
+}
 .bussola-course-videos {
   margin: 20px 0 28px;
   padding: clamp(14px, 3vw, 26px);

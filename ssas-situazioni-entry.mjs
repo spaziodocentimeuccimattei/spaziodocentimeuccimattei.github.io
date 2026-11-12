@@ -1,2 +1,2 @@
 // Every project uses the current interface; previous work is retained as data.
-await import('./ssas-situazioni.mjs?v=20261112-avviso-video');
+await import('./ssas-situazioni.mjs?v=20261112-open-day');

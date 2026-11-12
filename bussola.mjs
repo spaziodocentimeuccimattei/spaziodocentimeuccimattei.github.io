@@ -4,12 +4,15 @@ import { el, button, link, storage, persist as persistLocal, loadData, focusHead
 import {questionnaireRemote} from './bussola-questionario-remote.mjs?v=20261112';
 import { openCertificate } from './bussola-attestato.mjs?v=20261028-edificio';
 import { activityDestination as rawDestination } from './bussola-navigazione.mjs?v=20261019-accessi';
+import { openDayCard } from './bussola-prossimo-passo.mjs?v=20261112-open-day';
 
 const intro = document.getElementById('introPanel');
 const resume = document.getElementById('resumePanel');
 const questions = document.getElementById('questionPanel');
 const results = document.getElementById('resultPanel');
 const contactsMount = document.getElementById('contactMount');
+const openDay = document.getElementById('open-day');
+openDay.append(openDayCard());
 const status = document.getElementById('loadStatus');
 const start = document.getElementById('startPath');
 const announcements = document.getElementById('announcements');
@@ -27,7 +30,7 @@ if (['afm','sia','turismo','ssas','cat'].includes(entryCourse)) {
 }
 
 function hidePanels() {
-  for (const panel of [intro, resume, questions, results, contactsMount]) panel.hidden = true;
+  for (const panel of [intro, resume, questions, results, contactsMount, openDay]) panel.hidden = true;
   document.getElementById('bussolaVideo')?.pause(); // il video della prima pagina si ferma quando si esce dall'apertura
   skipActivities.parentElement.hidden = false;
   announcements.textContent = '';
@@ -44,7 +47,7 @@ function resetToIntro() {
   clearState(storage());
   state = freshState();
   persist(state);
-  hidePanels(); intro.hidden = false;
+  hidePanels(); intro.hidden = false; openDay.hidden = false;
   setJourney(0);
   focusHeading(intro);
   announcements.textContent = 'Il percorso e le risposte precedenti sono stati cancellati.';
@@ -147,7 +150,7 @@ function courseCard(item, highlighted = false, direction = null) {
 }
 
 function renderResults() {
-  hidePanels(); results.hidden = false; contactsMount.hidden = false;
+  hidePanels(); results.hidden = false; contactsMount.hidden = false; openDay.hidden = false;
   setJourney(1);
   const summary = summarize(situations, dimensions, state.answers);
   const direction = suggestCourses(situations, courses, state.answers);

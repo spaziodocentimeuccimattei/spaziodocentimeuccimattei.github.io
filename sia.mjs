@@ -1,7 +1,7 @@
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {COURSE_VIDEO_NOTICE,mountNextStep} from './bussola-prossimo-passo.mjs?v=20261112-avviso-video';
+import {COURSE_VIDEO_NOTICE,mountNextStep} from './bussola-prossimo-passo.mjs?v=20261112-open-day';
 import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor';
 import {restore,remoteProject} from './sia-records.mjs?v=20261010-all';
 const COURSE='sia';

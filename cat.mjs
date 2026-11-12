@@ -5,7 +5,7 @@ import {buildingContent,buildingAction,buildingCards,buildingHero} from './cat-e
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {COURSE_VIDEO_NOTICE,mountNextStep} from './bussola-prossimo-passo.mjs?v=20261112-avviso-video';
+import {COURSE_VIDEO_NOTICE,mountNextStep} from './bussola-prossimo-passo.mjs?v=20261112-open-day';
 import {setupCatRemote} from './cat-remote.mjs?v=20261029-missione';
 import {FORMAT,STORE as BASE_STORE,FOUR_LABS,labsFor,stagesFor,isFour,ENERGY_DATA,ENERGY_CONTROLS,energySignature,energyResult,testEnergy,AREAS,VIEWS,ZONES,ROOFS,FLOORS,OBSERVATIONS,HYPOTHESES,PHASES,find,createProject,dimensions,inBounds,layoutValid,place,surveySignature,composeSurvey,layoutSignature,testLayout,buildSignature,testWeather,heritageSignature,compareHeritage,estimate,planSignature,testPlan,latest,ready,completed,advance,invalidate,context,addNote,validProject} from './cat-core.mjs?v=20261029-missione';
 import {esc,viewDrawing,planBoard,construction,heritage,heroDrawing} from './cat-visuals.mjs?v=20261029-missione';

@@ -34,6 +34,37 @@ function node(tag, text, className) {
 }
 function anchor(text, href, className) { const a = node('a', text, className); a.href = href; return a; }
 
+export function openDayCard() {
+  const card = node('aside', null, 'bussola-open-day');
+  card.setAttribute('aria-label', 'Open Day a Decimomannu');
+  card.innerHTML = `
+    <div class="open-day-heading">
+      <p>Open Day · Decimomannu</p>
+      <h2>Vieni a conoscere il Mattei</h2>
+    </div>
+    <div class="open-day-schedule">
+      <h3>Date previste</h3>
+      <ul>
+        <li>
+          <span>Venerdì</span>
+          <time datetime="2026-12-11">11 dicembre 2026</time>
+          <span>15:00–19:00</span>
+        </li>
+        <li>
+          <span>Sabato</span>
+          <time datetime="2027-01-16">16 gennaio 2027</time>
+          <span>Al mattino, orario da confermare</span>
+        </li>
+      </ul>
+    </div>
+    <p class="open-day-place">Via Ugo Foscolo 48, Decimomannu</p>
+    <a class="open-day-poster" href="assets/campagna-decimomannu-cresce-qui.jpeg">
+      <img src="assets/campagna-decimomannu-cresce-qui.jpeg" width="1122" height="1402" loading="lazy" decoding="async" alt="">
+      <span>Apri la locandina</span>
+    </a>`;
+  return card;
+}
+
 function courseVideoLink(course, featured = false) {
   const link = anchor(null, `indirizzi.html#video-${course}`, `course-video-link${featured ? ' featured' : ''}`);
   const cover = node('img');
@@ -108,6 +139,8 @@ export function nextStep(course, { compact = false } = {}) {
 
 // Per le pagine costruite con modelli di testo: <div data-next-step="afm"></div>.
 export function mountNextStep(root) {
-  root?.querySelectorAll('[data-course-videos]').forEach(slot => slot.replaceWith(courseVideos(slot.dataset.courseVideos)));
+  root?.querySelectorAll('[data-course-videos]').forEach(slot => {
+    slot.replaceWith(courseVideos(slot.dataset.courseVideos), openDayCard());
+  });
   root?.querySelectorAll('[data-next-step]').forEach(slot => slot.replaceWith(nextStep(slot.dataset.nextStep)));
 }
