@@ -6,6 +6,7 @@ const NAMES = {
   cat: 'Costruzioni, Ambiente e Territorio',
 };
 const VIDEO_LABELS = { afm: 'AFM', sia: 'SIA', turismo: 'Turismo', ssas: 'SSAS', cat: 'CAT 4+2' };
+export const COURSE_VIDEO_NOTICE = 'Alla fine del percorso potrai guardare il video di questo indirizzo e quelli degli altri corsi.';
 let contactsPromise;
 
 export function loadContacts() {

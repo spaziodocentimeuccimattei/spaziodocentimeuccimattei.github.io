@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bussola SSAS · Servizi per la Sanità e l’Assistenza Sociale</title><meta name="description" content="Sei situazioni e cinque laboratori per esplorare il percorso SSAS."><link rel="stylesheet" href="ssas-labs.css?v=20261010-ssas"><link rel="stylesheet" href="bussola-ingresso.css?v=20261012-ingresso"><link rel="stylesheet" href="ssas-situazioni.css?v=20261024-esame"><link rel="stylesheet" href="bussola-ingressi.css?v=20261018-flow"><link rel="stylesheet" href="bussola-percorsi.css?v=20261112-video-indirizzi"><link rel="stylesheet" href="ssas-terza-media.css?v=20261111-inizia-diretto"></head>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bussola SSAS · Servizi per la Sanità e l’Assistenza Sociale</title><meta name="description" content="Sei situazioni e cinque laboratori per esplorare il percorso SSAS."><link rel="stylesheet" href="ssas-labs.css?v=20261010-ssas"><link rel="stylesheet" href="bussola-ingresso.css?v=20261012-ingresso"><link rel="stylesheet" href="ssas-situazioni.css?v=20261024-esame"><link rel="stylesheet" href="bussola-ingressi.css?v=20261018-flow"><link rel="stylesheet" href="bussola-percorsi.css?v=20261112-avviso-video"><link rel="stylesheet" href="ssas-terza-media.css?v=20261111-inizia-diretto"></head>
 <body class="tm-page"><a href="#main" class="skip">Vai all’attività</a>
 <nav class="experience-path tm-top" aria-label="Percorso"><a href="missioni.html" class="tm-top-back">← Indirizzi</a><span aria-current="page" class="tm-course">SSAS</span><button type="button" id="menuToggle" class="tm-menu-toggle" aria-expanded="false" aria-controls="pageMenu" data-alert="false"><span class="tm-menu-icon" aria-hidden="true"></span>Menu</button></nav>
 <div id="pageMenu" class="tm-menu" hidden>
@@ -28,7 +28,7 @@
 if(location.protocol==='file:'){
  const p=document.createElement('p');p.textContent='Apri l’esperienza dal server locale per svolgere e salvare le attività. ';
  const a=document.createElement('a');a.href='http://127.0.0.1:8766/bussola-ssas.html';a.textContent='Apri i cinque laboratori';p.append(a);document.getElementById('workspace').append(p);
-}else import('./ssas-situazioni-entry.mjs?v=20261112-video-indirizzi').catch(()=>{document.getElementById('workspace').textContent='L’attività non si è caricata. Ricarica la pagina; il lavoro salvato resta sul dispositivo.';});
+}else import('./ssas-situazioni-entry.mjs?v=20261112-avviso-video').catch(()=>{document.getElementById('workspace').textContent='L’attività non si è caricata. Ricarica la pagina; il lavoro salvato resta sul dispositivo.';});
 </script>  <!-- Cloudflare Web Analytics: conteggio delle pagine pubbliche -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"59b3a938ff634bfaaa1caa774a713401","spa":false}'></script>
 </body></html>

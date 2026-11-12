@@ -6,7 +6,7 @@ import {sceneImage,entranceImage} from './ssas-illustrazioni.mjs?v=20261012-scen
 import {scenePanel,paintScene} from './ssas-scena-visiva.mjs?v=20261111-scene';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261111-inizia-diretto';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {courseVideos,nextStep} from './bussola-prossimo-passo.mjs?v=20261112-video-indirizzi';
+import {COURSE_VIDEO_NOTICE,courseVideos,nextStep} from './bussola-prossimo-passo.mjs?v=20261112-avviso-video';
 import {FORMAT,LABS,CASES,caseById,GUIDE,cursor,guideIssues,titleDefaults,freshProject,restoreProject,selectCase,beginRevision,summaryItems,xml} from './ssas-situazioni-core.mjs?v=20261018-testi';
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');
 const API=localTest?'/__test/bussola-esperienze':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-esperienze';
@@ -194,7 +194,7 @@ function intro(){
   finally{trigger.disabled=false;trigger.textContent=label;}
  },'tm-start');
  const art=node('div',null,'tm-intro-art');art.append(entranceImage());
- s.append(node('p','Servizi per la Sanità e l’Assistenza Sociale','tm-kicker'),title,node('p',line,'tm-lead'),start,feedback);
+ s.append(node('p','Servizi per la Sanità e l’Assistenza Sociale','tm-kicker'),title,node('p',line,'tm-lead'),node('p',COURSE_VIDEO_NOTICE,'bussola-video-notice'),start,feedback);
  if(!started&&!classLink)s.append(btn('Entra con la classe',e=>classUI.begin(e.currentTarget),'tm-class-start'));
  s.append(art);
  mount.append(s);

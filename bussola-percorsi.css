@@ -100,6 +100,22 @@
   .next-step-actions { flex-direction: column; }
   .next-step-action { width: 100%; }
 }
+p.bussola-video-notice {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-inline-start: 4px solid #075d56;
+  border-radius: 8px;
+  background: #edf4f4;
+  color: #123c57;
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.bussola-page .compass-intro .bussola-video-notice {
+  margin: 14px 0;
+  border-color: #c9f981;
+  background: #214c65;
+}
 .bussola-course-videos {
   margin: 20px 0 28px;
   padding: clamp(14px, 3vw, 26px);
