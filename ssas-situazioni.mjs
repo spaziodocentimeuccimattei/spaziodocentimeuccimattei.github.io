@@ -197,6 +197,7 @@ function intro(){
  const art=node('div',null,'tm-intro-art');art.append(entranceImage());
  s.append(node('p','Servizi per la Sanità e l’Assistenza Sociale','tm-kicker'),title,node('p',line,'tm-lead'),node('p',COURSE_VIDEO_NOTICE,'bussola-video-notice'),start,feedback);
  if(!started&&!classLink)s.append(btn('Entra con la classe',e=>classUI.begin(e.currentTarget),'tm-class-start'));
+ if(started)s.append(btn('Inizia da capo',()=>$('newProject').click(),'tm-class-start')); // un'altra persona sullo stesso dispositivo: apre la conferma di «Inizia un nuovo progetto»
  s.append(art);
  mount.append(s);
 }
