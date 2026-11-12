@@ -8,6 +8,7 @@ import { openDayCard } from './bussola-prossimo-passo.mjs?v=20261112-open-day';
 
 const intro = document.getElementById('introPanel');
 const resume = document.getElementById('resumePanel');
+const resumePath = document.getElementById('resumePath');
 const questions = document.getElementById('questionPanel');
 const results = document.getElementById('resultPanel');
 const contactsMount = document.getElementById('contactMount');
@@ -34,6 +35,14 @@ function hidePanels() {
   document.getElementById('bussolaVideo')?.pause(); // il video della prima pagina si ferma quando si esce dall'apertura
   skipActivities.parentElement.hidden = false;
   announcements.textContent = '';
+}
+
+function showSavedPath() {
+  const finished = state.stage === 'results';
+  document.getElementById('resumeTitle').textContent = finished ? 'Il tuo risultato è pronto' : 'La tua Bussola è salvata';
+  resumePath.textContent = finished ? 'Rivedi il risultato' : 'Riprendi la Bussola';
+  intro.hidden = true;
+  resume.hidden = false;
 }
 
 function newPath() {
@@ -227,9 +236,11 @@ async function initialize() {
     status.replaceChildren(syncText);
     remoteQuestion=questionnaireRemote({status:()=>{},loaded:value=>{const next=sanitizeState({...value,missions:{...state?.missions,...value.missions}},situations,missionIds);if(next){state=next;persistLocal(state);if(!questions.hidden){if(state.stage==='results')renderResults();else renderQuestion();}else if(!results.hidden)renderResults();}},links:personal=>{for(const a of document.querySelectorAll('a[href]')){const u=new URL(a.href);if(u.origin===location.origin&&/(?:missioni|bussola-(?:afm|sia|turismo|ssas|cat))\.html$/.test(u.pathname))a.href=personal(a.href);}}});
     start.disabled = false;
-    if (state && Object.keys(state.answers).length) { intro.hidden = true; resume.hidden = false; }
+    if (state && Object.keys(state.answers).length) showSavedPath();
     else state = freshState();
-    remoteQuestion.init().then(()=>{if((!intro.hidden||!resume.hidden)&&state&&Object.keys(state.answers).length){intro.hidden=true;resume.hidden=false;}});
+    remoteQuestion.init().then(() => {
+      if ((!intro.hidden || !resume.hidden) && state && Object.keys(state.answers).length) showSavedPath();
+    });
   } catch {
     status.replaceChildren(el('span', 'Le situazioni non si sono caricate. Controlla la connessione. '), button('Riprova', initialize, 'explore-link'));
   }
@@ -237,7 +248,7 @@ async function initialize() {
 
 start.addEventListener('click', newPath);
 document.getElementById('newPath').addEventListener('click', newPath);
-document.getElementById('resumePath').addEventListener('click', () => {
+resumePath.addEventListener('click', () => {
   if (state.stage === 'results') renderResults(); else renderQuestion();
 });
 initialize();

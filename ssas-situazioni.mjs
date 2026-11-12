@@ -180,8 +180,9 @@ function intro(){
  const entered=j.visited>0,started=entered&&Boolean(c);
  const classLink=Boolean(classEntry().classe);
  const title=node('h1','Che cosa fa chi aiuta le persone?');title.id='ssasEntryTitle';s.setAttribute('aria-labelledby',title.id);
- const line=started?`Hai iniziato la storia di ${c.person}. Puoi continuare da dove avevi lasciato.`:'Scegli una storia e prova a capire, ascoltare e aiutare una persona, in cinque passi.';
- const label=started?'Riprendi':classLink&&!entered?'Entra con la classe':'Inizia';
+ const finished=started&&j.step===6&&j.finished;
+ const line=finished?`Hai concluso la storia di ${c.person}. Puoi rivedere il tuo riepilogo.`:started?`Hai iniziato la storia di ${c.person}. Puoi continuare da dove avevi lasciato.`:'Scegli una storia e prova a capire, ascoltare e aiutare una persona, in cinque passi.';
+ const label=finished?'Rivedi il tuo percorso':started?'Riprendi':classLink&&!entered?'Entra con la classe':'Inizia';
  const feedback=node('p',null,'tm-start-message');feedback.id='ssasStartMessage';feedback.setAttribute('role','status');
  const start=btn(label,async e=>{
   if(entered){resume();return;}

@@ -100,6 +100,13 @@
   .next-step-actions { flex-direction: column; }
   .next-step-action { width: 100%; }
 }
+.bussola-entry-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 16px;
+}
 p.bussola-video-notice {
   margin: 0 0 16px;
   padding: 10px 12px;
