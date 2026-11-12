@@ -45,7 +45,30 @@ function showSavedPath() {
   resume.hidden = false;
 }
 
+// Sullo stesso dispositivo si alternano persone diverse: «Inizia» deve partire da zero.
+// Chi inizia una nuova Bussola non eredita il codice personale di chi c'era prima (e quindi i suoi percorsi
+// negli indirizzi e le sue risposte nel monitoraggio). Fanno eccezione gli alunni entrati con il codice della classe,
+// che restano legati al proprio registro. La pagina si ricarica per ripartire pulita.
+const NEW_START = 'bussola-avvio-nuovo';
+function restartAsNewPerson(next) {
+  try {
+    const hash = new URLSearchParams(location.hash.slice(1));
+    const saved = JSON.parse(localStorage.getItem('bussola-partecipante') || 'null');
+    if (hash.get('classe') || saved?.classe) return false;
+    if (!hash.get('alunno') && !saved?.token) return false;
+    clearState(storage());
+    document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));
+    sessionStorage.setItem(NEW_START, next);
+    hash.delete('alunno');
+    const url = new URL(location.href); url.hash = hash.toString();
+    history.replaceState(null, '', url.href);
+    location.reload();
+    return true;
+  } catch { return false; }
+}
+
 function newPath() {
+  if (restartAsNewPerson('domande')) return;
   clearState(storage());
   state = freshState();
   persist(state);
@@ -53,6 +76,7 @@ function newPath() {
 }
 
 function resetToIntro() {
+  if (restartAsNewPerson('apertura')) return;
   clearState(storage());
   state = freshState();
   persist(state);
@@ -236,7 +260,9 @@ async function initialize() {
     status.replaceChildren(syncText);
     remoteQuestion=questionnaireRemote({status:()=>{},loaded:value=>{const next=sanitizeState({...value,missions:{...state?.missions,...value.missions}},situations,missionIds);if(next){state=next;persistLocal(state);if(!questions.hidden){if(state.stage==='results')renderResults();else renderQuestion();}else if(!results.hidden)renderResults();}},links:personal=>{for(const a of document.querySelectorAll('a[href]')){const u=new URL(a.href);if(u.origin===location.origin&&/(?:missioni|bussola-(?:afm|sia|turismo|ssas|cat))\.html$/.test(u.pathname))a.href=personal(a.href);}}});
     start.disabled = false;
-    if (state && Object.keys(state.answers).length) showSavedPath();
+    let newStart = null; try { newStart = sessionStorage.getItem(NEW_START); sessionStorage.removeItem(NEW_START); } catch {}
+    if (newStart) { state = freshState(); if (newStart === 'domande') { persist(state); renderQuestion(); } }
+    else if (state && Object.keys(state.answers).length) showSavedPath();
     else state = freshState();
     remoteQuestion.init().then(() => {
       if ((!intro.hidden || !resume.hidden) && state && Object.keys(state.answers).length) showSavedPath();
