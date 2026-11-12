@@ -18,9 +18,13 @@ function trackOf(screen) {
   return name ? screens.filter((item) => item.dataset.track === name) : [];
 }
 
-function show(id, { focus = true } = {}) {
+function show(id, { focus = true, anchor = null } = {}) {
   const screen = byId.get(id) ?? first;
-  for (const item of screens) item.hidden = item !== screen;
+  for (const item of screens) {
+    const hide = item !== screen;
+    if (hide && !item.hidden) item.querySelectorAll("video").forEach((video) => video.pause());
+    item.hidden = hide;
+  }
 
   const track = trackOf(screen);
   const index = track.indexOf(screen);
@@ -51,12 +55,16 @@ function show(id, { focus = true } = {}) {
     if (after) next.href = `#${after.id}`;
   }
 
-  window.scrollTo({ top: 0, behavior: "instant" });
-  if (focus) screen.querySelector("h1, h2")?.focus({ preventScroll: true });
+  if (anchor) anchor.scrollIntoView({ block: "start", behavior: "instant" });
+  else window.scrollTo({ top: 0, behavior: "instant" });
+  if (focus) (anchor ?? screen).querySelector("h1, h2")?.focus({ preventScroll: true });
 }
 
-function route(options) {
-  show(location.hash.slice(1), options);
+function route({ focus = true } = {}) {
+  const id = location.hash.slice(1);
+  const target = document.getElementById(id);
+  const anchor = target?.hasAttribute("data-flow-anchor") ? target : null;
+  show(anchor?.closest("[data-screen]")?.id ?? id, { focus, anchor });
 }
 
 addEventListener("hashchange", () => route());
@@ -67,5 +75,5 @@ addEventListener("keydown", (event) => {
 });
 
 route({ focus: false });
-// Il browser, a caricamento finito, salta all'ancora: si torna in cima alla schermata.
-addEventListener("load", () => window.scrollTo({ top: 0, behavior: "instant" }));
+// Riposiziona la schermata dopo il salto del browser al frammento dell’URL.
+addEventListener("load", () => route({ focus: false }));
