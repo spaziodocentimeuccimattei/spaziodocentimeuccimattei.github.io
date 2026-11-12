@@ -6,7 +6,7 @@ import {sceneImage,entranceImage} from './ssas-illustrazioni.mjs?v=20261012-scen
 import {scenePanel,paintScene} from './ssas-scena-visiva.mjs?v=20261111-scene';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261111-inizia-diretto';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {nextStep} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
+import {courseVideos,nextStep} from './bussola-prossimo-passo.mjs?v=20261112-video-indirizzi';
 import {FORMAT,LABS,CASES,caseById,GUIDE,cursor,guideIssues,titleDefaults,freshProject,restoreProject,selectCase,beginRevision,summaryItems,xml} from './ssas-situazioni-core.mjs?v=20261018-testi';
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');
 const API=localTest?'/__test/bussola-esperienze':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-esperienze';
@@ -363,9 +363,8 @@ function summary(){
   const liked=LABS.map((l,i)=>j.interests.includes(l.id)?INFINITIVES[i]:'').filter(Boolean);
   done.append(title,node('p',`Ti è piaciuto di più: ${liked.join(', ')}.`));if(j.nextIdea.trim())done.append(node('p',`La tua domanda: ${j.nextIdea}`));
   done.append(node('p','Porta il tuo lavoro all’incontro con studenti e docenti: sarà un buon punto da cui partire con le domande.'));
-  done.append(btn('Apri il tuo attestato',e=>certificateUI.open(e.currentTarget),'tm-start'));
-  const link=node('a','Esplora l’indirizzo SSAS →','tm-link');link.href='https://spaziodocentimeuccimattei.github.io/indirizzi.html#ssas';done.append(link);
-  mount.append(done,nextStep('ssas'));
+  mount.append(done,courseVideos('ssas'),
+    btn('Apri il tuo attestato',e=>certificateUI.open(e.currentTarget),'plain-button'),nextStep('ssas'));
  }
 }
 function render(focus=true){

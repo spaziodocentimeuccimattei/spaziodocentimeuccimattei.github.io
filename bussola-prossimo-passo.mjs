@@ -5,6 +5,7 @@ const NAMES = {
   turismo: 'Turismo', ssas: 'Servizi per la Sanità e l’Assistenza Sociale',
   cat: 'Costruzioni, Ambiente e Territorio',
 };
+const VIDEO_LABELS = { afm: 'AFM', sia: 'SIA', turismo: 'Turismo', ssas: 'SSAS', cat: 'CAT 4+2' };
 let contactsPromise;
 
 export function loadContacts() {
@@ -31,6 +32,43 @@ function node(tag, text, className) {
   return item;
 }
 function anchor(text, href, className) { const a = node('a', text, className); a.href = href; return a; }
+
+function courseVideoLink(course, featured = false) {
+  const link = anchor(null, `indirizzi.html#video-${course}`, `course-video-link${featured ? ' featured' : ''}`);
+  const cover = node('img');
+  cover.src = `presentazione-orientamento/assets/video/${course}-copertina.jpg`;
+  cover.alt = '';
+  cover.width = 1280;
+  cover.height = 720;
+  cover.decoding = 'async';
+  if (!featured) cover.loading = 'lazy';
+  const label = VIDEO_LABELS[course];
+  const caption = node('span', null, 'course-video-caption');
+  if (featured) caption.append(node('strong', course === 'cat' ? `${NAMES.cat} (CAT 4+2)` : NAMES[course]));
+  const action = node('span', null, 'course-video-action');
+  const play = node('span', '▶');
+  play.setAttribute('aria-hidden', 'true');
+  action.append(play, featured ? 'Guarda il video' : `Video ${label}`);
+  caption.append(action);
+  link.append(cover, caption);
+  return link;
+}
+
+export function courseVideos(course) {
+  const section = node('section', null, 'bussola-course-videos');
+  const title = node('h2', 'Scopri l’indirizzo');
+  title.id = `courseVideos-${course}`;
+  section.setAttribute('aria-labelledby', title.id);
+  const others = node('ul', null, 'other-course-videos');
+  for (const other of Object.keys(VIDEO_LABELS)) {
+    if (other === course) continue;
+    const item = node('li');
+    item.append(courseVideoLink(other));
+    others.append(item);
+  }
+  section.append(title, courseVideoLink(course, true), node('h3', 'Scopri gli altri video'), others);
+  return section;
+}
 
 function fill(section, contacts, course, compact) {
   const mail = anchor('Scrivi all’orientamento', mailHref(contacts, course), 'next-step-action primary-action');
@@ -69,5 +107,6 @@ export function nextStep(course, { compact = false } = {}) {
 
 // Per le pagine costruite con modelli di testo: <div data-next-step="afm"></div>.
 export function mountNextStep(root) {
+  root?.querySelectorAll('[data-course-videos]').forEach(slot => slot.replaceWith(courseVideos(slot.dataset.courseVideos)));
   root?.querySelectorAll('[data-next-step]').forEach(slot => slot.replaceWith(nextStep(slot.dataset.nextStep)));
 }

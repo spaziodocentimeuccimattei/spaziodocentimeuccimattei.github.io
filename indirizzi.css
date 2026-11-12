@@ -86,6 +86,10 @@
 .study-page .study-card .course-art { order: 3; display: block; width: 100%; max-width: 340px; height: auto; margin: 28px auto 0; }
 .course-body { min-width: 0; padding: 30px 34px; display: flex; flex-direction: column; }
 .course-intent { margin: 0; color: #33495a; font-size: 1.08rem; line-height: 1.65; }
+.course-film { width: min(100%, 560px); margin-top: 18px; }
+.course-film h4 { margin: 0 0 8px; color: #123c57; font-size: 1.1rem; }
+.course-film video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 12px; background: #123c57; }
+@media print { .course-film { display: none; } }
 .course-caption { margin: 18px 0 0; padding: 14px 16px; border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; color: #17314a; background: #f4f6f2; font-size: 1rem; line-height: 1.6; }
 .study-page .course-caption > span, .study-page .evening-caption > span { display: block; margin-bottom: 5px; color: #33495a; font-size: .9rem; font-weight: 800; letter-spacing: 0; text-transform: none; }
 .card-details { margin: 24px 0 0; padding: 22px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; border-top: 1px solid #d9e2e6; }
