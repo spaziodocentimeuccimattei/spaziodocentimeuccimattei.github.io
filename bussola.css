@@ -471,7 +471,17 @@
   .missioni-page .mission-card .course-art { width: 64px; height: 64px; }
 }
 
-/* Video della Bussola nella prima pagina: occupa tutta la larghezza del riquadro di apertura, parte solo al clic e riparte da solo. */
+/* Video della Bussola nella prima pagina: tutta la larghezza del riquadro di apertura, pulsanti propri grandi, riparte da solo. */
 .bussola-page .compass-video { grid-column: 1 / -1; margin: 0; background: #092b43; }
-.bussola-page .compass-video video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #092b43; }
-.bussola-page .compass-video figcaption { padding: 10px clamp(20px,4vw,48px) 14px; color: #fff; background: #092b43; font-size: .9375rem; }
+.bussola-page .compass-video-box { position: relative; background: #092b43; }
+.bussola-page .compass-video video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #092b43; cursor: pointer; }
+.bussola-page .compass-video-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); display: inline-flex; align-items: center; gap: 14px; min-height: 64px; padding: 14px 30px 14px 22px; border: 3px solid #fff; border-radius: 99px; color: #092b43; background: #79cf1b; font: inherit; font-size: clamp(1.125rem,2.2vw,1.625rem); font-weight: 800; white-space: nowrap; cursor: pointer; box-shadow: 0 10px 34px rgba(0,0,0,.5); }
+.bussola-page .compass-video-play:hover { background: #8ee02b; }
+.bussola-page .compass-video-play:focus-visible, .bussola-page .compass-video-button:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+.bussola-page .compass-video-play-icon { width: 0; height: 0; border-style: solid; border-width: 13px 0 13px 22px; border-color: transparent transparent transparent #092b43; }
+.bussola-page .compass-video-play[hidden] { display: none; }
+.bussola-page .compass-video figcaption { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 12px clamp(20px,4vw,48px) 16px; color: #fff; background: #092b43; font-size: .9375rem; }
+.bussola-page .compass-video-actions { display: inline-flex; gap: 10px; }
+.bussola-page .compass-video-button { min-height: 44px; padding: 8px 18px; border: 2px solid #c9f981; border-radius: 99px; color: #fff; background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
+.bussola-page .compass-video-button:hover { color: #092b43; background: #c9f981; }
+.bussola-page .compass-video-button[hidden] { display: none; }
