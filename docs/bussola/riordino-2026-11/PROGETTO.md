@@ -65,7 +65,7 @@ I colori dei cinque indirizzi si prendono dal video, non si inventano. La regola
 ## 6. Incarichi
 
 ### A1 — Base grafica comune (lavora per primo, da solo)
-- Creare `bussola-tema.css`: variabili di colore (un colore vivace per indirizzo più varianti chiara e scura, colori di fondo, testo), pulsante lucido primario e secondario, scheda, barra di avanzamento, tessera, distintivo, schermo «esplosione», tipografia grande. Tutto tramite variabili CSS, così la tavolozza si cambia in un punto solo.
+- Creare `bussola-tema.css`: variabili di colore (un colore vivace per indirizzo più varianti chiara e scura, colori di fondo, testo), pulsante lucido primario e secondario, scheda, barra di avanzamento, tessera, distintivo, schermo «esplosione», biglietto con codice personale e QR, tipografia grande. Tutto tramite variabili CSS, così la tavolozza si cambia in un punto solo.
 - Creare `bussola-effetti.mjs`: funzioni riusabili senza dipendenze, per esempio `esplosione(elemento, corso)` (coriandoli/raggi su canvas o CSS), `premio(elemento)`, `suono(nome)` con interruttore spento all'avvio, tutte rispettose di `prefers-reduced-motion`.
 - Collegare il tema a `bussola.html`, `missioni.html` e alle cinque pagine `bussola-<corso>.html`, dopo i fogli esistenti. Applicare subito il nuovo stile a pulsanti e schede esistenti senza cambiare testi né logica.
 - Scrivere `docs/bussola/riordino-2026-11/TEMA.md`: elenco di classi, variabili e funzioni, con un esempio d'uso per ciascuna. Gli altri agenti useranno solo questo.
@@ -89,6 +89,7 @@ I colori dei cinque indirizzi si prendono dal video, non si inventano. La regola
   Un link discreto «Rivedi il tuo lavoro» apre il riepilogo che oggi sta nel finale. La scelta «Che cosa ti ha incuriosito?» non blocca più l'attestato in nessun percorso.
 - API da rispettare (gli agenti dei percorsi la useranno): `mostraIngresso({corso, contenitore, classe, onInizia(nome, cognome)})` e `mostraFinale({corso, contenitore, nome, treCose, apriAttestato, rivediLavoro})`. Documentare firma definitiva ed esempio in `docs/bussola/riordino-2026-11/INGRESSO-FINALE.md` e collegare i due moduli almeno in un percorso (AFM) come esempio funzionante.
 - **Email e area docenti** (preparare, non attivare): salvataggio di nome, cognome, indirizzo provato, data, email del genitore e consenso con data e ora; nell'area docenti, per la sessione della funzione strumentale, un elenco con pulsante «Scarica» (CSV). Codice della funzione e file SQL nel repository, **non applicati**. Con `EMAIL_ATTIVA = false` nulla di tutto questo è visibile né inviato.
+- **Ritorno da casa** (richiesta del 14/11, pomeriggio): nello schermo dell'attestato compaiono un **codice QR** e un **codice personale breve** da scrivere (6 caratteri leggibili, senza 0/O e 1/I, mai ricavato dal nome), con una frase sola: «A casa, con i tuoi genitori, torna qui: scarichi l'attestato e scopri di più». Il QR serve a chi ha il telefono; il codice a chi non lo ha (allo stand lo si scrive su un cartoncino). In `bussola.html` un link piccolo «Ho un codice» porta a uno schermo «Bentornato» con: scarica l'attestato, i distintivi ottenuti, «Prova un altro indirizzo», Open Day e «Come ci si iscrive» (`famiglie.html#iscrizione`). È lì, a casa con il genitore, il posto giusto per l'email e il consenso (sempre dietro `EMAIL_ATTIVA`). Realizzazione in due passi: (1) il QR apre il link personale già previsto dal sistema (`#alunno=<codice lungo>`): verificare nel codice che funzioni anche per chi è entrato senza classe e usarlo subito, senza modifiche al server; (2) il codice breve richiede una corrispondenza sul server: preparare funzione e SQL nel repository, **non applicati**, e tenerlo nascosto finché non sono attivi. Il nome non è mai una chiave di accesso (omonimi, e chiunque scaricherebbe l'attestato di un altro). Finché la privacy non è approvata, nome e cognome non vanno sul server: per il ritorno con QR possono viaggiare nella parte del link dopo `#`, che il browser non invia al server; altrimenti a casa si richiede il nome. Generare il QR nel browser, senza servizi né librerie remote.
 - Allineare le etichette SSAS nella copia dei testi di `supabase/functions/bussola-gestione` (oggi sono quelle vecchie), senza deploy.
 
 ### A4-A8 — I cinque percorsi (un agente per indirizzo; ciascuno tocca solo i file del proprio corso e la propria pagina `bussola-<corso>.html`)
@@ -132,6 +133,7 @@ Tutto ciò che è stato detto, in ordine. In caso di dubbio fra questo registro 
 15. Risultato numero uno per la scuola: il ragazzo «si ricorda del Mattei».
 16. Sensazione durante la prova: «un videogioco».
 17. Il lavoro va fatto con un progetto unico che dica ai sotto-agenti che cosa fare, con un orchestratore.
+18. Far tornare le persone sul sito da casa, «coi tuoi genitori», per scaricare l'attestato, fare un'altra attività e saperne di più. Servono un codice da scrivere («scriviti questo codice, ritorna in questa sezione quando sei a casa») oppure un QR da inquadrare («inquadra il QR code per scaricare il tuo attestato»); chi non ha il telefono con sé usa il codice. «Bisogna ragionare su cosa è meglio fare».
 
 ### 8.2 Proposte di Claude accolte o non contestate (si applicano)
 
@@ -156,6 +158,7 @@ Tutto ciò che è stato detto, in ordine. In caso di dubbio fra questo registro 
 19. Sotto-agenti: uno per la base grafica (per primo), uno per questionario e risultato, uno per ingresso, finale e area docenti, cinque per gli indirizzi, un verificatore indipendente per ultimo.
 20. Priorità di pubblicazione: per l'Open Day dell'11 dicembre 2026 grafica, questionario, risultato, ingresso, finale e tagli di testo; per il 16 gennaio 2027 la riscrittura di SIA e l'elenco email nell'area docenti.
 21. Si lavora su un ramo di prova; si pubblica solo al «Pubblica» di Salvatore; nei collaudi non si preme «Inizia» sul sito vero.
+22. Ritorno da casa: si danno **tutti e due**, QR e codice breve, che portano allo stesso schermo «Bentornato». Il nome non si usa come chiave. L'email del genitore e il consenso si chiedono lì, a casa, dove il genitore c'è davvero. Il cartoncino con il codice sostituisce il modulo di carta per le email. (Proposta di Claude in risposta a 8.1.18, in attesa del parere di Salvatore.)
 
 ### 8.3 Proposte respinte da Salvatore o ritirate (NON si applicano)
 
@@ -167,6 +170,8 @@ Tutto ciò che è stato detto, in ordine. In caso di dubbio fra questo registro 
 6. **«Dichiarare lo scopo» come «alla fine avrai costruito questo in tot minuti»**: ritirata. Lo scopo è quello del punto 8.1.12.
 
 ### 8.4 Punti aperti (non decisi: non darli per fatti)
+
+0. Il codice breve per il ritorno da casa richiede una modifica al server (funzione e tabella): si prepara ma non si attiva senza il sì di Salvatore. Il QR invece dovrebbe funzionare con il link personale esistente: è da verificare nel codice, non è ancora un fatto.
 
 1. Informativa privacy e via della Dirigente per la raccolta di nome ed email sul server. Fino ad allora `EMAIL_ATTIVA = false`, e nome e cognome dell'ospite restano solo sul dispositivo.
 2. Chi approva i testi riscritti di AFM, SIA, Turismo e CAT: solo Salvatore o anche i colleghi di quegli indirizzi. Per questo ogni agente di percorso consegna l'elenco «prima → dopo» dei testi cambiati in `docs/bussola/riordino-2026-11/testi-<corso>.md`.
