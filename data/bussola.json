@@ -22,7 +22,8 @@
               "weight": 2,
               "reason": "Ascolto, bisogni e benessere si approfondiscono in Psicologia, Igiene e Metodologie operative."
             }
-          }
+          },
+          "icona": "🤝"
         },
         {
           "id": "curiosita-2",
@@ -39,7 +40,8 @@
               "weight": 2,
               "reason": "Disegno e realizzazione degli spazi si approfondiscono in Progettazione e Costruzioni."
             }
-          }
+          },
+          "icona": "📐"
         },
         {
           "id": "curiosita-3",
@@ -60,7 +62,8 @@
               "weight": 1,
               "reason": "Anche SIA usa dati economici, soprattutto quando vengono gestiti con strumenti informatici."
             }
-          }
+          },
+          "icona": "💶"
         },
         {
           "id": "curiosita-4",
@@ -77,7 +80,8 @@
               "weight": 2,
               "reason": "Programmi e gestione delle informazioni si approfondiscono in Informatica."
             }
-          }
+          },
+          "icona": "📱"
         },
         {
           "id": "curiosita-5",
@@ -94,7 +98,8 @@
               "weight": 2,
               "reason": "Lingue, Geografia turistica e Arte e territorio collegano comunicazione e luoghi."
             }
-          }
+          },
+          "icona": "🌍"
         }
       ],
       "area": "Interessi"
@@ -124,7 +129,8 @@
               "weight": 1,
               "reason": "Le storie di vita possono aprire domande sulle persone e sui contesti sociali."
             }
-          }
+          },
+          "icona": "🏛️"
         },
         {
           "id": "video-2",
@@ -141,7 +147,8 @@
               "weight": 2,
               "reason": "Prodotti e organizzazione delle imprese sono temi di Economia aziendale."
             }
-          }
+          },
+          "icona": "🏭"
         },
         {
           "id": "video-3",
@@ -158,7 +165,8 @@
               "weight": 2,
               "reason": "Costi e prezzi sono temi di Economia aziendale ed Economia politica."
             }
-          }
+          },
+          "icona": "🏷️"
         },
         {
           "id": "video-4",
@@ -175,7 +183,8 @@
               "weight": 2,
               "reason": "Costruire e verificare un programma è un’attività di Informatica."
             }
-          }
+          },
+          "icona": "💻"
         },
         {
           "id": "video-5",
@@ -192,7 +201,8 @@
               "weight": 2,
               "reason": "Comunicare tra lingue e culture è centrale nello studio delle lingue straniere."
             }
-          }
+          },
+          "icona": "👋"
         }
       ],
       "area": "Tempo libero"
@@ -211,14 +221,15 @@
             "comunicazione": 1,
             "organizzazione": 1
           },
-          "label": "Capire e ascoltare",
+          "label": "Ascoltare le persone",
           "detail": "Capire i comportamenti delle persone e imparare ad ascoltarle.",
           "courseLinks": {
             "ssas": {
               "weight": 2,
               "reason": "Comportamenti e ascolto si esplorano in Psicologia e Metodologie operative."
             }
-          }
+          },
+          "icona": "👂"
         },
         {
           "id": "imparare-2",
@@ -235,7 +246,8 @@
               "weight": 2,
               "reason": "Ruoli e organizzazione aziendale si approfondiscono in Economia aziendale."
             }
-          }
+          },
+          "icona": "🏢"
         },
         {
           "id": "imparare-3",
@@ -252,7 +264,8 @@
               "weight": 2,
               "reason": "Disegnare spazi risponde a problemi di Progettazione e Costruzioni."
             }
-          }
+          },
+          "icona": "✏️"
         },
         {
           "id": "imparare-4",
@@ -269,7 +282,8 @@
               "weight": 2,
               "reason": "Lingue straniere e accoglienza permettono di incontrare persone di altri paesi."
             }
-          }
+          },
+          "icona": "🗣️"
         },
         {
           "id": "imparare-5",
@@ -279,7 +293,7 @@
             "persone": 1,
             "risorse": 1
           },
-          "label": "Il tuo paese da vicino",
+          "label": "I servizi del tuo paese",
           "detail": "Conoscere i luoghi, i servizi e le occasioni che offre il posto in cui vivi.",
           "courseLinks": {
             "ssas": {
@@ -290,7 +304,8 @@
               "weight": 1,
               "reason": "Conoscere luoghi e opportunità può servire anche a costruire esperienze di visita."
             }
-          }
+          },
+          "icona": "🏘️"
         }
       ],
       "area": "Cose nuove da imparare"
@@ -316,7 +331,8 @@
               "weight": 2,
               "reason": "Confrontare costi e convenienza richiama Economia aziendale."
             }
-          }
+          },
+          "icona": "🔧"
         },
         {
           "id": "domande-2",
@@ -333,7 +349,8 @@
               "weight": 2,
               "reason": "Ricerca e organizzazione delle informazioni sono temi di Informatica."
             }
-          }
+          },
+          "icona": "🔎"
         },
         {
           "id": "domande-3",
@@ -350,7 +367,8 @@
               "weight": 2,
               "reason": "Misurare e rappresentare si collega a Topografia e Progettazione."
             }
-          }
+          },
+          "icona": "📏"
         },
         {
           "id": "domande-4",
@@ -367,7 +385,8 @@
               "weight": 2,
               "reason": "Collegare bisogni e servizi è un tema di Metodologie operative e Diritto."
             }
-          }
+          },
+          "icona": "🏥"
         },
         {
           "id": "domande-5",
@@ -384,7 +403,8 @@
               "weight": 2,
               "reason": "Acquisti e processi aziendali si approfondiscono in Economia aziendale."
             }
-          }
+          },
+          "icona": "📦"
         }
       ],
       "area": "Domande"
@@ -410,7 +430,8 @@
               "weight": 2,
               "reason": "Storia e caratteristiche di un luogo si collegano ad Arte e territorio e Geografia turistica."
             }
-          }
+          },
+          "icona": "🏺"
         },
         {
           "id": "visita-interessi-2",
@@ -427,7 +448,8 @@
               "weight": 2,
               "reason": "Edifici e rappresentazioni del territorio si approfondiscono in Costruzioni e Topografia."
             }
-          }
+          },
+          "icona": "🗺️"
         },
         {
           "id": "visita-interessi-3",
@@ -444,7 +466,8 @@
               "weight": 2,
               "reason": "Lingue straniere e comunicazione turistica aiutano a raccontare un luogo."
             }
-          }
+          },
+          "icona": "💬"
         },
         {
           "id": "visita-interessi-4",
@@ -454,7 +477,7 @@
             "organizzazione": 1,
             "dati": 1
           },
-          "label": "Confrontare costi e possibilità",
+          "label": "Prezzi, tempi e trasporti",
           "detail": "Come si confrontano prezzi, tempi e mezzi di trasporto per raggiungerlo.",
           "courseLinks": {
             "afm": {
@@ -465,7 +488,8 @@
               "weight": 1,
               "reason": "Costi e tempi entrano anche nell’organizzazione di un itinerario turistico."
             }
-          }
+          },
+          "icona": "🚌"
         },
         {
           "id": "visita-interessi-5",
@@ -482,7 +506,8 @@
               "weight": 2,
               "reason": "Considerare bisogni diversi e favorire la partecipazione si collega a Metodologie operative."
             }
-          }
+          },
+          "icona": "♿"
         }
       ],
       "area": "Luoghi e persone"
@@ -501,7 +526,7 @@
             "organizzazione": 1,
             "risorse": 1
           },
-          "label": "Dare ordine ai dati",
+          "label": "Mettere in ordine i dati",
           "detail": "Mettere in ordine informazioni e numeri per trovare una risposta.",
           "courseLinks": {
             "sia": {
@@ -512,7 +537,8 @@
               "weight": 1,
               "reason": "Anche AFM usa tabelle e dati per comprendere le scelte economiche."
             }
-          }
+          },
+          "icona": "📊"
         },
         {
           "id": "computer-2",
@@ -522,14 +548,15 @@
             "persone": 1,
             "dati": 1
           },
-          "label": "Capire i passaggi di un programma",
+          "label": "Come lavora un programma",
           "detail": "Capire i passaggi con cui un programma esegue un compito.",
           "courseLinks": {
             "sia": {
               "weight": 2,
               "reason": "Descrivere e verificare le istruzioni di un programma si collega a Informatica."
             }
-          }
+          },
+          "icona": "⚙️"
         },
         {
           "id": "computer-3",
@@ -550,7 +577,8 @@
               "weight": 1,
               "reason": "Comunicare in modo comprensibile conta anche nella relazione e nei servizi alla persona."
             }
-          }
+          },
+          "icona": "🖼️"
         },
         {
           "id": "computer-4",
@@ -567,7 +595,8 @@
               "weight": 2,
               "reason": "Rappresentazione degli spazi e disegno digitale si collegano a Progettazione."
             }
-          }
+          },
+          "icona": "🧊"
         },
         {
           "id": "computer-5",
@@ -584,7 +613,8 @@
               "weight": 2,
               "reason": "Leggere caratteristiche e costi per scegliere si collega a Economia aziendale."
             }
-          }
+          },
+          "icona": "⚖️"
         }
       ],
       "area": "Computer"
@@ -610,7 +640,8 @@
               "weight": 2,
               "reason": "Conoscere culture e modi di vivere aiuta nello studio delle lingue e nell’accoglienza."
             }
-          }
+          },
+          "icona": "🌏"
         },
         {
           "id": "libro-2",
@@ -620,14 +651,15 @@
             "comunicazione": 1,
             "territorio": 1
           },
-          "label": "Un edificio spiegato dal disegno",
+          "label": "Il disegno di un edificio",
           "detail": "Un disegno che spiega come è fatto un edificio o un paesaggio.",
           "courseLinks": {
             "cat": {
               "weight": 2,
               "reason": "Leggere un disegno di uno spazio si collega a Progettazione e Costruzioni."
             }
-          }
+          },
+          "icona": "🏗️"
         },
         {
           "id": "libro-3",
@@ -648,7 +680,8 @@
               "weight": 1,
               "reason": "Grafici e dati aiutano anche a confrontare costi e attività aziendali."
             }
-          }
+          },
+          "icona": "📈"
         },
         {
           "id": "libro-4",
@@ -665,7 +698,8 @@
               "weight": 2,
               "reason": "Bisogni e cambiamenti della persona si approfondiscono in Psicologia e Igiene."
             }
-          }
+          },
+          "icona": "👶"
         },
         {
           "id": "libro-5",
@@ -682,7 +716,8 @@
               "weight": 2,
               "reason": "Capire produzione e organizzazione si collega a Economia aziendale."
             }
-          }
+          },
+          "icona": "🏪"
         }
       ],
       "area": "Letture"
@@ -712,7 +747,8 @@
               "weight": 1,
               "reason": "Leggere i cambiamenti dei luoghi conta anche per conoscerli e raccontarli."
             }
-          }
+          },
+          "icona": "🌱"
         },
         {
           "id": "futuro-2",
@@ -722,14 +758,15 @@
             "territorio": 1,
             "organizzazione": 1
           },
-          "label": "Niente sprechi",
+          "label": "Soldi e tempo senza sprechi",
           "detail": "Quanto valgono soldi, tempo e materiali, e come usarli senza sprecarli.",
           "courseLinks": {
             "afm": {
               "weight": 2,
               "reason": "Valutare risorse e scelte economiche si collega a Economia aziendale."
             }
-          }
+          },
+          "icona": "⏳"
         },
         {
           "id": "futuro-3",
@@ -746,7 +783,8 @@
               "weight": 2,
               "reason": "Benessere e sostegno alle persone si collegano a Igiene, Psicologia e Metodologie operative."
             }
-          }
+          },
+          "icona": "❤️"
         },
         {
           "id": "futuro-4",
@@ -763,7 +801,8 @@
               "weight": 2,
               "reason": "Usare dati e strumenti digitali per capire un problema si collega a Informatica."
             }
-          }
+          },
+          "icona": "📡"
         },
         {
           "id": "futuro-5",
@@ -784,7 +823,8 @@
               "weight": 1,
               "reason": "Anche SIA studia i processi aziendali, collegandoli ai sistemi informativi."
             }
-          }
+          },
+          "icona": "👥"
         }
       ],
       "area": "Alle superiori"
@@ -810,7 +850,8 @@
               "weight": 2,
               "reason": "Economia aziendale e Diritto sono materie caratterizzanti di AFM."
             }
-          }
+          },
+          "icona": "📒"
         },
         {
           "id": "materie-2",
@@ -826,7 +867,8 @@
               "weight": 2,
               "reason": "Informatica applicata alle attività aziendali è il collegamento specifico di SIA."
             }
-          }
+          },
+          "icona": "💻"
         },
         {
           "id": "materie-3",
@@ -842,7 +884,8 @@
               "weight": 2,
               "reason": "Lingue, Arte e territorio e Geografia turistica sono materie caratterizzanti di Turismo."
             }
-          }
+          },
+          "icona": "🎨"
         },
         {
           "id": "materie-4",
@@ -858,7 +901,8 @@
               "weight": 2,
               "reason": "Psicologia, Igiene e Metodologie operative sono materie caratterizzanti di SSAS."
             }
-          }
+          },
+          "icona": "🩺"
         },
         {
           "id": "materie-5",
@@ -874,7 +918,8 @@
               "weight": 2,
               "reason": "Progettazione e Topografia sono materie caratterizzanti di CAT."
             }
-          }
+          },
+          "icona": "📐"
         }
       ]
     },
@@ -887,7 +932,7 @@
       "options": [
         {
           "id": "predisposizioni-1",
-          "label": "Ragionare con ordine",
+          "label": "Confrontare spese e vantaggi",
           "text": "Quando devo scegliere, metto in ordine le spese e confronto vantaggi e svantaggi.",
           "detail": "Quando devo scegliere, metto in ordine le spese e confronto vantaggi e svantaggi.",
           "weights": {
@@ -899,11 +944,12 @@
               "weight": 2,
               "reason": "Confrontare risorse e alternative è un modo di ragionare utile in Economia aziendale."
             }
-          }
+          },
+          "icona": "🧮"
         },
         {
           "id": "predisposizioni-2",
-          "label": "Provare e capire l’errore",
+          "label": "Trovare l’errore al computer",
           "text": "Quando qualcosa sul computer non funziona, provo un passaggio alla volta per capire dove si blocca.",
           "detail": "Quando qualcosa sul computer non funziona, provo un passaggio alla volta per capire dove si blocca.",
           "weights": {
@@ -915,11 +961,12 @@
               "weight": 2,
               "reason": "Scomporre un problema e verificare i passaggi è utile in Informatica."
             }
-          }
+          },
+          "icona": "🐞"
         },
         {
           "id": "predisposizioni-3",
-          "label": "Trovare le parole",
+          "label": "Raccontare in un’altra lingua",
           "text": "Mi piace trovare parole, immagini o espressioni in un’altra lingua per raccontare qualcosa a chi non lo conosce.",
           "detail": "Mi piace trovare parole, immagini o espressioni in un’altra lingua per raccontare qualcosa a chi non lo conosce.",
           "weights": {
@@ -931,11 +978,12 @@
               "weight": 2,
               "reason": "Comunicare con persone di lingue e culture diverse si collega a Turismo."
             }
-          }
+          },
+          "icona": "🔤"
         },
         {
           "id": "predisposizioni-4",
-          "label": "Accorgermi delle persone",
+          "label": "Accorgermi di chi resta fuori",
           "text": "Mi accorgo quando qualcuno resta fuori da un’attività e cerco di capire come coinvolgerlo.",
           "detail": "Mi accorgo quando qualcuno resta fuori da un’attività e cerco di capire come coinvolgerlo.",
           "weights": {
@@ -947,11 +995,12 @@
               "weight": 2,
               "reason": "Osservare e favorire la partecipazione si collega a Psicologia e Metodologie operative."
             }
-          }
+          },
+          "icona": "👀"
         },
         {
           "id": "predisposizioni-5",
-          "label": "Pensare per immagini",
+          "label": "Fare uno schizzo con le misure",
           "text": "Quando immagino un cambiamento, faccio uno schizzo e controllo misure e disposizione degli spazi.",
           "detail": "Quando immagino un cambiamento, faccio uno schizzo e controllo misure e disposizione degli spazi.",
           "weights": {
@@ -963,7 +1012,8 @@
               "weight": 2,
               "reason": "Rappresentazione, misure e spazi si collegano a Progettazione e Topografia."
             }
-          }
+          },
+          "icona": "✍️"
         }
       ]
     },
@@ -976,7 +1026,7 @@
       "options": [
         {
           "id": "sogni-1",
-          "label": "Far nascere un’idea",
+          "label": "Avviare una piccola attività",
           "text": "Far partire una piccola attività con un gruppo: capire a chi serve, organizzare quello che occorre e farla durare.",
           "detail": "Far partire una piccola attività con un gruppo: capire a chi serve, organizzare quello che occorre e farla durare.",
           "weights": {
@@ -988,7 +1038,8 @@
               "weight": 2,
               "reason": "Trasformare un’idea in un’attività sostenibile si collega a Economia aziendale e Marketing."
             }
-          }
+          },
+          "icona": "🚀"
         },
         {
           "id": "sogni-2",
@@ -1004,11 +1055,12 @@
               "weight": 2,
               "reason": "Progettare e verificare una soluzione digitale si collega a Informatica."
             }
-          }
+          },
+          "icona": "📲"
         },
         {
           "id": "sogni-3",
-          "label": "Incontrare il mondo",
+          "label": "Accogliere chi viene da lontano",
           "text": "Accogliere persone di altri paesi e far scoprire loro un luogo a cui tengo, parlando anche altre lingue.",
           "detail": "Accogliere persone di altri paesi e far scoprire loro un luogo a cui tengo, parlando anche altre lingue.",
           "weights": {
@@ -1020,11 +1072,12 @@
               "weight": 2,
               "reason": "Accoglienza, lingue e valorizzazione dei luoghi si collegano a Turismo."
             }
-          }
+          },
+          "icona": "✈️"
         },
         {
           "id": "sogni-4",
-          "label": "Far sentire qualcuno parte del gruppo",
+          "label": "Aiutare chi è in difficoltà",
           "text": "Ideare un’attività che aiuti bambini, anziani o persone in difficoltà a stare bene e partecipare.",
           "detail": "Ideare un’attività che aiuti bambini, anziani o persone in difficoltà a stare bene e partecipare.",
           "weights": {
@@ -1036,7 +1089,8 @@
               "weight": 2,
               "reason": "Progettare attività per benessere e partecipazione si collega a Metodologie operative."
             }
-          }
+          },
+          "icona": "🤗"
         },
         {
           "id": "sogni-5",
@@ -1052,7 +1106,8 @@
               "weight": 2,
               "reason": "Trasformare uno spazio considerando vincoli e sicurezza si collega a Progettazione e Costruzioni."
             }
-          }
+          },
+          "icona": "🏞️"
         }
       ]
     },
@@ -1065,7 +1120,7 @@
       "options": [
         {
           "id": "aspirazioni-1",
-          "label": "Decidere con i conti in mano",
+          "label": "Gestire conti e costi",
           "text": "Capire numeri, costi e regole per gestire bene un progetto o un’attività.",
           "detail": "Capire numeri, costi e regole per gestire bene un progetto o un’attività.",
           "weights": {
@@ -1077,11 +1132,12 @@
               "weight": 2,
               "reason": "Numeri, gestione e regole si collegano a Economia aziendale e Diritto."
             }
-          }
+          },
+          "icona": "💰"
         },
         {
           "id": "aspirazioni-2",
-          "label": "Passare dall’idea al programma",
+          "label": "Creare un programma che funziona",
           "text": "Creare un programma che funziona davvero, controllando dati e istruzioni.",
           "detail": "Creare un programma che funziona davvero, controllando dati e istruzioni.",
           "weights": {
@@ -1093,7 +1149,8 @@
               "weight": 2,
               "reason": "Programmi e gestione affidabile dei dati si collegano a Informatica."
             }
-          }
+          },
+          "icona": "⌨️"
         },
         {
           "id": "aspirazioni-3",
@@ -1109,7 +1166,8 @@
               "weight": 2,
               "reason": "Lingue, Geografia turistica e Discipline turistiche e aziendali si incontrano negli itinerari."
             }
-          }
+          },
+          "icona": "🧭"
         },
         {
           "id": "aspirazioni-4",
@@ -1125,7 +1183,8 @@
               "weight": 2,
               "reason": "Bisogni, relazione e progettazione di attività si collegano a Psicologia e Metodologie operative."
             }
-          }
+          },
+          "icona": "🤲"
         },
         {
           "id": "aspirazioni-5",
@@ -1141,7 +1200,8 @@
               "weight": 2,
               "reason": "Misure, rilievi e disegno tecnico si collegano a Topografia e Progettazione."
             }
-          }
+          },
+          "icona": "📏"
         }
       ]
     }
