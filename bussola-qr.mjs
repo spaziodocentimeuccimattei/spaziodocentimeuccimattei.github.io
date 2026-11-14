@@ -1,10 +1,10 @@
 // Codice QR generato nel browser, senza servizi né librerie remote.
 // Usa la libreria locale già presente nel sito (assets/vendor/qrcode-generator-2.0.4.mjs, MIT, Kazuhiko Arase),
-// la stessa dei codici delle classi nell'area docenti. Correzione degli errori livello M.
+// la stessa dei codici delle classi nell'area docenti. Correzione degli errori livello L: sullo schermo non c'è usura e i moduli restano più grandi, quindi più facili da inquadrare.
 import qrcode from './assets/vendor/qrcode-generator-2.0.4.mjs';
 
 function crea(testo) {
-  const q = qrcode(0, 'M');
+  const q = qrcode(0, 'L');
   q.addData(String(testo), 'Byte');
   q.make();
   return q;

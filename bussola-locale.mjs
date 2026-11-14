@@ -59,13 +59,13 @@ export function linkRitorno({ token, corso, persona = null, conclusi = [], base 
   if (!TOKEN.test(token || '') || !CORSI.includes(corso)) return '';
   const url = new URL('bussola.html', base);
   url.search = '';
-  const p = new URLSearchParams({ bentornato: '1', alunno: token, corso });
+  const p = new URLSearchParams({ alunno: token, corso });
   if (persona) p.set('n', nomeCompleto(persona));
   if (conclusi.length) p.set('d', conclusi.join('.'));
   url.hash = p.toString();
   return url.href;
 }
-/** Legge un link di ritorno (o il suo #): {token, corso, nome, conclusi} oppure null. */
+/** Legge un link di ritorno (o il suo #): {token, corso, nome, cognome, conclusi} oppure null. Serve `corso`: senza è un link personale d'altro tipo. */
 export function leggiRitorno(testo) {
   let parte = String(testo ?? '').trim();
   if (/^https?:\/\//i.test(parte)) { try { parte = new URL(parte).hash; } catch { return null; } }
@@ -73,9 +73,10 @@ export function leggiRitorno(testo) {
   const token = p.get('alunno') || '';
   if (!TOKEN.test(token)) return null;
   const corso = CORSI.includes(p.get('corso')) ? p.get('corso') : '';
+  if (!corso) return null;
   const [nome = '', ...resto] = (p.get('n') || '').trim().split(/\s+/u);
   return {
     token, corso, nome: pulisciNome(nome), cognome: pulisciNome(resto.join(' ')),
-    conclusi: CORSI.filter(c => (p.get('d') || '').split('.').includes(c)), esplicito: p.has('bentornato'),
+    conclusi: CORSI.filter(c => (p.get('d') || '').split('.').includes(c)),
   };
 }

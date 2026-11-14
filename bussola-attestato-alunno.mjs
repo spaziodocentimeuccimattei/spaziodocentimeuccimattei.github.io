@@ -27,6 +27,9 @@ export async function preparaAttestato(ctx,{identity,nome=''}={}){
 }
 export function setupParticipantCertificate(ctx){
  const $=id=>document.getElementById(id),dialog=$('certificateDialog');
+ // Il finale comune non usa la finestra: una pagina senza il suo markup ottiene solo `prepara`.
+ const prepara=async()=>{const id=await ctx.identity();return preparaAttestato(ctx,{identity:id,nome:nomeCompleto(nomeOspite())});};
+ if(!dialog)return {prepara,open:async()=>{}};
  let trigger=null,identity=null,generation=0,url=null;
  const message=text=>{$('certificateStatus').textContent=text;};
  function release(){if(url?.startsWith('blob:'))URL.revokeObjectURL(url);url=null;}
@@ -59,5 +62,5 @@ export function setupParticipantCertificate(ctx){
  $('certificateEditName').addEventListener('click',()=>{if(identity?.alunno)return;hideResult();$('certificateForm').hidden=false;$('certificateName').focus();});
  return {open:async button=>{await open(button);$('certificateEditName').hidden=!!identity?.alunno;},
   // Per il finale comune: attestato pronto con il nome già inserito (da classe o da questo dispositivo).
-  prepara:async()=>{const id=await ctx.identity();return preparaAttestato(ctx,{identity:id,nome:nomeCompleto(nomeOspite())});}};
+  prepara};
 }

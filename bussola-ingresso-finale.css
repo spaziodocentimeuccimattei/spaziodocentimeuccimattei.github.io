@@ -43,17 +43,28 @@
 }
 
 /* 2 · attestato */
-.bt-attestato { display: grid; justify-items: center; gap: 12px; width: 100%; }
+.bt-attestato { gap: 12px; }
 .bt-attestato__nome { max-width: 100%; overflow-wrap: anywhere; }
+.bt-attestato__corpo { display: grid; justify-items: center; align-items: center; gap: 14px; width: 100%; }
+.bt-attestato__azioni { display: grid; justify-items: center; gap: 12px; width: 100%; }
 .bt-attestato__foglio {
-  width: auto; max-width: min(100%, 300px); max-height: min(38vh, 340px); height: auto; margin: 0; background: var(--bt-carta);
+  width: auto; max-width: min(100%, 300px); height: auto; margin: 0; background: var(--bt-carta);
   border-radius: 8px; box-shadow: var(--bt-ombra); transform: rotate(-1.6deg); animation: bt-entra .6s ease .3s both;
 }
-.bt-attestato__foglio canvas { display: block; width: auto; max-width: 100%; height: auto; max-height: min(38vh, 340px); border-radius: 8px; }
+.bt-attestato__foglio canvas { display: block; width: auto; max-width: 100%; height: auto; max-height: 30vh; border-radius: 8px; }
 .bt-attestato__attendi { min-height: 120px; display: grid; place-items: center; }
-.bt-attestato .bt-biglietto { margin-top: 6px; }
+.bt-attestato .bt-biglietto { margin-top: 2px; }
+/* Il QR resta grande: almeno ~4 pixel per modulo, altrimenti la fotocamera fatica a leggerlo */
+.bt-attestato .bt-biglietto__qr, .bt-bentornato .bt-biglietto__qr { width: clamp(180px, 46vw, 212px); }
+@media (max-width: 420px) { .bt-attestato .bt-biglietto__qr, .bt-bentornato .bt-biglietto__qr { width: 200px; } }
 .bt-ritorno__nonpronto { margin: 0; color: var(--bt-inchiostro); font: 600 1rem/1.35 var(--bt-carattere); }
 .bt-ritorno__copia { justify-self: start; }
+@media (min-width: 900px) {
+  /* Chromebook: l'attestato a sinistra, a destra scarica/stampa, biglietto e «Avanti» */
+  .bt-attestato__corpo { grid-template-columns: auto minmax(0, 480px); gap: 36px; justify-content: center; }
+  .bt-attestato__foglio canvas { max-height: 46vh; }
+  .bt-attestato .bt-schermo, .bt-esplosione.bt-attestato { min-height: 0; }
+}
 
 /* email del genitore (visibile solo con EMAIL_ATTIVA) */
 .bt-email { display: grid; gap: 10px; width: min(100%, 460px); padding: 14px 16px; border-radius: var(--bt-raggio); background: rgba(255, 255, 255, .1); text-align: left; }
@@ -68,16 +79,25 @@
 .bt-video__avvia[hidden] { display: none; }
 
 /* 4 · prova un altro indirizzo */
-.bt-altri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: min(100%, 560px); margin: 4px 0 0; padding: 0; list-style: none; }
-.bt-altri a.bt-pulsante { width: 100%; min-height: 64px; flex-direction: column; gap: 2px; padding-inline: 12px; text-align: center; line-height: 1.1; }
-.bt-altri a.bt-pulsante small { font-size: .78rem; font-weight: 600; opacity: .9; }
-.bt-altri a.bt-pulsante[data-fatto]::after { content: "✓ già provato"; font-size: .75rem; font-weight: 700; }
-.bt-finale .bt-distintivi { justify-content: center; gap: 10px; margin: 0; }
-.bt-finale__piccolo { display: grid; justify-items: center; gap: 6px; margin: 4px 0 0; color: var(--bt-testo-tenue); font: 500 .95rem/1.4 var(--bt-carattere); }
+.bt-altri { display: grid; gap: 12px; width: min(100%, 460px); margin: 4px 0 0; padding: 0; list-style: none; }
+.bt-altri a.bt-pulsante {
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; width: 100%; min-height: 64px;
+  padding: 10px 22px; border-radius: var(--bt-raggio); text-align: left; line-height: 1.15;
+}
+.bt-altri a.bt-pulsante strong { font-size: 1.35rem; font-weight: 900; }
+.bt-altri a.bt-pulsante small { font-size: .85rem; font-weight: 700; }
+.bt-altri a.bt-pulsante[data-fatto] small:not(:empty)::after { content: " · già provato ✓"; }
+.bt-altri a.bt-pulsante[data-fatto] small:empty::after { content: "già provato ✓"; }
+.bt-finale .bt-distintivi { justify-content: center; flex-wrap: nowrap; gap: 8px; margin: 0; }
+.bt-finale .bt-distintivo--piccolo { width: 56px; height: 56px; font-size: .7rem; }
+.bt-finale__piccolo { display: grid; justify-items: center; gap: 8px; margin: 4px 0 0; color: var(--bt-testo-tenue); font: 500 .95rem/1.4 var(--bt-carattere); }
 .bt-finale__piccolo p { margin: 0; }
-.bt-finale__video { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 14px; }
+.bt-finale__video { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 16px; }
 .bt-finale__opendays { margin: 0; color: var(--bt-testo-tenue); font: 500 .95rem/1.4 var(--bt-carattere); }
 .bt-finale__opendays strong { color: var(--bt-testo); }
+
+/* Durante il finale la pagina del percorso lascia il palco: via intestazione, riga di stato e barra dei laboratori. */
+body:has(.bt-finale) .site-header, body:has(.bt-finale) .save-row, body:has(.bt-finale) #journey { display: none; }
 
 /* ---- Bentornato ------------------------------------------------------------------------ */
 dialog.bt-bentornato {
@@ -102,10 +122,16 @@ dialog.bt-bentornato::backdrop { background: var(--bt-palco-scuro); }
 }
 
 @media (max-width: 420px) {
-  .bt-altri { grid-template-columns: 1fr 1fr; }
   .bt-trecose li { grid-template-columns: 44px 1fr; gap: 12px; }
   .bt-trecose li::before { width: 44px; height: 44px; font-size: 1.3rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .bt-attestato__foglio { animation: none; transform: none; }
+}
+
+/* Telefono: «Avanti» prima del biglietto (il QR serve soprattutto allo stand, dove si inquadra da un altro telefono). */
+@media (max-width: 899px) {
+  .bt-attestato__azioni > #finaleAvanti { order: 1; }
+  .bt-attestato__azioni > .bt-biglietto { order: 2; }
+  .bt-attestato__azioni > .bt-email { order: 3; }
 }
