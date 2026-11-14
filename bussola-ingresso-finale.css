@@ -135,3 +135,7 @@ dialog.bt-bentornato::backdrop { background: var(--bt-palco-scuro); }
   .bt-attestato__azioni > .bt-biglietto { order: 2; }
   .bt-attestato__azioni > .bt-email { order: 3; }
 }
+
+/* «Chiudi» del Bentornato: collegamento chiaro sul fondo scuro */
+.bt-bentornato .bt-link, .bt-bentornato__chiudi { color: var(--bt-lime-chiaro); }
+.bt-bentornato .bt-titolo:focus { outline: none; }

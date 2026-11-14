@@ -65,14 +65,18 @@ export function linkRitorno({ token, corso, persona = null, conclusi = [], base 
   url.hash = p.toString();
   return url.href;
 }
-/** Legge un link di ritorno (o il suo #): {token, corso, nome, cognome, conclusi} oppure null. Serve `corso`: senza è un link personale d'altro tipo. */
+/** Legge un link di ritorno (o il suo #): {token, corso, nome, cognome, conclusi} oppure null. Senza `corso` (né dal link né dal nome della pagina) non è un ritorno. */
 export function leggiRitorno(testo) {
   let parte = String(testo ?? '').trim();
   if (/^https?:\/\//i.test(parte)) { try { parte = new URL(parte).hash; } catch { return null; } }
   const p = new URLSearchParams(parte.replace(/^#/, ''));
   const token = p.get('alunno') || '';
   if (!TOKEN.test(token)) return null;
-  const corso = CORSI.includes(p.get('corso')) ? p.get('corso') : '';
+  let corso = CORSI.includes(p.get('corso')) ? p.get('corso') : '';
+  // Link personale «vecchio stile» (quello di «La mia classe»): il percorso si legge dal nome della pagina.
+  if (!corso && /^https?:\/\//i.test(String(testo ?? '').trim())) {
+    try { corso = new URL(String(testo).trim()).pathname.match(/bussola-(afm|sia|turismo|ssas|cat)\.html$/)?.[1] || ''; } catch { /* niente */ }
+  }
   if (!corso) return null;
   const [nome = '', ...resto] = (p.get('n') || '').trim().split(/\s+/u);
   return {
