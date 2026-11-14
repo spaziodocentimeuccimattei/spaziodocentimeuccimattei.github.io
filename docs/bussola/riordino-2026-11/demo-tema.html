@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="it" class="bt-tema" data-corso="bussola">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tema della Bussola · pagina dimostrativa</title>
+<link rel="stylesheet" href="../../../bussola-tema.css">
+<style>
+  /* Solo impaginazione di questa pagina dimostrativa: non fa parte del tema. */
+  body { margin: 0; font-family: var(--bt-carattere); color: var(--bt-testo); }
+  .demo { max-width: 1040px; margin: 0 auto; padding: 20px 14px 60px; display: grid; gap: 34px; }
+  .demo > section { display: grid; gap: 16px; }
+  .demo h2 { margin: 0; font: 800 1.05rem/1.2 var(--bt-carattere); letter-spacing: .08em; text-transform: uppercase; color: var(--bt-testo-tenue); }
+  .demo-riga { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .demo-due { display: grid; gap: 18px; }
+  @media (min-width: 760px) { .demo-due { grid-template-columns: 1fr 1fr; align-items: start; } }
+  .demo-campioni { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .demo-campione { border: 0; font: inherit; cursor: pointer; text-align: left; border-radius: 16px; padding: 14px; min-height: 74px; background: var(--bt-colore); color: var(--bt-su-colore); font-weight: 800; box-shadow: 0 5px 0 var(--bt-colore-scuro), 0 0 24px var(--bt-alone); }
+  .demo-campione small { display: block; font-weight: 600; opacity: .95; }
+</style>
+</head>
+<body>
+<main class="demo">
+
+  <header class="bt-schermo" id="apertura">
+    <p class="bt-occhiello">Pagina dimostrativa · dati finti</p>
+    <h1 class="bt-titolo">Il tema <em>lucido</em> della Bussola</h1>
+    <p class="bt-frase">Un titolo, una frase, un’azione.</p>
+    <div class="bt-azioni">
+      <button class="bt-pulsante bt-pulsante--lime bt-pulsante--grande" type="button" id="provaEsplosione">Provala.</button>
+    </div>
+    <span id="postoSuono"></span>
+  </header>
+
+  <section aria-labelledby="t-colori">
+    <h2 id="t-colori">Colore corrente (tocca per cambiare indirizzo)</h2>
+    <div class="demo-campioni" id="campioni">
+      <button type="button" class="demo-campione" data-corso="bussola" data-imposta="bussola">Bussola<small>lime su blu petrolio</small></button>
+      <button type="button" class="demo-campione" data-corso="afm" data-imposta="afm">AFM<small>verde</small></button>
+      <button type="button" class="demo-campione" data-corso="sia" data-imposta="sia">SIA<small>verde acqua</small></button>
+      <button type="button" class="demo-campione" data-corso="turismo" data-imposta="turismo">Turismo<small>arancio</small></button>
+      <button type="button" class="demo-campione" data-corso="cat" data-imposta="cat">CAT<small>verde lime</small></button>
+      <button type="button" class="demo-campione" data-corso="ssas" data-imposta="ssas">SSAS<small>magenta</small></button>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-pulsanti">
+    <h2 id="t-pulsanti">Pulsanti</h2>
+    <div class="demo-riga">
+      <button class="bt-pulsante" type="button">Avanti</button>
+      <button class="bt-pulsante bt-pulsante--secondario" type="button">Indietro</button>
+      <button class="bt-pulsante bt-pulsante--lime" type="button">Prova</button>
+      <button class="bt-pulsante" type="button" disabled>Avanti</button>
+      <button class="bt-link" type="button">Ho un codice</button>
+    </div>
+    <div class="bt-scheda">
+      <div class="demo-riga">
+        <button class="bt-pulsante bt-pulsante--piccolo" type="button">Scarica</button>
+        <button class="bt-pulsante bt-pulsante--secondario" type="button">Stampa</button>
+        <button class="bt-link" type="button">Rivedi il tuo lavoro</button>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-avanzamento">
+    <h2 id="t-avanzamento">Barra di avanzamento</h2>
+    <progress class="bt-avanzamento" value="5" max="12" aria-label="Domanda 5 di 12"></progress>
+    <ol class="bt-passi" aria-label="Tappa 3 di 5"><li class="bt-fatto">1</li><li class="bt-fatto">2</li><li aria-current="step">3</li><li>4</li><li>5</li></ol>
+  </section>
+
+  <section aria-labelledby="t-scelte">
+    <h2 id="t-scelte">Una scelta per schermo</h2>
+    <div class="bt-scelte bt-scelte--due" id="scelte">
+      <button class="bt-scelta" type="button" aria-pressed="false">Persone e benessere</button>
+      <button class="bt-scelta" type="button" aria-pressed="true">Spazi da immaginare</button>
+      <button class="bt-scelta" type="button" aria-pressed="false">Numeri e conti</button>
+      <button class="bt-scelta" type="button" aria-pressed="false">Luoghi da scoprire</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-tessere">
+    <h2 id="t-tessere">Tessere accese e spente («Perché?»)</h2>
+    <ul class="bt-tessere">
+      <li><button type="button" class="bt-tessera bt-tessera--accesa">Curiosità</button></li>
+      <li><button type="button" class="bt-tessera bt-tessera--accesa">Materie</button></li>
+      <li><span class="bt-tessera bt-tessera--spenta">Video</span></li>
+      <li><button type="button" class="bt-tessera bt-tessera--accesa">Sogni</button></li>
+      <li><span class="bt-tessera bt-tessera--spenta">Computer</span></li>
+      <li><span class="bt-tessera bt-tessera--spenta">Libro</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-distintivi">
+    <h2 id="t-distintivi">Distintivi (premio al completamento)</h2>
+    <ul class="bt-distintivi">
+      <li><span class="bt-distintivo" data-corso="afm" id="distintivoAfm">AFM</span></li>
+      <li><span class="bt-distintivo" data-corso="sia">SIA</span></li>
+      <li><span class="bt-distintivo bt-distintivo--spento" data-corso="turismo">TUR</span></li>
+      <li><span class="bt-distintivo" data-corso="cat">CAT</span></li>
+      <li><span class="bt-distintivo bt-distintivo--spento" data-corso="ssas">SSAS</span></li>
+      <li><span class="bt-distintivo bt-distintivo--piccolo" data-corso="ssas">SSAS</span></li>
+    </ul>
+    <div class="demo-riga"><button class="bt-pulsante bt-pulsante--secondario" type="button" id="provaPremio">Prova premio()</button></div>
+  </section>
+
+  <section aria-labelledby="t-esplosione">
+    <h2 id="t-esplosione">Schermo «esplosione» (risultato e attestato)</h2>
+    <div class="bt-esplosione" id="esplosione">
+      <p class="bt-occhiello bt-occhiello--corso">Il tuo indirizzo</p>
+      <h3 class="bt-titolo" id="nomeIndirizzo">La tua Bussola</h3>
+      <div class="bt-disco"><img src="../../../assets/attestati/ssas.svg" id="figura" alt="" width="1080" height="500"></div>
+      <div class="bt-azioni">
+        <button class="bt-pulsante bt-pulsante--grande" type="button" id="provaAncora">Prova</button>
+        <button class="bt-pulsante bt-pulsante--secondario" type="button">Perché?</button>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-biglietto">
+    <h2 id="t-biglietto">Biglietto: codice personale e QR (esempio finto)</h2>
+    <div class="demo-due">
+      <div class="bt-biglietto">
+        <p class="bt-biglietto__etichetta">Il tuo codice</p>
+        <p class="bt-biglietto__codice">K7M4QX</p>
+        <p class="bt-biglietto__frase">A casa, con i tuoi genitori, torna qui: scarichi l’attestato e scopri di più.</p>
+        <div class="bt-biglietto__qr"><img src="../../../assets/qr-orientamento.svg" alt="Codice QR di esempio"></div>
+      </div>
+      <div class="bt-scheda bt-scheda--scura">
+        <h3 class="bt-titolo bt-titolo--medio bt-barretta">Servizi per la Sanità e l’Assistenza Sociale</h3>
+        <p class="bt-frase">Scheda di vetro scuro con titolo a barretta.</p>
+        <p class="bt-nota">Una sola nota discreta, in fondo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-schede">
+    <h2 id="t-schede">Schede</h2>
+    <div class="demo-due">
+      <div class="bt-scheda bt-scheda--colore">
+        <h3 class="bt-titolo bt-titolo--medio" style="color:var(--bt-inchiostro)">Scheda chiara</h3>
+        <p>Testo scuro su carta: contrasto alto.</p>
+        <progress class="bt-avanzamento" value="2" max="5" aria-label="Tappa 2 di 5"></progress>
+      </div>
+      <div class="bt-palco" style="padding:26px">
+        <p class="bt-occhiello">Palco dentro la pagina</p>
+        <p class="bt-frase">Fondo scuro tinto, raggi e testo bianco.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="bt-fascia"><span>● Prova la Bussola qui</span><span>IIS Meucci-Mattei · Decimomannu</span></div>
+</main>
+
+<script type="module">
+  import { esplosione, premio, scintilla, interruttoreSuono } from '../../../bussola-effetti.mjs';
+  const NOMI = { bussola: 'La tua Bussola', afm: 'AFM', sia: 'SIA', turismo: 'Turismo', cat: 'CAT', ssas: 'SSAS' };
+  const FIGURE = { bussola: 'ssas', afm: 'afm', sia: 'sia', turismo: 'turismo', cat: 'cat', ssas: 'ssas' };
+  const radice = document.documentElement;
+  function imposta(corso) {
+    radice.dataset.corso = corso;
+    radice.classList.toggle('bt-pagina-prova', corso !== 'bussola');
+    document.getElementById('nomeIndirizzo').textContent = NOMI[corso];
+    document.getElementById('figura').src = `../../../assets/attestati/${FIGURE[corso]}.svg`;
+  }
+  const iniziale = new URLSearchParams(location.search).get('corso');
+  if (NOMI[iniziale]) imposta(iniziale);
+  interruttoreSuono(document.getElementById('postoSuono'));
+  document.getElementById('campioni').addEventListener('click', e => { const b = e.target.closest('[data-imposta]'); if (b) { imposta(b.dataset.imposta); scintilla(b); } });
+  document.getElementById('provaEsplosione').addEventListener('click', e => esplosione(e.currentTarget));
+  document.getElementById('provaAncora').addEventListener('click', () => esplosione(document.getElementById('nomeIndirizzo')));
+  document.getElementById('provaPremio').addEventListener('click', () => premio(document.getElementById('distintivoAfm')));
+  document.getElementById('scelte').addEventListener('click', e => {
+    const b = e.target.closest('.bt-scelta'); if (!b) return;
+    for (const altro of b.parentElement.children) altro.setAttribute('aria-pressed', String(altro === b));
+    scintilla(b);
+  });
+  window.btDemo = { esplosione, premio, scintilla };
+</script>
+</body>
+</html>
