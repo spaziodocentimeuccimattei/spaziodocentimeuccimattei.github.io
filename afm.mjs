@@ -4,6 +4,7 @@ import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=2026
 import {COURSE_VIDEO_NOTICE,mountNextStep} from './bussola-prossimo-passo.mjs?v=20261112-open-day';
 import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor';
 import {restore,remoteProject} from './afm-records.mjs?v=20261010-all';
+import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261114-a3';
 const COURSE='afm';
 import {STORE as BASE_STORE,LABS,OFFERS,TASKS,OBSTACLES,AGREEMENTS,AMENDMENTS,TONES,QUESTIONS,STAGES,find,createProject,offer,feature,question,economics,cashflow,ready,choose,moveTask,advance,completed,posterTitle,context,addNote,validProject} from './afm-core.mjs?v=20261010-all';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -94,7 +95,9 @@ if(b.dataset.task){moveTask(p,b.dataset.task,Number(b.dataset.direction));render
 $('noteForm').addEventListener('submit',e=>{e.preventDefault();if(conflicted)return;const data=Object.fromEntries(new FormData(e.target)),before=p.notes.length;if(addNote(navigation.isIntro()?{...p,screen:-1}:p,data)){p.notes[before].pending=true;const ok=save();renderNotes();e.target.elements.text.value='';$('noteStatus').textContent=ok?'Nota conservata; aggiornamento online in corso.':'La nota resta in questa pagina: il browser non permette il salvataggio.';}});
 function loaded(value){p=value;p.revision=seenRevision;restoreRoute(navigation.route());render(false,false);}
 remote=setupStudioRemote({course:COURSE,restore,remoteProject,key:STORE+'.remote.'+storageId,entryToken,project:()=>p,keep:()=>save(false),loaded,localOK:()=>!memoryOnly,status:(text,retry)=>{$('saveStatus').textContent=text;$('retrySave').hidden=!retry;},notesChanged:()=>{$('noteCount').textContent=p.notes.length;if($('notesDialog').open)renderNotes();},conflict:()=>{conflicted=true;openConflict();}});
-classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:()=>remote.ensure(),isIntro:()=>navigation.isIntro()||p.screen<0,start:async()=>{try{await remote.ensure();}catch{}navigation.enter();p.started=true;p.screen=Math.max(0,p.screen);render(true);}});
+const startNow=async()=>{try{await remote.ensure();}catch{}navigation.enter();p.started=true;p.screen=Math.max(0,p.screen);render(true);};
+classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:()=>remote.ensure(),isIntro:()=>navigation.isIntro()||p.screen<0,start:startNow,
+ ingressoComune:true,apriIngresso:()=>mostraIngresso({corso:COURSE,contenitore:$('stage'),classe:classAccess,onInizia:startNow,onIndietro:()=>render(true)})});
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());

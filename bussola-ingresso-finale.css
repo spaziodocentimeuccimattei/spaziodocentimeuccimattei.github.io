@@ -1,0 +1,111 @@
+/* Ingresso, finale e «Bentornato» comuni della Bussola (riordino novembre 2026, agente A3).
+   Usa solo le variabili e le classi di bussola-tema.css (caricarlo DOPO il tema).
+   Nessun colore scritto a mano: tutto passa dalle variabili --bt-*. */
+
+/* ---- campi di testo (nome, cognome, codice) -------------------------------------------- */
+.bt-campo { display: grid; gap: 6px; width: 100%; text-align: left; color: var(--bt-testo); font: 700 1rem/1.2 var(--bt-carattere); }
+.bt-campo input {
+  box-sizing: border-box; width: 100%; min-height: 56px; padding: 10px 16px;
+  color: var(--bt-inchiostro); background: var(--bt-carta); border: 3px solid transparent; border-radius: var(--bt-raggio);
+  font: 700 1.25rem/1.2 var(--bt-carattere); box-shadow: var(--bt-ombra-piccola);
+}
+.bt-campo input:focus { outline: none; border-color: var(--bt-colore-chiaro); box-shadow: 0 0 0 4px var(--bt-alone); }
+.bt-campo input::placeholder { color: var(--bt-inchiostro-tenue); font-weight: 500; }
+.bt-campo input[aria-invalid="true"] { border-color: var(--bt-lime); }
+.bt-modulo { display: grid; gap: 14px; width: min(100%, 420px); margin: 0; }
+.bt-modulo .bt-pulsante { justify-self: center; }
+.bt-errore { min-height: 1.35em; margin: 0; color: var(--bt-testo); font: 700 1rem/1.35 var(--bt-carattere); text-align: center; }
+.bt-errore:not(:empty)::before { content: "! "; color: var(--bt-lime); font-weight: 900; }
+
+/* ---- ingresso ------------------------------------------------------------------------- */
+.bt-ingresso .bt-titolo em { color: var(--bt-lime); font-style: normal; }
+.bt-ingresso__codice[hidden] { display: none; }
+.bt-ingresso__piede { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px; }
+
+/* ---- finale: gli schermi in fila ------------------------------------------------------ */
+.bt-finale { position: relative; width: 100%; }
+.bt-finale .bt-schermo, .bt-finale .bt-esplosione { min-height: min(72vh, 680px); }
+.bt-finale__passi { margin: 0 0 4px; }
+.bt-finale__piede { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px; margin-top: 8px; }
+
+/* 1 · tre cose */
+.bt-trecose { display: grid; gap: 12px; width: min(100%, 560px); margin: 6px 0 0; padding: 0; list-style: none; counter-reset: cosa; }
+.bt-trecose li {
+  counter-increment: cosa; display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 14px;
+  padding: 14px 18px 14px 14px; text-align: left; border-radius: var(--bt-raggio);
+  background: rgba(255, 255, 255, .1); border: 2px solid var(--bt-alone); box-shadow: var(--bt-ombra-piccola);
+  font: 700 clamp(1.05rem, 3.6vw, 1.35rem)/1.3 var(--bt-carattere); color: var(--bt-testo);
+}
+.bt-trecose li::before {
+  content: counter(cosa); display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%;
+  color: var(--bt-su-colore); background: var(--bt-colore); font: 900 1.6rem/1 var(--bt-carattere);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .18), inset 0 3px 0 rgba(255, 255, 255, .35);
+}
+
+/* 2 · attestato */
+.bt-attestato { display: grid; justify-items: center; gap: 12px; width: 100%; }
+.bt-attestato__nome { max-width: 100%; overflow-wrap: anywhere; }
+.bt-attestato__foglio {
+  width: auto; max-width: min(100%, 300px); max-height: min(38vh, 340px); height: auto; margin: 0; background: var(--bt-carta);
+  border-radius: 8px; box-shadow: var(--bt-ombra); transform: rotate(-1.6deg); animation: bt-entra .6s ease .3s both;
+}
+.bt-attestato__foglio canvas { display: block; width: auto; max-width: 100%; height: auto; max-height: min(38vh, 340px); border-radius: 8px; }
+.bt-attestato__attendi { min-height: 120px; display: grid; place-items: center; }
+.bt-attestato .bt-biglietto { margin-top: 6px; }
+.bt-ritorno__nonpronto { margin: 0; color: var(--bt-inchiostro); font: 600 1rem/1.35 var(--bt-carattere); }
+.bt-ritorno__copia { justify-self: start; }
+
+/* email del genitore (visibile solo con EMAIL_ATTIVA) */
+.bt-email { display: grid; gap: 10px; width: min(100%, 460px); padding: 14px 16px; border-radius: var(--bt-raggio); background: rgba(255, 255, 255, .1); text-align: left; }
+.bt-email .bt-campo input { min-height: 52px; font-size: 1.05rem; }
+.bt-email__consenso { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; color: var(--bt-testo); font: 500 .95rem/1.35 var(--bt-carattere); }
+.bt-email__consenso input { width: 24px; height: 24px; margin: 2px 0 0; accent-color: var(--bt-lime); }
+
+/* 3 · video */
+.bt-video { position: relative; width: min(100%, 720px); aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--bt-raggio); background: var(--bt-palco-scuro); box-shadow: var(--bt-ombra); }
+.bt-video video { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--bt-palco-scuro); }
+.bt-video__avvia { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, .28); }
+.bt-video__avvia[hidden] { display: none; }
+
+/* 4 · prova un altro indirizzo */
+.bt-altri { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: min(100%, 560px); margin: 4px 0 0; padding: 0; list-style: none; }
+.bt-altri a.bt-pulsante { width: 100%; min-height: 64px; flex-direction: column; gap: 2px; padding-inline: 12px; text-align: center; line-height: 1.1; }
+.bt-altri a.bt-pulsante small { font-size: .78rem; font-weight: 600; opacity: .9; }
+.bt-altri a.bt-pulsante[data-fatto]::after { content: "✓ già provato"; font-size: .75rem; font-weight: 700; }
+.bt-finale .bt-distintivi { justify-content: center; gap: 10px; margin: 0; }
+.bt-finale__piccolo { display: grid; justify-items: center; gap: 6px; margin: 4px 0 0; color: var(--bt-testo-tenue); font: 500 .95rem/1.4 var(--bt-carattere); }
+.bt-finale__piccolo p { margin: 0; }
+.bt-finale__video { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 14px; }
+.bt-finale__opendays { margin: 0; color: var(--bt-testo-tenue); font: 500 .95rem/1.4 var(--bt-carattere); }
+.bt-finale__opendays strong { color: var(--bt-testo); }
+
+/* ---- Bentornato ------------------------------------------------------------------------ */
+dialog.bt-bentornato {
+  box-sizing: border-box; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; color: var(--bt-testo);
+  background: radial-gradient(120% 90% at 50% 0%, var(--bt-palco-chiaro), var(--bt-palco) 55%, var(--bt-palco-scuro));
+  overflow-y: auto;
+}
+dialog.bt-bentornato::backdrop { background: var(--bt-palco-scuro); }
+.bt-bentornato__chiudi { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.bt-bentornato .bt-schermo { min-height: 100dvh; }
+.bt-bentornato .bt-biglietto { text-align: left; }
+.bt-bentornato__azioni { display: grid; gap: 10px; width: min(100%, 420px); }
+.bt-bentornato__azioni .bt-pulsante { width: 100%; }
+
+/* ---- stampa dell'attestato dal finale ---------------------------------------------------- */
+.bt-stampa { display: none; }
+@media print {
+  body.bt-stampa-attiva > *:not(.bt-stampa) { display: none !important; }
+  body.bt-stampa-attiva .bt-stampa { display: block !important; }
+  body.bt-stampa-attiva .bt-stampa img { display: block; width: 210mm; height: 297mm; }
+  .bt-finale, .bt-bentornato { display: none !important; }
+}
+
+@media (max-width: 420px) {
+  .bt-altri { grid-template-columns: 1fr 1fr; }
+  .bt-trecose li { grid-template-columns: 44px 1fr; gap: 12px; }
+  .bt-trecose li::before { width: 44px; height: 44px; font-size: 1.3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bt-attestato__foglio { animation: none; transform: none; }
+}

@@ -42,6 +42,7 @@ export function setupStudioRemote(ctx){
    await connect();
    while(state.dirty){
     const stamp=clock,snapshot=ctx.remoteProject(ctx.project());if(!snapshot)throw new Error('Il progetto non è pronto per il salvataggio.');
+    if(snapshot.attestato&&'name' in snapshot.attestato)delete snapshot.attestato.name; // il nome di chi entra senza classe resta sul dispositivo (bussola-locale.mjs)
     state.lastOp=crypto.randomUUID();snapshot._save_operation=state.lastOp;keep();
     const reply=await api('save',{project:snapshot,revision:state.revision});state.revision=reply.revision;if(stamp===clock)state.dirty=false;keep();
    }
@@ -61,5 +62,5 @@ export function setupStudioRemote(ctx){
   state.dirty=false;conflict=false;accept(reply);connected=true;keep();ctx.status('Versione salvata aperta.',false);
  }
  window.addEventListener('pagehide',keep);
- return {changed,sync,ensure:connect,reload,hasConflict:()=>conflict,token:()=>state.token,participant:()=>state.participant,revision:()=>state.revision};
+ return {changed,sync,ensure:connect,reload,hasConflict:()=>conflict,saved:()=>connected&&!state.dirty&&!conflict,token:()=>state.token,participant:()=>state.participant,revision:()=>state.revision};
 }

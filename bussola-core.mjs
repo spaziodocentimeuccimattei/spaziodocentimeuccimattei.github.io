@@ -41,6 +41,8 @@ export function saveState(storage, state) {
 
 export function clearState(storage) {
   // Never clear the Commission's independent session or any other application data.
+  // Chi ricomincia sullo stesso dispositivo non eredita nome e distintivi della persona precedente (bussola-locale.mjs).
+  try { globalThis.localStorage?.removeItem('bussola-ospite'); globalThis.localStorage?.removeItem('bussola-distintivi'); } catch { /* niente */ }
   try { storage.removeItem(SESSION_KEY); return true; }
   catch { return false; }
 }
