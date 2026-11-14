@@ -1,0 +1,1195 @@
+/* ==========================================================================
+   Bussola · tema comune «lucido» (riordino novembre 2026, agente A1)
+   Riferimento grafico: assets/video/bussola-orientamento.mp4
+   Guida d'uso con esempi: docs/bussola/riordino-2026-11/TEMA.md
+
+   Indice
+   1. Tavolozza (unico punto in cui si cambiano i colori)
+   2. Colore corrente: data-corso="afm|sia|turismo|cat|ssas|bussola"
+   3. Palco: il fondo scuro con raggi e disco
+   4. Componenti .bt-*
+   5. Adattamento delle pagine esistenti (senza toccare testi, id e logica)
+   6. Movimento ridotto e stampa
+   ========================================================================== */
+
+/* 1. TAVOLOZZA ------------------------------------------------------------ */
+:root {
+  /* Lime della Bussola: pillola «Provala.» e parola chiave dei titoli nel video */
+  --bt-lime: #77ce19;
+  --bt-lime-chiaro: #a8ec58;
+  --bt-lime-scuro: #3b7d00;
+  --bt-su-lime: #0a2a14;
+
+  /* Fondo generale (blu petrolio del video) */
+  --bt-fondo: #06253c;
+  --bt-fondo-chiaro: #1d4858;
+  --bt-fondo-scuro: #041929;
+  --bt-fascia: #031624;
+
+  /* Testo */
+  --bt-testo: #ffffff;
+  --bt-testo-tenue: #cfdde4;
+  --bt-inchiostro: #0b2f47;
+  --bt-inchiostro-tenue: #33495a;
+
+  /* Carta: le superfici chiare appoggiate sul palco */
+  --bt-carta: #ffffff;
+  --bt-carta-tinta: #f1f5f6;
+  --bt-linea: #9fb4be;
+
+  /* AFM · verde (disco e barretta del video) */
+  --bt-afm: #007a3a;
+  --bt-afm-chiaro: #5ee3a1;
+  --bt-afm-scuro: #00522a;
+  --bt-afm-su: #ffffff;
+  --bt-afm-alone: rgba(0, 150, 72, .45);
+  --bt-afm-fondo: #02181c;
+  --bt-afm-fondo-chiaro: #07372e;
+
+  /* SIA · verde acqua */
+  --bt-sia: #56b9a8;
+  --bt-sia-chiaro: #9be6d8;
+  --bt-sia-scuro: #1c6b5e;
+  --bt-sia-su: #05222b;
+  --bt-sia-alone: rgba(86, 185, 168, .42);
+  --bt-sia-fondo: #091e25;
+  --bt-sia-fondo-chiaro: #17414a;
+
+  /* Turismo · arancio */
+  --bt-turismo: #bf4a00;
+  --bt-turismo-chiaro: #ffa35e;
+  --bt-turismo-scuro: #8a3400;
+  --bt-turismo-su: #ffffff;
+  --bt-turismo-alone: rgba(209, 82, 0, .48);
+  --bt-turismo-fondo: #171717;
+  --bt-turismo-fondo-chiaro: #3a2415;
+
+  /* CAT · verde lime */
+  --bt-cat: #77ce19;
+  --bt-cat-chiaro: #a8ec58;
+  --bt-cat-scuro: #3b7d00;
+  --bt-cat-su: #0a2a14;
+  --bt-cat-alone: rgba(119, 206, 25, .40);
+  --bt-cat-fondo: #0c211a;
+  --bt-cat-fondo-chiaro: #1e4423;
+
+  /* SSAS · magenta */
+  --bt-ssas: #db0a5a;
+  --bt-ssas-chiaro: #ff86b4;
+  --bt-ssas-scuro: #9c0540;
+  --bt-ssas-su: #ffffff;
+  --bt-ssas-alone: rgba(237, 9, 96, .46);
+  --bt-ssas-fondo: #170e1e;
+  --bt-ssas-fondo-chiaro: #3d1436;
+
+  /* Forme e misure */
+  --bt-raggio: 22px;
+  --bt-raggio-grande: 32px;
+  --bt-tocco: 48px;
+  --bt-carattere: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bt-ombra: 0 18px 44px rgba(0, 0, 0, .38);
+  --bt-ombra-piccola: 0 8px 20px rgba(0, 0, 0, .28);
+  --bt-rapido: .14s;
+  --bt-vivace: cubic-bezier(.2, 1.4, .4, 1);
+}
+
+/* 2. COLORE CORRENTE ------------------------------------------------------ */
+/* Senza data-corso (o con data-corso="bussola") vale la Bussola generale: lime su blu petrolio. */
+:root,
+[data-corso="bussola"] {
+  --bt-colore: var(--bt-lime);
+  --bt-colore-chiaro: var(--bt-lime-chiaro);
+  --bt-colore-scuro: var(--bt-lime-scuro);
+  --bt-su-colore: var(--bt-su-lime);
+  --bt-alone: rgba(119, 206, 25, .40);
+  --bt-palco: var(--bt-fondo);
+  --bt-palco-chiaro: var(--bt-fondo-chiaro);
+  --bt-palco-scuro: var(--bt-fondo-scuro);
+}
+[data-corso="afm"] {
+  --bt-colore: var(--bt-afm); --bt-colore-chiaro: var(--bt-afm-chiaro); --bt-colore-scuro: var(--bt-afm-scuro);
+  --bt-su-colore: var(--bt-afm-su); --bt-alone: var(--bt-afm-alone);
+  --bt-palco: var(--bt-afm-fondo); --bt-palco-chiaro: var(--bt-afm-fondo-chiaro); --bt-palco-scuro: #010f12;
+}
+[data-corso="sia"] {
+  --bt-colore: var(--bt-sia); --bt-colore-chiaro: var(--bt-sia-chiaro); --bt-colore-scuro: var(--bt-sia-scuro);
+  --bt-su-colore: var(--bt-sia-su); --bt-alone: var(--bt-sia-alone);
+  --bt-palco: var(--bt-sia-fondo); --bt-palco-chiaro: var(--bt-sia-fondo-chiaro); --bt-palco-scuro: #051318;
+}
+[data-corso="turismo"] {
+  --bt-colore: var(--bt-turismo); --bt-colore-chiaro: var(--bt-turismo-chiaro); --bt-colore-scuro: var(--bt-turismo-scuro);
+  --bt-su-colore: var(--bt-turismo-su); --bt-alone: var(--bt-turismo-alone);
+  --bt-palco: var(--bt-turismo-fondo); --bt-palco-chiaro: var(--bt-turismo-fondo-chiaro); --bt-palco-scuro: #0e0e0f;
+}
+[data-corso="cat"] {
+  --bt-colore: var(--bt-cat); --bt-colore-chiaro: var(--bt-cat-chiaro); --bt-colore-scuro: var(--bt-cat-scuro);
+  --bt-su-colore: var(--bt-cat-su); --bt-alone: var(--bt-cat-alone);
+  --bt-palco: var(--bt-cat-fondo); --bt-palco-chiaro: var(--bt-cat-fondo-chiaro); --bt-palco-scuro: #071511;
+}
+[data-corso="ssas"] {
+  --bt-colore: var(--bt-ssas); --bt-colore-chiaro: var(--bt-ssas-chiaro); --bt-colore-scuro: var(--bt-ssas-scuro);
+  --bt-su-colore: var(--bt-ssas-su); --bt-alone: var(--bt-ssas-alone);
+  --bt-palco: var(--bt-ssas-fondo); --bt-palco-chiaro: var(--bt-ssas-fondo-chiaro); --bt-palco-scuro: #0e0813;
+}
+
+/* Superfici: dicono ai componenti se poggiano sullo scuro o sul chiaro. */
+:root,
+.bt-su-scuro,
+.bt-palco,
+.bt-schermo,
+.bt-esplosione,
+.bt-scheda--scura {
+  --bt-sec-fondo: rgba(255, 255, 255, .10);
+  --bt-sec-fondo-attivo: rgba(255, 255, 255, .20);
+  --bt-sec-testo: #ffffff;
+  --bt-sec-bordo: rgba(255, 255, 255, .62);
+  --bt-fuoco: #ffffff;
+  --bt-link: var(--bt-lime-chiaro);
+}
+.bt-su-chiaro,
+.bt-scheda,
+.bt-biglietto {
+  --bt-sec-fondo: #ffffff;
+  --bt-sec-fondo-attivo: #e6eef1;
+  --bt-sec-testo: var(--bt-inchiostro);
+  --bt-sec-bordo: var(--bt-linea);
+  --bt-fuoco: var(--bt-inchiostro);
+  --bt-link: #00573f;
+}
+
+/* 3. PALCO ---------------------------------------------------------------- */
+/* Si accende con class="bt-tema" su <html>. Il disco compare con class="bt-pagina-prova". */
+@media screen {
+  html.bt-tema {
+    background: var(--bt-palco-scuro);
+    color-scheme: dark light;
+  }
+  html.bt-tema body {
+    background: transparent;
+    position: relative;
+  }
+  html.bt-tema body::before,
+  html.bt-tema body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  /* fondo profondo, tinto del colore dell'indirizzo */
+  html.bt-tema body::before {
+    background:
+      radial-gradient(120% 70% at 50% 0%, var(--bt-palco-chiaro) 0%, var(--bt-palco) 46%, var(--bt-palco-scuro) 100%);
+  }
+  /* raggi di luce e pulviscolo */
+  html.bt-tema body::after {
+    background:
+      radial-gradient(circle at 12% 22%, rgba(255, 255, 255, .55) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 78% 12%, rgba(255, 255, 255, .45) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 64% 58%, rgba(255, 255, 255, .35) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 30% 74%, rgba(255, 255, 255, .40) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 90% 84%, rgba(255, 255, 255, .30) 0 1px, transparent 1.6px),
+      repeating-conic-gradient(from 8deg at 50% 0%, var(--bt-alone) 0deg 5deg, transparent 5deg 19deg);
+    -webkit-mask-image: radial-gradient(110% 80% at 50% 0%, rgba(0, 0, 0, .42) 0%, rgba(0, 0, 0, .16) 45%, transparent 78%);
+    mask-image: radial-gradient(110% 80% at 50% 0%, rgba(0, 0, 0, .42) 0%, rgba(0, 0, 0, .16) 45%, transparent 78%);
+  }
+  /* il grande disco saturo dell'indirizzo, in basso a destra come nel video */
+  html.bt-tema.bt-pagina-prova body::before {
+    background:
+      radial-gradient(circle closest-side, rgba(255, 255, 255, .20) 0%, rgba(255, 255, 255, 0) 100%) calc(100% - 9vmax) calc(100% - 8vmax) / 30vmax 30vmax no-repeat,
+      radial-gradient(circle closest-side, var(--bt-colore) 0 calc(100% - 1.5px), transparent 100%) calc(100% + 12vmax) calc(100% + 14vmax) / 52vmax 52vmax no-repeat,
+      radial-gradient(circle closest-side, var(--bt-alone) 0%, transparent 100%) calc(100% + 22vmax) calc(100% + 24vmax) / 78vmax 78vmax no-repeat,
+      radial-gradient(120% 70% at 50% 0%, var(--bt-palco-chiaro) 0%, var(--bt-palco) 46%, var(--bt-palco-scuro) 100%);
+  }
+}
+
+/* Palco usato dentro una pagina (un riquadro scuro autonomo). */
+.bt-palco {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--bt-testo);
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--bt-palco-chiaro) 0%, var(--bt-palco) 48%, var(--bt-palco-scuro) 100%);
+  border-radius: var(--bt-raggio-grande);
+}
+.bt-palco::before,
+.bt-raggi::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: repeating-conic-gradient(from 8deg at 50% 0%, var(--bt-alone) 0deg 5deg, transparent 5deg 19deg);
+  -webkit-mask-image: radial-gradient(110% 90% at 50% 0%, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .15) 50%, transparent 82%);
+  mask-image: radial-gradient(110% 90% at 50% 0%, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .15) 50%, transparent 82%);
+}
+.bt-raggi { position: relative; isolation: isolate; }
+
+/* 4. COMPONENTI ----------------------------------------------------------- */
+
+/* 4.1 Schermo: un titolo, una frase, un'azione */
+.bt-schermo {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 2.4vh, 26px);
+  width: 100%;
+  max-width: 760px;
+  min-height: min(78vh, 720px);
+  margin: 0 auto;
+  padding: clamp(20px, 5vw, 48px) clamp(16px, 5vw, 40px);
+  text-align: center;
+  color: var(--bt-testo);
+  font-family: var(--bt-carattere);
+}
+.bt-schermo--sinistra { align-items: flex-start; text-align: left; }
+.bt-schermo > * { margin: 0; max-width: 100%; }
+
+/* 4.2 Tipografia grande */
+.bt-titolo {
+  margin: 0;
+  color: var(--bt-testo);
+  font: 800 clamp(2rem, 6.4vw, 3.6rem)/1.05 var(--bt-carattere);
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.bt-titolo--enorme { font-size: clamp(2.6rem, 10vw, 5.6rem); line-height: 1; }
+.bt-titolo--medio { font-size: clamp(1.5rem, 4.4vw, 2.3rem); line-height: 1.12; }
+.bt-chiave,
+.bt-titolo em { color: var(--bt-lime); font-style: normal; }
+.bt-chiave--corso { color: var(--bt-colore-chiaro); }
+.bt-frase {
+  margin: 0;
+  color: var(--bt-testo);
+  font: 500 clamp(1.1rem, 2.9vw, 1.45rem)/1.4 var(--bt-carattere);
+  text-wrap: balance;
+}
+.bt-nota {
+  margin: 0;
+  color: var(--bt-testo-tenue);
+  font: 500 .9375rem/1.45 var(--bt-carattere);
+}
+/* Titolo con la barretta verticale colorata, come i nomi degli indirizzi nel video */
+.bt-barretta {
+  position: relative;
+  padding-left: .55em;
+  text-align: left;
+}
+.bt-barretta::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .08em;
+  bottom: .08em;
+  width: .16em;
+  min-width: 6px;
+  border-radius: 99px;
+  background: var(--bt-colore);
+  box-shadow: 0 0 18px var(--bt-alone);
+}
+/* Etichetta a pillola (occhiello) */
+.bt-occhiello {
+  display: inline-flex;
+  align-items: center;
+  gap: .4em;
+  width: fit-content;
+  margin: 0;
+  padding: .42em 1em;
+  border-radius: 99px;
+  color: var(--bt-su-lime);
+  background-color: var(--bt-lime);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .38), rgba(255, 255, 255, 0) 60%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 4px 14px rgba(119, 206, 25, .3);
+  font: 800 .9375rem/1.2 var(--bt-carattere);
+}
+.bt-occhiello--corso {
+  color: var(--bt-su-colore);
+  background-color: var(--bt-colore);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 4px 14px var(--bt-alone);
+}
+
+/* 4.3 Pulsanti lucidi */
+.bt-pulsante {
+  --_fondo: var(--bt-colore);
+  --_testo: var(--bt-su-colore);
+  --_labbro: var(--bt-colore-scuro);
+  --_alone: var(--bt-alone);
+  box-sizing: border-box;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55em;
+  min-height: 56px;
+  padding: 15px 32px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--_testo);
+  background-color: var(--_fondo);
+  /* riflesso: resta nel quarto alto, sopra la riga del testo */
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, .36) 0%, rgba(255, 255, 255, .05) 24%, rgba(255, 255, 255, 0) 26%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 62%, rgba(0, 0, 0, .14) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .6),
+    0 5px 0 var(--_labbro),
+    0 14px 28px var(--_alone);
+  font: 800 1.1875rem/1.15 var(--bt-carattere);
+  letter-spacing: .005em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform var(--bt-rapido) ease, box-shadow var(--bt-rapido) ease, filter var(--bt-rapido) ease;
+}
+.bt-pulsante:hover { transform: translateY(-2px); filter: saturate(1.08); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 7px 0 var(--_labbro), 0 18px 34px var(--_alone); }
+.bt-pulsante:active { transform: translateY(4px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 1px 0 var(--_labbro), 0 6px 14px var(--_alone); }
+.bt-pulsante:focus-visible { outline: 3px solid var(--bt-fuoco); outline-offset: 4px; }
+.bt-pulsante:disabled,
+.bt-pulsante[aria-disabled="true"] {
+  --_fondo: #5d7380; --_testo: #ffffff; --_labbro: #3c4f5a; --_alone: transparent;
+  cursor: default; transform: none; filter: none;
+}
+/* la pillola lime del video («Provala.»), qualunque sia l'indirizzo */
+.bt-pulsante--lime { --_fondo: var(--bt-lime); --_testo: var(--bt-su-lime); --_labbro: var(--bt-lime-scuro); --_alone: rgba(119, 206, 25, .40); }
+/* secondario: vetro sul palco scuro, bianco sulla carta */
+.bt-pulsante--secondario {
+  --_fondo: var(--bt-sec-fondo);
+  --_testo: var(--bt-sec-testo);
+  min-height: var(--bt-tocco);
+  padding: 11px 24px;
+  border: 2px solid var(--bt-sec-bordo);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, 0) 26%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 6px 16px rgba(0, 0, 0, .18);
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+.bt-pulsante--secondario:hover { background-color: var(--bt-sec-fondo-attivo); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 10px 20px rgba(0, 0, 0, .22); }
+.bt-pulsante--secondario:active { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 2px 6px rgba(0, 0, 0, .18); }
+.bt-pulsante--piccolo { min-height: var(--bt-tocco); padding: 10px 20px; font-size: 1rem; }
+.bt-pulsante--grande { min-height: 68px; padding: 18px 44px; font-size: clamp(1.3rem, 4vw, 1.6rem); }
+.bt-pulsante--largo { width: 100%; }
+/* collegamento discreto («Ho un codice», «Rivedi il tuo lavoro») */
+.bt-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--bt-link);
+  font: 700 1rem/1.3 var(--bt-carattere);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  cursor: pointer;
+}
+.bt-link:hover { text-decoration-thickness: 3px; }
+.bt-link:focus-visible { outline: 3px solid var(--bt-fuoco); outline-offset: 3px; border-radius: 8px; }
+/* riga di pulsanti: «Indietro» a sinistra, «Avanti» a destra; in colonna sul telefono */
+.bt-azioni { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 18px; }
+.bt-azioni--estremi { justify-content: space-between; width: 100%; }
+
+/* 4.4 Scheda */
+.bt-scheda {
+  box-sizing: border-box;
+  position: relative;
+  padding: clamp(18px, 4vw, 30px);
+  border-radius: var(--bt-raggio);
+  color: var(--bt-inchiostro);
+  background: var(--bt-carta);
+  box-shadow: var(--bt-ombra), inset 0 1px 0 #ffffff;
+  font-family: var(--bt-carattere);
+}
+/* bordo alto nel colore dell'indirizzo */
+.bt-scheda--colore { border-top: 10px solid var(--bt-colore); }
+/* scheda di vetro scuro, per stare sul palco senza spegnerlo */
+.bt-scheda--scura {
+  color: var(--bt-testo);
+  background: linear-gradient(160deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .04));
+  border: 1px solid rgba(255, 255, 255, .16);
+  box-shadow: var(--bt-ombra-piccola), inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+/* disco: il cerchio pieno su cui poggia un'illustrazione o una scheda, come nel video */
+.bt-disco {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(72vw, 340px);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 26%, var(--bt-colore-chiaro) 0%, var(--bt-colore) 46%, var(--bt-colore) 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 0 70px var(--bt-alone), inset 0 -18px 40px rgba(0, 0, 0, .16);
+}
+.bt-disco > img,
+.bt-disco > svg,
+.bt-disco > .bt-scheda {
+  width: 84%;
+  height: auto;
+  border-radius: 18px;
+  background: var(--bt-carta);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .34);
+  transform: rotate(-2deg);
+}
+
+/* 4.5 Barra di avanzamento */
+/* <progress class="bt-avanzamento" value="3" max="12"> oppure <div class="bt-avanzamento"><span></span></div> */
+.bt-avanzamento {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 14px;
+  border: 0;
+  border-radius: 99px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .20);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, .35);
+}
+.bt-su-chiaro .bt-avanzamento,
+.bt-scheda:not(.bt-scheda--scura) .bt-avanzamento { background: #d5e0e5; box-shadow: inset 0 2px 4px rgba(11, 47, 71, .22); }
+.bt-avanzamento::-webkit-progress-bar { background: transparent; }
+.bt-avanzamento::-webkit-progress-value {
+  border-radius: 99px;
+  background: linear-gradient(180deg, var(--bt-colore-chiaro), var(--bt-colore));
+  box-shadow: 0 0 14px var(--bt-alone);
+  transition: width .45s var(--bt-vivace);
+}
+.bt-avanzamento::-moz-progress-bar { border-radius: 99px; background: linear-gradient(180deg, var(--bt-colore-chiaro), var(--bt-colore)); }
+.bt-avanzamento > span {
+  display: block;
+  width: calc(var(--bt-valore, 0) * 100%);
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(180deg, var(--bt-colore-chiaro), var(--bt-colore));
+  box-shadow: 0 0 14px var(--bt-alone);
+  transition: width .45s var(--bt-vivace);
+}
+/* avanzamento a passi: un pallino per tappa */
+.bt-passi { display: flex; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.bt-passi > li {
+  flex: 1;
+  height: 12px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, .22);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, .3);
+  font-size: 0;
+}
+.bt-passi > li.bt-fatto { background: linear-gradient(180deg, var(--bt-colore-chiaro), var(--bt-colore)); box-shadow: 0 0 12px var(--bt-alone); }
+.bt-passi > li[aria-current] { background: #ffffff; box-shadow: 0 0 14px rgba(255, 255, 255, .6); }
+
+/* 4.6 Scelta: la risposta grande da toccare (una scelta per schermo) */
+.bt-scelte { display: grid; gap: 14px; width: 100%; margin: 0; padding: 0; list-style: none; }
+@media (min-width: 720px) { .bt-scelte--due { grid-template-columns: 1fr 1fr; } }
+.bt-scelta {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 68px;
+  padding: 14px 18px;
+  border: 3px solid transparent;
+  border-radius: var(--bt-raggio);
+  color: var(--bt-inchiostro);
+  background-color: var(--bt-carta);
+  background-image: linear-gradient(180deg, #ffffff 0%, #ffffff 40%, #eaf0f2 100%);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, .28), 0 12px 24px rgba(0, 0, 0, .22);
+  font: 700 1.125rem/1.25 var(--bt-carattere);
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--bt-rapido) ease, box-shadow var(--bt-rapido) ease, border-color var(--bt-rapido) ease;
+}
+.bt-scelta:hover { transform: translateY(-2px); }
+.bt-scelta:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, .28), 0 6px 12px rgba(0, 0, 0, .2); }
+.bt-scelta:focus-visible,
+.bt-scelta:has(input:focus-visible) { outline: 3px solid var(--bt-fuoco); outline-offset: 3px; }
+.bt-scelta input { position: absolute; opacity: 0; pointer-events: none; }
+.bt-scelta img,
+.bt-scelta svg { flex: none; width: 56px; height: 56px; border-radius: 14px; }
+.bt-scelta--scelta,
+.bt-scelta[aria-pressed="true"],
+.bt-scelta[aria-checked="true"],
+.bt-scelta:has(input:checked) {
+  border-color: var(--bt-colore);
+  background-image: linear-gradient(180deg, #ffffff 0%, #f4fbe9 100%);
+  box-shadow: 0 5px 0 var(--bt-colore-scuro), 0 0 0 4px var(--bt-alone), 0 14px 28px var(--bt-alone);
+}
+.bt-scelta--scelta::after,
+.bt-scelta[aria-pressed="true"]::after,
+.bt-scelta[aria-checked="true"]::after,
+.bt-scelta:has(input:checked)::after {
+  content: "✓";
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-left: auto;
+  border-radius: 50%;
+  color: var(--bt-su-colore);
+  background: var(--bt-colore);
+  font: 900 1rem/1 var(--bt-carattere);
+}
+
+/* 4.7 Tessera accesa o spenta (il «Perché?» del risultato) */
+.bt-tessere { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; width: 100%; margin: 0; padding: 0; list-style: none; }
+.bt-tessera {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 96px;
+  padding: 12px 10px;
+  border: 2px solid rgba(255, 255, 255, .16);
+  border-radius: 18px;
+  color: var(--bt-testo-tenue);
+  background: rgba(255, 255, 255, .06);
+  font: 700 .9375rem/1.2 var(--bt-carattere);
+  text-align: center;
+  text-decoration: none;
+  transition: transform var(--bt-rapido) ease, box-shadow var(--bt-rapido) ease;
+}
+button.bt-tessera { cursor: pointer; }
+.bt-tessera img,
+.bt-tessera svg { width: 44px; height: 44px; }
+.bt-tessera--spenta { border-style: dashed; }
+.bt-tessera--spenta img,
+.bt-tessera--spenta svg { opacity: .45; filter: grayscale(1); }
+.bt-tessera--accesa {
+  border-color: var(--bt-colore-chiaro);
+  color: var(--bt-su-colore);
+  background-color: var(--bt-colore);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .30) 0%, rgba(255, 255, 255, 0) 30%), linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, .14));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 5px 0 var(--bt-colore-scuro), 0 0 26px var(--bt-alone);
+}
+button.bt-tessera--accesa:hover { transform: translateY(-3px); }
+button.bt-tessera--accesa:active { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 1px 0 var(--bt-colore-scuro), 0 0 14px var(--bt-alone); }
+.bt-tessera:focus-visible { outline: 3px solid var(--bt-fuoco); outline-offset: 3px; }
+
+/* 4.8 Distintivo dell'indirizzo (premio al completamento) */
+.bt-distintivo {
+  --_lato: 112px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--_lato);
+  height: var(--_lato);
+  flex: none;
+  border-radius: 50%;
+  color: var(--bt-su-colore);
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, .55) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 50% 50%, var(--bt-colore) 0 58%, var(--bt-colore-scuro) 59% 64%, var(--bt-colore) 65% 100%);
+  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .85), inset 0 -10px 18px rgba(0, 0, 0, .2), 0 8px 0 var(--bt-colore-scuro), 0 0 34px var(--bt-alone);
+  font: 900 calc(var(--_lato) * .24)/1 var(--bt-carattere);
+  letter-spacing: .01em;
+  text-align: center;
+}
+.bt-distintivo img,
+.bt-distintivo svg { width: 52%; height: 52%; }
+.bt-distintivo--piccolo { --_lato: 64px; box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .85), 0 4px 0 var(--bt-colore-scuro), 0 0 18px var(--bt-alone); }
+.bt-distintivo--grande { --_lato: 168px; }
+.bt-distintivo--spento {
+  color: var(--bt-testo-tenue);
+  background: rgba(255, 255, 255, .07);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .3);
+  border: 0;
+  outline: 2px dashed rgba(255, 255, 255, .35);
+  outline-offset: -8px;
+}
+.bt-distintivi { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin: 0; padding: 0; list-style: none; }
+
+/* 4.9 Schermo «esplosione»: il risultato e l'attestato */
+.bt-esplosione {
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 3vh, 30px);
+  width: 100%;
+  min-height: min(86vh, 760px);
+  padding: clamp(24px, 6vw, 56px) clamp(16px, 5vw, 44px);
+  border-radius: var(--bt-raggio-grande);
+  color: var(--bt-testo);
+  background: radial-gradient(90% 70% at 50% 42%, var(--bt-palco-chiaro) 0%, var(--bt-palco) 52%, var(--bt-palco-scuro) 100%);
+  text-align: center;
+  font-family: var(--bt-carattere);
+}
+.bt-esplosione > * { margin: 0; max-width: 100%; }
+/* raggi che partono dal centro */
+.bt-esplosione::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  z-index: -1;
+  width: 220vmax;
+  height: 220vmax;
+  margin: -110vmax 0 0 -110vmax;
+  pointer-events: none;
+  background: repeating-conic-gradient(from 0deg, var(--bt-alone) 0deg 6deg, transparent 6deg 18deg);
+  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, .75) 0%, rgba(0, 0, 0, .25) 14%, transparent 30%);
+  mask-image: radial-gradient(circle, rgba(0, 0, 0, .75) 0%, rgba(0, 0, 0, .25) 14%, transparent 30%);
+  animation: bt-gira 40s linear infinite;
+}
+/* alone pieno dietro il titolo */
+.bt-esplosione::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  z-index: -1;
+  width: min(120vw, 760px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--bt-alone) 0%, transparent 62%);
+}
+.bt-esplosione .bt-titolo,
+.bt-esplosione__titolo {
+  font: 900 clamp(2.4rem, 9.5vw, 5.2rem)/1 var(--bt-carattere);
+  letter-spacing: -.025em;
+  color: var(--bt-testo);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, .25), 0 0 44px var(--bt-alone);
+  text-wrap: balance;
+  animation: bt-scoppio .7s var(--bt-vivace) both;
+}
+.bt-esplosione > :not(.bt-titolo):not(.bt-esplosione__titolo) { animation: bt-entra .5s ease .25s both; }
+
+/* 4.10 Biglietto: codice personale in grande e riquadro per il QR */
+.bt-biglietto {
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px clamp(14px, 4vw, 28px);
+  width: min(100%, 520px);
+  padding: clamp(16px, 4vw, 24px);
+  border-radius: var(--bt-raggio);
+  color: var(--bt-inchiostro);
+  background:
+    radial-gradient(circle at 0 50%, transparent 0 11px, #ffffff 12px) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent 0 11px, #ffffff 12px) right / 51% 100% no-repeat;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, .34));
+  border-top: 8px solid var(--bt-colore);
+  font-family: var(--bt-carattere);
+  text-align: left;
+}
+.bt-biglietto__etichetta { grid-column: 1; margin: 0; color: var(--bt-inchiostro-tenue); font: 700 .875rem/1.2 var(--bt-carattere); letter-spacing: .08em; text-transform: uppercase; }
+.bt-biglietto__codice {
+  grid-column: 1;
+  margin: 0;
+  color: var(--bt-inchiostro);
+  font: 900 clamp(2rem, 9.5vw, 3.1rem)/1 ui-monospace, "SFMono-Regular", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  letter-spacing: .14em;
+  white-space: nowrap;
+  -webkit-user-select: all;
+  user-select: all;
+}
+.bt-biglietto__frase { grid-column: 1; margin: 0; color: var(--bt-inchiostro); font: 600 1rem/1.35 var(--bt-carattere); }
+.bt-biglietto__qr {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  display: grid;
+  place-items: center;
+  width: clamp(104px, 28vw, 148px);
+  aspect-ratio: 1;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 3px solid var(--bt-colore);
+  border-radius: 16px;
+  color: var(--bt-inchiostro-tenue);
+  background: #ffffff;
+  font: 700 .8125rem/1.2 var(--bt-carattere);
+  text-align: center;
+}
+.bt-biglietto__qr > img,
+.bt-biglietto__qr > svg,
+.bt-biglietto__qr > canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+@media (max-width: 420px) {
+  .bt-biglietto { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .bt-biglietto__qr { grid-column: 1; grid-row: auto; width: 148px; }
+}
+
+/* 4.11 Fascia in basso con il marchio, come nel video */
+.bt-fascia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 18px;
+  padding: 12px clamp(16px, 4vw, 32px);
+  border-top: 3px solid var(--bt-colore);
+  color: var(--bt-testo);
+  background: var(--bt-fascia);
+  font: 700 1rem/1.3 var(--bt-carattere);
+}
+.bt-fascia img { width: 44px; height: 44px; border-radius: 10px; background: #ffffff; }
+
+/* 4.12 Interruttore dei suoni (lo crea interruttoreSuono() di bussola-effetti.mjs) */
+.bt-suono {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: var(--bt-tocco);
+  min-height: var(--bt-tocco);
+  padding: 8px 16px;
+  border: 2px solid var(--bt-sec-bordo);
+  border-radius: 99px;
+  color: var(--bt-sec-testo);
+  background: var(--bt-sec-fondo);
+  font: 700 .9375rem/1 var(--bt-carattere);
+  cursor: pointer;
+}
+.bt-suono[aria-pressed="true"] { border-color: var(--bt-lime); color: var(--bt-su-lime); background: var(--bt-lime); }
+.bt-suono:focus-visible { outline: 3px solid var(--bt-fuoco); outline-offset: 3px; }
+
+/* 4.13 Effetti: classi usate da bussola-effetti.mjs */
+.bt-effetti-tela {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483000;
+  pointer-events: none;
+}
+.bt-premiato { animation: bt-premio .6s var(--bt-vivace) both; }
+.bt-toccato { animation: bt-tocco .32s var(--bt-vivace) both; }
+.bt-entra { animation: bt-entra .45s ease both; }
+.bt-pulsa { animation: bt-pulsa 1.8s ease-in-out infinite; }
+.bt-nascosto-visivamente {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@keyframes bt-scoppio {
+  0% { opacity: 0; transform: scale(.2) rotate(-6deg); filter: blur(6px); }
+  60% { opacity: 1; transform: scale(1.12) rotate(1deg); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes bt-entra { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes bt-premio { 0% { transform: scale(.4) rotate(-14deg); opacity: 0; } 55% { transform: scale(1.18) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes bt-tocco { 0% { transform: scale(1); } 45% { transform: scale(.94); } 100% { transform: scale(1); } }
+@keyframes bt-pulsa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+@keyframes bt-gira { to { transform: rotate(360deg); } }
+
+/* 5. ADATTAMENTO DELLE PAGINE ESISTENTI ----------------------------------- */
+/* Regole provvisorie: vestono le pagine attuali con il tema, senza toccarne il codice.
+   Gli agenti dei percorsi le sostituiranno man mano con le classi .bt-* della sezione 4. */
+@media screen {
+
+  /* 5.1 Pagine con l'intestazione del sito: bussola.html e missioni.html */
+  html.bt-pagina-bussola body { color: var(--bt-testo) !important; }
+  html.bt-pagina-bussola .site-header.explore-header {
+    background: var(--bt-fascia) !important;
+    border-bottom: 3px solid var(--bt-lime) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .35) !important;
+  }
+  html.bt-pagina-bussola .site-header.explore-header::after { display: none; }
+  html.bt-pagina-bussola .site-header .site-brand,
+  html.bt-pagina-bussola .site-header .site-brand-name { color: #ffffff !important; }
+  html.bt-pagina-bussola .site-header .site-brand-place { color: var(--bt-lime-chiaro) !important; }
+  html.bt-pagina-bussola .site-header .site-logo { border-radius: 14px !important; overflow: hidden; background: #ffffff !important; }
+  html.bt-pagina-bussola .page-nav a { color: #ffffff !important; background: transparent !important; border-color: transparent !important; }
+  html.bt-pagina-bussola .page-nav a:hover { color: #ffffff !important; background: rgba(255, 255, 255, .14) !important; }
+  html.bt-pagina-bussola .page-nav a[aria-current="page"] {
+    color: var(--bt-su-lime) !important;
+    background-color: var(--bt-lime) !important;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .36), rgba(255, 255, 255, 0) 55%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 4px 0 var(--bt-lime-scuro) !important;
+    border-color: transparent !important;
+    border-radius: 99px !important;
+  }
+  html.bt-pagina-bussola .page-nav a[aria-current="page"]::after { display: none; }
+
+  /* testi che poggiano direttamente sul palco */
+  html.bt-pagina-bussola .journey li { color: var(--bt-testo-tenue) !important; }
+  html.bt-pagina-bussola .journey li.current { color: #ffffff !important; }
+  html.bt-pagina-bussola .journey li::before { color: var(--bt-su-lime) !important; background: rgba(255, 255, 255, .55) !important; }
+  html.bt-pagina-bussola .journey li.current::before { background: var(--bt-lime) !important; box-shadow: 0 0 14px var(--bt-alone) !important; }
+  html.bt-pagina-bussola .journey.activity-path li::before { background: rgba(255, 255, 255, .55) !important; }
+  html.bt-pagina-bussola .journey.activity-path li.current::before { background: var(--bt-lime) !important; }
+  html.bt-pagina-bussola main > .explore-note,
+  html.bt-pagina-bussola main > noscript p { color: var(--bt-testo) !important; }
+  html.bt-pagina-bussola .explore-link { color: var(--bt-lime-chiaro) !important; text-decoration-thickness: 2px; }
+  html.bt-pagina-bussola .explore-link:hover { color: #ffffff !important; }
+  html.bt-pagina-bussola .catalog-contacts > summary { color: #ffffff !important; }
+  html.bt-pagina-bussola .catalog-contacts { border-color: rgba(255, 255, 255, .25) !important; }
+
+  /* riquadri scuri → vetro sul palco */
+  html.bt-pagina-bussola .compass-intro,
+  html.bt-pagina-bussola .question-panel,
+  html.bt-pagina-bussola .direction-intro,
+  html.bt-pagina-bussola #missionCatalog,
+  html.bt-pagina-bussola .resume-panel,
+  html.bt-pagina-bussola .bussola-open-day,
+  html.bt-pagina-bussola .contacts-panel {
+    color: var(--bt-testo) !important;
+    background: linear-gradient(165deg, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, .035) 60%) !important;
+    border: 1px solid rgba(255, 255, 255, .16) !important;
+    box-shadow: var(--bt-ombra), inset 0 1px 0 rgba(255, 255, 255, .18) !important;
+    border-radius: var(--bt-raggio-grande) !important;
+  }
+  html.bt-pagina-bussola .resume-panel h2,
+  html.bt-pagina-bussola .resume-panel p { color: var(--bt-testo) !important; }
+  html.bt-pagina-bussola .compass-intro h2,
+  html.bt-pagina-bussola #missionCatalog h1,
+  html.bt-pagina-bussola .question-panel h2,
+  html.bt-pagina-bussola .direction-intro h2 {
+    color: #ffffff !important;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    text-shadow: 0 3px 0 rgba(0, 0, 0, .22);
+  }
+  html.bt-pagina-bussola .bussola-video-notice {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, .10) !important;
+    border-left-color: var(--bt-lime) !important;
+  }
+  html.bt-pagina-bussola .intro-topics li { color: #ffffff !important; background: rgba(255, 255, 255, .12) !important; border: 1px solid rgba(255, 255, 255, .2) !important; }
+
+  /* pillole lime */
+  html.bt-pagina-bussola .eyebrow,
+  html.bt-pagina-bussola .question-area,
+  html.bt-pagina-bussola .explore-kicker,
+  html.bt-pagina-bussola .intro-facts span,
+  html.bt-pagina-bussola .next-step {
+    color: var(--bt-su-lime) !important;
+    background-color: var(--bt-lime) !important;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .38), rgba(255, 255, 255, 0) 60%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 4px 14px rgba(119, 206, 25, .28) !important;
+  }
+
+  /* superfici chiare: schede bianche lucide */
+  html.bt-pagina-bussola .mission-card,
+  html.bt-pagina-bussola .direction-card,
+  html.bt-pagina-bussola .discovery-course,
+  html.bt-pagina-bussola .catalog-support,
+  html.bt-pagina-bussola .other-directions,
+  html.bt-pagina-bussola .choice-recap,
+  html.bt-pagina-bussola .question-footer,
+  html.bt-pagina-bussola dialog {
+    --bt-sec-fondo: #ffffff;
+    --bt-sec-fondo-attivo: #e6eef1;
+    --bt-sec-testo: var(--bt-inchiostro);
+    --bt-sec-bordo: var(--bt-linea);
+    --bt-fuoco: var(--bt-inchiostro);
+    --bt-link: #00573f;
+    color: var(--bt-inchiostro) !important;
+  }
+  html.bt-pagina-bussola .mission-card,
+  html.bt-pagina-bussola .direction-card,
+  html.bt-pagina-bussola .discovery-course,
+  html.bt-pagina-bussola .catalog-support,
+  html.bt-pagina-bussola .other-directions,
+  html.bt-pagina-bussola .choice-recap {
+    border-radius: var(--bt-raggio) !important;
+    box-shadow: var(--bt-ombra), inset 0 1px 0 #ffffff !important;
+  }
+  html.bt-pagina-bussola .mission-card .explore-link,
+  html.bt-pagina-bussola .direction-card .explore-link,
+  html.bt-pagina-bussola .discovery-course .explore-link,
+  html.bt-pagina-bussola .catalog-support .explore-link,
+  html.bt-pagina-bussola .other-directions .explore-link,
+  html.bt-pagina-bussola .choice-recap .explore-link,
+  html.bt-pagina-bussola .question-footer .explore-link,
+  html.bt-pagina-bussola .question-footer .skip-button,
+  html.bt-pagina-bussola dialog .explore-link { color: #00573f !important; }
+
+  /* schede del catalogo e del risultato: ciascuna con il colore del proprio indirizzo */
+  html.bt-pagina-bussola #prova-afm, html.bt-pagina-bussola [data-course="afm"] { --bt-colore: var(--bt-afm); --bt-colore-chiaro: var(--bt-afm-chiaro); --bt-colore-scuro: var(--bt-afm-scuro); --bt-su-colore: var(--bt-afm-su); --bt-alone: var(--bt-afm-alone); }
+  html.bt-pagina-bussola #prova-sia, html.bt-pagina-bussola [data-course="sia"] { --bt-colore: var(--bt-sia); --bt-colore-chiaro: var(--bt-sia-chiaro); --bt-colore-scuro: var(--bt-sia-scuro); --bt-su-colore: var(--bt-sia-su); --bt-alone: var(--bt-sia-alone); }
+  html.bt-pagina-bussola #prova-turismo, html.bt-pagina-bussola [data-course="turismo"] { --bt-colore: var(--bt-turismo); --bt-colore-chiaro: var(--bt-turismo-chiaro); --bt-colore-scuro: var(--bt-turismo-scuro); --bt-su-colore: var(--bt-turismo-su); --bt-alone: var(--bt-turismo-alone); }
+  html.bt-pagina-bussola #prova-cat, html.bt-pagina-bussola [data-course="cat"] { --bt-colore: var(--bt-cat); --bt-colore-chiaro: var(--bt-cat-chiaro); --bt-colore-scuro: var(--bt-cat-scuro); --bt-su-colore: var(--bt-cat-su); --bt-alone: var(--bt-cat-alone); }
+  html.bt-pagina-bussola #prova-ssas, html.bt-pagina-bussola [data-course="ssas"] { --bt-colore: var(--bt-ssas); --bt-colore-chiaro: var(--bt-ssas-chiaro); --bt-colore-scuro: var(--bt-ssas-scuro); --bt-su-colore: var(--bt-ssas-su); --bt-alone: var(--bt-ssas-alone); }
+  html.bt-pagina-bussola .mission-card { border-top: 10px solid var(--bt-colore) !important; }
+  html.bt-pagina-bussola .mission-card::before { display: none; }
+  html.bt-pagina-bussola .mission-card .explore-kicker,
+  html.bt-pagina-bussola .direction-card .course-tag {
+    color: var(--bt-su-colore) !important;
+    background-color: var(--bt-colore) !important;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, 0) 60%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 3px 10px var(--bt-alone) !important;
+  }
+
+  /* pulsanti: primario pieno e lucido */
+  html.bt-pagina-bussola .explore-button,
+  html.bt-pagina-bussola .compass-video-play {
+    position: relative;
+    min-height: 54px;
+    padding: 14px 30px;
+    border: 0 !important;
+    border-radius: 999px !important;
+    color: var(--bt-su-colore) !important;
+    background-color: var(--bt-colore) !important;
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, .36) 0%, rgba(255, 255, 255, .05) 24%, rgba(255, 255, 255, 0) 26%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0) 62%, rgba(0, 0, 0, .14) 100%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 5px 0 var(--bt-colore-scuro), 0 14px 28px var(--bt-alone) !important;
+    font-weight: 800;
+    font-size: 1.125rem;
+    text-decoration: none;
+    transition: transform var(--bt-rapido) ease, box-shadow var(--bt-rapido) ease;
+  }
+  html.bt-pagina-bussola .explore-button:hover,
+  html.bt-pagina-bussola .compass-video-play:hover {
+    color: var(--bt-su-colore) !important;
+    background-color: var(--bt-colore) !important;
+    transform: translateY(-2px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 7px 0 var(--bt-colore-scuro), 0 18px 34px var(--bt-alone) !important;
+  }
+  html.bt-pagina-bussola .explore-button:active { transform: translateY(4px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 1px 0 var(--bt-colore-scuro), 0 6px 14px var(--bt-alone) !important; }
+  html.bt-pagina-bussola .explore-button:focus-visible { outline: 3px solid var(--bt-fuoco); outline-offset: 4px; }
+  html.bt-pagina-bussola .explore-button:disabled,
+  html.bt-pagina-bussola .explore-button[aria-disabled="true"] {
+    color: #ffffff !important;
+    background-color: #5d7380 !important;
+    background-image: none !important;
+    box-shadow: 0 4px 0 #3c4f5a !important;
+    opacity: 1 !important;
+    transform: none;
+  }
+  /* pulsanti: secondario */
+  html.bt-pagina-bussola .explore-button.secondary {
+    min-height: var(--bt-tocco);
+    padding: 11px 24px;
+    border: 2px solid var(--bt-sec-bordo) !important;
+    color: var(--bt-sec-testo) !important;
+    background-color: var(--bt-sec-fondo) !important;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, 0) 26%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 6px 16px rgba(0, 0, 0, .18) !important;
+    font-weight: 700;
+    font-size: 1.0625rem;
+  }
+  html.bt-pagina-bussola .explore-button.secondary:hover { color: var(--bt-sec-testo) !important; background-color: var(--bt-sec-fondo-attivo) !important; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 10px 20px rgba(0, 0, 0, .22) !important; }
+  html.bt-pagina-bussola .compass-video-button { border-radius: 99px !important; border: 2px solid rgba(255, 255, 255, .62) !important; color: #ffffff !important; background: rgba(255, 255, 255, .10) !important; }
+
+  /* domande: risposte come tessere bianche lucide, barra lime */
+  html.bt-pagina-bussola .progress-track { height: 14px; border-radius: 99px !important; background: rgba(255, 255, 255, .20) !important; box-shadow: inset 0 2px 4px rgba(0, 0, 0, .35) !important; overflow: hidden; }
+  html.bt-pagina-bussola .progress-track span { height: 100%; border-radius: 99px !important; background: linear-gradient(180deg, var(--bt-lime-chiaro), var(--bt-lime)) !important; box-shadow: 0 0 14px rgba(119, 206, 25, .6) !important; }
+  html.bt-pagina-bussola .skip-button { color: #ffffff !important; }
+  html.bt-pagina-bussola .question-panel > .compass-skip .explore-link,
+  html.bt-pagina-bussola .question-panel .compass-skip .explore-link { color: var(--bt-lime-chiaro) !important; }
+  html.bt-pagina-bussola .choice {
+    color: var(--bt-inchiostro) !important;
+    border: 3px solid transparent !important;
+    border-radius: var(--bt-raggio) !important;
+    background-color: #ffffff !important;
+    background-image: linear-gradient(180deg, #ffffff 0%, #ffffff 40%, #eaf0f2 100%) !important;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, .28), 0 12px 24px rgba(0, 0, 0, .22) !important;
+    transition: transform var(--bt-rapido) ease, box-shadow var(--bt-rapido) ease, border-color var(--bt-rapido) ease;
+  }
+  html.bt-pagina-bussola .choice:hover { transform: translateY(-2px); }
+  html.bt-pagina-bussola .choice:has(input:checked) {
+    border-color: var(--bt-lime) !important;
+    background-image: linear-gradient(180deg, #ffffff 0%, #f1fbe2 100%) !important;
+    box-shadow: 0 5px 0 var(--bt-lime-scuro), 0 0 0 4px rgba(119, 206, 25, .35), 0 14px 28px rgba(119, 206, 25, .3) !important;
+  }
+  html.bt-pagina-bussola .choice input { accent-color: var(--bt-lime-scuro); }
+  html.bt-pagina-bussola .question-footer { border-radius: 28px !important; box-shadow: var(--bt-ombra-piccola) !important; }
+  html.bt-pagina-bussola .direction-card { border-top-color: var(--bt-colore) !important; }
+
+  html.bt-pagina-bussola .site-footer { border-top: 3px solid var(--bt-lime) !important; background: var(--bt-fascia) !important; color: var(--bt-testo) !important; }
+  html.bt-pagina-bussola .site-footer a { color: var(--bt-lime-chiaro) !important; }
+  html.bt-pagina-bussola dialog { border-radius: var(--bt-raggio) !important; }
+  html.bt-tema dialog::backdrop { background: rgba(2, 12, 20, .72) !important; }
+
+  /* 5.2 Pagine delle prove: bussola-<corso>.html */
+  /* il contenuto resta su una grande scheda chiara: i testi interni non cambiano contrasto */
+  html.bt-pagina-prova main {
+    --bt-sec-fondo: #ffffff;
+    --bt-sec-fondo-attivo: #e6eef1;
+    --bt-sec-testo: var(--bt-inchiostro);
+    --bt-sec-bordo: var(--bt-linea);
+    --bt-fuoco: var(--bt-inchiostro);
+    --bt-link: #00573f;
+    box-sizing: border-box;
+    width: calc(100% - 20px);
+    margin-block: 6px 26px;
+    margin-inline: auto;
+    padding: clamp(14px, 3vw, 28px) clamp(14px, 2.6vw, 30px) clamp(18px, 3vw, 32px);
+    border-radius: var(--bt-raggio-grande);
+    border-top: 10px solid var(--bt-colore);
+    background: var(--paper, var(--bt-carta-tinta));
+    box-shadow: var(--bt-ombra), 0 0 0 1px rgba(255, 255, 255, .10), 0 0 80px var(--bt-alone);
+  }
+  /* striscia alta: «← Prova gli indirizzi · AFM · Area docenti» */
+  html.bt-pagina-prova body .experience-path {
+    color: #ffffff !important;
+    background: var(--bt-fascia) !important;
+    border-bottom: 3px solid var(--bt-colore) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+  }
+  html.bt-pagina-prova body .experience-path a { color: #ffffff !important; }
+  html.bt-pagina-prova body.tm-page main { background: #f5f5ef; }
+  html.bt-pagina-prova body .tm-bottom {
+    background: rgba(3, 22, 36, .94) !important;
+    border-top: 3px solid var(--bt-colore) !important;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, .35);
+  }
+  html.bt-pagina-prova .experience-path a:hover { color: var(--bt-lime-chiaro); }
+  html.bt-pagina-prova .experience-path [aria-current] {
+    padding: 6px 16px;
+    border-radius: 99px;
+    color: var(--bt-su-colore);
+    background-color: var(--bt-colore);
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, 0) 60%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 0 18px var(--bt-alone);
+  }
+  /* testata, riga di stato e piè di pagina: poggiano sul palco scuro */
+  html.bt-pagina-prova body > header.site-header,
+  html.bt-pagina-prova body > .save-row,
+  html.bt-pagina-prova body > .status-line,
+  html.bt-pagina-prova body > footer {
+    color: var(--bt-testo);
+    background: transparent;
+    border-color: rgba(255, 255, 255, .18);
+  }
+  html.bt-pagina-prova body > header.site-header .brand,
+  html.bt-pagina-prova body > header.site-header .brand strong,
+  html.bt-pagina-prova body > header.site-header .brand > span { color: #ffffff; }
+  html.bt-pagina-prova body > header.site-header .brand span,
+  html.bt-pagina-prova body > header.site-header .brand small,
+  html.bt-pagina-prova body > .save-row > span,
+  html.bt-pagina-prova body > .status-line > span,
+  html.bt-pagina-prova body > footer,
+  html.bt-pagina-prova body > footer p,
+  html.bt-pagina-prova body > footer span,
+  html.bt-pagina-prova body > footer label,
+  html.bt-pagina-prova body > footer summary { color: var(--bt-testo-tenue); }
+  html.bt-pagina-prova body > header.site-header .brand strong { color: #ffffff; }
+  html.bt-pagina-prova body > header.site-header .brand img { border-radius: 12px; background: #ffffff; }
+  html.bt-pagina-prova body > header #noteCount { display: inline-block; min-width: 1.6em; border-radius: 99px; text-align: center; color: var(--bt-inchiostro) !important; background: #ffffff !important; }
+  html.bt-pagina-prova body > footer a { color: var(--bt-lime-chiaro); }
+  html.bt-pagina-prova body > footer select { color: var(--bt-inchiostro); background: #ffffff; }
+  html.bt-pagina-prova body > noscript p { color: var(--bt-testo); }
+
+  /* pulsante primario: pieno, lucido, nel colore dell'indirizzo */
+  html.bt-pagina-prova body .primary,
+  html.bt-pagina-prova body button.primary.bussola-start,
+  html.bt-pagina-prova body .tm-start,
+  html.bt-pagina-prova body .tm-next,
+  html.bt-pagina-prova body .class-guest-button {
+    border: 0 !important;
+    border-radius: 999px !important;
+    color: var(--bt-su-colore) !important;
+    background-color: var(--bt-colore) !important;
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, .36) 0%, rgba(255, 255, 255, .05) 24%, rgba(255, 255, 255, 0) 26%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0) 62%, rgba(0, 0, 0, .14) 100%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 5px 0 var(--bt-colore-scuro), 0 12px 24px var(--bt-alone) !important;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform var(--bt-rapido) ease, box-shadow var(--bt-rapido) ease;
+  }
+  html.bt-pagina-prova body .primary:hover:not(:disabled),
+  html.bt-pagina-prova body .tm-start:hover:not(:disabled),
+  html.bt-pagina-prova body .tm-next:hover:not(:disabled),
+  html.bt-pagina-prova body .class-guest-button:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 7px 0 var(--bt-colore-scuro), 0 16px 30px var(--bt-alone) !important;
+  }
+  html.bt-pagina-prova body .primary:active:not(:disabled),
+  html.bt-pagina-prova body .tm-start:active:not(:disabled),
+  html.bt-pagina-prova body .tm-next:active:not(:disabled),
+  html.bt-pagina-prova body .class-guest-button:active {
+    transform: translateY(4px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 1px 0 var(--bt-colore-scuro), 0 6px 12px var(--bt-alone) !important;
+  }
+  html.bt-pagina-prova body .primary:disabled,
+  html.bt-pagina-prova body .tm-next:disabled,
+  html.bt-pagina-prova body .tm-start:disabled {
+    color: #ffffff !important;
+    background-color: #5d7380 !important;
+    background-image: none !important;
+    box-shadow: 0 4px 0 #3c4f5a !important;
+    opacity: 1;
+  }
+  html.bt-pagina-prova body .primary:focus-visible,
+  html.bt-pagina-prova body .tm-start:focus-visible,
+  html.bt-pagina-prova body .tm-next:focus-visible { outline: 3px solid var(--bt-fuoco); outline-offset: 4px; }
+
+  /* pulsanti secondari: bianchi lucidi sulla carta, di vetro sul palco */
+  html.bt-pagina-prova body .quiet,
+  html.bt-pagina-prova body .secondary,
+  html.bt-pagina-prova body .plain-button,
+  html.bt-pagina-prova body .tm-menu-toggle {
+    border: 2px solid var(--bt-sec-bordo) !important;
+    border-radius: 999px !important;
+    color: var(--bt-sec-testo) !important;
+    background-color: var(--bt-sec-fondo) !important;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, 0) 26%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 5px 14px rgba(0, 0, 0, .16);
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform var(--bt-rapido) ease, background-color var(--bt-rapido) ease;
+  }
+  html.bt-pagina-prova body .quiet:hover:not(:disabled),
+  html.bt-pagina-prova body .secondary:hover,
+  html.bt-pagina-prova body .plain-button:hover,
+  html.bt-pagina-prova body .tm-menu-toggle:hover { background-color: var(--bt-sec-fondo-attivo) !important; transform: translateY(-1px); }
+  html.bt-pagina-prova body > footer .text-button { color: var(--bt-lime-chiaro); }
+  html.bt-pagina-prova .tm-menu-toggle .tm-menu-icon,
+  html.bt-pagina-prova .tm-menu-toggle .tm-menu-icon::before,
+  html.bt-pagina-prova .tm-menu-toggle .tm-menu-icon::after { background: currentColor; }
+  /* finestre di dialogo e menu: superfici chiare */
+  html.bt-pagina-prova dialog,
+  html.bt-pagina-prova .tm-menu {
+    --bt-sec-fondo: #ffffff;
+    --bt-sec-fondo-attivo: #e6eef1;
+    --bt-sec-testo: var(--bt-inchiostro);
+    --bt-sec-bordo: var(--bt-linea);
+    --bt-fuoco: var(--bt-inchiostro);
+    --bt-link: #00573f;
+  }
+  html.bt-pagina-prova dialog { border-radius: var(--bt-raggio); box-shadow: var(--bt-ombra); }
+  html.bt-pagina-prova a.skip:focus { z-index: 50; }
+}
+
+/* 6. MOVIMENTO RIDOTTO E STAMPA ------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .bt-pulsante, .bt-scelta, .bt-tessera,
+  .bt-avanzamento > span, .bt-avanzamento::-webkit-progress-value,
+  html.bt-tema .explore-button, html.bt-tema .choice, html.bt-tema .primary, html.bt-tema .quiet,
+  html.bt-tema .secondary, html.bt-tema .plain-button, html.bt-tema .tm-start, html.bt-tema .tm-next,
+  html.bt-tema .class-guest-button, html.bt-tema .compass-video-play { transition: none !important; }
+  .bt-pulsante:hover, .bt-pulsante:active, .bt-scelta:hover, .bt-scelta:active,
+  button.bt-tessera--accesa:hover, button.bt-tessera--accesa:active,
+  html.bt-tema .explore-button:hover, html.bt-tema .explore-button:active, html.bt-tema .choice:hover,
+  html.bt-tema .primary:hover, html.bt-tema .primary:active, html.bt-tema .quiet:hover,
+  html.bt-tema .secondary:hover, html.bt-tema .plain-button:hover, html.bt-tema .tm-start:hover,
+  html.bt-tema .tm-next:hover, html.bt-tema .class-guest-button:hover, html.bt-tema .compass-video-play:hover { transform: none !important; }
+  .bt-esplosione::before,
+  .bt-esplosione .bt-titolo, .bt-esplosione__titolo,
+  .bt-esplosione > :not(.bt-titolo):not(.bt-esplosione__titolo),
+  .bt-premiato, .bt-toccato, .bt-entra, .bt-pulsa { animation: none !important; }
+}
+@media print {
+  .bt-effetti-tela, .bt-suono { display: none !important; }
+  .bt-palco, .bt-esplosione, .bt-schermo { color: #000000; background: #ffffff; }
+  .bt-palco::before, .bt-raggi::before, .bt-esplosione::before, .bt-esplosione::after { display: none; }
+}
