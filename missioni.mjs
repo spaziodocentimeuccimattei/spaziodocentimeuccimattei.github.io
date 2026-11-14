@@ -14,7 +14,7 @@ let selected = [], followup = '', firstSelection = [];
 
 function openCatalog(updateUrl = true) {
   if (updateUrl) history.replaceState(null, '', 'missioni.html');
-  panel.hidden = true; catalog.hidden = false; contactsMount.hidden = false;
+  panel.hidden = true; catalog.hidden = false; 
   current = null; setJourney(0); focusHeading(catalog);
 }
 
@@ -176,7 +176,7 @@ function conclusion() {
   panel.append(row);
   const state=readState(storage(),situations,missions.map(m=>m.id)) || freshState();
   state.missions[current.id]={completed:true}; persist(state);
-  contactsMount.hidden=false;
+  
 }
 
 function renderMission() {
@@ -203,24 +203,24 @@ async function initialize() {
     const [m,c,b,contactData]=await loadData(['missioni','indirizzi','bussola','contatti']);
     missions=m.missions; courses=c.courses; situations=b.situations; contacts=contactData;
     cards.replaceChildren();
+    // Catalogo riordinato (14/11/2026): una scheda colorata per indirizzo, una riga, un pulsante.
+    const entry={
+      afm:{title:'Dai forma a un’idea d’impresa',art:'afm'},
+      sia:{title:'Progetta una soluzione digitale',art:'sia'},
+      turismo:{title:'Crea una proposta turistica',art:'turismo'},
+      ssas:{title:'Ascolta una persona e progetta l’aiuto',art:'ssas'},
+      cat:{title:'Missione Aurora: un drone e un edificio',art:'cat-edificio'}
+    };
     for (const course of courses) {
-      const mission=missions.find(m=>m.id===course.id);
-      const card=el('article',null,'mission-card'); card.dataset.course=course.id; card.append(courseArt(course.id));
-      const entry={
-        afm:{title:'Dai forma a un’idea d’impresa',description:'Idee e impresa, organizzazione, dati e finanza, accordi, marketing e lingue',url:'bussola-afm.html'},
-        sia:{title:'Progetta una soluzione digitale',description:'Processi, dati, programmazione, interfacce e responsabilità',url:'bussola-sia.html'},
-        turismo:{title:'Crea una proposta turistica',description:'Territorio, lingue e accoglienza, esperienze, impresa e servizi, comunicazione',url:'bussola-turismo.html'},
-        ssas:{title:'Ascolta una persona e progetta l’aiuto',description:'Sei storie per provare ascolto, sostegno e attività per persone di età diverse, attraverso cinque laboratori.',url:'bussola-ssas.html'},
-        cat:{title:'CAT 4+2 · Missione Aurora',description:'Pilota un drone virtuale, osserva i punti deboli e scegli come riqualificare un edificio. Scopri anche il percorso 4+2.',url:'bussola-cat.html'}
-      }[course.id];
-      card.id = `prova-${course.id}`;
-      card.append(el('p',course.code === 'TUR' ? 'Turismo' : course.code,'explore-kicker'),el('h2',entry?.title||mission.title),el('p',course.name,'activity-course-name'),el('p',entry?.description||mission.subject),entry?link(`Prova ${course.code === 'TUR' ? 'Turismo' : course.code}`,personalDestination(activityDestination(location.href,course.id))):button(`Prova ${course.code}`,()=>openMission(course.id)));
+      const info=entry[course.id]; const name=course.code==='TUR'?'Turismo':course.code;
+      const card=el('li',null,'missioni-scheda'); card.dataset.corso=course.id; card.id=`prova-${course.id}`;
+      const disc=el('div',null,'bt-disco'); const img=el('img'); img.src=`assets/attestati/${info.art}.svg`; img.alt=''; img.width=1080; img.height=500; disc.append(img);
+      const full=course.name.replace(/\s*·\s*4\+2$/,''); const title=el('h2',name);
+      const go=link('Prova',personalDestination(activityDestination(location.href,course.id)),'bt-pulsante');
+      go.setAttribute('aria-label',`Prova ${full}`);
+      card.append(disc,title);if(full!==name)card.append(el('p',full,'missioni-nome'));card.append(el('p',info.title),go);
       cards.append(card);
     }
-    contactsMount.replaceChildren(contactsPanel(contacts,()=>{
-      clearState(storage()); current=null; selected=[]; followup=''; firstSelection=[]; openCatalog();
-      document.getElementById('announcements').textContent='Le risposte delle dodici domande della Bussola sono state cancellate.';
-    }));
     const id=new URLSearchParams(location.search).get('corso')?.toLowerCase();
     if (id && missions.some(m=>m.id===id)) openMission(id,false);
     else setJourney(0);
