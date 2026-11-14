@@ -38,38 +38,38 @@
   --bt-linea: #9fb4be;
 
   /* AFM · verde (disco e barretta del video) */
-  --bt-afm: #007a3a;
+  --bt-afm: #006949;
   --bt-afm-chiaro: #5ee3a1;
-  --bt-afm-scuro: #00522a;
+  --bt-afm-scuro: #004a33;
   --bt-afm-su: #ffffff;
-  --bt-afm-alone: rgba(0, 150, 72, .45);
+  --bt-afm-alone: rgba(0, 140, 96, .45);
   --bt-afm-fondo: #02181c;
   --bt-afm-fondo-chiaro: #07372e;
 
   /* SIA · verde acqua */
-  --bt-sia: #56b9a8;
-  --bt-sia-chiaro: #9be6d8;
-  --bt-sia-scuro: #1c6b5e;
-  --bt-sia-su: #05222b;
-  --bt-sia-alone: rgba(86, 185, 168, .42);
-  --bt-sia-fondo: #091e25;
-  --bt-sia-fondo-chiaro: #17414a;
+  --bt-sia: #0ea7a5;
+  --bt-sia-chiaro: #7fe3e0;
+  --bt-sia-scuro: #0a6665;
+  --bt-sia-su: #03252a;
+  --bt-sia-alone: rgba(14, 167, 165, .42);
+  --bt-sia-fondo: #061f25;
+  --bt-sia-fondo-chiaro: #0f4046;
 
   /* Turismo · arancio */
-  --bt-turismo: #bf4a00;
-  --bt-turismo-chiaro: #ffa35e;
-  --bt-turismo-scuro: #8a3400;
-  --bt-turismo-su: #ffffff;
-  --bt-turismo-alone: rgba(209, 82, 0, .48);
-  --bt-turismo-fondo: #171717;
-  --bt-turismo-fondo-chiaro: #3a2415;
+  --bt-turismo: #d89e18;
+  --bt-turismo-chiaro: #ffd166;
+  --bt-turismo-scuro: #7d5800;
+  --bt-turismo-su: #1f1500;
+  --bt-turismo-alone: rgba(216, 158, 24, .46);
+  --bt-turismo-fondo: #17140c;
+  --bt-turismo-fondo-chiaro: #3a2e12;
 
   /* CAT · verde lime */
-  --bt-cat: #77ce19;
-  --bt-cat-chiaro: #a8ec58;
-  --bt-cat-scuro: #3b7d00;
+  --bt-cat: #85c140;
+  --bt-cat-chiaro: #b4e86e;
+  --bt-cat-scuro: #3c7410;
   --bt-cat-su: #0a2a14;
-  --bt-cat-alone: rgba(119, 206, 25, .40);
+  --bt-cat-alone: rgba(133, 193, 64, .40);
   --bt-cat-fondo: #0c211a;
   --bt-cat-fondo-chiaro: #1e4423;
 

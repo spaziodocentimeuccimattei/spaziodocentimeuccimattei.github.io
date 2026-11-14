@@ -10,8 +10,8 @@
 
 const CORSI = ['afm', 'sia', 'turismo', 'cat', 'ssas'];
 const RISERVA = {
-  bussola: ['#77ce19', '#a8ec58'], afm: ['#007a3a', '#5ee3a1'], sia: ['#56b9a8', '#9be6d8'],
-  turismo: ['#bf4a00', '#ffa35e'], cat: ['#77ce19', '#a8ec58'], ssas: ['#db0a5a', '#ff86b4'],
+  bussola: ['#77ce19', '#a8ec58'], afm: ['#006949', '#5ee3a1'], sia: ['#0ea7a5', '#7fe3e0'],
+  turismo: ['#d89e18', '#ffd166'], cat: ['#85c140', '#b4e86e'], ssas: ['#db0a5a', '#ff86b4'],
 };
 
 /** Vero se la persona ha chiesto al dispositivo di ridurre il movimento. */

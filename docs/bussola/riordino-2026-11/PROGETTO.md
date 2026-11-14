@@ -49,7 +49,7 @@ Salvatore ha indicato come modello di «lucido» il video `assets/video/bussola-
 - **Pulsante a pillola lime brillante** con testo scuro («Provala.»).
 - Barretta verticale colorata accanto al titolo dell'indirizzo; fascia scura in basso con il marchio.
 
-I colori dei cinque indirizzi si prendono dal video, non si inventano. La regola del contrasto resta valida: testo bianco su fondo scuro, testo scuro sui pulsanti lime.
+I colori degli indirizzi: SSAS resta il magenta attuale; gli altri quattro prendono i colori del logo della scuola (decisione di Salvatore del 14/11 sera, che sostituisce «si prendono dal video»): AFM verde scuro `#006949`, SIA turchese `#0ea7a5`, CAT verde chiaro `#85c140`, Turismo oro `#d89e18`. Lo stile lucido resta quello del video. La regola del contrasto resta valida: testo bianco su fondo scuro, testo scuro sui pulsanti lime.
 
 ## 5. Vincoli tecnici che non si toccano
 
@@ -134,6 +134,8 @@ Tutto ciò che è stato detto, in ordine. In caso di dubbio fra questo registro 
 16. Sensazione durante la prova: «un videogioco».
 17. Il lavoro va fatto con un progetto unico che dica ai sotto-agenti che cosa fare, con un orchestratore.
 18. Far tornare le persone sul sito da casa, «coi tuoi genitori», per scaricare l'attestato, fare un'altra attività e saperne di più. Servono un codice da scrivere («scriviti questo codice, ritorna in questa sezione quando sei a casa») oppure un QR da inquadrare («inquadra il QR code per scaricare il tuo attestato»); chi non ha il telefono con sé usa il codice. «Bisogna ragionare su cosa è meglio fare».
+
+19. Colori: «mantenendo il colore del SSAS così, agli altri indirizzi attribuisci i colori del logo».
 
 ### 8.2 Proposte di Claude accolte o non contestate (si applicano)
 

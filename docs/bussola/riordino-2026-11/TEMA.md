@@ -47,10 +47,10 @@ Tutti i colori stanno nella prima sezione di `bussola-tema.css` («1. Tavolozza�
 
 | Indirizzo | Pieno `--bt-<corso>` | Chiaro `--bt-<corso>-chiaro` | Scuro `--bt-<corso>-scuro` | Testo sul pieno `--bt-<corso>-su` | Fondo `--bt-<corso>-fondo` | Fondo chiaro `--bt-<corso>-fondo-chiaro` |
 |---|---|---|---|---|---|---|
-| AFM · verde | `#007a3a` | `#5ee3a1` | `#00522a` | bianco | `#02181c` | `#07372e` |
-| SIA · verde acqua | `#56b9a8` | `#9be6d8` | `#1c6b5e` | scuro `#05222b` | `#091e25` | `#17414a` |
-| Turismo · arancio | `#bf4a00` | `#ffa35e` | `#8a3400` | bianco | `#171717` | `#3a2415` |
-| CAT · verde lime | `#77ce19` | `#a8ec58` | `#3b7d00` | scuro `#0a2a14` | `#0c211a` | `#1e4423` |
+| AFM · verde scuro del logo | `#006949` | `#5ee3a1` | `#004a33` | bianco | `#02181c` | `#07372e` |
+| SIA · turchese del logo | `#0ea7a5` | `#7fe3e0` | `#0a6665` | scuro `#03252a` | `#061f25` | `#0f4046` |
+| Turismo · oro dello stemma del logo | `#d89e18` | `#ffd166` | `#7d5800` | scuro `#1f1500` | `#17140c` | `#3a2e12` |
+| CAT · verde chiaro del logo | `#85c140` | `#b4e86e` | `#3c7410` | scuro `#0a2a14` | `#0c211a` | `#1e4423` |
 | SSAS · magenta | `#db0a5a` | `#ff86b4` | `#9c0540` | bianco | `#170e1e` | `#3d1436` |
 
 C'è anche `--bt-<corso>-alone`, lo stesso colore reso trasparente, per ombre luminose e raggi.
@@ -60,7 +60,7 @@ C'è anche `--bt-<corso>-alone`, lo stesso colore reso trasparente, per ombre lu
 - **Scuro**: variante profonda, per il bordo basso dei pulsanti e per testo colorato **sulla carta bianca** (contrasto almeno 5:1).
 - **Testo sul pieno**: bianco per AFM, Turismo e SSAS; scuro per SIA e CAT, che sono colori chiari. Non si sceglie a mano: si usa `--bt-su-colore`.
 
-Nota: nel video il lime di CAT è lo stesso lime della Bussola generale (`#77ce19`).
+Nota (14/11/2026, decisione di Salvatore): SSAS resta com'è; gli altri quattro indirizzi usano i colori del logo della scuola (`assets/logo-meucci-mattei-decimomannu.jpeg`), non più quelli del video.
 
 ### 2.2 Colore corrente
 
