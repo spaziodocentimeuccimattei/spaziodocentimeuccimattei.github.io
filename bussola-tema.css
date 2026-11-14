@@ -162,7 +162,6 @@
 @media screen {
   html.bt-tema {
     background: var(--bt-palco-scuro);
-    color-scheme: dark light;
   }
   html.bt-tema body {
     background: transparent;
@@ -195,8 +194,11 @@
   }
   /* il grande disco saturo dell'indirizzo, in basso a destra come nel video */
   html.bt-tema.bt-pagina-prova body::before {
+    /* Il disco di pagina è «in ombra» (colore pieno velato di scuro) con il bordo acceso: così ogni testo
+       che gli passa sopra resta leggibile. Il disco a colore pieno è il componente .bt-disco. */
     background:
-      radial-gradient(circle closest-side, rgba(255, 255, 255, .20) 0%, rgba(255, 255, 255, 0) 100%) calc(100% - 9vmax) calc(100% - 8vmax) / 30vmax 30vmax no-repeat,
+      radial-gradient(circle closest-side, transparent calc(100% - 5px), var(--bt-colore) calc(100% - 4px), var(--bt-colore) calc(100% - 1.5px), transparent 100%) calc(100% + 12vmax) calc(100% + 14vmax) / 52vmax 52vmax no-repeat,
+      radial-gradient(circle closest-side, rgba(0, 0, 0, .64) 0 calc(100% - 4px), transparent calc(100% - 3px)) calc(100% + 12vmax) calc(100% + 14vmax) / 52vmax 52vmax no-repeat,
       radial-gradient(circle closest-side, var(--bt-colore) 0 calc(100% - 1.5px), transparent 100%) calc(100% + 12vmax) calc(100% + 14vmax) / 52vmax 52vmax no-repeat,
       radial-gradient(circle closest-side, var(--bt-alone) 0%, transparent 100%) calc(100% + 22vmax) calc(100% + 24vmax) / 78vmax 78vmax no-repeat,
       radial-gradient(120% 70% at 50% 0%, var(--bt-palco-chiaro) 0%, var(--bt-palco) 46%, var(--bt-palco-scuro) 100%);
@@ -561,6 +563,8 @@
   transition: transform var(--bt-rapido) ease, box-shadow var(--bt-rapido) ease;
 }
 button.bt-tessera { cursor: pointer; }
+.bt-tessere > li { display: grid; }
+.bt-tessere > li > .bt-tessera { width: 100%; }
 .bt-tessera img,
 .bt-tessera svg { width: 44px; height: 44px; }
 .bt-tessera--spenta { border-style: dashed; }
@@ -663,7 +667,7 @@ button.bt-tessera--accesa:active { transform: translateY(3px); box-shadow: inset
 }
 .bt-esplosione .bt-titolo,
 .bt-esplosione__titolo {
-  font: 900 clamp(2.4rem, 9.5vw, 5.2rem)/1 var(--bt-carattere);
+  font: 900 clamp(2.8rem, 14vw, 5.6rem)/1 var(--bt-carattere);
   letter-spacing: -.025em;
   color: var(--bt-testo);
   text-shadow: 0 4px 0 rgba(0, 0, 0, .25), 0 0 44px var(--bt-alone);
@@ -1037,6 +1041,32 @@ button.bt-tessera--accesa:active { transform: translateY(3px); box-shadow: inset
     background: var(--paper, var(--bt-carta-tinta));
     box-shadow: var(--bt-ombra), 0 0 0 1px rgba(255, 255, 255, .10), 0 0 80px var(--bt-alone);
   }
+  /* Schermo scuro a tutta pagina dentro una prova: la scheda chiara si fa da parte e resta il palco.
+     Succede da solo quando <main> contiene .bt-schermo o .bt-esplosione; in alternativa class="bt-scuro" su <main>. */
+  html.bt-pagina-prova main.bt-scuro {
+    --bt-sec-fondo: rgba(255, 255, 255, .10);
+    --bt-sec-fondo-attivo: rgba(255, 255, 255, .20);
+    --bt-sec-testo: #ffffff;
+    --bt-sec-bordo: rgba(255, 255, 255, .62);
+    --bt-fuoco: #ffffff;
+    --bt-link: var(--bt-lime-chiaro);
+    color: var(--bt-testo);
+    background: transparent;
+    border-top: 0;
+    box-shadow: none;
+  }
+  html.bt-pagina-prova main:has(.bt-schermo, .bt-esplosione) {
+    --bt-sec-fondo: rgba(255, 255, 255, .10);
+    --bt-sec-fondo-attivo: rgba(255, 255, 255, .20);
+    --bt-sec-testo: #ffffff;
+    --bt-sec-bordo: rgba(255, 255, 255, .62);
+    --bt-fuoco: #ffffff;
+    --bt-link: var(--bt-lime-chiaro);
+    color: var(--bt-testo);
+    background: transparent;
+    border-top: 0;
+    box-shadow: none;
+  }
   /* striscia alta: «← Prova gli indirizzi · AFM · Area docenti» */
   html.bt-pagina-prova body .experience-path {
     color: #ffffff !important;
@@ -1083,8 +1113,30 @@ button.bt-tessera--accesa:active { transform: translateY(3px); box-shadow: inset
   html.bt-pagina-prova body > footer summary { color: var(--bt-testo-tenue); }
   html.bt-pagina-prova body > header.site-header .brand strong { color: #ffffff; }
   html.bt-pagina-prova body > header.site-header .brand img { border-radius: 12px; background: #ffffff; }
-  html.bt-pagina-prova body > header #noteCount { display: inline-block; min-width: 1.6em; border-radius: 99px; text-align: center; color: var(--bt-inchiostro) !important; background: #ffffff !important; }
+  html.bt-pagina-prova body > header #noteCount { min-width: 1.6em; border-radius: 99px; text-align: center; color: var(--bt-inchiostro) !important; background: #ffffff !important; }
   html.bt-pagina-prova body > footer a { color: var(--bt-lime-chiaro); }
+  /* «Riprendere o iniziare un altro lavoro»: un cartoncino chiaro sul palco, con i suoi testi scuri */
+  html.bt-pagina-prova body > footer details {
+    --bt-sec-fondo: #ffffff;
+    --bt-sec-fondo-attivo: #e6eef1;
+    --bt-sec-testo: var(--bt-inchiostro);
+    --bt-sec-bordo: var(--bt-linea);
+    --bt-fuoco: var(--bt-inchiostro);
+    --bt-link: #00573f;
+    margin-top: 10px;
+    padding: 4px 16px;
+    border-radius: 18px;
+    color: var(--bt-inchiostro) !important;
+    background: var(--bt-carta-tinta) !important;
+    box-shadow: var(--bt-ombra-piccola);
+  }
+  html.bt-pagina-prova body > footer details summary,
+  html.bt-pagina-prova body > footer details p,
+  html.bt-pagina-prova body > footer details span,
+  html.bt-pagina-prova body > footer details label,
+  html.bt-pagina-prova body > footer details .text-button { color: var(--bt-inchiostro) !important; }
+  html.bt-pagina-prova body > footer details .recovery { color: var(--bt-inchiostro); background: transparent; }
+  html.bt-pagina-prova body > footer details a { color: #00573f !important; }
   html.bt-pagina-prova body > footer select { color: var(--bt-inchiostro); background: #ffffff; }
   html.bt-pagina-prova body > noscript p { color: var(--bt-testo); }
 
@@ -1152,7 +1204,6 @@ button.bt-tessera--accesa:active { transform: translateY(3px); box-shadow: inset
   html.bt-pagina-prova body .secondary:hover,
   html.bt-pagina-prova body .plain-button:hover,
   html.bt-pagina-prova body .tm-menu-toggle:hover { background-color: var(--bt-sec-fondo-attivo) !important; transform: translateY(-1px); }
-  html.bt-pagina-prova body > footer .text-button { color: var(--bt-lime-chiaro); }
   html.bt-pagina-prova .tm-menu-toggle .tm-menu-icon,
   html.bt-pagina-prova .tm-menu-toggle .tm-menu-icon::before,
   html.bt-pagina-prova .tm-menu-toggle .tm-menu-icon::after { background: currentColor; }
