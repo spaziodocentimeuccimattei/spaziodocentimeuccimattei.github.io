@@ -38,6 +38,19 @@ Criticità lette nel codice: la pagina del risultato ha più di venti comandi; c
 9. **Durata**: ogni prova si conclude in 5-7 minuti leggendo tutto.
 10. **Dispositivi**: telefono 390×844 e Chromebook 1366×768, senza scorrimento orizzontale.
 
+### Riferimento grafico obbligatorio: il video della Bussola
+
+Salvatore ha indicato come modello di «lucido» il video `assets/video/bussola-orientamento.mp4` (quello dell'apertura di `bussola.html`, usato anche come salvaschermo a scuola): «è molto bello perché risulta molto lucido». La nuova grafica deve sembrare la stessa famiglia di quel video. Che cosa si vede nei fotogrammi (estraili con `ffmpeg -ss <secondi> -i assets/video/bussola-orientamento.mp4 -frames:v 1 out.jpg`; alcuni sono già in `/home/claude/anteprime/riferimento/`):
+
+- **Fondo scuro e profondo**, tinto del colore dell'indirizzo (blu petrolio per la Bussola generale, marrone caldo per Turismo, verde bosco per CAT, prugna per SSAS), con raggi di luce e un leggero pulviscolo.
+- **Un grande disco di colore pieno e saturo** per ogni indirizzo (arancio per Turismo, verde lime per CAT, magenta per SSAS; AFM e SIA vanno letti dal video) su cui poggia una scheda illustrata chiara con angoli arrotondati e ombra.
+- **Bussola 3D lucida** con riflessi, ago luminoso e alone.
+- **Testo bianco, grande e in grassetto**; la parola chiave in lime.
+- **Pulsante a pillola lime brillante** con testo scuro («Provala.»).
+- Barretta verticale colorata accanto al titolo dell'indirizzo; fascia scura in basso con il marchio.
+
+I colori dei cinque indirizzi si prendono dal video, non si inventano. La regola del contrasto resta valida: testo bianco su fondo scuro, testo scuro sui pulsanti lime.
+
 ## 5. Vincoli tecnici che non si toccano
 
 - Sito statico senza framework e senza dipendenze remote nuove. Moduli `.mjs`, CSS semplice.
@@ -109,7 +122,7 @@ Tutto ciò che è stato detto, in ordine. In caso di dubbio fra questo registro 
 5. Va raccolta anche l'email (del ragazzo «o del genitore») con la spunta del consenso privacy, perché la scuola possa mandare l'attestato.
 6. Invio degli attestati: il sistema salva l'email; la scuola estrae l'elenco dall'area della Bussola con la password della funzione strumentale e invia a mano. Accanto, un modulo di carta per non perdere le email.
 7. Dopo il test di Elmas il percorso «va rivisto», indirizzo per indirizzo, con «un piano di intervento unico» su tutto il flusso fino alla fine.
-8. Revisione grafica: oggi è «tutto molto opaco, satinato», senza tasti colorati. La vuole «lucida», con «colori accattivanti».
+8. Revisione grafica: oggi è «tutto molto opaco, satinato», senza tasti colorati. La vuole «lucida», con «colori accattivanti». Il modello è il video della Bussola dell'apertura (`assets/video/bussola-orientamento.mp4`), che usa anche come salvaschermo: «molto bello perché risulta molto lucido».
 9. Riduzione del rumore: «c'è troppo testo, troppo testo». Ripetuto più volte: è la priorità. «La Bussola va curata meglio».
 10. Anche alla fine di ogni prova di indirizzo serve «qualcosa di eclatante»: l'attestato che dice «te lo manderemo via mail», oppure il video dell'indirizzo; alla fine del video l'invito a provare un altro percorso «detto bene, in modo chiaro, semplice», oppure a vedere altri video (storia della scuola, altri indirizzi). «Stiamo facendo orientamento e non bisogna disorientare le persone».
 11. Ogni percorso va migliorato per linguaggio naturale, scopo dell'attività e gradevolezza.
