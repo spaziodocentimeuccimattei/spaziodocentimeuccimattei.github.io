@@ -485,3 +485,132 @@
 .bussola-page .compass-video-button { min-height: 44px; padding: 8px 18px; border: 2px solid #c9f981; border-radius: 99px; color: #fff; background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
 .bussola-page .compass-video-button:hover { color: #092b43; background: #c9f981; }
 .bussola-page .compass-video-button[hidden] { display: none; }
+
+/* ==========================================================================
+   Riordino A2 (14/11/2026): apertura, domande, risultato e «Perché?».
+   Usa le classi .bt-* di bussola-tema.css; qui solo misure e le poche cose che il tema non ha.
+   Le regole sono legate a .bussola-a2 (bussola.html) o .missioni-a2 (missioni.html)
+   per scavalcare i vecchi stili di .explore-page (titoli blu, larghezze in 68ch).
+   Ogni selettore comincia con «html» per pesare più delle classi .bt-* del tema, caricato dopo.
+   ========================================================================== */
+html .bussola-a2, html .missioni-a2 { width: min(1120px, calc(100% - 24px)); padding: 12px 0 48px; }
+html .bussola-a2 :is(h2, h3).bt-titolo, html .missioni-a2 :is(h1, h2).bt-titolo { margin: 0; color: var(--bt-testo); }
+html .bussola-a2 :is(h2, h3).bt-titolo:not(.bt-titolo--medio):not(.bt-titolo--enorme), html .missioni-a2 h1.bt-titolo { font-size: clamp(2rem, 6.4vw, 3.6rem); line-height: 1.05; }
+html .bussola-a2 .bt-titolo--enorme { font-size: clamp(2.6rem, 10vw, 5.6rem); line-height: 1; }
+html .bussola-a2 .bt-titolo--medio { font-size: clamp(1.5rem, 4.4vw, 2.3rem); line-height: 1.12; }
+html .bussola-a2 p, html .missioni-a2 p { max-width: none; }
+html .bussola-a2 .bt-frase, html .missioni-a2 .bt-frase { color: var(--bt-testo); max-width: 34ch; }
+html .bussola-a2 .bt-nota, html .missioni-a2 .bt-nota { color: var(--bt-testo-tenue); }
+
+/* Collegamenti piccoli in riga («Ho un codice», «Ricomincia», …): bersagli alti 44 px */
+html .bussola-link-piccoli { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px; margin: 0; }
+html .bussola-link-piccoli .bt-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; font-size: 1rem; }
+html button.bt-link { border: 0; background: none; cursor: pointer; font: inherit; }
+
+/* Apertura */
+html .bussola-apertura { min-height: min(72vh, 620px); }
+html .bussola-giu { margin-top: 4px; }
+html .bussola-extra { display: grid; gap: 28px; max-width: 920px; margin: 24px auto 0; padding-top: 8px; scroll-margin-top: 16px; }
+html .bussola-extra .compass-video { margin: 0; }
+
+/* Domanda: una per schermo */
+html .bussola-domanda { justify-content: flex-start; gap: 16px; min-height: 0; max-width: 820px; padding-top: 12px; }
+html .bussola-domanda-testa { display: flex; align-items: center; gap: 14px; width: 100%; }
+html .bussola-domanda-testa .bt-avanzamento { flex: 1; }
+html .bussola-contatore { margin: 0; color: var(--bt-testo); font: 800 1rem/1 var(--bt-carattere); white-space: nowrap; }
+html .bussola-scelte { margin-top: 4px; }
+@media (min-width: 720px) { .bussola-scelte { grid-template-columns: 1fr 1fr; } }
+html .bussola-icona {
+  flex: none; display: inline-grid; place-items: center; width: 52px; height: 52px; border-radius: 14px;
+  background: var(--bt-carta-tinta); font-size: 1.75rem; line-height: 1;
+  font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+}
+html .bussola-scelta-testo { flex: 1; }
+html .bussola-comandi { width: 100%; }
+html .bussola-comandi .bt-pulsante { min-width: 140px; }
+
+/* Risultato: uno, due o tre indirizzi che esplodono */
+html .bussola-risultato { display: grid; justify-items: center; gap: 18px; }
+html .bussola-risultato-titolo { margin: 8px 0 0; }
+html .bussola-esiti { display: grid; gap: 16px; width: 100%; }
+html .bussola-esiti--1 { max-width: 760px; }
+@media (min-width: 900px) {
+  html .bussola-esiti--2 { grid-template-columns: repeat(2, 1fr); }
+  html .bussola-esiti--3 { grid-template-columns: repeat(3, 1fr); }
+}
+html .bussola-esito { min-height: 0; gap: 14px; padding: 26px 18px 24px; }
+html .bussola-esito .bt-titolo { font-size: clamp(2.6rem, 12vw, 4.8rem); }
+html .bussola-esiti--3 .bussola-esito .bt-titolo, html .bussola-esiti--2 .bussola-esito .bt-titolo { font-size: clamp(2.4rem, 9vw, 3.6rem); }
+html .bussola-nome-intero { margin: 0; color: var(--bt-testo); font: 700 1.05rem/1.3 var(--bt-carattere); max-width: 26ch !important; }
+html .bussola-disco { width: min(62vw, 300px); }
+html .bussola-esiti--2 .bussola-disco, html .bussola-esiti--3 .bussola-disco { width: min(46vw, 220px); }
+html .bussola-esiti--2 .bussola-esito, html .bussola-esiti--3 .bussola-esito { padding: 18px 14px 20px; }
+html .bussola-fondo { margin-top: 6px; }
+/* Sul telefono, con più indirizzi, ogni esito è una riga compatta: nome, disco piccolo, due tasti */
+@media (max-width: 899px) {
+  html .bussola-esiti--2 .bussola-esito, html .bussola-esiti--3 .bussola-esito {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; justify-items: start; text-align: left; gap: 6px 12px;
+  }
+  html .bussola-esiti--2 .bussola-esito .bt-titolo, html .bussola-esiti--3 .bussola-esito .bt-titolo { font-size: clamp(2rem, 9vw, 2.8rem); }
+  html .bussola-esiti--2 .bussola-disco, html .bussola-esiti--3 .bussola-disco { grid-column: 2; grid-row: 1 / span 2; width: 104px; }
+  html .bussola-esiti--2 .bussola-disco > img, html .bussola-esiti--3 .bussola-disco > img { width: 90%; border-radius: 10px; }
+  html .bussola-esiti--2 .bt-azioni, html .bussola-esiti--3 .bt-azioni { grid-column: 1 / -1; width: 100%; justify-content: flex-start; flex-wrap: nowrap; gap: 12px; }
+  html .bussola-esiti--2 .bt-azioni .bt-pulsante, html .bussola-esiti--3 .bt-azioni .bt-pulsante { flex: 1; min-height: 56px; padding: 12px 16px; font-size: 1.2rem; }
+}
+
+/* «Perché?» */
+html .bussola-perche { justify-content: flex-start; min-height: 0; max-width: 900px; gap: 16px; padding-top: 14px; }
+html .bussola-scegli-corso .bt-pulsante[aria-pressed="true"] { color: var(--bt-su-colore); background: var(--bt-colore); border-color: var(--bt-colore-chiaro); }
+html .bussola-tessere { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+html .bussola-tessere .bt-tessera { min-height: 104px; }
+html .bussola-tessere .bt-tessera--spenta { color: var(--bt-testo-tenue); }
+html .bussola-tessere button.bt-tessera[aria-pressed="true"] { outline: 3px solid #ffffff; outline-offset: 3px; }
+html .bussola-icona--tessera { width: 40px; height: 40px; border-radius: 12px; font-size: 1.4rem; background: rgba(255, 255, 255, .85); }
+html .bt-tessera--spenta .bussola-icona--tessera { opacity: .5; filter: grayscale(1); background: rgba(255, 255, 255, .2); }
+html .bussola-ragione {
+  margin: 0; width: 100%; max-width: 640px !important; padding: 14px 18px; border-radius: var(--bt-raggio);
+  color: var(--bt-inchiostro); background: var(--bt-carta); border-left: 8px solid var(--bt-colore);
+  font: 600 1.05rem/1.4 var(--bt-carattere); text-align: left;
+}
+@media (max-width: 480px) {
+  html .bussola-tessere { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  html .bussola-tessere .bt-tessera { min-height: 92px; font-size: .9rem; }
+}
+
+/* Catalogo missioni.html: cinque schede colorate */
+html .missioni-catalogo { display: grid; justify-items: center; gap: 18px; padding-top: 18px; }
+html .missioni-schede { display: grid; gap: 16px; width: 100%; margin: 6px 0 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+html .missioni-scheda {
+  display: grid; grid-template-rows: auto auto auto 1fr auto; justify-items: center; gap: 10px; padding: 18px 16px 18px;
+  border-radius: var(--bt-raggio-grande); text-align: center; color: var(--bt-testo);
+  background: radial-gradient(90% 80% at 50% 30%, var(--bt-palco-chiaro) 0%, var(--bt-palco) 70%, var(--bt-palco-scuro) 100%);
+  border: 1px solid rgba(255, 255, 255, .14); border-top: 6px solid var(--bt-colore); box-shadow: var(--bt-ombra-piccola);
+}
+html .missioni-scheda .bt-disco { width: 128px; }
+html .missioni-scheda .bt-disco > img { width: 92%; border-radius: 10px; }
+html .missioni-scheda h2 { margin: 0; color: var(--bt-testo); font: 900 1.9rem/1 var(--bt-carattere); letter-spacing: -.02em; }
+html .missioni-scheda p { margin: 0; color: var(--bt-testo); font: 600 1rem/1.3 var(--bt-carattere); }
+html .missioni-scheda .bt-pulsante { width: 100%; }
+@media (max-width: 480px) {
+  html .missioni-scheda { grid-template-columns: auto 1fr; grid-template-rows: auto auto auto; justify-items: start; text-align: left; gap: 4px 14px; padding: 14px; }
+  html .missioni-scheda .bt-disco { grid-row: 1 / span 2; width: 84px; }
+  html .missioni-scheda .bt-pulsante { grid-column: 1 / -1; margin-top: 8px; }
+}
+html .missioni-scheda p.missioni-nome { color: var(--bt-testo-tenue); font-size: .9rem; font-weight: 600; }
+@media (max-width: 480px) { .missioni-scheda .bt-disco { grid-row: 1 / span 3; } }
+html .bussola-a2 .bussola-esito h3.bt-titolo { font-size: clamp(3rem, 14vw, 5rem); line-height: 1; }
+html .bussola-a2 .bussola-esiti--2 .bussola-esito h3.bt-titolo, html .bussola-a2 .bussola-esiti--3 .bussola-esito h3.bt-titolo { font-size: clamp(2.2rem, 9vw, 3.6rem); }
+html .bussola-a2 h2.bussola-risultato-titolo { font: 800 1.05rem/1.2 var(--bt-carattere); margin: 6px 0 0; letter-spacing: 0; }
+html .bussola-a2 .bussola-esito { min-height: 0; }
+html #resultPanel .bussola-esito h3.bt-titolo { font-size: clamp(3.2rem, 15vw, 5.4rem); line-height: 1; }
+html #resultPanel .bussola-esiti--2 .bussola-esito h3.bt-titolo, html #resultPanel .bussola-esiti--3 .bussola-esito h3.bt-titolo { font-size: clamp(2.2rem, 9vw, 3.6rem); }
+html .bussola-a2 .bussola-meno { margin-top: 6px; font-weight: 700; font-size: 1rem; }
+html .bussola-a2 .bussola-tessere--spente .bt-tessera { min-height: 84px; }
+@media (max-width: 480px) {
+  html .missioni-a2 .missioni-scheda { grid-template-columns: 84px 1fr; grid-template-rows: auto auto auto auto; align-items: center; }
+  html .missioni-a2 .missioni-scheda .bt-disco { grid-column: 1; grid-row: 1 / span 3; width: 84px; }
+  html .missioni-a2 .missioni-scheda > :is(h2, p) { grid-column: 2; }
+  html .missioni-a2 .missioni-scheda h2 { font-size: 1.6rem; }
+  html .missioni-a2 .missioni-scheda .bt-pulsante { grid-column: 1 / -1; grid-row: 4; }
+  html .missioni-a2 #missionCatalog { padding-inline: 12px; }
+}
