@@ -20,7 +20,6 @@
 <label>La tua nota<textarea id="noteText" name="note_text" rows="4" maxlength="2000" required minlength="2" placeholder="Per esempio: in questo punto la consegna non è chiara…"></textarea></label><p class="field-help">Scrivi dell’attività, senza nomi o informazioni personali.</p>
 <button type="submit" class="primary">Salva la nota</button><p id="noteStatus" role="status" aria-live="polite"></p></form>
 <section class="saved-notes"><h3>Le tue note, una per una</h3><div id="notesList"></div></section></dialog>
-<dialog id="resetDialog" aria-labelledby="resetTitle"><h2 id="resetTitle">Un progetto nuovo</h2><p>Prima di cominciare, conserva una copia del progetto e delle note. Il nuovo percorso avrà un identificativo diverso.</p><div class="dialog-actions"><a id="backupBeforeReset" class="secondary" download="progetto-ssas.json">Scarica il lavoro attuale</a><button type="button" id="cancelReset" class="plain-button">Torna al progetto</button><button type="button" id="confirmReset" class="primary">Inizia il nuovo progetto</button></div></dialog>
 <noscript><p>Per provare l’indirizzo SSAS occorre JavaScript.</p></noscript><script>
 if(location.protocol==='file:'){
  const p=document.createElement('p');p.textContent='Apri l’esperienza dal server locale per svolgere e salvare le attività. ';

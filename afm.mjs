@@ -38,7 +38,7 @@ window.addEventListener('storage',e=>{if(e.key!==`${STORE}.${storageId}`||!e.new
 $('conflictDialog').addEventListener('cancel',e=>e.preventDefault());
 // «Inizia da capo»: sullo stesso dispositivo si alternano persone diverse. Conserva il lavoro presente,
 // dimentica il codice personale di chi c'era prima e apre un lavoro nuovo dall'ingresso.
-function startOver(){save();document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));const u=new URL(location.href),h=new URLSearchParams(u.hash.includes('=')?u.hash.slice(1):'');h.delete('alunno');h.delete('passaggio');u.searchParams.set('progetto',crypto.randomUUID());u.hash=h.get('classe')?h.toString():'ingresso';location.assign(u.href);}
+function startOver(senzaClasse=false){save();document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));const u=new URL(location.href),h=new URLSearchParams(u.hash.includes('=')?u.hash.slice(1):'');h.delete('alunno');h.delete('passaggio');if(senzaClasse===true)h.delete('classe');u.searchParams.set('progetto',crypto.randomUUID());u.hash=h.get('classe')?h.toString():'ingresso';location.assign(u.href);}
 // ---------------------------------------------------------------------------------------------
 // Testi che il ragazzo legge. I dati in afm-core.mjs (nomi, titoli, descrizioni) restano quelli di prima perché li
 // leggono monitoraggio e attestato: qui ci sono solo i testi «da schermo». Fonti: docs/bussola/riordino-2026-11/testi-afm.md
@@ -307,7 +307,7 @@ function loaded(value){p=value;p.revision=seenRevision;restoreRoute(navigation.r
 remote=setupStudioRemote({course:COURSE,restore,remoteProject,key:STORE+'.remote.'+storageId,entryToken,project:()=>p,keep:()=>save(false),loaded,localOK:()=>!memoryOnly,status:(text,retry)=>{$('saveStatus').textContent=text;$('retrySave').hidden=!retry;},notesChanged:()=>{$('noteCount').textContent=p.notes.length;if($('notesDialog').open)renderNotes();},conflict:()=>{conflicted=true;openConflict();}});
 const startNow=async()=>{try{await remote.ensure();}catch{}navigation.enter();p.started=true;vaiA(Math.max(0,p.screen));render(true);};
 classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:()=>remote.ensure(),isIntro:()=>navigation.isIntro()||p.screen<0,start:startNow,
- ingressoComune:true,apriIngresso:()=>mostraIngresso({corso:COURSE,contenitore:$('stage'),classe:classAccess,onInizia:startNow,onIndietro:()=>render(true)})});
+ ingressoComune:true,apriIngresso:()=>mostraIngresso({corso:COURSE,contenitore:$('stage'),classe:classAccess,onInizia:startNow,onNuovo:()=>startOver(true),onIndietro:()=>render(true)})});
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());

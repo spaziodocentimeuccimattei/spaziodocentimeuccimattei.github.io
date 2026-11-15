@@ -23,9 +23,11 @@ const campo = (etichetta, nome, extra = {}) => {
  * @param {object|null} [o.classe]    il valore restituito da setupClass(...) di bussola-classe.mjs
  *                                    (con ctx.ingressoComune:true); se manca, niente codice classe
  * @param {(nome:string,cognome:string)=>any} o.onInizia  chiamata quando l'alunno è pronto; può essere asincrona
+ * @param {()=>any} [o.onNuovo]       «Non sono <nome>»: la stessa funzione di «Inizia da capo» della prova (nome, distintivi, codice
+ *                                    personale e lavoro corrente dimenticati, lavoro nuovo, fuori dalla classe di prima)
  * @param {()=>any} [o.onIndietro]    se c'è, compare «Indietro»
  */
-export async function mostraIngresso({corso, contenitore, classe = null, onInizia, onIndietro = null}) {
+export async function mostraIngresso({corso, contenitore, classe = null, onInizia, onNuovo = null, onIndietro = null}) {
   const principale = contenitore.closest('main');
   const chiudi = () => principale?.classList.remove('bt-scuro');
   principale?.classList.add('bt-scuro');
@@ -119,8 +121,10 @@ export async function mostraIngresso({corso, contenitore, classe = null, onInizi
     });
 
     nonSono?.addEventListener('click', () => {
+      if (onNuovo) { nonSono.disabled = true; Promise.resolve(onNuovo()).then(fine, () => { nonSono.disabled = false; }); return; }
       azzeraLavoroLocale();
-      mostraIngresso({corso, contenitore, classe, onInizia, onIndietro}).then(fine);
+      document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));
+      mostraIngresso({corso, contenitore, classe, onInizia, onNuovo, onIndietro}).then(fine);
     });
 
     const piede = el('div', {class: 'bt-ingresso__piede'}, salvato ? nonSono : interruttore);

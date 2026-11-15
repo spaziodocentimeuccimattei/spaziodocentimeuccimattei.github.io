@@ -196,7 +196,7 @@ function intro(){
  start.id='ssasStart';
  const art=node('div',null,'tm-intro-art');art.append(entranceImage(),node('span','Tocca a te!','tm-bollino'));
  s.append(node('p','SSAS · Servizi per la Sanità e l’Assistenza Sociale','bt-occhiello bt-occhiello--corso'),title,node('p',line,'bt-frase'),art,start,feedback);
- if(started)s.append(btn('Inizia da capo',()=>$('newProject').click(),'bt-link tm-class-start')); // un'altra persona sullo stesso dispositivo: apre la conferma di «Inizia un nuovo progetto»
+ if(started)s.append(btn('Inizia da capo',()=>$('newProject').click(),'bt-link tm-class-start')); // un'altra persona sullo stesso dispositivo: riparte subito, come nelle altre prove
  s.append(node('p','Storie e persone sono inventate. Il diploma non dà da solo qualifiche come OSS o infermiere.','bt-nota'));
  mount.append(s);
 }
@@ -397,7 +397,15 @@ $('noteForm').addEventListener('submit',event=>{event.preventDefault();const dra
 // Le note partono dal menu: il contesto è sempre quello del passaggio aperto.
 $('openNotes').addEventListener('click',()=>openNotes(menuToggle));$('closeNotes').addEventListener('click',()=>notesDialog.close());notesDialog.addEventListener('close',()=>{state.draft=draftFromForm();keep();noteTrigger?.focus({preventScroll:true});});
 retry.addEventListener('click',()=>sync());window.addEventListener('online',()=>sync());
-$('newProject').addEventListener('click',()=>{$('backupBeforeReset').href=jsonHref();$('resetDialog').showModal();});$('cancelReset').addEventListener('click',()=>$('resetDialog').close());$('confirmReset').addEventListener('click',()=>{try{localStorage.setItem(KEY+':archivio:'+crypto.randomUUID(),JSON.stringify(state));}catch{status('Non riesco a conservare il percorso precedente. Scarica una copia prima di iniziarne uno nuovo.',true);return;}epoch++;clearTimeout(timer);connected=false;conflict=false;state={project:freshProject(),token:'',participant:'',revision:0,dirty:false,notes:[],draft:null};keep();navigation.showIntro();$('resetDialog').close();document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));status('Un progetto nuovo, con un identificativo distinto.');render(true);});
+// «Inizia da capo» e «Non sono …»: come nelle altre quattro prove, nessuna finestra di conferma. Il lavoro di prima resta conservato sul dispositivo.
+function nuovoProgetto(senzaClasse=false){
+ try{localStorage.setItem(KEY+':archivio:'+crypto.randomUUID(),JSON.stringify(state));}catch{status('Non riesco a conservare il percorso precedente.',true);return false;}
+ epoch++;clearTimeout(timer);connected=false;conflict=false;state={project:freshProject(),token:'',participant:'',revision:0,dirty:false,notes:[],draft:null};keep();navigation.showIntro();
+ document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));
+ if(senzaClasse){const h=new URLSearchParams(location.hash.slice(1));h.delete('classe');h.delete('alunno');history.replaceState(null,'',location.pathname+location.search+(h.toString()?'#'+h:''));classUI.leave();}
+ return true;
+}
+$('newProject').addEventListener('click',()=>{if(nuovoProgetto())render(true);});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')keep();});
 // Menu in testa alla pagina: note, classe, area docenti, salvataggio, progetto nuovo.
 function setMenu(open,focusFirst=true){pageMenu.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));if(open&&focusFirst)pageMenu.querySelector('button:not([hidden]),a')?.focus();}
@@ -409,7 +417,7 @@ for(const d of document.querySelectorAll('dialog'))d.addEventListener('close',()
 // Ingresso comune «Come ti chiami?»: al posto della vecchia finestra «Come vuoi iniziare?».
 const apriIngresso=()=>{
  ingressoAperto=true;
- return mostraIngresso({corso:'ssas',contenitore:mount,classe:classUI,onInizia:openExperience,onIndietro:()=>{ingressoAperto=false;render(true);}})
+ return mostraIngresso({corso:'ssas',contenitore:mount,classe:classUI,onInizia:openExperience,onNuovo:()=>{if(!nuovoProgetto(true))return;ingressoAperto=false;return apriIngresso();},onIndietro:()=>{ingressoAperto=false;render(true);}})
   .finally(()=>{ingressoAperto=false;$('main').classList.add('bt-scuro');});
 };
 const classUI=setupClass({key:KEY,offerGuest:false,ingressoComune:true,apriIngresso,isIntro:()=>navigation.isIntro()||journey().step===0,start:startExperience,token:()=>state.token,ensure:async()=>{if(!connected)await connect();if(!state.participant)throw new Error('Il collegamento non è riuscito. Riprova tra poco.');}});

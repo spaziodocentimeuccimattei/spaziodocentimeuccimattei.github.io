@@ -85,5 +85,7 @@ export function setupClass(ctx){
  const initial=ctx.token()||access?refresh().catch(()=>{}):Promise.resolve();
  if(entry.classe&&!ctx.ingressoComune)initial.then(()=>{if(info&&!identity?.alunno)open($('openClass'),ctx.isIntro());});
  window.addEventListener('hashchange',()=>{const next=classEntry();if(!next.classe)return;if(next.alunno&&next.alunno!==entry.alunno){location.reload();return;}entry=next;access=next.classe;codeInput.value=isShortCode(access)?access:'';info=null;if(ctx.ingressoComune)refresh().catch(()=>{});else open($('openClass'),ctx.isIntro());});
- return {begin:trigger=>ctx.ingressoComune?ctx.apriIngresso():open(trigger,true),refresh,ready:initial,iscrivi:enrollNow,anteprima:async raw=>{await resolve(raw);return {...info};},stato:()=>({classe:access,info:info?{...info}:null,personale:!!entry.alunno}),identity:async()=>{if(access&&!identity?.alunno)await refresh();return identity?.alunno?JSON.parse(JSON.stringify(identity)):null;}};
+ // «Non sono …»: chi usa il dispositivo dopo un compagno esce dalla classe di prima e potrà rientrare con il suo codice.
+ function leave(){access='';info=null;identity=null;entry={classe:'',alunno:''};lookupVersion++;pendingLookup=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}show();}
+ return {leave,begin:trigger=>ctx.ingressoComune?ctx.apriIngresso():open(trigger,true),refresh,ready:initial,iscrivi:enrollNow,anteprima:async raw=>{await resolve(raw);return {...info};},stato:()=>({classe:access,info:info?{...info}:null,personale:!!entry.alunno}),identity:async()=>{if(access&&!identity?.alunno)await refresh();return identity?.alunno?JSON.parse(JSON.stringify(identity)):null;}};
 }

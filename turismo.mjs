@@ -56,7 +56,7 @@ function newActivity(){
 }
 // «Inizia da capo»: sullo stesso dispositivo si alternano persone diverse. Conserva il lavoro presente,
 // dimentica il codice personale di chi c'era prima e apre un lavoro nuovo dall'ingresso.
-function startOver(){save();document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));const u=new URL(location.href),h=new URLSearchParams(u.hash.includes('=')?u.hash.slice(1):'');h.delete('alunno');h.delete('passaggio');u.searchParams.set('progetto',crypto.randomUUID());u.hash=h.get('classe')?h.toString():'ingresso';location.assign(u.href);}
+function startOver(senzaClasse=false){save();document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));const u=new URL(location.href),h=new URLSearchParams(u.hash.includes('=')?u.hash.slice(1):'');h.delete('alunno');h.delete('passaggio');if(senzaClasse===true)h.delete('classe');u.searchParams.set('progetto',crypto.randomUUID());u.hash=h.get('classe')?h.toString():'ingresso';location.assign(u.href);}
 
 // ---------------------------------------------------------------------------------------------
 // Testi che il ragazzo legge. I dati in turismo-core.mjs (nomi, descrizioni, frasi) restano quelli di prima, perché li leggono
@@ -277,7 +277,7 @@ $('noteForm').addEventListener('submit',e=>{e.preventDefault();const d=new FormD
 remote=setupTourismRemote({key:KEY+'.remote.'+storageId,entryToken:entryAlumno,project:()=>p,keep,loaded,notesChanged:()=>{if($('notes').open){showNotes();if(p.notes.length&&!p.notes.some(n=>n.pending))$('noteMessage').textContent='Note salvate, ciascuna separatamente. Puoi chiudere e continuare.';}},status:(message,error)=>{$('saved').textContent=localTest?message.replaceAll('Supabase','database di prova')+' · Prova locale':message;$('retrySave').hidden=!error;},localOK:()=>storageOK});
 const startNow=async()=>{try{await remote.ensure();}catch{}p.started=true;go(p.screen);};
 classAccess=setupClass({key:KEY,token:()=>remote.token(),ensure:()=>remote.ensure(),isIntro:()=>mode==='intro',start:startNow,
- ingressoComune:true,apriIngresso:()=>mostraIngresso({corso:COURSE,contenitore:$('stage'),classe:classAccess,onInizia:startNow,onIndietro:()=>render(true)})});
+ ingressoComune:true,apriIngresso:()=>mostraIngresso({corso:COURSE,contenitore:$('stage'),classe:classAccess,onInizia:startNow,onNuovo:()=>startOver(true),onIndietro:()=>render(true)})});
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());
