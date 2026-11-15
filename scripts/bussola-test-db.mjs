@@ -29,7 +29,7 @@ const ident=key=>{if(!/^[a-z_][a-z0-9_]*$/.test(key))throw new Error('Unsafe fix
 export async function isolatedBussola(){
  const db=new PGlite();await db.waitReady;
  await db.exec("create role anon;create role authenticated;create role service_role bypassrls;create table public.orientamento_sessioni(token_hash text primary key,expires_at timestamptz not null,access_level text not null);alter table public.orientamento_sessioni enable row level security;grant select,insert,delete on public.orientamento_sessioni to service_role;");
- for(const file of ['bussola-esperienze-v2.sql','bussola-classi-attestati.sql','bussola-codice-classe.sql'])await db.exec(await readFile(new URL('../supabase/sql/'+file,import.meta.url),'utf8'));
+ for(const file of ['bussola-esperienze-v2.sql','bussola-classi-attestati.sql','bussola-codice-classe.sql','bussola-codice-ritorno.sql'])await db.exec(await readFile(new URL('../supabase/sql/'+file,import.meta.url),'utf8'));
  const legacy=crypto.randomUUID(),legacyClass=crypto.randomUUID();
  await db.query('insert into bussola_v2_partecipanti(id,token_hash) values($1,$2)',[legacy,'f'.repeat(64)]);
  await db.query('insert into bussola_v2_progetti(partecipante_id,corso,payload) values($1,\'ssas\',$2)',[legacy,JSON.stringify({version:1,legacy:{unknown:'da conservare'},labJourney:{done:[]}})]);
