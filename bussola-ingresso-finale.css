@@ -80,24 +80,31 @@
 
 /* 4 · prova un altro indirizzo */
 .bt-altri { display: grid; gap: 12px; width: min(100%, 460px); margin: 4px 0 0; padding: 0; list-style: none; }
+.bt-altri { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .bt-altri a.bt-pulsante {
-  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; width: 100%; min-height: 64px;
-  padding: 10px 22px; border-radius: var(--bt-raggio); text-align: left; line-height: 1.15;
+  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 64px;
+  padding: 10px 14px; border-radius: var(--bt-raggio); text-align: center; font-size: 1.4rem; font-weight: 900; line-height: 1.1;
 }
-.bt-altri a.bt-pulsante strong { font-size: 1.35rem; font-weight: 900; }
-.bt-altri a.bt-pulsante small { font-size: .85rem; font-weight: 700; }
-.bt-altri a.bt-pulsante[data-fatto] small:not(:empty)::after { content: " · già provato ✓"; }
-.bt-altri a.bt-pulsante[data-fatto] small:empty::after { content: "già provato ✓"; }
+.bt-altri a.bt-pulsante[data-fatto] { box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .55); }
 .bt-finale .bt-distintivi { justify-content: center; flex-wrap: nowrap; gap: 8px; margin: 0; }
 .bt-finale .bt-distintivo--piccolo { width: 56px; height: 56px; font-size: .7rem; }
 .bt-finale__piccolo { display: grid; justify-items: center; gap: 8px; margin: 4px 0 0; color: var(--bt-testo-tenue); font: 500 .95rem/1.4 var(--bt-carattere); }
 .bt-finale__piccolo p { margin: 0; }
-.bt-finale__video { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 16px; }
+.bt-finale__video { border: 0; background: transparent; padding: 0; text-align: center; }
+.bt-finale__video > summary { display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; color: var(--bt-lime-chiaro); font-weight: 800; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.bt-finale__video > ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 18px; margin: 4px 0 0; padding: 0; list-style: none; }
+.bt-finale__video a { display: inline-flex; align-items: center; min-height: 44px; }
 .bt-finale__opendays { margin: 0; color: var(--bt-testo-tenue); font: 500 .95rem/1.4 var(--bt-carattere); }
 .bt-finale__opendays strong { color: var(--bt-testo); }
 
-/* Durante il finale la pagina del percorso lascia il palco: via intestazione, riga di stato e barra dei laboratori. */
-body:has(.bt-finale) .site-header, body:has(.bt-finale) .save-row, body:has(.bt-finale) #journey { display: none; }
+/* Durante il finale la pagina del percorso lascia il palco: via intestazione, riga di stato, barra dei laboratori, menu e piè di pagina.
+   Resta solo «← Indirizzi» come uscita discreta. La specificità è alta di proposito: il tema (html.bt-pagina-prova body>header…) vinceva su questa regola. */
+html body:has(.bt-finale) > header.site-header, html body:has(.bt-finale) > .save-row, html body:has(.bt-finale) #journey,
+html body:has(.bt-finale) > .site-footer, html body:has(.bt-finale) > footer, html body:has(.bt-finale) .tm-menu,
+html body:has(.bt-finale) .experience-path [aria-current], html body:has(.bt-finale) .experience-path .tm-menu-toggle,
+html body:has(.bt-finale) .tm-bottom { display: none !important; }
+html.bt-pagina-prova body:has(.bt-finale) .experience-path { min-height: 0; background: transparent !important; border-bottom: 0 !important; box-shadow: none !important; }
+html.bt-pagina-prova body:has(.bt-finale) .experience-path a { font-weight: 600; opacity: .85; }
 
 /* ---- Bentornato ------------------------------------------------------------------------ */
 dialog.bt-bentornato {

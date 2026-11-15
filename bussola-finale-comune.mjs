@@ -34,8 +34,8 @@ export function biglietto({corso, token, persona = null, conclusi = [], salvato 
   const scheda = el('div', {class: 'bt-biglietto', 'data-corso': corso});
   const qr = el('div', {class: 'bt-biglietto__qr'});
   const frase = el('p', {class: 'bt-biglietto__frase'}, 'A casa, con i tuoi genitori, torna qui: scarichi l’attestato e scopri di più.');
-  const etichetta = el('p', {class: 'bt-biglietto__etichetta'}, CODICE_BREVE_ATTIVO && codiceBreve ? 'Il tuo codice' : 'Per tornare da casa');
-  scheda.append(etichetta);
+  // L'etichetta serve solo quando c'è il codice da scrivere: senza, la frase basta (meno parole).
+  if (CODICE_BREVE_ATTIVO && codiceBreve) scheda.append(el('p', {class: 'bt-biglietto__etichetta'}, 'Il tuo codice'));
   if (CODICE_BREVE_ATTIVO && codiceBreve) scheda.append(el('p', {class: 'bt-biglietto__codice'}, codiceBreve));
   scheda.append(frase, qr);
   const copia = el('button', {class: 'bt-link bt-ritorno__copia', type: 'button', hidden: true}, 'Copia il link');
@@ -119,7 +119,7 @@ export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriA
   const piede = () => {
     const nodo = el('div', {class: 'bt-finale__piede'});
     if (indice > 0) { const b = el('button', {class: 'bt-link', type: 'button'}, 'Indietro'); b.addEventListener('click', () => vai(indice - 1)); nodo.append(b); }
-    if (typeof rivediLavoro === 'function') { const b = el('button', {class: 'bt-link', type: 'button', id: 'finaleRivedi'}, 'Rivedi il tuo lavoro'); b.addEventListener('click', () => rivediLavoro()); nodo.append(b); }
+    if (typeof rivediLavoro === 'function' && (indice === 0 || indice === passi.length - 1)) { const b = el('button', {class: 'bt-link', type: 'button', id: 'finaleRivedi'}, 'Rivedi il tuo lavoro'); b.addEventListener('click', () => rivediLavoro()); nodo.append(b); }
     return nodo;
   };
 
@@ -209,17 +209,18 @@ export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriA
     const fatti = distintivi();
     const lista = el('ul', {class: 'bt-distintivi', 'aria-label': 'I tuoi distintivi'},
       CORSI.map(c => el('li', {}, el('span', {class: `bt-distintivo bt-distintivo--piccolo${fatti.includes(c) ? '' : ' bt-distintivo--spento'}`, 'data-corso': c, 'aria-label': `${NOMI_BREVI[c]}: ${fatti.includes(c) ? 'ottenuto' : 'da provare'}`}, NOMI_BREVI[c]))));
+    // Solo la sigla sul pulsante: il nome esteso su colore pieno si leggeva male (e allungava il testo).
     const bottoni = el('ul', {class: 'bt-altri'}, altri.map(c => el('li', {},
-      el('a', {class: 'bt-pulsante', 'data-corso': c, 'data-fatto': fatti.includes(c) ? '' : null, href: personalDestination(`bussola-${c}.html`)}, el('strong', {}, NOMI_BREVI[c]), el('small', {}, NOMI_BREVI[c] === NOMI_CORSI[c] ? '' : NOMI_CORSI[c])))));
-    const video = el('p', {class: 'bt-finale__video'}, el('span', {}, 'Guarda gli altri video:'),
-      ...altri.map(c => el('a', {class: 'bt-link', href: `indirizzi.html#video-${c}`}, NOMI_BREVI[c])),
-      el('a', {class: 'bt-link', href: 'index.html#video-scuola'}, 'La storia del Mattei'));
-    const giorni = OPEN_DAY.map(g => `${g.giorno.toLowerCase()} ${g.testo}, ${g.orario.charAt(0).toLowerCase()}${g.orario.slice(1)}`);
-    const open = el('p', {class: 'bt-finale__opendays'}, el('strong', {}, 'Open Day a Decimomannu: '), giorni.join(' · '));
+      el('a', {class: 'bt-pulsante', 'data-corso': c, 'data-fatto': fatti.includes(c) ? '' : null, href: personalDestination(`bussola-${c}.html`),
+        'aria-label': `${NOMI_CORSI[c]}${fatti.includes(c) ? ', già provato' : ''}`}, NOMI_BREVI[c], fatti.includes(c) ? el('span', {'aria-hidden': 'true', class: 'bt-altri__spunta'}, ' ✓') : null))));
+    const video = el('details', {class: 'bt-finale__video'}, el('summary', {}, 'Guarda gli altri video'),
+      el('ul', {}, ...altri.map(c => el('li', {}, el('a', {class: 'bt-link', href: `indirizzi.html#video-${c}`}, NOMI_BREVI[c]))),
+        el('li', {}, el('a', {class: 'bt-link', href: 'index.html#video-scuola'}, 'La storia del Mattei'))));
+    const giorni = OPEN_DAY.map(g => `${g.giorno.toLowerCase()} ${g.testo.replace(/\s\d{4}$/, '')}`);
+    const open = el('p', {class: 'bt-finale__opendays'}, el('strong', {}, 'Open Day: '), giorni.join(' · '));
     const schermo = el('section', {class: 'bt-schermo', 'aria-labelledby': 'finaleTitolo'},
       barra(), lista,
       el('h1', {class: 'bt-titolo', id: 'finaleTitolo', tabindex: '-1'}, 'Prova un ', el('em', {}, 'altro indirizzo')),
-      el('p', {class: 'bt-frase'}, 'Ogni indirizzo ha la sua prova, di pochi minuti.'),
       bottoni, el('div', {class: 'bt-finale__piccolo'}, video, open), piede());
     queueMicrotask(() => premio(schermo.querySelector(`.bt-distintivo[data-corso="${corso}"]`), corso));
     return schermo;
