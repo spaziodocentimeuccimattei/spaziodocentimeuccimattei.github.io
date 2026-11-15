@@ -111,10 +111,55 @@ Nessuna promessa di qualifica o di lavoro: coerente con `indirizzi.json`, «dest
 | Collegamento in alto | ← Indirizzi | ← Prova gli indirizzi |
 | Finestra attestato dentro la pagina | `#certificateDialog` | Tolta: l'attestato si scarica dal finale comune |
 
-## Durata (una storia, Luca, telefono)
+## Durata
 
-Misura: parole leggibili sullo schermo (esclusi pulsanti, barra di avanzamento, testo nascosto) divise per 120 al minuto, più 4 secondi per scelta. Strumento: `percorso.py` (non nel repository).
+Misura: parole leggibili sullo schermo (esclusi pulsanti, barra di avanzamento, testo nascosto) divise per 120 al minuto, più 4 secondi per scelta (21 scelte e azioni per storia → 84 s). Strumento: `percorso.py` (non nel repository), telefono 390×844, scelta automatica della prima opzione.
 
-- 16 schermi del percorso (apertura 43, ingresso 15, storie 65, cinque passi con le loro schermate, passaggio) + 4 del finale comune: 895 parole → 448 s.
-- 21 scelte e azioni (storia, nome, ogni scelta, ogni Avanti nel finale) → 84 s.
-- Totale 532 s, cioè **circa 8,9 minuti**. Con la storia di Rosa, 8,5. **Oltre i 5-7 minuti richiesti.** Per rientrare servirebbe togliere circa 250 parole, cioè le frasi di raccordo dei sotto-passi: non l'ho fatto per non riscrivere la trama.
+### Misura precedente (agente A8, prima della pulizia comune)
+
+Luca: 895 parole → 448 s + 84 s = 532 s, circa 8,9 minuti. Con Rosa 8,5. L'agente A8 non aveva toccato i raccordi per non riscrivere la trama.
+
+### Dopo la pulizia comune (agente A10)
+
+Tagliate solo ripetizioni e frasi di passaggio. Non sono cambiati trama, personaggi, scelte, identificativi né i testi delle scelte (alcuni sono salvati come testo: non si toccano).
+
+| Storia | Parole prima | Parole dopo | Tolte (di cui finale comune) | Minuti prima | Minuti dopo |
+|---|---|---|---|---|---|
+| Luca | 895 | 796 | 99 (34) | 8,9 | 8,0 |
+| Irene | 879 | 782 | 97 (34) | 8,7 | 7,9 |
+| Sara | 845 | 753 | 92 (34) | 8,4 | 7,7 |
+| Rosa | 852 | 755 | 97 (34) | 8,5 | 7,7 |
+| Tommaso | 862 | 770 | 92 (34) | 8,6 | 7,8 |
+| Nico | 857 | 777 | 80 (34) | 8,5 | 7,9 |
+
+Le «parole prima» sono state rimisurate dal ramo precedente con lo stesso strumento (Luca coincide con le 895 di A8). Il finale comune perde 34 parole perché il quarto schermo è stato ridotto (vedi `bussola-finale-comune.mjs`).
+
+**Non si arriva a 7 minuti.** Restano 7,7-8,0 minuti. Per scendere sotto 7 servirebbero altre 100-130 parole, e quelle che restano sono contenuto: le due frasi tra cui il ragazzo sceglie a ogni passo, le battute dei personaggi, le righe «✓» che spiegano che cosa fa ogni scelta e le cinque frasi «In SSAS impari…». Va deciso se toglierle o accorciarle, oppure se accettare circa otto minuti per SSAS.
+
+### Che cosa è stato tolto o accorciato
+
+Nei testi (`ssas-situazioni-revisione.mjs`), per tutte e sei le storie:
+
+| Dove | Prima (Luca) | Dopo (Luca) |
+|---|---|---|
+| Passaggio da amico a operatore | Fin qui hai ascoltato Luca da vicino. Per aiutarlo davvero serve chi lo fa di mestiere. Prova tu il lavoro dell’educatrice del centro giovani. | Fin qui hai ascoltato Luca. Ora prova il lavoro dell’educatrice del centro giovani. |
+| Passo 1, frase di apertura | Luca è un tuo compagno di squadra. Da qualche settimana ti sembra stanco e spesso non viene agli allenamenti. | Luca, tuo compagno di squadra, è stanco e salta gli allenamenti da settimane. |
+| Passo 2, frase di apertura | Dopo l’allenamento restate soli. Vuoi capire che cosa gli succede, senza farlo sentire sotto esame. | Dopo l’allenamento restate soli. Vuoi capire, senza metterlo sotto esame. |
+| Passo 3, frase di apertura | Adesso fai il lavoro dell’educatrice del centro giovani che Luca frequenta. Luca vuole tornare agli allenamenti: lo aiuti a organizzarsi. | Sei l’educatrice del centro giovani che Luca frequenta. |
+| Passo 2, secondo sotto-passo | Luca ti ha risposto. Ora vuoi capire meglio com’è fatta una sua giornata. | Ora vuoi capire meglio com’è fatta una sua giornata. |
+| Passo 5, ostacolo | Al centro si chiede di partecipare davanti agli altri ragazzi. Luca preferirebbe parlare con l’educatrice in privato. | Al centro si partecipa davanti agli altri. Luca preferirebbe parlare in privato. |
+
+Le altre cinque storie hanno la stessa riduzione (passaggio, aperture dei passi 1, 2 e 3, frase del secondo sotto-passo); i testi nuovi sono nel file. Nico: resta il nome di Lia nella frase del passo 3.
+
+Nella schermata (`ssas-situazioni.mjs`):
+
+| Dove | Prima | Dopo |
+|---|---|---|
+| Titolo del passo sopra la barra | «2 di 5 · Ascolti e fai le domande giuste» su ogni schermata | Una volta sola, sulla prima schermata del passo; nelle altre resta per il lettore di schermo |
+| Schermo «Scegli una storia» | Riga «Ti accompagna in tutti e cinque i passi.» | Tolta |
+| Passo 1 | Riga «Tu sei in squadra con lui.» (ripeteva la frase di apertura) | Tolta (il dato `role` resta nel file) |
+| Nome sopra le battute | «Luca, 14 anni» | «Luca» (l’età sta già nella scelta della storia) |
+| Collegamento in alto | ← Prova gli indirizzi | ← Indirizzi (il nome accessibile resta «Torna a Prova gli indirizzi»); aggiornato il controllo `verifica-bussola-percorsi.mjs` |
+| Menu in alto | Menu proprio di SSAS | Invariato (è il modello copiato dalle altre quattro prove) |
+
+Copie per la gestione: `supabase/functions/bussola-gestione/ssas-situazioni-revisione.mjs` rigenerata identica (senza deploy).

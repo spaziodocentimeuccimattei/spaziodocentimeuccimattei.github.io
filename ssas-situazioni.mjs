@@ -166,13 +166,13 @@ const isQuote=t=>/^[«—"“]/.test(String(t||'').trim());
 function bubble(c,text,{label,ai=false,reader=false,cls=''}={}){
  const row=node('div',null,'tm-speaker'+(cls?' '+cls:''));
  const b=node('div',null,'tm-bubble'+(isQuote(text)?' tm-quote':' tm-story'));
- const name=label||(isQuote(text)?whoOf(c):'');if(name)b.append(node('p',name,'tm-bubble-name'));b.append(node('p',text,'tm-bubble-text'));
+ const name=label||(isQuote(text)?(c?.person||whoOf(c)):'');if(name)b.append(node('p',name,'tm-bubble-name'));b.append(node('p',text,'tm-bubble-text'));
  row.append(ai?aiAvatar():reader?readerAvatar():avatar(c),b);return row;
 }
 function progress(){
  const j=journey(),current=Math.min(j.step,5),bar=node('div',null,'tm-progress');
  const text=j.step===6?'Il tuo lavoro':handoffActive()?'Cambio di ruolo':`${current} di 5 · ${LAB_TITLES[current-1]}`;
- bar.append(node('p',text,'tm-step-label'));
+ bar.append(node('p',text,'tm-step-label'+(j.step<=5&&!handoffActive()&&cursor(j)>0?' tm-sr':'')));// il titolo del passo si legge una volta sola: nei sotto-passi resta solo per chi usa il lettore di schermo
  const ticks=node('ol',null,'tm-ticks');ticks.setAttribute('aria-label','I cinque passi');
  LABS.forEach((l,i)=>{
   const done=j.done.includes(l.id),here=j.step===i+1,li=node('li'),b=btn('',()=>go(i+1,0),'tm-tick');
@@ -202,7 +202,7 @@ function intro(){
 }
 function stories(){
  const j=journey(),s=node('section',null,'tm-stories'),title=node('h1','Scegli una storia','tm-question');title.id='tmQuestion';
- s.append(title,node('p','Ti accompagna in tutti e cinque i passi.','tm-hint'));
+ s.append(title);
  const box=node('fieldset',null,'tm-story-grid');box.id='health-focus';box.setAttribute('aria-labelledby','tmQuestion');
  for(const c of CASES){
   const input=node('input');input.type='radio';input.name='ssas-health-focus';input.id=`health-focus-${c.id}`;input.value=c.id;input.checked=j.health.focus===c.id;
@@ -254,7 +254,7 @@ function updateReply(animateArt=false){
  paintScene($('tmStepArt'),c.id,options.key,selectedArt(options,j),animateArt,format);
  const r=replyContent();box.replaceChildren();
  if(!r)return;
- if(r.quote){box.append(bubble(c,r.quote,{label:r.reader||whoOf(c),reader:!!r.reader,cls:'tm-reaction'}));}
+ if(r.quote){box.append(bubble(c,r.quote,{label:r.reader||c.person||whoOf(c),reader:!!r.reader,cls:'tm-reaction'}));}
  if(r.note){const p=node('p',null,'tm-note');if(!r.reader)p.append(node('span','✓ ','tm-note-mark'));p.append(r.note);box.append(p);}
  box.classList.remove('tm-appear');void box.offsetWidth;box.classList.add('tm-appear');
 }
@@ -294,8 +294,7 @@ function step(){
  current=screen(j,c,n);lastToggled=null;
  const s=node('section',null,'tm-step');
  const lead=node('div',null,'tm-step-lead');
- if(j.step===1&&c.role)lead.append(node('p',`Tu sei ${c.role}.`,'tm-role'));
- if(current.context)lead.append(node('p',current.context,'tm-role'));
+  if(current.context)lead.append(node('p',current.context,'tm-role'));
  if(current.lead)lead.append(bubble(c,current.lead,{label:current.leadLabel,ai:current.ai}));
  const q=node('h1',current.question,'tm-question');q.id='tmQuestion';lead.append(q);
  // Una frase per laboratorio lega l'attività all'indirizzo: sta nell'ultimo schermo del laboratorio.
