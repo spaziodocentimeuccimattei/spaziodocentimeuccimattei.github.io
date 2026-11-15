@@ -4,15 +4,15 @@
 // (variabile `sub`, solo in memoria: alla ripresa si riparte dal primo schermo ancora da fare).
 // Accanto a ogni schermo c'è l'anteprima dell'app che prende forma con le scelte.
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
-import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor';
-import {restore,remoteProject} from './sia-records.mjs?v=20261010-all';
-import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261114-a3';
-import {mostraFinale} from './bussola-finale-comune.mjs?v=20261114-a3';
-import {scintilla} from './bussola-effetti.mjs?v=20261114-tema';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261115-riordino';
+import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261115-riordino';
+import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261115-riordino';
+import {restore,remoteProject} from './sia-records.mjs?v=20261115-riordino';
+import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261115-riordino';
+import {mostraFinale} from './bussola-finale-comune.mjs?v=20261115-riordino';
+import {scintilla} from './bussola-effetti.mjs?v=20261115-riordino';
 import {iniziaMenu} from './bussola-menu.mjs?v=20261115-riordino';
-import {STORE as BASE_STORE,LABS,PROCESS,FIELDS,BLOCKS,ROLES,find,createProject,processRun,processSignature,handoffRun,records,query,programSignature,runProgram,uiSignature,runUI,accessSignature,runAccess,currentRuns,ready,completed,advance,context,addNote,validProject,invalidate} from './sia-core.mjs?v=20261115-a4';
+import {STORE as BASE_STORE,LABS,PROCESS,FIELDS,BLOCKS,ROLES,find,createProject,processRun,processSignature,handoffRun,records,query,programSignature,runProgram,uiSignature,runUI,accessSignature,runAccess,currentRuns,ready,completed,advance,context,addNote,validProject,invalidate} from './sia-core.mjs?v=20261115-riordino';
 const COURSE='sia';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

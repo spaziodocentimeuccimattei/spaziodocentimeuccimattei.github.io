@@ -1,4 +1,4 @@
-import {FORMAT,LABS,PROCESS,BLOCKS,ROLES,CASES,find,ready,validProject,query,processSignature,programSignature,uiSignature,accessSignature,currentRuns} from './sia-core.mjs?v=20261010-all';
+import {FORMAT,LABS,PROCESS,BLOCKS,ROLES,CASES,find,ready,validProject,query,processSignature,programSignature,uiSignature,accessSignature,currentRuns} from './sia-core.mjs?v=20261115-riordino';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function restore(value){
  try{

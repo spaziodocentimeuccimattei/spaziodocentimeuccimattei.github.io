@@ -842,7 +842,7 @@ function proposalsSheet() {
 async function exportExcel(kind, target) {
   if (!data) { target.textContent = 'Carica prima i dati con «Aggiorna dati».'; return; }
   try {
-    const { downloadWorkbook } = await import('./gestione-excel.mjs?v=20261022-cruscotto');
+    const { downloadWorkbook } = await import('./gestione-excel.mjs?v=20261115-riordino');
     const files = {
       calendario: [[datesSheet(), schoolsSheet()], `calendario-orientamento-${today()}.xlsx`, 'il calendario con date e scuole'],
       dirigente: [[dirigenteSheet()], `elenco-dirigente-orientamento-${today()}.xlsx`, 'l’elenco per la Dirigente'],

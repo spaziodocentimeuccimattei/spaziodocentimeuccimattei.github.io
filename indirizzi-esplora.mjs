@@ -1,6 +1,6 @@
-import { courseArt } from './bussola-visuals.mjs?v=20261010-correzioni';
-import { readState, summarize, suggestCourses, clearState } from './bussola-core.mjs';
-import { el, button, link, storage, loadData } from './bussola-ui.mjs?v=20261010-correzioni';
+import { courseArt } from './bussola-visuals.mjs?v=20261115-riordino';
+import { readState, summarize, suggestCourses, clearState } from './bussola-core.mjs?v=20261115-riordino';
+import { el, button, link, storage, loadData } from './bussola-ui.mjs?v=20261115-riordino';
 
 async function initialize() {
   try {

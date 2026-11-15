@@ -1,4 +1,4 @@
-import {CONDITIONS, GOALS, SETTINGS, SERVICES, issues} from './ssas-labs-core.mjs?v=20261008';
+import {CONDITIONS, GOALS, SETTINGS, SERVICES, issues} from './ssas-labs-core.mjs?v=20261115-riordino';
 export const GUIDE = [
  ['Scegli una patologia','Prepara la scheda'],
  ['Apri il dialogo','Dai spazio a Sonia','Chiudi l’incontro'],

@@ -1,4 +1,4 @@
-import {FORMAT,LABS,OFFERS,OBSTACLES,AGREEMENTS,AMENDMENTS,TONES,QUESTIONS,TASKS,find,offer,feature,question,economics,cashflow,posterTitle,ready,validProject} from './afm-core.mjs?v=20261010-all';
+import {FORMAT,LABS,OFFERS,OBSTACLES,AGREEMENTS,AMENDMENTS,TONES,QUESTIONS,TASKS,find,offer,feature,question,economics,cashflow,posterTitle,ready,validProject} from './afm-core.mjs?v=20261115-riordino';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function restore(value){
  try{

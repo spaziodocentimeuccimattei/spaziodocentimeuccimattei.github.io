@@ -1,6 +1,6 @@
 // Ingresso unico dei cinque percorsi: «Come ti chiami?» (riordino novembre 2026, agente A3).
 // Al posto della finestra «Come vuoi iniziare?». Firma e istruzioni: docs/bussola/riordino-2026-11/INGRESSO-FINALE.md
-import {nomeOspite, salvaNomeOspite, azzeraLavoroLocale, pulisciNome, nomeCompleto, NOMI_BREVI} from './bussola-locale.mjs?v=20261114-a3';
+import {nomeOspite, salvaNomeOspite, azzeraLavoroLocale, pulisciNome, nomeCompleto, NOMI_BREVI} from './bussola-locale.mjs?v=20261115-riordino';
 
 function el(tag, attributi = {}, ...figli) {
   const nodo = document.createElement(tag);

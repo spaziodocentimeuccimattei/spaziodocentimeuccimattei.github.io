@@ -1,5 +1,5 @@
 import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
-import {restore,remoteProject} from './turismo-core.mjs?v=20261115-a7';
+import {restore,remoteProject} from './turismo-core.mjs?v=20261115-riordino';
 export function setupTourismRemote(ctx){
  const testing=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).has('prova');
  const API=testing?'/__test/bussola-esperienze':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-esperienze';

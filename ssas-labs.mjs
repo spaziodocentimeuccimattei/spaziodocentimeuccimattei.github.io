@@ -1,9 +1,9 @@
 import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
-import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
-import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {GUIDE,cursor,guideIssues,titleDefaults,storyBranch} from './ssas-guided-core.mjs';
+import {classEntry,setupClass} from './bussola-classe.mjs?v=20261115-riordino';
+import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261115-riordino';
+import {GUIDE,cursor,guideIssues,titleDefaults,storyBranch} from './ssas-guided-core.mjs?v=20261115-riordino';
 import {LAB_PRESENTATION,studioArt} from './ssas-labs-visuals.mjs?v=20261010-ssas';
-import {FORMAT,LABS,CONDITIONS,OPENINGS,PARTICIPATION,PERSONS,GOALS,SETTINGS,SERVICES,ACCESS,CHECKS,freshProject,restoreProject,issues,beginRevision,summaryItems,xml} from './ssas-labs-core.mjs?v=20261008';
+import {FORMAT,LABS,CONDITIONS,OPENINGS,PARTICIPATION,PERSONS,GOALS,SETTINGS,SERVICES,ACCESS,CHECKS,freshProject,restoreProject,issues,beginRevision,summaryItems,xml} from './ssas-labs-core.mjs?v=20261115-riordino';
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');
 const API=localTest?'/__test/bussola-esperienze':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-esperienze';
 const entryAlumno=classEntry().alunno;

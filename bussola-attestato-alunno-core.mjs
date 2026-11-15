@@ -1,5 +1,5 @@
-import {completion,courseDetails} from './bussola-records-core.mjs?v=20261029-missione';
-import {restoreProject,summaryItems,LABS} from './ssas-labs-core.mjs';
+import {completion,courseDetails} from './bussola-records-core.mjs?v=20261115-riordino';
+import {restoreProject,summaryItems,LABS} from './ssas-labs-core.mjs?v=20261115-riordino';
 
 export function certificateName(value){
  const name=typeof value==='string'?value.trim().replace(/\s+/gu,' ').normalize('NFC'):'';

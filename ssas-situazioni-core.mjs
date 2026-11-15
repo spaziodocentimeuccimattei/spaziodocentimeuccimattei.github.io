@@ -1,6 +1,6 @@
-import {CASES,caseById} from './ssas-situazioni-data.mjs?v=20261115-a8';
-import {LAB_TITLES} from './ssas-situazioni-revisione.mjs?v=20261115-a8';
-import {LABS as originalLabs,xml} from './ssas-labs-core.mjs';
+import {CASES,caseById} from './ssas-situazioni-data.mjs?v=20261115-riordino';
+import {LAB_TITLES} from './ssas-situazioni-revisione.mjs?v=20261115-riordino';
+import {LABS as originalLabs,xml} from './ssas-labs-core.mjs?v=20261115-riordino';
 export {CASES,caseById,xml};
 export const FORMAT='ssas-sei-situazioni-2';
 export const LABS=originalLabs.map((l,i)=>({...l,title:LAB_TITLES[i],...(i?{}:{label:'Salute e bisogni',bridge:'Benessere, prevenzione e bisogni della persona: osservare una situazione e comunicarla con parole chiare.'})}));

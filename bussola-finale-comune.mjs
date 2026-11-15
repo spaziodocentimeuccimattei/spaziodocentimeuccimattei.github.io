@@ -2,12 +2,12 @@
 //  1. «In questo indirizzo fai tre cose»   2. l'attestato che esplode (+ QR per il ritorno da casa)
 //  3. il video dell'indirizzo               4. «Prova un altro indirizzo»
 // Firma e istruzioni: docs/bussola/riordino-2026-11/INGRESSO-FINALE.md
-import {esplosione, premio} from './bussola-effetti.mjs?v=20261114-tema';
-import {OPEN_DAY} from './bussola-prossimo-passo.mjs?v=20261114-a3';
+import {esplosione, premio} from './bussola-effetti.mjs?v=20261115-riordino';
+import {OPEN_DAY} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 import {sharedParticipant, personalDestination} from './bussola-identita.mjs?v=20261019-monitor';
-import {CORSI, NOMI_BREVI, NOMI_CORSI, nomeOspite, nomeCompleto, salvaNomeOspite, pulisciNome, distintivi, aggiungiDistintivo, linkRitorno} from './bussola-locale.mjs?v=20261114-a3';
-import {qrElemento} from './bussola-qr.mjs?v=20261114-a3';
-import {EMAIL_ATTIVA, CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261114-a3';
+import {CORSI, NOMI_BREVI, NOMI_CORSI, nomeOspite, nomeCompleto, salvaNomeOspite, pulisciNome, distintivi, aggiungiDistintivo, linkRitorno} from './bussola-locale.mjs?v=20261115-riordino';
+import {qrElemento} from './bussola-qr.mjs?v=20261115-riordino';
+import {EMAIL_ATTIVA, CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261115-riordino';
 
 function el(tag, attributi = {}, ...figli) {
   const nodo = document.createElement(tag);

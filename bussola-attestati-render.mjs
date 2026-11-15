@@ -1,6 +1,6 @@
-import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261029-missione';
-import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261029-missione';
-import {loadContacts,phoneLabel} from './bussola-prossimo-passo.mjs?v=20261020-contatti';
+import {pagesPDF,zipFiles,certificatePath,certificateCSV} from './bussola-attestati-files.mjs?v=20261115-riordino';
+import {safeName,COURSE_NAMES} from './bussola-records-core.mjs?v=20261115-riordino';
+import {loadContacts,phoneLabel} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 let imagePromise,qrPromise;
 function logo(){return imagePromise??=new Promise((resolve,reject)=>{const loaded=document.querySelector('img[src="assets/logo-meucci-mattei-decimomannu.jpeg"]');if(loaded?.complete&&loaded.naturalWidth){resolve(loaded);return;}const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{imagePromise=null;reject(new Error('Il logo della scuola non si è caricato. Riprova.'));};img.src='assets/logo-meucci-mattei-decimomannu.jpeg';});}
 // Illustrazione originale e colore di ciascun indirizzo (assets/attestati).

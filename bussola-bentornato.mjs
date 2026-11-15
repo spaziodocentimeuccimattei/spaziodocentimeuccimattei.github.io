@@ -2,9 +2,9 @@
 // Si apre da solo con il link del QR (bussola.html#alunno=…&corso=…) e dal link «Ho un codice» della prima pagina.
 // Ritorno in due passi: (1) QR = link personale già previsto dal sistema, senza modifiche al server;
 // (2) codice breve da scrivere: nascosto finché CODICE_BREVE_ATTIVO è falso (vedi bussola-interruttori.mjs).
-import {CORSI, NOMI_BREVI, NOMI_CORSI, leggiRitorno, pulisciNome, nomeCompleto} from './bussola-locale.mjs?v=20261114-a3';
-import {EMAIL_ATTIVA, CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261114-a3';
-import {OPEN_DAY, OPEN_DAY_LUOGO} from './bussola-prossimo-passo.mjs?v=20261114-a3';
+import {CORSI, NOMI_BREVI, NOMI_CORSI, leggiRitorno, pulisciNome, nomeCompleto} from './bussola-locale.mjs?v=20261115-riordino';
+import {EMAIL_ATTIVA, CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261115-riordino';
+import {OPEN_DAY, OPEN_DAY_LUOGO} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 import {personalDestination} from './bussola-identita.mjs?v=20261019-monitor';
 import {classCode} from './bussola-codice.mjs?v=20261008-codice';
 
@@ -106,9 +106,9 @@ export async function apriBentornato(ritorno) {
 
   // Moduli pesanti caricati solo qui: la prima pagina della Bussola resta leggera.
   const [{completion, courseDetails}, {participantCertificate}, {certificateCanvas, downloadCertificate}] = await Promise.all([
-    import('./bussola-records-core.mjs?v=20261029-missione'),
-    import('./bussola-attestato-alunno-core.mjs?v=20261029-missione'),
-    import('./bussola-attestati-render.mjs?v=20261029-missione'),
+    import('./bussola-records-core.mjs?v=20261115-riordino'),
+    import('./bussola-attestato-alunno-core.mjs?v=20261115-riordino'),
+    import('./bussola-attestati-render.mjs?v=20261115-riordino'),
   ]);
   const payload = carico.project.payload;
   let finito = false;

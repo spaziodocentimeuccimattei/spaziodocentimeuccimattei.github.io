@@ -1,9 +1,9 @@
 import {personalDestination} from './bussola-identita.mjs?v=20261019-monitor';
 import {activityDestination} from './bussola-navigazione.mjs?v=20261019-accessi';
-import { readState, freshState, totals, clearState } from './bussola-core.mjs';
-import { el, button, link, choice, storage, persist, loadData, focusHeading, setJourney, contactsPanel, showError } from './bussola-ui.mjs?v=20261010-correzioni';
+import { readState, freshState, totals, clearState } from './bussola-core.mjs?v=20261115-riordino';
+import { el, button, link, choice, storage, persist, loadData, focusHeading, setJourney, contactsPanel, showError } from './bussola-ui.mjs?v=20261115-riordino';
 
-import { courseArt, amountVisual, routeVisual, dataFlow, observationVisual, itineraryMap } from './bussola-visuals.mjs?v=20261010-correzioni';
+import { courseArt, amountVisual, routeVisual, dataFlow, observationVisual, itineraryMap } from './bussola-visuals.mjs?v=20261115-riordino';
 
 const catalog = document.getElementById('missionCatalog');
 const cards = document.getElementById('catalogCards');

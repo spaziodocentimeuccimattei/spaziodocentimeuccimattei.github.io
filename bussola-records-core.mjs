@@ -1,11 +1,11 @@
-import {FORMAT as CASE_FORMAT,restoreProject as restoreCases,summaryItems as caseSummary,LABS as CASE_LABS} from './ssas-situazioni-core.mjs';
-import {FORMAT as AFM_FORMAT,LABS as AFM_LABS,ready as afmReady,completed as afmCompleted} from './afm-core.mjs?v=20261010-all';
-import {restore as restoreAFM,summaryItems as afmSummary} from './afm-records.mjs?v=20261010-all';
-import {FORMAT as SIA_FORMAT,LABS as SIA_LABS,ready as siaReady,completed as siaCompleted} from './sia-core.mjs?v=20261010-all';
-import {restore as restoreSIA,summaryItems as siaSummary} from './sia-records.mjs?v=20261010-all';
+import {FORMAT as CASE_FORMAT,restoreProject as restoreCases,summaryItems as caseSummary,LABS as CASE_LABS} from './ssas-situazioni-core.mjs?v=20261115-riordino';
+import {FORMAT as AFM_FORMAT,LABS as AFM_LABS,ready as afmReady,completed as afmCompleted} from './afm-core.mjs?v=20261115-riordino';
+import {restore as restoreAFM,summaryItems as afmSummary} from './afm-records.mjs?v=20261115-riordino';
+import {FORMAT as SIA_FORMAT,LABS as SIA_LABS,ready as siaReady,completed as siaCompleted} from './sia-core.mjs?v=20261115-riordino';
+import {restore as restoreSIA,summaryItems as siaSummary} from './sia-records.mjs?v=20261115-riordino';
 import {FORMAT as CAT_FORMAT,restore as restoreCat,labsFor as catLabs,summaryItems as catSummary,completed as catCompleted,ready as catReady} from './cat-core.mjs?v=20261029-missione';
-import {FORMAT as TUR_FORMAT,restore as restoreTur,LABS as TUR_LABS,summaryItems as turSummary} from './turismo-core.mjs?v=20261009-cat';
-import {FORMAT,restoreProject,summaryItems,LABS} from './ssas-labs-core.mjs';
+import {FORMAT as TUR_FORMAT,restore as restoreTur,LABS as TUR_LABS,summaryItems as turSummary} from './turismo-core.mjs?v=20261115-riordino';
+import {FORMAT,restoreProject,summaryItems,LABS} from './ssas-labs-core.mjs?v=20261115-riordino';
 export const COURSE_NAMES={afm:'Amministrazione, Finanza e Marketing',sia:'Sistemi Informativi Aziendali',ssas:'Servizi per la sanità e l’assistenza sociale',turismo:'Turismo',cat:'Costruzioni, Ambiente e Territorio'};
 export function courseDetails(payload){if(payload?.caseJourney?.format===CASE_FORMAT){const j=restoreCases(payload).caseJourney;return {corso:"ssas",journey:j,labs:CASE_LABS,works:caseSummary(j),idea:j.nextIdea};}if(payload?.format===AFM_FORMAT){const p=restoreAFM(payload);if(!p)throw new Error('Progetto AFM non valido.');return {corso:'afm',journey:p,labs:AFM_LABS,works:afmSummary(p),idea:''};}if(payload?.format===SIA_FORMAT){const p=restoreSIA(payload);if(!p)throw new Error('Progetto SIA non valido.');return {corso:'sia',journey:p,labs:SIA_LABS,works:siaSummary(p),idea:''};}if(payload?.format===CAT_FORMAT){const p=restoreCat(payload);if(!p)throw new Error('Progetto CAT non valido.');return {corso:'cat',journey:p,labs:catLabs(p),works:catSummary(p),idea:''};}if(payload?.format&&payload.format!==TUR_FORMAT)throw new Error('Formato del progetto non riconosciuto.');if(payload?.format===TUR_FORMAT){const p=restoreTur(payload);if(!p)throw new Error('Progetto Turismo non valido.');return {corso:'turismo',journey:p,labs:TUR_LABS,works:turSummary(p),idea:''};}const j=restoreProject(payload).labJourney;return {corso:'ssas',journey:j,labs:LABS,works:summaryItems(j),idea:j.nextIdea};}
 export function completion(project){

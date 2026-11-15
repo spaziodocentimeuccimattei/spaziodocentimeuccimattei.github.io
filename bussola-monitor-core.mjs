@@ -1,10 +1,10 @@
 import * as MISSIONE from './cat-missione-core.mjs?v=20261029-missione';
 import * as EDIFICIO from './cat-edificio-core.mjs?v=20261028-edificio';
-import {courseDetails,completion} from './bussola-records-core.mjs?v=20261029-missione';
-import {caseById} from './ssas-situazioni-core.mjs?v=20261018-testi';
-import * as AFM from './afm-core.mjs';
-import * as SIA from './sia-core.mjs';
-import * as TUR from './turismo-core.mjs';
+import {courseDetails,completion} from './bussola-records-core.mjs?v=20261115-riordino';
+import {caseById} from './ssas-situazioni-core.mjs?v=20261115-riordino';
+import * as AFM from './afm-core.mjs?v=20261115-riordino';
+import * as SIA from './sia-core.mjs?v=20261115-riordino';
+import * as TUR from './turismo-core.mjs?v=20261115-riordino';
 import * as CAT from './cat-core.mjs?v=20261029-missione';
 export const COURSES={ssas:'SSAS',afm:'AFM',sia:'SIA',turismo:'Turismo',cat:'CAT 4+2',bussola:'Le dodici domande'};
 export const STATES={empty:'Non iniziato',working:'In corso',done:'Concluso'};

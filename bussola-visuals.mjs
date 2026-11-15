@@ -1,5 +1,5 @@
 // Simple illustrative SVGs: they explain activities, never represent real school equipment.
-import { el } from './bussola-ui.mjs';
+import { el } from './bussola-ui.mjs?v=20261115-riordino';
 const scenes={
  afm:'<rect x="36" y="40" width="112" height="140" rx="12"/><path d="M58 72h66M58 96h36M58 120h52"/><rect x="173" y="65" width="96" height="92" rx="12"/><path d="M190 88h58M193 112h12M221 112h12M193 136h12M221 136h12"/>',
  sia:'<rect x="28" y="34" width="250" height="146" rx="14"/><path d="M28 67h250M100 180v20M210 180v20M78 200h154"/><path d="m90 94-24 22 24 22m128-44 24 22-24 22m-58-55-17 68"/>',

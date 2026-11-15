@@ -1,8 +1,8 @@
-import {COURSE_NAMES} from './bussola-records-core.mjs?v=20261029-missione';
-import {certificateName,participantCertificate} from './bussola-attestato-alunno-core.mjs?v=20261029-missione';
-import {certificateCanvas,downloadCertificate} from './bussola-attestati-render.mjs?v=20261029-missione';
-import {nextStep} from './bussola-prossimo-passo.mjs?v=20261114-a3';
-import {nomeOspite,salvaNomeOspite,nomeCompleto} from './bussola-locale.mjs?v=20261114-a3';
+import {COURSE_NAMES} from './bussola-records-core.mjs?v=20261115-riordino';
+import {certificateName,participantCertificate} from './bussola-attestato-alunno-core.mjs?v=20261115-riordino';
+import {certificateCanvas,downloadCertificate} from './bussola-attestati-render.mjs?v=20261115-riordino';
+import {nextStep} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
+import {nomeOspite,salvaNomeOspite,nomeCompleto} from './bussola-locale.mjs?v=20261115-riordino';
 
 // Identificativo e data del documento restano nel progetto. Il NOME no: il progetto viene sincronizzato per intero
 // e, finché la privacy non è approvata, nome e cognome di chi entra senza classe restano solo sul dispositivo

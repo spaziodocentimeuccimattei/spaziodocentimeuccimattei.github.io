@@ -1,4 +1,4 @@
-import { phoneLabel } from './bussola-prossimo-passo.mjs?v=20261020-contatti';
+import { phoneLabel } from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 // Export content stays separate from the stored journey. No student identity is persisted.
 export function firstName(value = '') {
   return String(value).normalize('NFC').replace(/[^\p{L}\p{M}\s’'-]/gu, '')

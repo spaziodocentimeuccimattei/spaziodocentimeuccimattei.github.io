@@ -1,4 +1,4 @@
-import { SESSION_KEY, saveState, clearState } from './bussola-core.mjs';
+import { SESSION_KEY, saveState, clearState } from './bussola-core.mjs?v=20261115-riordino';
 
 export function el(tag, text, className) {
   const node = document.createElement(tag);

@@ -1,9 +1,9 @@
-import { freshState, readState, clearState, sanitizeState, suggestCourses, validateContent } from './bussola-core.mjs';
-import { el, button, link, storage, persist as persistLocal, loadData, focusHeading } from './bussola-ui.mjs?v=20261114-a2';
+import { freshState, readState, clearState, sanitizeState, suggestCourses, validateContent } from './bussola-core.mjs?v=20261115-riordino';
+import { el, button, link, storage, persist as persistLocal, loadData, focusHeading } from './bussola-ui.mjs?v=20261115-riordino';
 import {questionnaireRemote} from './bussola-questionario-remote.mjs?v=20261112';
 import { activityDestination as rawDestination } from './bussola-navigazione.mjs?v=20261019-accessi';
-import { openDayCard } from './bussola-prossimo-passo.mjs?v=20261112-open-day';
-import { esplosione, scintilla } from './bussola-effetti.mjs?v=20261114-tema';
+import { openDayCard } from './bussola-prossimo-passo.mjs?v=20261115-riordino';
+import { esplosione, scintilla } from './bussola-effetti.mjs?v=20261115-riordino';
 
 // Riordino del 14/11/2026: un titolo, una frase, un'azione per schermo.
 // Apertura → 12 domande (una per schermo) → risultato che «esplode» → «Perché?» a richiesta.

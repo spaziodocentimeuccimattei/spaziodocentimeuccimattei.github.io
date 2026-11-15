@@ -4,7 +4,7 @@
 // una scelta ciascuno; lo schermo corrente non si salva: si ricava dai dati (primoDaFare).
 // Elenco prima → dopo dei testi: docs/bussola/riordino-2026-11/testi-cat.md
 import * as M from './cat-missione-core.mjs?v=20261029-missione';
-import {missionScene} from './cat-missione.mjs?v=20261115-a6';
+import {missionScene} from './cat-missione.mjs?v=20261115-riordino';
 import {esc} from './cat-visuals.mjs?v=20261029-missione';
 
 const num=n=>new Intl.NumberFormat('it-IT',{useGrouping:'always'}).format(n),money=n=>num(n)+' €';
