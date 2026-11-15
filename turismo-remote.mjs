@@ -1,5 +1,5 @@
 import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
-import {restore,remoteProject} from './turismo-core.mjs?v=20261009-turismo';
+import {restore,remoteProject} from './turismo-core.mjs?v=20261115-a7';
 export function setupTourismRemote(ctx){
  const testing=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).has('prova');
  const API=testing?'/__test/bussola-esperienze':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-esperienze';
@@ -37,5 +37,5 @@ export function setupTourismRemote(ctx){
  function schedule(){clearTimeout(timer);timer=setTimeout(sync,600);}
  function changed(){clock++;state.dirty=true;keep();ctx.status(ctx.localOK()?'Salvato sul dispositivo · aggiornamento online…':'Salvataggio online in corso. Tieni aperta questa pagina.',false);schedule();}
  window.addEventListener('pagehide',()=>{keep();ctx.keep();});
- return {changed,sync,ensure:connect,token:()=>state.token,participant:()=>state.participant,revision:()=>state.revision};
+ return {changed,sync,ensure:connect,saved:()=>connected&&!state.dirty&&!conflict,token:()=>state.token,participant:()=>state.participant,revision:()=>state.revision};
 }
