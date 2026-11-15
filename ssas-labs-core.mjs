@@ -69,7 +69,7 @@ export function restoreProject(raw){
  for(const key of ['health','relation','autonomy','creative','service'])j[key].before=source[key]?.before&&typeof source[key].before==='object'?clone(source[key].before):null;
  j.interests=LABS.filter(l=>source.interests?.includes?.(l.id)).map(l=>l.id);j.nextIdea=str(source.nextIdea,180);
  for(let i=1;i<=5;i++)if(issues(j,i,1).length)j.done=j.done.filter(id=>id!==LABS[i-1].id);
- j.finished=source.finished===true&&j.done.length===5&&j.interests.length>0;
+ j.finished=source.finished===true&&j.done.length===5; // la scelta sugli interessi non blocca più
  p.version=1;p.labJourney=j;return p;
 }
 export function issues(j,step=j.step,part=j.part){
@@ -79,7 +79,7 @@ export function issues(j,step=j.step,part=j.part){
  if(step===3){add(j.autonomy.person,'Scegli la persona con cui progettare il sostegno.','autonomy-person-nico');add(j.autonomy.supports.length>0,'Scegli almeno un sostegno concreto.','autonomy-supports');if(part)add(j.autonomy.adaptation,'Scegli come adattare il sostegno alla richiesta.','autonomy-adaptation');}
  if(step===4){add(j.creative.goal,'Scegli lo scopo educativo della storia.','creative-goal-emozioni');add(j.creative.setting,'Scegli dove comincia la storia.','creative-setting-ponte');if(part){add(j.creative.title.trim(),'Dai un titolo alla storia.','creative-title');add(j.creative.ending.trim(),'Scegli un seguito o scrivilo tu.','creative-ending');}}
  if(step===5){add(j.service.kind,'Scegli il servizio da progettare.','service-kind-salute');add(j.service.activity,'Scegli l’attività che offrirà.','service-activity');if(part){add(j.service.name.trim(),'Dai un nome al servizio.','service-name');add(j.service.access,'Scegli un accesso anche senza internet.','service-access-presenza');add(j.service.check,'Scegli che cosa osservare per migliorare.','service-check-accesso');}}
- if(step===6){add(j.done.length===5,'Completa tutti e cinque i laboratori.','stepNav');add(j.interests.length,'Indica almeno una parte che vorresti approfondire.','interest-salute');}
+ if(step===6){add(j.done.length===5,'Completa tutti e cinque i laboratori.','stepNav');}
  return result;
 }
 export function beginRevision(j){const key=['health','relation','autonomy','creative','service'][j.step-1];if(key&&!j[key].before){const {before,...draft}=j[key];j[key].before=clone(draft);}j.part=1;}

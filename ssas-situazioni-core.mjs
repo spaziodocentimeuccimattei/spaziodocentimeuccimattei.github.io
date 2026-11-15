@@ -1,15 +1,16 @@
-import {CASES,caseById} from './ssas-situazioni-data.mjs?v=20261018-testi';
+import {CASES,caseById} from './ssas-situazioni-data.mjs?v=20261115-a8';
+import {LAB_TITLES} from './ssas-situazioni-revisione.mjs?v=20261115-a8';
 import {LABS as originalLabs,xml} from './ssas-labs-core.mjs';
 export {CASES,caseById,xml};
 export const FORMAT='ssas-sei-situazioni-2';
-export const LABS=originalLabs.map((l,i)=>i?{...l}:{...l,label:'Salute e bisogni',title:'Un bisogno da capire',bridge:'Benessere, prevenzione e bisogni della persona: osservare una situazione e comunicarla con parole chiare.'});
-export const GUIDE=[['Scegli la situazione','Descrivi la situazione'],['Scegli la domanda','Approfondisci il racconto','Proponi un primo passo'],['Scegli i sostegni','Adatta l’aiuto'],['Scegli lo scopo','Scegli il materiale','Migliora e prova'],['Scegli l’attività','Apri l’accesso','Pensa al miglioramento']];
+export const LABS=originalLabs.map((l,i)=>({...l,title:LAB_TITLES[i],...(i?{}:{label:'Salute e bisogni',bridge:'Benessere, prevenzione e bisogni della persona: osservare una situazione e comunicarla con parole chiare.'})}));
+export const GUIDE=[['Scegli la storia','Spiega che cosa succede'],['Fai la prima domanda','Ascolta ancora','Proponi un primo passo'],['Scegli gli aiuti','Cambia l’aiuto'],['Scegli a che cosa serve','Scegli il materiale','Migliora e prova'],['Scegli l’attività','Fai partecipare tutti','Controlla come è andata']];
 export const PRESENTATION=[
- {title:'Una situazione da comprendere.',product:'La tua descrizione della situazione',result:'Scegli il caso che ti interessa e considera le difficoltà raccontate.'},
- {title:'Una conversazione da aprire.',product:'La tua proposta di dialogo',result:'Ascolta la persona e concorda un primo passo.'},
- {title:'Un aiuto da concordare.',product:'Il tuo piano di aiuto',result:'Scegli i sostegni e adattali alle richieste della persona.'},
- {title:'Un materiale da preparare.',product:'Il tuo materiale',result:'Scegli lo scopo e il formato, poi rivedi la bozza.'},
- {title:'Un’attività da organizzare.',product:'La tua proposta di attività',result:'Scegli l’attività, come partecipare e che cosa verificare.'}
+ {title:'Capisci che cosa succede.',product:'La tua spiegazione della storia',result:'Scegli una storia e dì che cosa sta succedendo alla persona.'},
+ {title:'Ascolti e fai le domande giuste.',product:'Il tuo dialogo con la persona',result:'Ascolta la persona e proponi un primo passo.'},
+ {title:'Scegli gli aiuti per la persona.',product:'Il tuo piano di aiuto',result:'Scegli gli aiuti e cambiali quando la persona lo chiede.'},
+ {title:'Prepari un materiale per gli altri.',product:'Il tuo materiale',result:'Scegli a che cosa serve, poi migliora la bozza.'},
+ {title:'Organizzi un’attività per tutti.',product:'La tua proposta di attività',result:'Scegli l’attività, come far partecipare tutti e che cosa controllare.'}
 ];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const areas=['health','relation','autonomy','creative','service'];
@@ -26,7 +27,7 @@ export function cursor(j){
 }
 export function guideIssues(j,c=cursor(j)){
  const pending=[],need=(ok,message,id)=>{if(!ok)pending.push({text:message,id});};
- if(j.step===6){need(j.done.length===5,'Completa i cinque laboratori.','stepNav');need(j.interests.length,'Scegli una parte che vorresti approfondire.','interest-salute');return pending;}
+ if(j.step===6){need(j.done.length===5,'Completa i cinque laboratori.','stepNav');return pending;}
  if(j.step<1||j.step>5)return pending;
  need(caseById(j.health.focus),'Scegli una situazione.','health-focus');
  if(j.step===1&&c>=1)need(j.health.explanation.trim(),'Scegli una frase o scrivila tu.','health-explanation');
@@ -51,7 +52,7 @@ export function restoreProject(raw){
  j.visited=Number.isInteger(source.visited)?Math.max(j.step,Math.min(6,source.visited)):j.step;j.part=source.part===1?1:0;
  j.guideCursor=Number.isInteger(source.guideCursor)?source.guideCursor:0;j.guideCursor=cursor(j);
  j.done=LABS.filter((l,i)=>source.done?.includes?.(l.id)&&!issues(j,i+1).length).map(l=>l.id);
- j.interests=LABS.filter(l=>source.interests?.includes?.(l.id)).map(l=>l.id);j.nextIdea=text(source.nextIdea,180);j.finished=source.finished===true&&j.done.length===5&&j.interests.length>0;
+ j.interests=LABS.filter(l=>source.interests?.includes?.(l.id)).map(l=>l.id);j.nextIdea=text(source.nextIdea,180);j.finished=j.done.length===5&&(source.finished===true||j.visited>=6); // la scelta sugli interessi non blocca più; i lavori già arrivati alla conclusione risultano conclusi
  p.version=1;p.caseJourney=j;p.scenarioDrafts=p.scenarioDrafts&&typeof p.scenarioDrafts==='object'&&!Array.isArray(p.scenarioDrafts)?p.scenarioDrafts:{};
  return p; // labJourney et al. are retained byte-for-byte as legacy work.
 }

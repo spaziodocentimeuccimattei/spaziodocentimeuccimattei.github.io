@@ -19,6 +19,9 @@ for(const c of CASES){
   p.labJourney={format:'ssas-cinque-laboratori-1',health:{focus:'asma',explanation:'Lavoro precedente'},notes:{preserve:true}};
   p.oldUnknown={keep:true};j.health.unknown={preserve:true};
   const restored=restoreProject(p);assert(restored.caseJourney.finished);assert.deepEqual(restored.labJourney,p.labJourney);assert.deepEqual(restored.oldUnknown,p.oldUnknown);assert.deepEqual(restored.caseJourney.health.unknown,{preserve:true});
+  // Gli interessi non bloccano piu': tutte le scelte fatte e nessun interesse = percorso concluso (anche per i lavori salvati prima).
+  {const old=structuredClone(p);const oj=old.caseJourney;oj.interests=[];oj.finished=false;oj.step=6;oj.visited=6;assert.deepEqual(guideIssues(oj),[],c.id+' senza interessi');const rr=restoreProject(old);assert.equal(rr.caseJourney.finished,true,c.id+' lavoro vecchio senza interessi concluso');assert.equal(completion({payload:rr}).completed,true);
+   const incompleto=structuredClone(old);incompleto.caseJourney.done.pop();incompleto.caseJourney.finished=false;assert.equal(restoreProject(incompleto).caseJourney.finished,false,c.id+' con un laboratorio mancante non e concluso');}
   assert.equal(summaryItems(j).length,5);assert.equal(completion({payload:restored}).completed,true);assert.equal(courseDetails(restored).works.length,5);
   assert.equal(completion({corso:'turismo',payload:restored}).completed,false);
   const record=participantCertificate(restored,{name:'Prova Locale',id:'00000000-0000-4000-8000-000000000001',date:'2026-10-12T16:00:00Z'});assert.equal(record.snapshot.lavori.length,5);

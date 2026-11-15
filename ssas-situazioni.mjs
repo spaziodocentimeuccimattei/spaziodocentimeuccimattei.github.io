@@ -1,13 +1,15 @@
 import {sharedParticipant,rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
-import {materialExamples,materialCheck,INTEREST_ACTIVITIES} from './ssas-situazioni-revisione.mjs';
+import {materialExamples,materialCheck,LAB_TITLES,SSAS_LEGAMI,TRE_COSE,PASSAGGIO} from './ssas-situazioni-revisione.mjs?v=20261115-a8';
+import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261114-a3';
+import {mostraFinale} from './bussola-finale-comune.mjs?v=20261114-a3';
+import {scintilla,interruttoreSuono} from './bussola-effetti.mjs?v=20261114-tema';
 import {readEntryState} from './ssas-situazioni-entry-core.mjs?v=20261018-ingresso';
 import {sceneImage,entranceImage} from './ssas-illustrazioni.mjs?v=20261012-scene';
 import {scenePanel,paintScene} from './ssas-scena-visiva.mjs?v=20261111-scene';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261111-inizia-diretto';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {COURSE_VIDEO_NOTICE,courseVideos,nextStep,openDayCard} from './bussola-prossimo-passo.mjs?v=20261112-open-day';
-import {FORMAT,LABS,CASES,caseById,GUIDE,cursor,guideIssues,titleDefaults,freshProject,restoreProject,selectCase,beginRevision,summaryItems,xml} from './ssas-situazioni-core.mjs?v=20261018-testi';
+import {FORMAT,LABS,CASES,caseById,GUIDE,cursor,guideIssues,titleDefaults,freshProject,restoreProject,selectCase,beginRevision,summaryItems,xml} from './ssas-situazioni-core.mjs?v=20261115-a8';
 const localTest=['localhost','127.0.0.1'].includes(location.hostname)&&new URLSearchParams(location.search).get('prova');
 const API=localTest?'/__test/bussola-esperienze':'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-esperienze';
 const entryAlumno=classEntry().alunno;
@@ -27,6 +29,10 @@ let localOK=true, connected=false, syncing=false, conflict=false, clock=0, timer
 let pendingConnection;
 // Il passaggio di mano tra il laboratorio 2 e il 3 è solo presentazione: non si salva e non ha una rotta.
 let handoff=false;
+// Il finale comune sostituisce il riepilogo; «Rivedi il tuo lavoro» riapre il riepilogo e «Torna al finale» lo richiude.
+let reviewing=false;
+// Mentre è aperto «Come ti chiami?» nessun ridisegno deve cancellarlo.
+let ingressoAperto=false;
 let state={project:freshProject(),token:'',participant:'',revision:0,dirty:false,notes:[],draft:null};
 try{const raw=readEntryState(localStorage,KEY);if(raw&&typeof raw==='object')state={...state,...raw,project:restoreProject(raw.project),token:/^[\w-]{43}$/.test(raw.token)?raw.token:'',revision:Number.isInteger(raw.revision)?raw.revision:0,notes:Array.isArray(raw.notes)?raw.notes.filter(n=>n&&typeof n.testo==='string'):[]};}catch{}
 if(entryAlumno&&!state.token)state.token=entryAlumno;
@@ -68,23 +74,26 @@ async function openConnection(generation){
   else{conflict=true;throw Object.assign(new Error('Il progetto è cambiato in un’altra finestra. Scarica il tuo lavoro prima di ricaricare.'),{code:409});}
  }
  state.participant=reply.participant;
- if(reply.project&&!state.dirty){state.project=restoreProject(reply.project.payload);state.revision=reply.project.revision;restoreRoute(navigation.route());render(false);}
+ if(reply.project&&!state.dirty){state.project=restoreProject(reply.project.payload);state.revision=reply.project.revision;restoreRoute(navigation.route());if(!ingressoAperto)render(false);}
  state.notes=unique([...state.notes.filter(n=>n.pending),...(reply.notes||[]).map(n=>({...n,pending:false}))]);
  connected=true;keep();renderNotes();
 }
-async function startExperience(){
+// Apre il percorso dopo il collegamento al lavoro salvato. Se il collegamento non riesce, lancia un errore con il messaggio da mostrare.
+async function openExperience(){
  const generation=epoch;
  try{if(state.token&&!connected)await connect();}
  catch{
   if(generation!==epoch)return;
-  const message='Il lavoro salvato non è ancora disponibile. Riprova.';
-  status(message,true);
-  const feedback=$('ssasStartMessage');
-  if(feedback)feedback.textContent=message;
-  return;
+  throw new Error('Il lavoro salvato non è ancora disponibile. Riprova.');
  }
  if(generation===epoch&&navigation.isIntro())resume();
 }
+async function startExperience(){
+ try{await openExperience();}
+ catch(e){status(e.message,true);const feedback=$('ssasStartMessage');if(feedback)feedback.textContent=e.message;}
+}
+// Vero se il lavoro è già salvato online (serve al codice QR del finale).
+const saved=()=>connected&&!state.dirty&&!conflict;
 async function sync(){
  if(syncing||conflict)return;
  syncing=true;const generation=epoch;status('Salvataggio in corso…');
@@ -138,8 +147,7 @@ function edit(area,key,value,redraw=true){const j=journey(),p=j[area];
 // Nomi dei laboratori per i ragazzi. Le etichette di LABS (core) restano per attestati e gestione.
 const VERBS=['Capisci','Ascolta','Aiuta','Crea','Organizza'];
 // Messaggi d'aiuto semplici al posto di quelli del core (per id dell'issue).
-const HELP={stepNav:'Prima completa i cinque passi.','interest-salute':'Scegli almeno una cosa che ti è piaciuta.'};
-const INFINITIVES=['capire','ascoltare','aiutare','creare','organizzare'];
+const HELP={stepNav:'Prima completa i cinque passi.'};
 // Inquadratura del protagonista dentro l'illustrazione esistente (posizione in percentuale).
 // Punto (in % della larghezza e dell'altezza dell'illustrazione) da tenere al centro dell'avatar.
 const AVATAR_FOCUS={dipendenze:[52,30],disabilita:[33,40],immigrazione:[27,30],anziani:[37,33],disagio:[19,34],infanzia:[24,48]};
@@ -163,52 +171,43 @@ function bubble(c,text,{label,ai=false,reader=false,cls=''}={}){
 }
 function progress(){
  const j=journey(),current=Math.min(j.step,5),bar=node('div',null,'tm-progress');
- const text=j.step===6?'5 di 5 · Fatto!':handoffActive()?'Cambio di ruolo':`${current} di 5 · ${VERBS[current-1]}`;
+ const text=j.step===6?'Il tuo lavoro':handoffActive()?'Cambio di ruolo':`${current} di 5 · ${LAB_TITLES[current-1]}`;
  bar.append(node('p',text,'tm-step-label'));
- const ticks=node('ol',null,'tm-ticks');ticks.setAttribute('aria-label','I cinque laboratori');
+ const ticks=node('ol',null,'tm-ticks');ticks.setAttribute('aria-label','I cinque passi');
  LABS.forEach((l,i)=>{
   const done=j.done.includes(l.id),here=j.step===i+1,li=node('li'),b=btn('',()=>go(i+1,0),'tm-tick');
   b.dataset.state=here?'current':done?'done':i+1<=j.visited?'visited':'next';b.disabled=i+1>j.visited;
-  b.setAttribute('aria-label',`${i+1}. ${VERBS[i]}${done?' · fatto':''}${here?' · sei qui':''}${b.disabled?' · ancora da fare':''}`);
-  if(here)b.setAttribute('aria-current','step');
+  b.setAttribute('aria-label',`${i+1}. ${LAB_TITLES[i]}${done?' · fatto':''}${here?' · sei qui':''}${b.disabled?' · ancora da fare':''}`);
+  if(here){b.setAttribute('aria-current','step');b.style.setProperty('--tm-riempi',String(Math.round((cursor(j)+1)/GUIDE[i].length*100))+'%');}
   b.append(node('span',null,'tm-tick-bar'));li.append(b);ticks.append(li);
  });
  bar.append(ticks);nav.append(bar);
 }
 function intro(){
- const j=journey(),s=node('section',null,'tm-intro'),c=caseById(j.health.focus);
+ const j=journey(),c=caseById(j.health.focus);
  const entered=j.visited>0,started=entered&&Boolean(c);
- const classLink=Boolean(classEntry().classe);
- const title=node('h1','Che cosa fa chi aiuta le persone?');title.id='ssasEntryTitle';s.setAttribute('aria-labelledby',title.id);
  const finished=started&&j.step===6&&j.finished;
- const line=finished?`Hai concluso la storia di ${c.person}. Puoi rivedere il tuo riepilogo.`:started?`Hai iniziato la storia di ${c.person}. Puoi continuare da dove avevi lasciato.`:'Scegli una storia e prova a capire, ascoltare e aiutare una persona, in cinque passi.';
- const label=finished?'Rivedi il tuo percorso':started?'Riprendi':classLink&&!entered?'Entra con la classe':'Inizia';
- const feedback=node('p',null,'tm-start-message');feedback.id='ssasStartMessage';feedback.setAttribute('role','status');
- const start=btn(label,async e=>{
-  if(entered){resume();return;}
-  const trigger=e.currentTarget;
-  if(classLink){classUI.begin(trigger);return;}
-  feedback.textContent='';
-  trigger.disabled=true;
-  trigger.textContent='Apertura…';
-  try{await startExperience();}
-  finally{trigger.disabled=false;trigger.textContent=label;}
- },'tm-start');
- const art=node('div',null,'tm-intro-art');art.append(entranceImage());
- s.append(node('p','Servizi per la Sanità e l’Assistenza Sociale','tm-kicker'),title,node('p',line,'tm-lead'),node('p',COURSE_VIDEO_NOTICE,'bussola-video-notice'),start,feedback);
- if(!started&&!classLink)s.append(btn('Entra con la classe',e=>classUI.begin(e.currentTarget),'tm-class-start'));
- if(started)s.append(btn('Inizia da capo',()=>$('newProject').click(),'tm-class-start')); // un'altra persona sullo stesso dispositivo: apre la conferma di «Inizia un nuovo progetto»
- s.append(art);
+ const s=node('section',null,'bt-schermo tm-intro');s.dataset.corso='ssas';
+ const title=node('h1',null,'bt-titolo');title.id='ssasEntryTitle';title.append('Che cosa fa chi ',node('em','aiuta'),' le persone?');s.setAttribute('aria-labelledby',title.id);
+ const line=finished?`Hai finito la storia di ${c.person}. Puoi riprendere dal finale.`:started?`Hai iniziato la storia di ${c.person}. Puoi continuare da dove eri.`:'Scegli una storia e aiuta una persona in cinque passi.';
+ const label=finished?'Vai al finale':started?'Riprendi':'Inizia';
+ const feedback=node('p',null,'bt-errore tm-start-message');feedback.id='ssasStartMessage';feedback.setAttribute('role','status');
+ const start=btn(label,e=>{if(entered){resume();return;}classUI.begin(e.currentTarget);},'bt-pulsante bt-pulsante--grande tm-start');
+ start.id='ssasStart';
+ const art=node('div',null,'tm-intro-art');art.append(entranceImage(),node('span','Tocca a te!','tm-bollino'));
+ s.append(node('p','SSAS · Servizi per la Sanità e l’Assistenza Sociale','bt-occhiello bt-occhiello--corso'),title,node('p',line,'bt-frase'),art,start,feedback);
+ if(started)s.append(btn('Inizia da capo',()=>$('newProject').click(),'bt-link tm-class-start')); // un'altra persona sullo stesso dispositivo: apre la conferma di «Inizia un nuovo progetto»
+ s.append(node('p','Storie e persone sono inventate. Il diploma non dà da solo qualifiche come OSS o infermiere.','bt-nota'));
  mount.append(s);
 }
 function stories(){
- const j=journey(),s=node('section',null,'tm-stories'),title=node('h1','Scegli una storia');title.id='tmQuestion';
- s.append(title,node('p','Ti accompagnerà in tutti e cinque i passi.','tm-hint'));
+ const j=journey(),s=node('section',null,'tm-stories'),title=node('h1','Scegli una storia','tm-question');title.id='tmQuestion';
+ s.append(title,node('p','Ti accompagna in tutti e cinque i passi.','tm-hint'));
  const box=node('fieldset',null,'tm-story-grid');box.id='health-focus';box.setAttribute('aria-labelledby','tmQuestion');
  for(const c of CASES){
   const input=node('input');input.type='radio';input.name='ssas-health-focus';input.id=`health-focus-${c.id}`;input.value=c.id;input.checked=j.health.focus===c.id;
-  input.addEventListener('change',()=>edit('health','focus',c.id));
   const card=node('label',null,'tm-story');card.dataset.case=c.id;
+  input.addEventListener('change',()=>{scintilla(card);edit('health','focus',c.id);});
   const art=sceneImage(c.id,{decorative:true,className:'tm-story-img'});if(art)card.append(art);
   const text=node('span',null,'tm-story-text');text.append(node('strong',whoOf(c)),node('span',hookOf(c)));
   card.append(input,text,node('span',null,'tm-check'));box.append(card);
@@ -267,13 +266,15 @@ function optionsBox(o){
   input.type=o.type==='check'?'checkbox':'radio';
   if(o.type==='example'){input.name=`ssas-example-${o.area}-${o.key}`;input.id=`example-${o.area}-${o.key}-${i}`;input.value=item.label;input.checked=value===item.label;}
   else{input.name=`ssas-${o.area}-${o.key}`;input.id=`${o.area}-${o.key}-${item.id}`;input.value=item.id;input.checked=o.type==='check'?value.includes(item.id):value===item.id;}
+  const l=node('label',null,'bt-scelta tm-option');l.htmlFor=input.id;
   input.addEventListener('change',()=>{
+   scintilla(l); // l'effetto a ogni scelta
    if(o.type==='check'){const now=journey()[o.area][o.key];lastToggled=input.checked?item.id:null;edit(o.area,o.key,input.checked?[...now,item.id]:now.filter(x=>x!==item.id),false);}
    else if(o.type==='example'){if(o.area==='creative'&&o.key==='ending')journey().creative.editedBranch=i;edit(o.area,o.key,item.label,false);const ta=$(`${o.area}-${o.key}-testo`);if(ta)ta.value=item.label;}
    else edit(o.area,o.key,item.id,false);
    updateReply(true);
   });
-  const l=node('label',null,'tm-option');l.htmlFor=input.id;l.append(input,node('span',item.label,'tm-option-text'),node('span',null,'tm-check'));fs.append(l);
+  l.append(input,node('span',item.label,'tm-option-text'));fs.append(l);
  });
  return fs;
 }
@@ -281,7 +282,7 @@ function optionsBox(o){
 function writer(o){
  const j=journey(),value=j[o.area][o.key],custom=!!value.trim()&&!o.texts.includes(value),w=node('div',null,'tm-write');
  const id=`${o.area}-${o.key}-testo`,panel=node('div',null,'tm-write-panel');panel.id=id+'-pannello';panel.hidden=!custom;
- const toggle=btn(custom?'Scrivo io ✓':'Scrivo io',()=>{const open=panel.hidden;panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));if(open){ta.value=journey()[o.area][o.key];ta.focus();ta.scrollIntoView({block:'nearest'});}},'tm-write-toggle');
+ const toggle=btn(custom?'Scrivo io ✓':'Scrivo io',()=>{const open=panel.hidden;panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));if(open){ta.value=journey()[o.area][o.key];ta.focus();ta.scrollIntoView({block:'nearest'});}},'bt-link tm-write-toggle');
  toggle.setAttribute('aria-expanded',String(custom));toggle.setAttribute('aria-controls',panel.id);
  const ta=node('textarea');ta.id=id;ta.name=`ssas-${o.area}-${o.key}`;ta.rows=3;ta.maxLength=o.max;ta.value=value;
  const lab=node('label','Scrivi con parole tue','tm-write-label');lab.htmlFor=id;
@@ -297,6 +298,8 @@ function step(){
  if(current.context)lead.append(node('p',current.context,'tm-role'));
  if(current.lead)lead.append(bubble(c,current.lead,{label:current.leadLabel,ai:current.ai}));
  const q=node('h1',current.question,'tm-question');q.id='tmQuestion';lead.append(q);
+ // Una frase per laboratorio lega l'attività all'indirizzo: sta nell'ultimo schermo del laboratorio.
+ if(n===GUIDE[j.step-1].length-1){const legame=node('p',null,'tm-legame');legame.append(node('b','SSAS'),SSAS_LEGAMI[j.step-1]);lead.prepend(legame);}
  const art=scenePanel(c.id);art.id='tmStepArt';
  const choices=node('div',null,'tm-step-choices');
  if(current.hint)choices.append(node('p',current.hint,'tm-hint'));
@@ -310,30 +313,25 @@ function handoffActive(){const j=journey();return handoff&&j.step===3&&cursor(j)
 function handoffScreen(){
  const c=caseById(journey().health.focus),s=node('section',null,'tm-handoff');
  const art=scenePanel(c.id);paintScene(art,c.id,'handoff',[],true);
- const title=node('h1','Passaggio di mano');s.append(title,node('p',c.handoff,'tm-handoff-text'),art);mount.append(s);
+ const title=node('h1',null,'bt-titolo tm-handoff-title');title.append('Ora cambi ',node('em','ruolo'));
+ const mestiere=node('div',null,'tm-mestiere');mestiere.append(node('p',PASSAGGIO.mestiere,'tm-mestiere-forte'),node('p',PASSAGGIO.scuola));
+ s.append(node('p',PASSAGGIO.occhiello,'bt-occhiello bt-occhiello--corso'),title,node('p',c.handoff,'tm-handoff-text'),mestiere,art);mount.append(s);
 }
 function bottomBar(){
  const j=journey(),c=cursor(j),bar=node('div',null,'tm-bottom'),inner=node('div',null,'tm-bottom-inner');
- const back=btn('←',()=>{if(handoffActive()){go(2,1);return;}if(j.step===6)go(5,1);else if(c>0)go(j.step,1,c-1);else go(j.step-1,j.step>1?1:0);},'tm-back');back.setAttribute('aria-label','Indietro');
+ const back=btn('Indietro',()=>{if(handoffActive()){go(2,1);return;}if(j.step===6)go(5,1);else if(c>0)go(j.step,1,c-1);else go(j.step-1,j.step>1?1:0);},'bt-pulsante bt-pulsante--secondario tm-back');
  let next;
- if(handoffActive()){next=btn('Avanti',()=>{handoff=false;render(true);},'tm-next');}
- else{next=btn('Avanti',advance,'tm-next');next.id='continue';next.disabled=guideIssues(j).length>0;}
- const help=node('div',null,'requirements tm-sr');help.id='requirements';help.hidden=true;help.setAttribute('role','status');
- inner.append(back,next);bar.append(help,inner);mount.append(bar);
+ if(handoffActive()){next=btn('Avanti',()=>{handoff=false;render(true);},'bt-pulsante tm-next');next.id='handoffNext';}
+ else{next=btn('Avanti',advance,'bt-pulsante tm-next');next.id='continue';next.disabled=guideIssues(j).length>0;}
+ inner.append(back,next);bar.append(inner);
+ if(!handoffActive()){const help=node('div',null,'requirements tm-sr');help.id='requirements';help.hidden=true;help.setAttribute('role','status');bar.prepend(help);}mount.append(bar);
 }
 function updateLive(){if($('downloadProject'))$('downloadProject').href=jsonHref();if($('downloadPortfolio'))$('downloadPortfolio').href=svgHref();if($('backupBeforeReset'))$('backupBeforeReset').href=jsonHref();}
 function updateHelp(error=false){const box=$('requirements');if(!box)return;box.replaceChildren();const pending=guideIssues(journey());box.hidden=!pending.length;box.dataset.error=String(error&&!!pending.length);if(pending.length)box.append(node('p',HELP[pending[0].id]||'Scegli una risposta per andare avanti.'));const next=$('continue');if(next)next.disabled=journey().step===6&&journey().finished||pending.length>0;}
-function go(step,part=0,action=null,showHandoff=false){handoff=showHandoff;if(step===0){navigation.showIntro();render(true);return;}navigation.enter();const j=journey();j.step=step;j.part=part;j.guideVersion=1;j.guideCursor=action??(step>=1&&step<=5&&part?GUIDE[step-1].length-1:0);j.visited=Math.max(j.visited,step);clock++;state.dirty=true;keep();schedule();render(true);}
+function go(step,part=0,action=null,showHandoff=false){handoff=showHandoff;reviewing=false;if(step===0){navigation.showIntro();render(true);return;}navigation.enter();const j=journey();j.step=step;j.part=part;j.guideVersion=1;j.guideCursor=action??(step>=1&&step<=5&&part?GUIDE[step-1].length-1:0);j.visited=Math.max(j.visited,step);clock++;state.dirty=true;keep();schedule();render(true);}
 function advance(){const j=journey(),c=cursor(j),pending=guideIssues(j,c);if(pending.length){updateHelp(true);const target=$(pending[0].id);target?.scrollIntoView({block:'center',behavior:'instant'});(target?.matches('input,textarea,button')?target:target?.querySelector('input,button'))?.focus({preventScroll:true});return;}
- if(j.step===6){j.finished=true;j.attestato={...j.attestato,id:crypto.randomUUID(),date:new Date().toISOString()};changed(true,true);$('completion')?.querySelector('h2')?.focus();$('completion')?.scrollIntoView({block:'start',behavior:'instant'});return;}
  if(c<GUIDE[j.step-1].length-1){beginRevision(j);go(j.step,1,c+1);}
  else{titleDefaults(j);const id=LABS[j.step-1].id;if(!j.done.includes(id))j.done.push(id);go(j.step+1,0,null,j.step===2&&!!caseById(j.health.focus)?.handoff);}
-}
-function interests(){
- const box=node('fieldset',null,'tm-options tm-interests');box.setAttribute('aria-labelledby','tmInterests');
- LABS.forEach((l,i)=>{const input=node('input');input.type='checkbox';input.name='ssas-interests';input.id=`interest-${l.id}`;input.value=l.id;input.checked=journey().interests.includes(l.id);input.addEventListener('change',()=>{const j=journey();j.interests=input.checked?[...j.interests,l.id]:j.interests.filter(id=>id!==l.id);changed(false);});
-  const lab=node('label',null,'tm-option');lab.htmlFor=input.id;const text=node('span',null,'tm-option-text');text.append(node('strong',VERBS[i]),node('span',INTEREST_ACTIVITIES[i].replace(/\.$/,''),'tm-interest-what'),node('span','Si studia in: '+l.subject,'tm-interest-subject'));lab.append(input,text,node('span',null,'tm-check'));box.append(lab);});
- return box;
 }
 function recap(j,c){
  const pick=(list,id)=>list.find(x=>x.id===id)?.label||'';
@@ -346,35 +344,40 @@ function recap(j,c){
   [pick(c.activities,j.service.activity),pick(c.access,j.service.access)].filter(Boolean).join(' · ')
  ];
 }
+// «Rivedi il tuo lavoro»: il riepilogo dei cinque passi, con il ritorno al finale.
 function summary(){
  const j=journey(),c=caseById(j.health.focus),s=node('section',null,'tm-summary');
  const head=node('div',null,'tm-summary-head');const h=node('h1',`Ecco che cosa hai fatto per ${c?.person||'la tua storia'}`);head.append(avatar(c,'large'),h);s.append(head);
  const list=node('ol',null,'tm-recap');list.setAttribute('aria-label','I tuoi cinque passi');
  (c?recap(j,c):[]).forEach((text,i)=>{const li=node('li');li.append(node('strong',VERBS[i]),node('span',text||'—','tm-recap-text'));list.append(li);});
  s.append(list);
- const q=node('h2','Che cosa ti è piaciuto di più?');q.id='tmInterests';s.append(q,node('p','Puoi sceglierne più di uno.','tm-hint'),interests());
- const field=node('textarea');field.id='nextIdea';field.name='ssas-next-idea';field.maxLength=180;field.rows=2;field.value=j.nextIdea;field.addEventListener('input',()=>{j.nextIdea=field.value;changed(false);});
- const lab=node('label','Vuoi chiedere qualcosa a studenti o docenti di questo indirizzo? (facoltativo)','tm-write-label');lab.htmlFor=field.id;s.append(lab,field);
- const help=node('div',null,'requirements tm-requirements');help.id='requirements';help.hidden=true;help.setAttribute('role','status');
  const actions=node('div',null,'tm-summary-actions');
- const back=btn('←',()=>go(5,1),'tm-back');back.setAttribute('aria-label','Indietro');
- const next=btn(j.finished?'Percorso concluso ✓':'Concludi',advance,'tm-next');next.id='continue';next.disabled=j.finished||guideIssues(j).length>0;
- actions.append(back,next);s.append(help,actions);mount.append(s);
- if(j.finished){
-  const done=node('section',null,'tm-complete');done.id='completion';const title=node('h2','Hai completato i cinque passi!');title.tabIndex=-1;
-  const liked=LABS.map((l,i)=>j.interests.includes(l.id)?INFINITIVES[i]:'').filter(Boolean);
-  done.append(title,node('p',`Ti è piaciuto di più: ${liked.join(', ')}.`));if(j.nextIdea.trim())done.append(node('p',`La tua domanda: ${j.nextIdea}`));
-  done.append(node('p','Porta il tuo lavoro all’incontro con studenti e docenti: sarà un buon punto da cui partire con le domande.'));
-  mount.append(done,courseVideos('ssas'),openDayCard(),
-    btn('Apri il tuo attestato',e=>certificateUI.open(e.currentTarget),'plain-button'),nextStep('ssas'));
- }
+ const back=btn('Torna al finale',()=>{reviewing=false;render(true);},'bt-pulsante tm-next');back.id='continue';
+ actions.append(back);s.append(actions);mount.append(s);
+}
+// Tutte le scelte fatte = percorso concluso. Si fissa una volta sola, anche per i lavori salvati prima di questa versione.
+function conclude(){
+ const j=journey();if(j.done.length<5)return;
+ const stamped=/^[0-9a-f-]{36}$/i.test(j.attestato?.id);
+ if(j.finished&&stamped)return;
+ j.finished=true;if(!stamped)j.attestato={...j.attestato,id:crypto.randomUUID(),date:new Date().toISOString()};
+ changed(false,true);
+}
+function finale(){
+ mostraFinale({corso:'ssas',contenitore:mount,treCose:TRE_COSE,apriAttestato:()=>certificateUI.prepara(),
+  rivediLavoro:()=>{reviewing=true;render(true);},token:()=>state.token,
+  salvato:async()=>{for(let i=0;i<40;i++){await sync();if(!syncing)break;await new Promise(r=>setTimeout(r,150));}return saved();}});
 }
 function render(focus=true){
  const focused=document.activeElement?.id,j=journey();nav.replaceChildren();mount.replaceChildren();current=null;
  const isIntro=navigation.isIntro()||j.step===0;if(isIntro||!handoffActive())handoff=false;
+ if(j.step!==6||isIntro)reviewing=false;
+ $('main').classList.add('bt-scuro');
+ const isFinal=!isIntro&&j.step===6&&!reviewing;
  const storyChoice=!isIntro&&j.step===1&&(cursor(j)===0||!caseById(j.health.focus));
- document.body.dataset.view=isIntro?'ingresso':j.step===6?'conclusione':handoffActive()?'passaggio':storyChoice?'storie':'passo';
+ document.body.dataset.view=isIntro?'ingresso':isFinal?'finale':j.step===6?'conclusione':handoffActive()?'passaggio':storyChoice?'storie':'passo';
  if(isIntro)intro();
+ else if(isFinal){conclude();finale();}
  else{progress();if(j.step===6)summary();else{if(handoffActive())handoffScreen();else if(storyChoice)stories();else step();bottomBar();}}
  navigation.write(isIntro?'ingresso':j.step===6?'conclusione':`laboratorio-${j.step}-${cursor(j)+1}`);updateLive();updateHelp();renderNotes();
  const headingTarget=mount.querySelector('h1');if(headingTarget)headingTarget.tabIndex=-1;
@@ -384,7 +387,7 @@ function context(){const j=journey();return `SSAS · ${caseById(j.health.focus)?
 function exportedProject(){return {experience:FORMAT,participant:state.participant,project:state.project,notes:state.notes.map(({pending,...n})=>n)};}
 function jsonHref(){return fileURL(JSON.stringify(exportedProject(),null,2),'application/json;charset=utf-8');}
 function wrap(s,max=70){const rows=[];let line='';for(const word of String(s).split(/\s+/)){if(word.length>max){if(line){rows.push(line);line='';}for(let i=0;i<word.length;i+=max)rows.push(word.slice(i,i+max));continue;}if(line.length+word.length+1>max){rows.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)rows.push(line);return rows;}
-function collectionSVG(){const j=journey(),items=summaryItems(j),cardHeights=items.map(x=>95+(wrap(x.title,40).length-1)*25+wrap(x.text,68).length*21+wrap(x.detail,75).length*18);let y=160;const cards=items.map((x,i)=>{const l=LABS[i],top=y;y+=cardHeights[i]+18;let ty=top+61;const title=wrap(x.title,40).map(t=>{const v=`<text x="54" y="${ty}" font-size="21" font-weight="700">${xml(t)}</text>`;ty+=25;return v;}).join('');const body=wrap(x.text,68).map(t=>{const v=`<text x="54" y="${ty+3}" font-size="15">${xml(t)}</text>`;ty+=21;return v;}).join('');const detail=wrap(x.detail,75).map(t=>{const v=`<text x="54" y="${ty+4}" font-size="12" fill="#596452">${xml(t)}</text>`;ty+=18;return v;}).join('');return `<rect x="30" y="${top}" width="700" height="${cardHeights[i]}" rx="15" fill="#fffdf4" stroke="#cbd6c3"/><text x="54" y="${top+28}" font-size="11" font-weight="700" fill="${l.color}">${xml(l.label)}</text>${title}${body}${detail}`;}).join('');const reflection=wrap(`Vorrei approfondire: ${LABS.filter(l=>j.interests.includes(l.id)).map(l=>l.label.toLowerCase()).join(', ')||'da scegliere'}. ${j.nextIdea}`,72);const height=y+reflection.length*20+90;return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 ${height}" role="img" aria-labelledby="title desc"><title id="title">I miei cinque laboratori SSAS</title><desc id="desc">I cinque lavori e le curiosità dichiarate nel percorso.</desc><rect width="760" height="${height}" fill="#f2f1e5"/><g font-family="Arial,sans-serif" fill="#294538"><text x="34" y="42" font-size="12">Bussola · IIS Meucci - Mattei | Decimomannu</text><text x="34" y="94" font-size="31" font-weight="700">I miei cinque laboratori SSAS</text><text x="34" y="126" font-size="13">Salute e bisogni · Relazione · Cura e autonomia · Creatività · Progettazione</text>${cards}${reflection.map((t,i)=>`<text x="34" y="${y+27+i*20}" font-size="14">${xml(t)}</text>`).join('')}<text x="34" y="${height-23}" font-size="11">Il mio percorso di esplorazione · Situazioni e personaggi immaginari</text></g></svg>`;}
+function collectionSVG(){const j=journey(),items=summaryItems(j),cardHeights=items.map(x=>95+(wrap(x.title,40).length-1)*25+wrap(x.text,68).length*21+wrap(x.detail,75).length*18);let y=160;const cards=items.map((x,i)=>{const l=LABS[i],top=y;y+=cardHeights[i]+18;let ty=top+61;const title=wrap(x.title,40).map(t=>{const v=`<text x="54" y="${ty}" font-size="21" font-weight="700">${xml(t)}</text>`;ty+=25;return v;}).join('');const body=wrap(x.text,68).map(t=>{const v=`<text x="54" y="${ty+3}" font-size="15">${xml(t)}</text>`;ty+=21;return v;}).join('');const detail=wrap(x.detail,75).map(t=>{const v=`<text x="54" y="${ty+4}" font-size="12" fill="#596452">${xml(t)}</text>`;ty+=18;return v;}).join('');return `<rect x="30" y="${top}" width="700" height="${cardHeights[i]}" rx="15" fill="#fffdf4" stroke="#cbd6c3"/><text x="54" y="${top+28}" font-size="11" font-weight="700" fill="${l.color}">${xml(l.label)}</text>${title}${body}${detail}`;}).join('');const liked=LABS.filter(l=>j.interests.includes(l.id)).map(l=>l.label.toLowerCase()),reflection=wrap(`${liked.length?`Vorrei approfondire: ${liked.join(', ')}. `:''}${j.nextIdea}`,72).filter(Boolean);const height=y+reflection.length*20+90;return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 ${height}" role="img" aria-labelledby="title desc"><title id="title">I miei cinque laboratori SSAS</title><desc id="desc">I cinque lavori e le curiosità dichiarate nel percorso.</desc><rect width="760" height="${height}" fill="#f2f1e5"/><g font-family="Arial,sans-serif" fill="#294538"><text x="34" y="42" font-size="12">Bussola · IIS Meucci - Mattei | Decimomannu</text><text x="34" y="94" font-size="31" font-weight="700">I miei cinque laboratori SSAS</text><text x="34" y="126" font-size="13">Salute e bisogni · Relazione · Cura e autonomia · Creatività · Progettazione</text>${cards}${reflection.map((t,i)=>`<text x="34" y="${y+27+i*20}" font-size="14">${xml(t)}</text>`).join('')}<text x="34" y="${height-23}" font-size="11">Il mio percorso di esplorazione · Situazioni e personaggi immaginari</text></g></svg>`;}
 function svgHref(){return fileURL(collectionSVG(),'image/svg+xml;charset=utf-8');}
 document.addEventListener('click',async event=>{const a=event.target.closest?.('a[download]');if(!a||!['downloadPortfolio','downloadProject','backupBeforeReset'].includes(a.id)||!['localhost','127.0.0.1'].includes(location.hostname))return;if(a.dataset.ready==='true'){delete a.dataset.ready;return;}event.preventDefault();try{const kind=a.id==='downloadPortfolio'?'svg':'json';const r=await fetch('/__bussola/export',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind,content:kind==='svg'?collectionSVG():JSON.stringify(exportedProject(),null,2)})});if(!r.ok)throw new Error();a.href=(await r.json()).url;a.dataset.ready='true';a.click();}catch{a.href=a.id==='downloadPortfolio'?svgHref():jsonHref();a.dataset.ready='true';a.click();}});
 function renderNotes(){const pending=state.notes.filter(n=>n.pending).length;$('noteCount').textContent=String(state.notes.length);const list=$('notesList');list.replaceChildren();if(!state.notes.length)list.append(node('p','Qui ritroverai ogni nota con il punto del percorso a cui si riferisce.','field-help'));for(const n of state.notes){const entry=node('article',null,'note-entry');entry.append(node('div',`${n.contesto} · ${n.ruolo_dichiarato==='docente'?'Prova docente':'Prova alunno'}`,'note-meta'),node('p',n.testo),node('div',n.pending?'Conservata sul dispositivo · da inviare':localTest?'Salvata nel database di prova':'Salvata online','note-sync'));list.append(entry);}if(notesDialog.open&&pending)$('noteStatus').textContent='La nota è sul dispositivo. Il salvataggio online è in corso o da riprovare.';else if(notesDialog.open&&state.notes.length)$('noteStatus').textContent='Le tue note sono salvate, ciascuna separatamente.';}
@@ -404,7 +407,14 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!pageMenu.hidden&&!
 document.addEventListener('click',e=>{if(!pageMenu.hidden&&!pageMenu.contains(e.target)&&!menuToggle.contains(e.target))setMenu(false);});
 pageMenu.addEventListener('click',e=>{const item=e.target.closest('button,a');if(item&&item.id!=='retrySave')setMenu(false);});
 for(const d of document.querySelectorAll('dialog'))d.addEventListener('close',()=>setTimeout(()=>{if(document.activeElement===document.body||!document.activeElement?.offsetParent)menuToggle.focus({preventScroll:true});}));
-const classUI=setupClass({key:KEY,offerGuest:false,isIntro:()=>navigation.isIntro()||journey().step===0,start:startExperience,token:()=>state.token,ensure:async()=>{if(!connected)await connect();if(!state.participant)throw new Error('Il collegamento non è riuscito. Riprova tra poco.');}});
+// Ingresso comune «Come ti chiami?»: al posto della vecchia finestra «Come vuoi iniziare?».
+const apriIngresso=()=>{
+ ingressoAperto=true;
+ return mostraIngresso({corso:'ssas',contenitore:mount,classe:classUI,onInizia:openExperience,onIndietro:()=>{ingressoAperto=false;render(true);}})
+  .finally(()=>{ingressoAperto=false;$('main').classList.add('bt-scuro');});
+};
+const classUI=setupClass({key:KEY,offerGuest:false,ingressoComune:true,apriIngresso,isIntro:()=>navigation.isIntro()||journey().step===0,start:startExperience,token:()=>state.token,ensure:async()=>{if(!connected)await connect();if(!state.participant)throw new Error('Il collegamento non è riuscito. Riprova tra poco.');}});
 const certificateUI=setupParticipantCertificate({project:()=>state.project,journey:()=>journey(),participant:()=>state.participant,revision:()=>state.revision,identity:()=>classUI.identity(),save:()=>changed(false,true)});
+interruttoreSuono(pageMenu);
 const courseLabel=document.querySelector('.experience-path [aria-current]');if(localTest&&courseLabel)courseLabel.textContent='SSAS · prova locale';
 restoreRoute(navigation.route());render(false);if(state.token)sync();
