@@ -10,7 +10,8 @@ import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor'
 import {restore,remoteProject} from './sia-records.mjs?v=20261010-all';
 import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261114-a3';
 import {mostraFinale} from './bussola-finale-comune.mjs?v=20261114-a3';
-import {scintilla,interruttoreSuono} from './bussola-effetti.mjs?v=20261114-tema';
+import {scintilla} from './bussola-effetti.mjs?v=20261114-tema';
+import {iniziaMenu} from './bussola-menu.mjs?v=20261115-riordino';
 import {STORE as BASE_STORE,LABS,PROCESS,FIELDS,BLOCKS,ROLES,find,createProject,processRun,processSignature,handoffRun,records,query,programSignature,runProgram,uiSignature,runUI,accessSignature,runAccess,currentRuns,ready,completed,advance,context,addNote,validProject,invalidate} from './sia-core.mjs?v=20261115-a4';
 const COURSE='sia';
 const $=id=>document.getElementById(id);
@@ -330,5 +331,5 @@ classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());
-interruttoreSuono(document.querySelector('.site-header'));
+iniziaMenu();
 restoreRoute(navigation.route());render(false,false);if(remote.token())remote.sync();

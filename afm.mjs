@@ -5,7 +5,8 @@ import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor'
 import {restore,remoteProject} from './afm-records.mjs?v=20261010-all';
 import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261114-a3';
 import {mostraFinale} from './bussola-finale-comune.mjs?v=20261114-a3';
-import {scintilla,interruttoreSuono} from './bussola-effetti.mjs?v=20261114-tema';
+import {scintilla} from './bussola-effetti.mjs?v=20261114-tema';
+import {iniziaMenu} from './bussola-menu.mjs?v=20261115-riordino';
 const COURSE='afm';
 import {STORE as BASE_STORE,LABS,OFFERS,TASKS,OBSTACLES,AGREEMENTS,AMENDMENTS,TONES,QUESTIONS,STAGES,find,createProject,offer,feature,question,economics,cashflow,ready,choose,advance,completed,posterTitle,context,addNote,validProject} from './afm-core.mjs?v=20261115-a5';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -310,5 +311,5 @@ classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());
-interruttoreSuono(document.querySelector('.site-header'));
+iniziaMenu();
 restoreRoute(navigation.route());render(false,false);if(remote.token())remote.sync();

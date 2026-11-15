@@ -27,7 +27,7 @@ for (const course of courses) {
     }
   }
   const html = readFileSync(new URL(`../bussola-${course}.html`, import.meta.url), 'utf8');
-  assert.match(html, /<nav class="experience-path"[^>]*><a href="missioni\.html">← Prova gli indirizzi<\/a>/);
+  assert.match(html, /<nav class="experience-path"[^>]*><a href="missioni\.html" aria-label="Torna a Prova gli indirizzi">← Indirizzi<\/a>/);
   assert.doesNotMatch(html, /href="bussola\.html"/);
 }
 let fallback = false;

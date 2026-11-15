@@ -1,0 +1,26 @@
+/* Menu in testa alle prove (AFM, SIA, Turismo, CAT): una riga sottile e un pannello. Vedi bussola-menu.mjs */
+html.bt-pagina-prova .experience-path{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:6px max(14px,calc((100vw - 1040px)/2));position:relative;z-index:35;font:700 .9375rem/1.2 var(--bt-carattere)}
+html.bt-pagina-prova .experience-path a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
+html.bt-pagina-prova .experience-path a:hover{text-decoration:underline;text-underline-offset:4px}
+.tm-menu-toggle{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;font:700 .9375rem var(--bt-carattere);cursor:pointer}
+.tm-menu-icon{display:block;width:16px;height:2px;background:currentColor;border-radius:2px;box-shadow:0 -5px 0 currentColor,0 5px 0 currentColor}
+.tm-menu-toggle[data-alert=true]::after{content:"";position:absolute;top:6px;right:8px;width:10px;height:10px;border-radius:50%;background:var(--bt-lime);box-shadow:0 0 0 2px var(--bt-fascia)}
+.tm-menu{position:fixed;z-index:40;top:58px;right:max(12px,calc((100vw - 1040px)/2));width:min(330px,calc(100vw - 24px));max-height:calc(100dvh - 70px);overflow:auto;display:flex;flex-direction:column;gap:2px;padding:8px;background:var(--bt-carta);color:var(--bt-inchiostro);border:2px solid var(--bt-linea);border-radius:var(--bt-raggio);box-shadow:var(--bt-ombra)}
+.tm-menu[hidden]{display:none!important}
+.tm-menu .tm-menu-item{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;padding:10px 12px;border:0;border-radius:12px;background:transparent;color:var(--bt-inchiostro);font:700 1rem/1.3 var(--bt-carattere);text-align:left;text-decoration:none;box-shadow:none;cursor:pointer}
+.tm-menu .tm-menu-item:hover{background:var(--bt-carta-tinta)}
+.tm-menu #noteCount{min-width:28px;padding:2px 8px;border-radius:999px;background:var(--bt-palco-chiaro);color:#fff;font-size:.875rem;text-align:center}
+.tm-menu .tm-save{display:block;margin:4px 0;padding:10px 12px;border-top:1px solid var(--bt-linea);border-bottom:1px solid var(--bt-linea);color:var(--bt-inchiostro-tenue);font-size:.875rem;line-height:1.4}
+.tm-menu .tm-save span{display:block;color:inherit;font-size:inherit}
+.tm-menu #retrySave{display:inline-flex;align-items:center;min-height:44px;margin-top:4px;padding:0;border:0;background:none;color:var(--bt-colore-scuro);font:700 .9375rem var(--bt-carattere);text-decoration:underline;cursor:pointer}
+.tm-menu #retrySave[hidden]{display:none}
+.tm-menu details{margin:2px 0;padding:0;border:0;background:transparent;color:var(--bt-inchiostro)}
+.tm-menu details>summary{display:flex;align-items:center;min-height:48px;padding:10px 12px;border-radius:12px;color:var(--bt-inchiostro);font:700 1rem/1.3 var(--bt-carattere);cursor:pointer}
+.tm-menu details>summary:hover{background:var(--bt-carta-tinta)}
+.tm-menu details>p,.tm-menu details .recovery p{margin:6px 12px;color:var(--bt-inchiostro-tenue);font-size:.875rem}
+.tm-menu details .recovery{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:4px 12px 10px}
+.tm-menu details label{color:var(--bt-inchiostro);font-size:.875rem}
+.tm-menu details select{width:100%;min-height:44px;color:var(--bt-inchiostro);background:#fff}
+.tm-menu details .quiet{width:100%;margin:4px 0 0;min-height:44px}
+.tm-menu .bt-suono{align-self:flex-start;margin:4px 4px 2px}
+@media print{html.bt-pagina-prova .experience-path,.tm-menu{display:none!important}}

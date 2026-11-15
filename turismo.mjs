@@ -5,7 +5,8 @@ import {setupTourismRemote} from './turismo-remote.mjs?v=20261115-a7';
 import {rememberParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261114-a3';
 import {mostraFinale} from './bussola-finale-comune.mjs?v=20261114-a3';
-import {scintilla,interruttoreSuono} from './bussola-effetti.mjs?v=20261114-tema';
+import {scintilla} from './bussola-effetti.mjs?v=20261114-tema';
+import {iniziaMenu} from './bussola-menu.mjs?v=20261115-riordino';
 import {KEY as BASE_KEY,LABS,PLACES,QUESTIONS,WELCOMES,PLANS,RAIN,SERVICES,TERMS,TONES,createProject,restore,choose,canAdvance,next,complete,costs} from './turismo-core.mjs?v=20261115-a7';
 const COURSE='turismo';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -280,5 +281,5 @@ classAccess=setupClass({key:KEY,token:()=>remote.token(),ensure:()=>remote.ensur
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());
-interruttoreSuono(document.querySelector('.site-header'));
+iniziaMenu();
 restoreRoute(navigation.route());keep();render();showSavedActivities();if(remote.token())remote.sync();
