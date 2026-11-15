@@ -1,4 +1,5 @@
 import {reviseCase} from './ssas-situazioni-revisione.mjs';
+// ATTENZIONE: i testi che il ragazzo legge sono riscritti e sovrascritti da ssas-situazioni-revisione.mjs (reviseCase). Si modifichino lì.
 // Casi inventati per l’orientamento. Adattamenti delle UDA, per ragazzi di 13–14 anni.
 export const CASES = [
  {
@@ -26,7 +27,7 @@ export const CASES = [
   purposes:[['Far notare un ostacolo','Osservare lo spazio dal punto di vista di chi lo usa.'],['Far partecipare alle scelte','Concordare ruoli e sostegni con la persona.']],
   formats:[['Una mappa dello spazio','Due indicazioni per una postazione accessibile.','«Irene lavora da sola al tavolo più comodo.»',['Prepariamo un tavolo raggiungibile nel gruppo e teniamo libero il passaggio.','Chiediamo a Irene dove vuole lavorare e sistemiamo insieme gli strumenti.']],['Un gioco da adattare','Una regola che permetta di giocare insieme.','«Irene guarda mentre gli altri fanno la prova.»',['Ogni squadra sceglie una prova che tutti possano svolgere e concorda i ruoli.','Adattiamo strumenti e spazio; Irene sceglie la parte che vuole svolgere.']]],
   test:'Irene dice: «Il tavolo va bene, ma vorrei scegliere il mio ruolo.»',responses:[['«Posso scegliere che cosa fare?»','Lo spazio è migliorato. Aggiungi anche come si concordano i ruoli.'],['«Posso cambiare postazione?»','Controlla che l’accesso resti possibile anche quando ci si sposta.']],
-  service:'Laboratorio accessibile',team:'Operatori e professionisti dei servizi concordano attività e sostegni con le persone.',activities:[['Una prova di strumenti e spazi','Ogni persona sperimenta e indica che cosa funziona.'],['Un’attività di gruppo adattabile','Ruoli e materiali cambiano secondo le richieste.']],
+  service:'Laboratorio per tutti',team:'Operatori e professionisti dei servizi concordano attività e sostegni con le persone.',activities:[['Una prova di strumenti e spazi','Ogni persona sperimenta e indica che cosa funziona.'],['Un’attività di gruppo adattabile','Ruoli e materiali cambiano secondo le richieste.']],
   accessIssue:'La sala scelta ha un gradino all’ingresso.',access:[['Scegliere una sala con accesso utilizzabile','Si verifica il percorso prima di invitare le persone.'],['Verificare con il servizio una soluzione accessibile','La soluzione deve funzionare davvero, anche per gli spostamenti.']],checks:[['Se tutti riescono a partecipare','Si osservano gli ostacoli rimasti.'],['Se le persone possono scegliere il proprio ruolo','Una breve restituzione raccoglie le loro richieste.']]
  },
  {

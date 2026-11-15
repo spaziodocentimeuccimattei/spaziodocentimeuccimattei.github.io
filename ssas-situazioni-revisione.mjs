@@ -51,20 +51,20 @@ const revisioni={
   supportGoal:'Irene vuole lavorare alla mostra insieme al gruppo.',
   supports:[['Un tavolo a cui Irene arriva','Prende gli strumenti stando alla sua postazione.'],['Un passaggio libero','Può muoversi tra le postazioni.'],['Un aiuto deciso da lei','Irene dice quando e per che cosa serve.']],
   request:'«Vorrei spostarmi vicino agli altri per confrontare le foto. Possiamo sistemare anche quella postazione?»',
-  adaptations:[['Preparare una postazione accessibile dentro il gruppo','Lo spazio cambia, così si confronta con gli altri.'],['Scegliere con Irene gli spostamenti utili','Decidete dove lavorare e tenete liberi i passaggi.']],
+  adaptations:[['Preparare un posto dove Irene arriva, dentro il gruppo','Lo spazio cambia, così si confronta con gli altri.'],['Scegliere con Irene gli spostamenti utili','Decidete dove lavorare e tenete liberi i passaggi.']],
   purposes:[['Far notare gli ostacoli','Guarda lo spazio come lo vive chi lo usa.'],['Far scegliere a tutti che cosa fare','Ruoli e aiuti si decidono con le persone.']],
   formats:[
    {label:'Una mappa della sala',detail:'Poche indicazioni per un posto in cui tutti arrivano.',draft:'«Per Irene abbiamo preparato un tavolo separato, lontano dal gruppo.»',byPurpose:{p1:['Lasciamo libero il passaggio dall’ingresso ai tavoli. Foto e strumenti devono essere alla portata di tutti.','Prima di aprire, chiediamo a chi usa lo spazio se tavoli e passaggi vanno bene.'],p2:['Sulla mappa ognuno segna dove vuole lavorare. Poi decidiamo insieme postazioni e materiali.','Chiediamo a Irene dove vuole lavorare. Mettiamo gli strumenti in modo che scelga le foto con gli altri.']}},
-   {label:'Un gioco da adattare',detail:'Un gioco per i visitatori, con ruoli e strumenti adattabili.',draft:'«I visitatori fanno la prova in piedi. Chi non riesce può guardare.»',byPurpose:{p1:['Le foto si guardano da seduti o in piedi. Comandi e materiali devono essere alla portata di tutti.','Prima del gioco proviamo strumenti e spazio con chi partecipa e togliamo gli ostacoli.'],p2:['Ognuno sceglie se guardare le foto, abbinarle o raccontarle. I ruoli si decidono nel gruppo.','Adattiamo strumenti e regole con chi gioca. Irene sceglie la parte che vuole fare.']}}
+   {label:'Un gioco che tutti possono fare',detail:'Un gioco per i visitatori, con ruoli e strumenti che si possono cambiare.',draft:'«I visitatori fanno la prova in piedi. Chi non riesce può guardare.»',byPurpose:{p1:['Le foto si guardano da seduti o in piedi. Comandi e materiali devono essere alla portata di tutti.','Prima del gioco proviamo strumenti e spazio con chi partecipa e togliamo gli ostacoli.'],p2:['Ognuno sceglie se guardare le foto, abbinarle o raccontarle. I ruoli si decidono nel gruppo.','Cambiamo strumenti e regole insieme a chi gioca. Irene sceglie la parte che vuole fare.']}}
   ],
   test:'Irene legge la vostra proposta per la mostra.',
   responses:[['«È chiaro come posso partecipare?»','Rileggi: dice come usare lo spazio o entrare nel gioco?'],['«Posso scegliere il mio ruolo?»','Controlla che ognuno possa scegliere che cosa fare.']],
   team:'L’educatrice e chi partecipa decidono insieme spazi, materiali e ruoli.',
-  activities:[['Una prova di strumenti e spazi','Ognuno prova e dice che cosa funziona.'],['Un’attività di gruppo adattabile','Ruoli e materiali cambiano secondo le richieste.']],
+  activities:[['Una prova di strumenti e spazi','Ognuno prova e dice che cosa funziona.'],['Un’attività di gruppo che si può cambiare','Ruoli e materiali cambiano secondo le richieste.']],
   accessIssue:'La sala scelta ha un gradino all’ingresso.',
   access:[['Scegliere una sala senza gradini','Controlli il percorso prima di invitare le persone.'],['Chiedere al servizio una soluzione che funzioni','Deve funzionare davvero, anche negli spostamenti.']],
   checks:[['Se tutti riescono a partecipare','Guardi quali ostacoli restano.'],['Se ognuno può scegliere il suo ruolo','Chiedi a tutti che cosa cambierebbero.']],
-  badges:['Hai capito che cosa separa Irene dal lavoro che vuole fare.','Hai ascoltato Irene prima di decidere qualcosa per lei.','Hai adattato spazi e aiuti alle scelte di Irene.','Hai preparato indicazioni o regole perché tutti possano partecipare.','Hai organizzato un laboratorio dove ognuno arriva e sceglie il suo ruolo.']
+  badges:['Hai capito che cosa separa Irene dal lavoro che vuole fare.','Hai ascoltato Irene prima di decidere qualcosa per lei.','Hai cambiato spazi e aiuti seguendo le scelte di Irene.','Hai preparato indicazioni o regole perché tutti possano partecipare.','Hai organizzato un laboratorio dove ognuno arriva e sceglie il suo ruolo.']
  },
  immigrazione:{
   who:'Sara, 13 anni',
@@ -94,9 +94,9 @@ const revisioni={
   team:'L’educatrice e gli allenatori preparano l’accoglienza. Se serve, un mediatore aiuta chi parla un’altra lingua a capirsi.',
   activities:[['Una guida illustrata della squadra','Mostra luoghi, passaggi e persone a cui chiedere.'],['Un incontro per conoscersi','Ognuno sceglie che cosa raccontare.']],
   accessIssue:'Le informazioni sono solo in italiano, con frasi lunghe.',
-  access:[['Usare immagini e parole semplici','Chi legge può indicare che cosa non è chiaro.'],['Chiedere un incontro con un mediatore','Aiuta a capirsi quando serve.']],
+  access:[['Usare immagini e parole semplici','Chi legge può indicare che cosa non è chiaro.'],['Chiedere l’aiuto di un mediatore, che traduce e spiega','Aiuta a capirsi quando serve.']],
   checks:[['Se tutti capiscono i passaggi','Chiedi che cosa faranno dopo.'],['Se riescono a fare domande','Raccogli i dubbi, anche quelli detti piano.']],
-  badges:['Hai capito perché le istruzioni sono un problema per Sara.','Hai chiesto a Sara che cosa capisce e che cosa vuole provare.','Hai scelto aiuti che lasciano a Sara la parte principale.','Hai adattato parole e immagini per chi arriva per la prima volta.','Hai organizzato l’accoglienza pensando a chi non capisce e vuole chiedere.']
+  badges:['Hai capito perché le istruzioni sono un problema per Sara.','Hai chiesto a Sara che cosa capisce e che cosa vuole provare.','Hai scelto aiuti che lasciano a Sara la parte principale.','Hai scelto parole e immagini per chi arriva per la prima volta.','Hai organizzato l’accoglienza pensando a chi non capisce e vuole chiedere.']
  },
  anziani:{
   who:'Rosa, 76 anni',
@@ -136,7 +136,7 @@ const revisioni={
   role:'in classe con lui',
   handoff:'Hai ascoltato Tommaso e pensato a un adulto di fiducia. Ora tocca a chi ascolta i ragazzi di mestiere. Prova tu il lavoro dell’educatrice della scuola.',
   scene:'Tommaso, 14 anni, da qualche settimana non vuole leggere ad alta voce in classe. Dice di sentirsi in difficoltà. Alcuni compagni lo prendono in giro.',
-  need:'Tommaso ha bisogno di qualcuno che lo ascolti, senza dargli etichette.',
+  need:'Tommaso ha bisogno di qualcuno che lo ascolti, senza giudicarlo.',
   observation:'Che cosa sta vivendo Tommaso?',
   explanations:['Tommaso fa fatica a leggere davanti alla classe. Le prese in giro gli rendono difficile anche chiedere aiuto.','Tommaso evita di leggere e dice di sentirsi in difficoltà. Meglio ascoltarlo, senza decidere noi che cosa ha.'],
   contexts:['Tommaso è in classe con te. Da qualche settimana non vuole leggere ad alta voce e qualcuno ride di lui.','Dopo le lezioni lo avvicini, lontano dai compagni. Vuoi ascoltarlo senza metterlo a disagio.','Adesso fai il lavoro dell’educatrice della scuola di Tommaso. Lui cerca una persona di fiducia con cui parlare.','Con i ragazzi prepari un messaggio sulle parole rispettose e su come chiedere aiuto.','La scuola vuole spiegare meglio come arrivare allo spazio di ascolto. Lo organizzi tu.'],
@@ -147,20 +147,20 @@ const revisioni={
   supportGoal:'Tommaso vuole un modo per parlare con una persona di fiducia.',
   supports:[['Un momento tranquillo per ascoltarlo','Tommaso sceglie che cosa raccontare.'],['Un messaggio da preparare insieme','Lo aiuta ad aprire il dialogo con un adulto.'],['Un adulto di fiducia a cui rivolgersi','Non resta tutto sulle spalle dei compagni.']],
   request:'«Vorrei parlarne, ma non davanti alla classe.»',
-  adaptations:[['Organizzare un incontro riservato con un adulto','Tommaso spiega la richiesta in un posto tranquillo.'],['Aiutarlo a scrivere come vuole essere ascoltato','Il messaggio apre il contatto con l’adulto scelto.']],
-  purposes:[['Far cambiare le parole che feriscono','Rivede insulti ed etichette.'],['Far conoscere un aiuto','Invita a parlare con un adulto o un professionista.']],
+  adaptations:[['Organizzare un incontro in privato con un adulto','Tommaso spiega la richiesta in un posto tranquillo.'],['Aiutarlo a scrivere come vuole essere ascoltato','Il messaggio apre il contatto con l’adulto scelto.']],
+  purposes:[['Far cambiare le parole che feriscono','Toglie gli insulti e le parole che giudicano.'],['Far conoscere un aiuto','Invita a parlare con un adulto o un professionista.']],
   formats:[
-   {label:'Un messaggio per la scuola',detail:'Una frase rispettosa e un invito a chiedere aiuto.',draft:'«Per aiutare chi è in difficoltà, invitatelo a reagire e a non pensarci.»',byPurpose:{p1:['Se un compagno ti racconta una difficoltà, ascoltalo. Ridere di lui può impedirgli di chiedere aiuto.','Prima di giudicare, ascolta chi vive la difficoltà. Le parole rispettose permettono di parlarne.'],p2:['Se stai vivendo una difficoltà, parlane con un adulto di fiducia. Chiedi come arrivare allo spazio di ascolto.','Hai bisogno di parlare con qualcuno? Chiedi a un adulto della scuola come contattare lo spazio di ascolto, in modo riservato.']}},
-   {label:'Un dialogo da provare',detail:'Una conversazione che lascia spazio a chi parla.',draft:'«— Faccio fatica a leggere davanti alla classe. — Non pensarci e vedrai che passa.»',byPurpose:{p1:['— Quando leggo, qualcuno ride. — Mi dispiace. Se vuoi, raccontami che cosa succede, senza fretta.','— Mi chiamano strano perché mi blocco. — Non è giusto. Ti va di raccontarmi che cosa è successo?'],p2:['— Vorrei chiedere aiuto, ma non so a chi. — Possiamo informarci con un adulto della scuola sullo spazio di ascolto.','— Non voglio parlarne davanti ai compagni. — Possiamo chiedere a un adulto un momento riservato.']}}
+   {label:'Un messaggio per la scuola',detail:'Una frase rispettosa e un invito a chiedere aiuto.',draft:'«Per aiutare chi è in difficoltà, invitatelo a reagire e a non pensarci.»',byPurpose:{p1:['Se un compagno ti racconta una difficoltà, ascoltalo. Ridere di lui può impedirgli di chiedere aiuto.','Prima di giudicare, ascolta chi vive la difficoltà. Le parole rispettose permettono di parlarne.'],p2:['Se stai vivendo una difficoltà, parlane con un adulto di fiducia. Chiedi come arrivare allo spazio di ascolto.','Hai bisogno di parlare con qualcuno? Chiedi a un adulto della scuola come contattare lo spazio di ascolto, in privato.']}},
+   {label:'Un dialogo da provare',detail:'Una conversazione che lascia spazio a chi parla.',draft:'«— Faccio fatica a leggere davanti alla classe. — Non pensarci e vedrai che passa.»',byPurpose:{p1:['— Quando leggo, qualcuno ride. — Mi dispiace. Se vuoi, raccontami che cosa succede, senza fretta.','— Mi chiamano strano perché mi blocco. — Non è giusto. Ti va di raccontarmi che cosa è successo?'],p2:['— Vorrei chiedere aiuto, ma non so a chi. — Possiamo informarci con un adulto della scuola sullo spazio di ascolto.','— Non voglio parlarne davanti ai compagni. — Possiamo chiedere a un adulto un momento in privato.']}}
   ],
   test:'Un ragazzo legge il messaggio preparato per la scuola.',
   responses:[['«Posso scrivere prima?»','Controlla se si può chiedere aiuto anche scrivendo.'],['«Posso scegliere con chi parlare?»','Rileggi: aiuta a trovare un adulto senza raccontare a tutti?']],
   team:'Una persona esperta di ascolto accoglie le richieste. Gli adulti della scuola aiutano a trovarla.',
-  activities:[['Un colloquio di ascolto','Si sceglie un momento per parlare.'],['Un incontro sulle parole e le etichette','Il gruppo rivede le frasi, nessuno deve raccontare di sé.']],
+  activities:[['Un colloquio di ascolto','Si sceglie un momento per parlare.'],['Un incontro sulle parole che giudicano','Il gruppo rivede le frasi, nessuno deve raccontare di sé.']],
   accessIssue:'Gli appuntamenti si chiedono a voce, davanti a tutti.',
-  access:[['Permettere una richiesta riservata','Si contatta l’adulto senza dirlo agli altri.'],['Fissare un momento tranquillo, solo in due','È un primo spazio per parlare con calma.']],
+  access:[['Permettere di chiedere aiuto in privato','Si contatta l’adulto senza dirlo agli altri.'],['Fissare un momento tranquillo, solo in due','È un primo spazio per parlare con calma.']],
   checks:[['Se è chiaro come chiedere un appuntamento','Controlli che le informazioni si capiscano.'],['Se le parole usate sono rispettose','Raccogli frasi da migliorare, senza fare nomi.']],
-  badges:['Hai capito la difficoltà di Tommaso e come lo trattano i compagni.','Hai ascoltato Tommaso rispettando i suoi tempi.','Hai preparato un modo per chiedere aiuto in modo riservato.','Hai riscritto parole rivolte a chi vive una difficoltà.','Hai organizzato come arrivare a uno spazio di ascolto.']
+  badges:['Hai capito la difficoltà di Tommaso e come lo trattano i compagni.','Hai ascoltato Tommaso rispettando i suoi tempi.','Hai preparato un modo per chiedere aiuto in privato.','Hai riscritto parole rivolte a chi vive una difficoltà.','Hai organizzato come arrivare a uno spazio di ascolto.']
  },
  infanzia:{
   who:'Nico, 6 anni',
@@ -191,8 +191,8 @@ const revisioni={
   activities:[['Un gioco sulle emozioni','Con immagini, parole e gesti.'],['Una storia con scelte','I bambini scelgono come continua.']],
   accessIssue:'Per partecipare, ogni bambino dovrebbe parlare davanti a tutti.',
   access:[['Offrire anche immagini e disegni','Si può partecipare senza parole.'],['Cominciare in coppia o in piccolo gruppo','È un modo più tranquillo di partecipare.']],
-  checks:[['Se i bambini trovano un modo per partecipare','Osservi come scelgono di esprimersi.'],['Se propongono di cambiare il gioco','Le loro idee ti aiutano a rivederlo.']],
-  badges:['Hai capito che Nico e Lia vogliono giocare insieme.','Hai scelto un modo di ascoltare adatto a un bambino di sei anni.','Hai trovato un aiuto per far riprovare i bambini insieme.','Hai preparato una storia o delle carte per esprimersi giocando.','Hai organizzato un’attività pensando a come partecipa ogni bambino.']
+  checks:[['Se i bambini trovano un modo per partecipare','Osservi come scelgono di dire che cosa provano.'],['Se propongono di cambiare il gioco','Le loro idee ti aiutano a rivederlo.']],
+  badges:['Hai capito che Nico e Lia vogliono giocare insieme.','Hai scelto un modo di ascoltare giusto per un bambino di sei anni.','Hai trovato un aiuto per far riprovare i bambini insieme.','Hai preparato una storia o delle carte per dire che cosa si prova.','Hai organizzato un’attività pensando a come partecipa ogni bambino.']
  }
 };
 
@@ -222,4 +222,11 @@ export function materialCheck(c,goal){
  return {context:c?.test||'',questions:c?.responses.map(r=>[r.label,r.detail])||[]};
 }
 
-export const INTEREST_ACTIVITIES=['Capire che cosa sta succedendo a una persona.','Ascoltare una persona e fare le domande giuste.','Trovare gli aiuti giusti per una persona.','Creare un materiale per altre persone.','Organizzare un’attività a cui tutti partecipano.'];
+// Che cosa fa il ragazzo in ciascun laboratorio (titoli concreti, al posto di «Un bisogno da capire», «Un aiuto da concordare»…).
+export const LAB_TITLES=['Capisci che cosa succede','Ascolti e fai le domande giuste','Scegli gli aiuti per la persona','Prepari un materiale per gli altri','Organizzi un’attività per tutti'];
+// Una frase per laboratorio che lega l'attività all'indirizzo. Fonte: indirizzi.html e data/indirizzi.json (vedi testi-ssas.md).
+export const SSAS_LEGAMI=['In SSAS impari a osservare i bisogni delle persone.','In SSAS impari ad ascoltare e a comunicare in modo chiaro.','In SSAS impari a cambiare aiuti e ambienti per tutti.','In SSAS impari a progettare attività per il benessere.','In SSAS impari a organizzare attività e a lavorare in gruppo.'];
+// Le «tre cose» del finale comune.
+export const TRE_COSE=['Osservi i bisogni delle persone e le ascolti.','Cambi aiuti e ambienti, perché tutti possano partecipare.','Progetti attività e lavori con altri professionisti.'];
+// Il passaggio dall'amico all'operatore (dopo il laboratorio 2). La frase specifica della storia sta in `handoff`.
+export const PASSAGGIO={titolo:'Ora cambi ruolo',occhiello:'Da amico a professionista',mestiere:'Aiutare le persone è un mestiere che si impara.',scuola:'In SSAS cominci a scuola: impari a osservare i bisogni, comunicare e progettare attività.'};
