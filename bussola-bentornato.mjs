@@ -74,8 +74,15 @@ async function risolvi(testo) {
   if (ritorno) return apriBentornato(ritorno);
   const classe = classCode(testo);
   if (classe) {
-    const d = await chiama(API_GESTIONE, '', {action: 'class_info', classe});
-    return classeRiconosciuta(classe, d.classe);
+    let nonClasse = null;
+    try { const d = await chiama(API_GESTIONE, '', {action: 'class_info', classe}); return classeRiconosciuta(classe, d.classe); }
+    catch (e) { nonClasse = e; }
+    // Con CODICE_BREVE_ATTIVO un codice che non è di una classe può essere un codice personale di ritorno (stesso formato, senza L).
+    if (CODICE_BREVE_ATTIVO && nonClasse.stato === 404) {
+      const m = await import('./bussola-ritorno-codice.mjs?v=20261115-a11');
+      if (m.eCodicePersonale(classe)) return m.apriConCodice(classe, {el, mostra, nonTrovato});
+    }
+    throw nonClasse;
   }
   throw new Error(CODICE_BREVE_ATTIVO ? 'Il codice non è valido. Controlla di averlo scritto bene.' : 'Non riconosco questo codice. Se hai il QR, inquadralo con la fotocamera del telefono.');
 }
