@@ -66,7 +66,7 @@ try{
  record('Alternativa nell’ingresso apre una nuova attività',p.button,'Inizia');
  record('Alternativa nell’ingresso conserva il recupero',p.$('savedActivities').querySelectorAll('a').length,1);
  p.$('openClass').click();
- [...p.w.document.querySelectorAll('button')].find(b=>b.textContent==='Cambia partecipante').click();
+ [...p.w.document.querySelectorAll('button')].find(b=>b.textContent==='Entra un’altra persona').click();
  const anotherURL=p.destination;p.w.close();
  p=await page(anotherURL);await until(()=>p.$('saved').textContent.includes('Tutto salvato'),'cambio partecipante');
  record('Altra persona vede Inizia',p.button,'Inizia');

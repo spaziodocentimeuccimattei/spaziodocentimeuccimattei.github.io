@@ -80,6 +80,6 @@ const m2=new Map();async function load2(url){if(!m2.has(url.href))m2.set(url.hre
 const controller=await load2(new URL('bussola-classe.mjs',base));await controller.link((id,parent)=>load2(new URL(id,parent.identifier)));await controller.evaluate();
 controller.namespace.setupClass({key:'archivio-immutato',token:()=>env.people[0].token,ensure:async()=>{},isIntro:()=>true,start:()=>{}});
 await until(()=>studentDom.window.document.getElementById('classSummary').textContent.includes('Alunno 1'),'identità precedente riconosciuta');
-[...studentDom.window.document.querySelectorAll('button')].find(b=>b.textContent==='Cambia partecipante').click();
+[...studentDom.window.document.querySelectorAll('button')].find(b=>b.textContent==='Entra un’altra persona').click();
 const nextPerson=new URL(destination),identityParams=new URLSearchParams(nextPerson.hash.slice(1));eq(identityParams.get('classe'),classInfo.codice_breve);assert.notEqual(identityParams.get('alunno'),env.people[0].token);checks++;eq(identityParams.get('alunno').length,43);eq(saved.get('lavoro-precedente'),'risposte da conservare');assert.ok(nextPerson.searchParams.get('progetto'));checks++;studentDom.window.close();
 console.log(JSON.stringify({status:'superato',checks,scope:'Client questionario (offline, retry, conflitti) e interfaccia eseguita in DOM simulato con il vero handler e PostgreSQL locale: tre viste, presentazione, CSV, stampa, cinque indirizzi, commissione e revoca',limite:'Non sostituisce un collaudo visivo nel browser'},null,2));w.close();await env.db.close();

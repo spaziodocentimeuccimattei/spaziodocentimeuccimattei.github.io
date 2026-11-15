@@ -74,7 +74,7 @@ export function setupClass(ctx){
   }catch(e){$('classMessage').textContent=e.message;}finally{submit.disabled=false;}
  });
  $('classGuest')?.addEventListener('click',()=>{if(!offerGuest||!startMode||entry.classe||identity?.alunno)return;access='';info=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}start();});
- const changePerson=document.createElement('button');changePerson.type='button';changePerson.className='secondary';changePerson.textContent='Cambia partecipante';changePerson.title='Il lavoro attuale resta conservato. L’altra persona entrerà con il proprio nome.';
+ const changePerson=document.createElement('button');changePerson.type='button';changePerson.className='secondary';changePerson.textContent='Entra un’altra persona';changePerson.title='Il lavoro di ora resta conservato. L’altra persona scrive il suo nome.';
  changePerson.addEventListener('click',()=>{
   const nextToken=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
   const url=new URL(location.href),params=new URLSearchParams({alunno:nextToken});if(access)params.set('classe',access);
