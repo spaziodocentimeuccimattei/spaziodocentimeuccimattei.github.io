@@ -27,16 +27,18 @@ async function page(url,{offline=false}={}){
  const $=id=>doc.getElementById(id);
  return {dom,w,$,get url(){return w.location.href;},get destination(){return destination;},get button(){return $('enter')?.textContent.trim().replace(/\s*→$/,'');},get project(){const id=new URL(w.location.href).searchParams.get('progetto');return [...data].filter(([k])=>k.endsWith('.'+id)&&!k.includes('.remote.')).map(([,v])=>JSON.parse(v))[0];},errors};
 }
+const entra=async p=>{p.$('enter').click();await until(()=>p.$('stage').querySelector('form'),'ingresso');const n=p.$('stage').querySelector('input[name=nome]');if(n){n.value='Mario';p.$('stage').querySelector('input[name=cognome]').value='Prova';}p.$('stage').querySelector('form').requestSubmit();await until(()=>p.$('previous'),'avvio');};
 try{
  let p=await page('http://127.0.0.1:8766/bussola-turismo.html?prova=ingresso-a');
  record('Primo accesso',p.button,'Inizia');record('Nessuna attività avviata',p.project.started,false);let firstURL=p.url;p.w.close();
- p=await page(firstURL);record('Ricarica senza iniziare',p.button,'Inizia');p.$('enter').click();record('Dialogo di accesso',p.$('classDialog').open,true);p.$('closeClass').click();record('Chiudere il dialogo non avvia',p.project.started,false);record('Invito dopo annullamento',p.button,'Inizia');
- p.$('enter').click();p.$('classGuest').click();await until(()=>p.$('previous'),'avvio');p.$('previous').click();record('Ritorno dopo avvio',p.button,'Riprendi l’attività salvata');
+ p=await page(firstURL);record('Ricarica senza iniziare',p.button,'Inizia');p.$('enter').click();await until(()=>p.$('stage').querySelector('form'),'ingresso');record('Ingresso comune: nome e cognome',[!!p.$('stage').querySelector('input[name=nome]'),!!p.$('stage').querySelector('input[name=cognome]')],[true,true]);record('Nessuna finestra di accesso vecchia',[!!p.$('certificateDialog'),!!p.$('stage').querySelector('select')],[false,false]);
+ [...p.$('stage').querySelectorAll('button')].find(b=>b.textContent.trim()==='Indietro').click();await until(()=>p.$('enter'),'ritorno');record('Tornare indietro non avvia',p.project.started,false);record('Invito dopo annullamento',p.button,'Inizia');
+ await entra(p);p.$('previous').click();record('Ritorno dopo avvio',p.button,'Riprendi');
  // Save one choice to distinguish the old work from a genuine new activity.
- p.$('enter').click();p.w.document.querySelector('[data-key="place"][data-value="laguna"]').click();await until(()=>p.$('saved').textContent.includes('Tutto salvato'),'salvataggio online');p.$('previous').click();firstURL=p.url;
+ p.$('enter').click();await until(()=>p.w.document.querySelector('[data-key="place"]'),'prima scelta');p.w.document.querySelector('[data-key="place"][data-value="laguna"]').click();await until(()=>p.$('saved').textContent.includes('Tutto salvato'),'salvataggio online');p.$('previous').click();firstURL=p.url;
  const old=p.project,oldId=old.id,oldRemote=JSON.stringify((await env.db.query("select partecipante_id,corso,payload,revision from bussola_v2_progetti where payload->>'id'=$1",[oldId])).rows);
  record('Scelta registrata',old.choices.place,'laguna');p.w.close();
- p=await page(firstURL);await until(()=>p.$('saved').textContent.includes('Tutto salvato'),'ripresa online');record('Ripresa dopo ricarica',p.button,'Riprendi l’attività salvata');record('Scelta ripresa',p.project.choices.place,'laguna');
+ p=await page(firstURL);await until(()=>p.$('saved').textContent.includes('Tutto salvato'),'ripresa online');record('Ripresa dopo ricarica',p.button,'Riprendi');record('Scelta ripresa',p.project.choices.place,'laguna');
  p.$('newDemo').click();const next=p.destination;assert.ok(next);p.w.close();
  p=await page(next);await until(()=>p.$('saved').textContent.includes('Tutto salvato'),'nuova copia online');
  checks.push({name:'Inizia un altro lavoro: risultato',button:p.button,oldId,newId:p.project.id,choices:p.project.choices});
@@ -52,14 +54,14 @@ try{
  p=await page(recoveredURL);await until(()=>p.$('saved').textContent.includes('Tutto salvato'),'riapertura archivio');
  record('Attività precedente riaperta con il suo ID',p.project.id,oldId);
  record('Scelta precedente conservata',p.project.choices.place,'laguna');
- record('Attività precedente ancora riprendibile',p.button,'Riprendi l’attività salvata');
- record('Alternativa visibile nell’ingresso',p.w.document.querySelectorAll('[data-new-activity]').length,1);
+ record('Attività precedente ancora riprendibile',p.button,'Riprendi');
+ record('Alternativa visibile nell’ingresso',p.w.document.querySelectorAll('#startOver').length,1);record('Alternativa nel piè di pagina',!!p.$('newDemo'),true);
  const personBefore=data.get('bussola-partecipante:prova:ingresso-a');failArchive=true;
- p.w.document.querySelector('[data-new-activity]').click();
+ p.$('newDemo').click();
  record('Archivio non disponibile: nessun cambio di pagina',p.destination,'');
  record('Archivio non disponibile: identità conservata',data.get('bussola-partecipante:prova:ingresso-a'),personBefore);
  record('Archivio non disponibile: messaggio comprensibile',p.$('saved').textContent.includes('Non riesco a conservare'),true);
- failArchive=false;p.w.document.querySelector('[data-new-activity]').click();const visibleDestination=p.destination;p.w.close();
+ failArchive=false;p.$('newDemo').click();const visibleDestination=p.destination;p.w.close();
  p=await page(visibleDestination);await until(()=>p.$('saved').textContent.includes('Tutto salvato'),'nuova attività da ingresso');
  record('Alternativa nell’ingresso apre una nuova attività',p.button,'Inizia');
  record('Alternativa nell’ingresso conserva il recupero',p.$('savedActivities').querySelectorAll('a').length,1);
@@ -74,7 +76,7 @@ try{
  record('Nessun errore JavaScript nel DOM',p.errors,[]);
  p.w.close();
  p=await page(recoveredURL,{offline:true});await until(()=>!p.$('retrySave').hidden,'recupero offline');
- record('Recupero senza rete mantiene Riprendi',p.button,'Riprendi l’attività salvata');
+ record('Recupero senza rete mantiene Riprendi',p.button,'Riprendi');
  record('Recupero senza rete conserva la scelta',p.project.choices.place,'laguna');p.w.close();
 
 }finally{console.log(JSON.stringify({scope:'Moduli reali Turismo eseguiti in DOM simulato e PostgreSQL isolato, con soli dati fittizi',limite:'Non sostituisce un nuovo controllo visivo nel browser',checks},null,2));await env.db.close();}

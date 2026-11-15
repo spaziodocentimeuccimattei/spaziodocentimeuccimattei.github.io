@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {createProject,restore,remoteProject,choose,next,complete,isComplete,costs,LABS} from '../turismo-core.mjs';
 import {completion,certificateSnapshot} from '../bussola-records-core.mjs';
 import {participantCertificate} from '../bussola-attestato-alunno-core.mjs';
@@ -22,4 +23,16 @@ const a={verificato:true,id:crypto.randomUUID(),nome:'Nome',cognome:'Fittizio'},
 const s=certificateSnapshot(a,c,{corso:'turismo',payload:p,revision:1});assert.equal(s.corso,'turismo');assert.equal(s.lavori.length,5);assert.deepEqual(s.laboratori,LABS.map(l=>l.label));
 const personal=participantCertificate(p,{identity:{alunno:a,classe:c},id:crypto.randomUUID(),date:new Date().toISOString()});assert.equal(personal.snapshot.nome,'Nome');assert.equal(personal.snapshot.corso,'turismo');
 choose(p,'question','tempo');assert(!p.choices.welcome);assert(!p.done.includes(1));assert.equal(completion({corso:'turismo',payload:p}).completed,false);assert.throws(()=>certificateSnapshot(a,c,{payload:p,revision:2}));
+// Struttura della pagina riordinata: un passaggio per schermo, ingresso e finale comuni, frasi brevi.
+{const html=readFileSync(new URL('../bussola-turismo.html',import.meta.url),'utf8'),src=readFileSync(new URL('../turismo.mjs',import.meta.url),'utf8');
+ assert(!/<select/.test(html.replace(/<dialog id="notes"[\s\S]*?<\/dialog>/,'')),'nessun menu a tendina fuori dalle note');
+ assert(!html.includes('certificateDialog'),'il vecchio attestato in pagina non c\u2019\u00e8 pi\u00f9');
+ assert(html.includes('id="classGuestBox"')||/classGuestBox/.test(html),'classGuestBox resta nella pagina');
+ assert(!/style="/.test(html),'nessuno stile in linea');
+ assert(src.includes('mostraIngresso')&&src.includes('mostraFinale'),'ingresso e finale comuni agganciati');
+ assert(/<progress class="bt-avanzamento"/.test(src),'barra di avanzamento');
+ assert(!/interests|Che cosa ti ha incuriosito/.test(src.replace(/\/\/.*$/gm,'')),'la domanda sugli interessi non compare pi\u00f9');
+ const passi=[...src.matchAll(/titolo:'([^']+)',frase:'([^']+)'/g)];
+ assert(passi.length>=3,'frasi dei passaggi trovate');
+ for(const [,t,f] of passi)assert(f.split(/\s+/).length<=15,'frase troppo lunga: '+f);}
 console.log('Turismo: avanzamento, revisione, completamento, costi, separazione dei corsi, sanitizzazione e attestati verificati.');
