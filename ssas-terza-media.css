@@ -37,15 +37,6 @@ body #stepNav{display:block;margin:0}
 body #stepNav:empty{display:none}
 .tm-progress{display:grid;gap:4px;padding:6px 0 2px}
 .tm-step-label{margin:0;color:var(--bt-testo);font:800 1rem/1.25 var(--bt-carattere)}
-.tm-ticks{display:flex;gap:8px;margin:0;padding:0;list-style:none}
-.tm-ticks li{flex:1;margin:0}
-body #stepNav button.tm-tick{display:flex;align-items:center;width:100%;height:28px;min-height:0;margin:0;padding:0;border:0;border-radius:8px;background:transparent;box-shadow:none;cursor:pointer}
-body #stepNav button.tm-tick:disabled{cursor:default;background:transparent}
-body #stepNav button.tm-tick .tm-tick-bar{position:static;display:block;width:100%;height:12px;overflow:visible;clip-path:none;border-radius:99px;background:rgba(255,255,255,.22);box-shadow:inset 0 2px 4px rgba(0,0,0,.3)}
-body #stepNav button.tm-tick[data-state=visited] .tm-tick-bar{background:linear-gradient(180deg,var(--bt-colore-chiaro),var(--bt-colore-scuro));opacity:.75}
-body #stepNav button.tm-tick[data-state=done] .tm-tick-bar{background:linear-gradient(180deg,var(--bt-colore-chiaro),var(--bt-colore));box-shadow:0 0 12px var(--bt-alone)}
-body #stepNav button.tm-tick[data-state=current] .tm-tick-bar{background:linear-gradient(90deg,var(--bt-testo) var(--tm-riempi,35%),rgba(255,255,255,.22) var(--tm-riempi,35%));box-shadow:0 0 14px rgba(255,255,255,.5)}
-body #stepNav button.tm-tick:not(:disabled):hover .tm-tick-bar{transform:scaleY(1.3)}
 
 /* Il personaggio parla: bolla chiara con avatar */
 .tm-speaker{display:flex;align-items:flex-start;gap:10px;margin:10px 0 0}

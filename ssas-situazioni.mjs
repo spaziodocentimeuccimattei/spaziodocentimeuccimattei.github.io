@@ -41,7 +41,8 @@ const navigation=setupExperienceNavigation(route=>{restoreRoute(route);render(tr
 function restoreRoute(route){
  handoff=false;
  const m=route.match(/^laboratorio-([1-5])-([1-3])$/),step=route==='conclusione'?6:Number(m?.[1]),part=Number(m?.[2])-1,j=journey();
- if(step===6&&j.visited>=6){navigation.enter();j.step=6;}
+ if(route==='passaggio-3'&&j.visited>=3&&caseById(j.health.focus)?.handoff){navigation.enter();j.step=3;j.guideCursor=0;j.guideVersion=1;j.part=0;handoff=true;} // ricarica su «Ora cambi ruolo»: lo schermo resta quello
+ else if(step===6&&j.visited>=6){navigation.enter();j.step=6;}
  else if(m&&step<=j.visited&&part<GUIDE[step-1].length){navigation.enter();j.step=step;j.guideCursor=part;j.guideVersion=1;j.part=part?1:0;}
  else navigation.showIntro();
 }
@@ -171,17 +172,12 @@ function bubble(c,text,{label,ai=false,reader=false,cls=''}={}){
 }
 function progress(){
  const j=journey(),current=Math.min(j.step,5),bar=node('div',null,'tm-progress');
- const text=j.step===6?'Il tuo lavoro':handoffActive()?'Cambio di ruolo':`${current} di 5 · ${LAB_TITLES[current-1]}`;
- bar.append(node('p',text,'tm-step-label'+(j.step<=5&&!handoffActive()&&cursor(j)>0?' tm-sr':'')));// il titolo del passo si legge una volta sola: nei sotto-passi resta solo per chi usa il lettore di schermo
- const ticks=node('ol',null,'tm-ticks');ticks.setAttribute('aria-label','I cinque passi');
- LABS.forEach((l,i)=>{
-  const done=j.done.includes(l.id),here=j.step===i+1,li=node('li'),b=btn('',()=>go(i+1,0),'tm-tick');
-  b.dataset.state=here?'current':done?'done':i+1<=j.visited?'visited':'next';b.disabled=i+1>j.visited;
-  b.setAttribute('aria-label',`${i+1}. ${LAB_TITLES[i]}${done?' · fatto':''}${here?' · sei qui':''}${b.disabled?' · ancora da fare':''}`);
-  if(here){b.setAttribute('aria-current','step');b.style.setProperty('--tm-riempi',String(Math.round((cursor(j)+1)/GUIDE[i].length*100))+'%');}
-  b.append(node('span',null,'tm-tick-bar'));li.append(b);ticks.append(li);
- });
- bar.append(ticks);nav.append(bar);
+ const text=j.step===6?'Il tuo lavoro':handoffActive()?'Ora cambi ruolo':`${current} di 5`;
+ bar.append(node('p',text,'tm-step-label'+(handoffActive()||(j.step<=5&&cursor(j)>0)?' tm-sr':'')));// il titolo del passo si legge una volta sola: nei sotto-passi resta solo per chi usa il lettore di schermo
+ // Barra di avanzamento uguale a quella delle altre quattro prove: un semplice indicatore, non cliccabile.
+ const total=GUIDE.reduce((n,g)=>n+g.length,0),before=GUIDE.slice(0,Math.max(0,Math.min(j.step,5)-1)).reduce((n,g)=>n+g.length,0);
+ const bt=node('progress',null,'bt-avanzamento');bt.max=total;bt.value=j.step===6?total:Math.min(total,before+cursor(j)+1);bt.setAttribute('aria-label',`Schermo ${bt.value} di ${total}`);
+ bar.append(bt);nav.append(bar);
 }
 function intro(){
  const j=journey(),c=caseById(j.health.focus);
@@ -197,7 +193,6 @@ function intro(){
  const art=node('div',null,'tm-intro-art');art.append(entranceImage(),node('span','Tocca a te!','tm-bollino'));
  s.append(node('p','SSAS · Servizi per la Sanità e l’Assistenza Sociale','bt-occhiello bt-occhiello--corso'),title,node('p',line,'bt-frase'),art,start,feedback);
  if(started)s.append(btn('Inizia da capo',()=>$('newProject').click(),'bt-link tm-class-start')); // un'altra persona sullo stesso dispositivo: riparte subito, come nelle altre prove
- s.append(node('p','Storie e persone sono inventate. Il diploma non dà da solo qualifiche come OSS o infermiere.','bt-nota'));
  mount.append(s);
 }
 function stories(){
@@ -216,20 +211,20 @@ function stories(){
 }
 // Che cosa mostra ogni passaggio: chi parla, la domanda, le opzioni e la reazione dopo la scelta.
 function screen(j,c,n){
- const s=j.step,P=c.person,detail=x=>x?.detail?{note:x.detail}:null;
+ const s=j.step,P=c.person,detail=null; // le note «detail» restano nei dati ma non si mostrano: ogni schermo ha già abbastanza testo
  const pick=(list,id)=>list.find(x=>x.id===id);
  if(s===1)return {lead:c.contexts?.[0]||c.scene,question:c.observation||`Che cosa sta succedendo a ${P}?`,options:{type:'example',area:'health',key:'explanation',texts:c.explanations,max:230}};
- if(s===2&&n===0)return {lead:c.contexts?.[1]||c.need,question:`Che cosa chiedi a ${P}?`,options:{type:'radio',area:'relation',key:'opening',list:c.openings},reply:x=>({quote:x.reply})};
- if(s===2&&n===1)return {lead:c.participationContext,question:`Come continui ad ascoltare ${P}?`,options:{type:'radio',area:'relation',key:'participation',list:c.participation},reply:x=>({quote:x.reply})};
- if(s===2){const p=pick(c.participation,j.relation.participation);return {lead:p?.reply||c.need,question:`Che cosa proponi a ${P}?`,options:{type:'example',area:'relation',key:'closing',texts:c.closings,max:180}};}
- if(s===3&&n===0)return {context:c.contexts?.[2],lead:c.supportGoal,question:'Quali aiuti prepari?',hint:'Puoi sceglierne più di uno.',options:{type:'check',area:'autonomy',key:'supports',list:c.supports},reply:detail};
+ if(s===2&&n===0)return {lead:'',question:`Che cosa chiedi a ${P}?`,options:{type:'radio',area:'relation',key:'opening',list:c.openings},reply:x=>({quote:x.reply})};
+ if(s===2&&n===1)return {lead:'',question:`Come continui ad ascoltare ${P}?`,options:{type:'radio',area:'relation',key:'participation',list:c.participation},reply:null};
+ if(s===2){const p=pick(c.participation,j.relation.participation);return {lead:'',question:`Che cosa proponi a ${P}?`,options:{type:'example',area:'relation',key:'closing',texts:c.closings,max:180}};}
+ if(s===3&&n===0)return {lead:'',question:'Quali aiuti prepari?',hint:'Puoi sceglierne più di uno.',options:{type:'check',area:'autonomy',key:'supports',list:c.supports},reply:detail};
  if(s===3)return {lead:c.request,question:'Come cambi l’aiuto?',options:{type:'radio',area:'autonomy',key:'adaptation',list:c.adaptations},reply:detail};
  if(s===4&&n===0)return {lead:c.contexts?.[3]||c.need,question:'A che cosa deve servire?',options:{type:'radio',area:'creative',key:'goal',list:c.purposes},reply:detail};
- if(s===4&&n===1){const g=pick(c.purposes,j.creative.goal);return {lead:g?`Deve servire a: ${g.label.charAt(0).toLowerCase()+g.label.slice(1).replace(/\.$/,'')}.`:c.need,question:'Che cosa prepari?',options:{type:'radio',area:'creative',key:'setting',list:c.formats},reply:detail};}
- if(s===4){const f=pick(c.formats,j.creative.setting);return {lead:f?.draft||'',ai:true,leadLabel:'Bozza scritta con l’IA',question:'Come la riscrivi?',options:{type:'example',area:'creative',key:'ending',texts:materialExamples(c,j.creative.goal,j.creative.setting),max:230},reply:(x,i)=>{const check=materialCheck(c,j.creative.goal),q=check.questions[(i??0)%Math.max(1,check.questions.length)];return q?{reader:check.context,quote:q[0],note:q[1]}:null;}};}
+ if(s===4&&n===1){const g=pick(c.purposes,j.creative.goal);return {lead:'',question:'Che cosa prepari?',options:{type:'radio',area:'creative',key:'setting',list:c.formats},reply:detail};}
+ if(s===4){const f=pick(c.formats,j.creative.setting);return {lead:f?.draft||'',ai:true,leadLabel:'Bozza dell’intelligenza artificiale',question:'Come la riscrivi?',options:{type:'example',area:'creative',key:'ending',texts:materialExamples(c,j.creative.goal,j.creative.setting),max:230},reply:(x,i)=>{const check=materialCheck(c,j.creative.goal),q=check.questions[(i??0)%Math.max(1,check.questions.length)];return q?{reader:check.context,quote:q[0],note:q[1]}:null;}};}
  if(s===5&&n===0)return {lead:c.contexts?.[4]||c.team,question:'Quale attività proponi?',options:{type:'radio',area:'service',key:'activity',list:c.activities},reply:detail};
  if(s===5&&n===1)return {lead:c.accessIssue,question:'Come fai partecipare tutti?',options:{type:'radio',area:'service',key:'access',list:c.access},reply:detail};
- const a=pick(c.activities,j.service.activity);return {lead:a?`La tua attività: ${a.label.charAt(0).toLowerCase()+a.label.slice(1).replace(/\.$/,'')}.`:c.team,question:'Che cosa controlli dopo?',options:{type:'radio',area:'service',key:'check',list:c.checks},reply:detail};
+ const a=pick(c.activities,j.service.activity);return {lead:'',question:'Che cosa controlli dopo?',options:{type:'radio',area:'service',key:'check',list:c.checks},reply:detail};
 }
 let current=null,lastToggled=null;
 function replyContent(){
@@ -254,8 +249,8 @@ function updateReply(animateArt=false){
  paintScene($('tmStepArt'),c.id,options.key,selectedArt(options,j),animateArt,format);
  const r=replyContent();box.replaceChildren();
  if(!r)return;
- if(r.quote){box.append(bubble(c,r.quote,{label:r.reader||c.person||whoOf(c),reader:!!r.reader,cls:'tm-reaction'}));}
- if(r.note){const p=node('p',null,'tm-note');if(!r.reader)p.append(node('span','✓ ','tm-note-mark'));p.append(r.note);box.append(p);}
+ if(r.quote){box.append(bubble(c,r.quote,{label:r.reader?'Chi legge':(c.person||whoOf(c)),reader:!!r.reader,cls:'tm-reaction'}));}
+ if(r.note&&!r.reader){const p=node('p',null,'tm-note');if(!r.reader)p.append(node('span','✓ ','tm-note-mark'));p.append(r.note);box.append(p);}
  box.classList.remove('tm-appear');void box.offsetWidth;box.classList.add('tm-appear');
 }
 function optionsBox(o){
@@ -298,7 +293,7 @@ function step(){
  if(current.lead)lead.append(bubble(c,current.lead,{label:current.leadLabel,ai:current.ai}));
  const q=node('h1',current.question,'tm-question');q.id='tmQuestion';lead.append(q);
  // Una frase per laboratorio lega l'attività all'indirizzo: sta nell'ultimo schermo del laboratorio.
- if(n===GUIDE[j.step-1].length-1){const legame=node('p',null,'tm-legame');legame.append(node('b','SSAS'),SSAS_LEGAMI[j.step-1]);lead.prepend(legame);}
+ if(n===GUIDE[j.step-1].length-1&&j.step!==2){const legame=node('p',null,'tm-legame');legame.append(SSAS_LEGAMI[j.step-1]);lead.prepend(legame);}
  const art=scenePanel(c.id);art.id='tmStepArt';
  const choices=node('div',null,'tm-step-choices');
  if(current.hint)choices.append(node('p',current.hint,'tm-hint'));
@@ -378,7 +373,7 @@ function render(focus=true){
  if(isIntro)intro();
  else if(isFinal){conclude();finale();}
  else{progress();if(j.step===6)summary();else{if(handoffActive())handoffScreen();else if(storyChoice)stories();else step();bottomBar();}}
- navigation.write(isIntro?'ingresso':j.step===6?'conclusione':`laboratorio-${j.step}-${cursor(j)+1}`);updateLive();updateHelp();renderNotes();
+ navigation.write(isIntro?'ingresso':j.step===6?'conclusione':handoffActive()?'passaggio-3':`laboratorio-${j.step}-${cursor(j)+1}`);updateLive();updateHelp();renderNotes();
  const headingTarget=mount.querySelector('h1');if(headingTarget)headingTarget.tabIndex=-1;
  if(focus){headingTarget?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}else if(focused)$(focused)?.focus({preventScroll:true});
 }
