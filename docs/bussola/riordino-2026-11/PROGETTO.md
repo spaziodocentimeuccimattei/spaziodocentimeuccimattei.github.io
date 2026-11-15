@@ -179,3 +179,11 @@ Tutto ciò che è stato detto, in ordine. In caso di dubbio fra questo registro 
 2. Chi approva i testi riscritti di AFM, SIA, Turismo e CAT: solo Salvatore o anche i colleghi di quegli indirizzi. Per questo ogni agente di percorso consegna l'elenco «prima → dopo» dei testi cambiati in `docs/bussola/riordino-2026-11/testi-<corso>.md`.
 3. Quale versione di CAT hanno provato i ragazzi a Elmas (dieci tappe o Missione Aurora): non ricostruibile dai dati.
 4. Le schermate non sono state viste da Claude prima dell'intervento: il giudizio di partenza viene da codice, testi e dati.
+
+### 8.5 Decisioni di Salvatore del 15/11/2026 (risposte dirette)
+
+1. Turismo resta **oro del logo**.
+2. Scadenza dei lavori sul server: **allungare fino a fine iscrizioni** (oggi 30 giorni). La modifica al database si prepara e si mostra a Salvatore prima di applicarla. La data esatta di fine iscrizioni 2027/28 va presa da una fonte ufficiale: non inventarla; renderla un parametro.
+3. Codice breve per il ritorno da casa: **per l'Open Day dell'11 dicembre 2026** (non più gennaio). Si prepara ora; l'applicazione al server richiede un sì specifico.
+4. Testi riscritti delle prove: **si applicano così come sono**, senza giro di approvazione dei colleghi («Applica i testi riscritti e stop»). Il punto aperto 8.4.2 è chiuso.
+5. Nessuna riduzione di scopo per risparmiare: SSAS e verificatore a scopo pieno.
