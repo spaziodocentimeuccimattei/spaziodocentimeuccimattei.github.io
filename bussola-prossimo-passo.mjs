@@ -34,6 +34,13 @@ function node(tag, text, className) {
 }
 function anchor(text, href, className) { const a = node('a', text, className); a.href = href; return a; }
 
+// Date dell'Open Day: un solo posto. La scheda qui sotto e la riga del finale comune (bussola-finale-comune.mjs) le leggono da qui.
+export const OPEN_DAY = [
+  { data: '2026-12-11', giorno: 'Venerdì', testo: '11 dicembre 2026', orario: '15:00–19:00' },
+  { data: '2027-01-16', giorno: 'Sabato', testo: '16 gennaio 2027', orario: 'Al mattino, orario da confermare' },
+];
+export const OPEN_DAY_LUOGO = 'Via Ugo Foscolo 48, Decimomannu';
+
 export function openDayCard() {
   const card = node('aside', null, 'bussola-open-day');
   card.setAttribute('aria-label', 'Open Day a Decimomannu');
@@ -45,19 +52,14 @@ export function openDayCard() {
     <div class="open-day-schedule">
       <h3>Date previste</h3>
       <ul>
-        <li>
-          <span>Venerdì</span>
-          <time datetime="2026-12-11">11 dicembre 2026</time>
-          <span>15:00–19:00</span>
-        </li>
-        <li>
-          <span>Sabato</span>
-          <time datetime="2027-01-16">16 gennaio 2027</time>
-          <span>Al mattino, orario da confermare</span>
-        </li>
+${OPEN_DAY.map(g => `<li>
+          <span>${g.giorno}</span>
+          <time datetime="${g.data}">${g.testo}</time>
+          <span>${g.orario}</span>
+        </li>`).join('\n        ')}
       </ul>
     </div>
-    <p class="open-day-place">Via Ugo Foscolo 48, Decimomannu</p>
+    <p class="open-day-place">${OPEN_DAY_LUOGO}</p>
     <a class="open-day-poster" href="assets/campagna-decimomannu-cresce-qui.jpeg">
       <img src="assets/campagna-decimomannu-cresce-qui.jpeg" width="1122" height="1402" loading="lazy" decoding="async" alt="">
       <span>Apri la locandina</span>

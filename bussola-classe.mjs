@@ -42,6 +42,13 @@ export function setupClass(ctx){
    info=d.classe;access=code;show();return info;
   })().finally(()=>{if(pendingLookup===current)pendingLookup=null;});pendingLookup=current;return current.promise;
  }
+ // Iscrizione con codice, usata sia dalla finestra «La mia classe» sia dall'ingresso comune (bussola-ingresso-comune.mjs).
+ async function enrollNow(raw,nome,cognome){
+  await resolve(raw);
+  if(info.modalita==='elenco'&&!entry.alunno)throw new Error('Questa classe usa accessi personali. Apri quello ricevuto dal docente.');
+  await ctx.ensure();identity=await api('enroll',{classe:access,accesso:entry.alunno||ctx.token(),nome,cognome});keep();show();
+  rememberParticipant(ctx.token(),access);return JSON.parse(JSON.stringify(identity));
+ }
  async function refresh(){
   if(ctx.token()){
    const d=await api('identity');if(d.alunno){identity=d;info=d.classe;access=info.codice_breve||info.codice||access;rememberParticipant(ctx.token(),access);codeInput.value=isShortCode(access)?access:'';keep();show();return;}
@@ -54,18 +61,15 @@ export function setupClass(ctx){
   (identity?.alunno?$('closeClass'):!$('classGuestBox').hidden&&!info?$('classGuest'):info?.modalita==='elenco'?$('classSubmit'):info?form.elements.nome:codeInput).focus();
   if(ctx.token()||access)try{await refresh();if(dialog.open&&startMode&&identity?.alunno)start();}catch(e){if(dialog.open)$('classMessage').textContent=e.message;}
  }
- $('openClass').addEventListener('click',e=>open(e.currentTarget,ctx.isIntro()));$('closeClass').addEventListener('click',()=>dialog.close());
+ $('openClass').addEventListener('click',e=>{if(ctx.ingressoComune&&ctx.isIntro()&&!identity?.alunno)ctx.apriIngresso();else open(e.currentTarget,ctx.isIntro());});$('closeClass').addEventListener('click',()=>dialog.close());
  dialog.addEventListener('close',()=>{startMode=false;returnFocus?.focus();});
  codeInput.addEventListener('input',()=>{lookupVersion++;pendingLookup=null;info=null;access='';$('classMessage').textContent='';show();});
  codeInput.addEventListener('blur',async()=>{if(!classCode(codeInput.value)||identity?.alunno)return;try{await resolve(codeInput.value);$('classMessage').textContent='Classe riconosciuta. Controlla nome e cognome, poi inizia.';}catch(e){$('classMessage').textContent=e.message;}});
  form.addEventListener('submit',async e=>{
   e.preventDefault();const submit=$('classSubmit');submit.disabled=true;$('classMessage').textContent='Controllo la classe…';
   try{
-   await resolve($('classLinkField').hidden?access:codeInput.value);
-   if(info.modalita==='elenco'&&!entry.alunno)throw new Error('Questa classe usa accessi personali. Apri quello ricevuto dal docente.');
-   const nome=form.elements.nome.value,cognome=form.elements.cognome.value;
-   await ctx.ensure();identity=await api('enroll',{classe:access,accesso:entry.alunno||ctx.token(),nome,cognome});keep();show();
-   rememberParticipant(ctx.token(),access);if(startMode)start();else dialog.close();
+   await enrollNow($('classLinkField').hidden?access:codeInput.value,form.elements.nome.value,form.elements.cognome.value);
+   if(startMode)start();else dialog.close();
   }catch(e){$('classMessage').textContent=e.message;}finally{submit.disabled=false;}
  });
  $('classGuest').addEventListener('click',()=>{if(!offerGuest||!startMode||entry.classe||identity?.alunno)return;access='';info=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}start();});
@@ -78,7 +82,7 @@ export function setupClass(ctx){
  });dialog.append(changePerson);
  document.addEventListener('bussola-progetto-nuovo',()=>{identity=null;form.elements.nome.value='';form.elements.cognome.value='';show();});
  const initial=ctx.token()||access?refresh().catch(()=>{}):Promise.resolve();
- if(entry.classe)initial.then(()=>{if(info&&!identity?.alunno)open($('openClass'),ctx.isIntro());});
- window.addEventListener('hashchange',()=>{const next=classEntry();if(!next.classe)return;if(next.alunno&&next.alunno!==entry.alunno){location.reload();return;}entry=next;access=next.classe;codeInput.value=isShortCode(access)?access:'';info=null;open($('openClass'),ctx.isIntro());});
- return {begin:trigger=>open(trigger,true),refresh,identity:async()=>{if(access&&!identity?.alunno)await refresh();return identity?.alunno?JSON.parse(JSON.stringify(identity)):null;}};
+ if(entry.classe&&!ctx.ingressoComune)initial.then(()=>{if(info&&!identity?.alunno)open($('openClass'),ctx.isIntro());});
+ window.addEventListener('hashchange',()=>{const next=classEntry();if(!next.classe)return;if(next.alunno&&next.alunno!==entry.alunno){location.reload();return;}entry=next;access=next.classe;codeInput.value=isShortCode(access)?access:'';info=null;if(ctx.ingressoComune)refresh().catch(()=>{});else open($('openClass'),ctx.isIntro());});
+ return {begin:trigger=>ctx.ingressoComune?ctx.apriIngresso():open(trigger,true),refresh,ready:initial,iscrivi:enrollNow,anteprima:async raw=>{await resolve(raw);return {...info};},stato:()=>({classe:access,info:info?{...info}:null,personale:!!entry.alunno}),identity:async()=>{if(access&&!identity?.alunno)await refresh();return identity?.alunno?JSON.parse(JSON.stringify(identity)):null;}};
 }
