@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import * as C from '../cat-core.mjs';
 import * as M from '../cat-missione-core.mjs';
-import {missionActivity,missionCards,missionScene} from '../cat-missione.mjs';
+import {missionScene} from '../cat-missione.mjs';
+import * as P from '../cat-percorso.mjs';
 import {completion,courseDetails} from '../bussola-records-core.mjs';
 import {projectView} from '../bussola-monitor-core.mjs';
 import {participantCertificate} from '../bussola-attestato-alunno-core.mjs';
@@ -21,7 +22,7 @@ for(const i of M.INSULATIONS)for(const w of M.WINDOWS){const pair=scenarios.filt
 M.chooseMission(m,'insulation','isolamento-sughero');M.chooseMission(m,'windows','infissi-tripli');M.chooseMission(m,'finish','finitura-bassovoc');M.testMission(m);eq(C.advance(p),false,'Budget da rispettare');eq(M.applyMission(m),null);
 M.chooseMission(m,'insulation','isolamento-minerale');M.chooseMission(m,'windows','infissi-doppi');eq(M.latestMissionRun(m),null,'Scelta nuova da provare');const result=M.testMission(m);eq(result.before,17153);eq(result.after,6226);eq(result.total,22200);eq(result.reduction,64);ok(C.advance(p));eq(p.screen,2);eq(p.done.length,8);eq(C.completed(p),false);eq(C.advance(p),false,'Serve applicare la proposta');ok(M.applyMission(m));ok(C.advance(p));eq(p.screen,3);ok(C.completed(p));eq(completion({corso:'cat',payload:p}).done,5);eq(courseDetails(p).works.length,5);
 p.interests=['termografia','energia'];eq(completion({payload:p}).interests,['Termografia','Progetto energetico']);ok(C.validProject(p));const view=projectView({payload:p},'cat');ok(view.completed);ok(view.labs[2].fields.some(f=>f.value==='Cappotto in lana minerale'));eq(view.labs[4].status,'done');
-for(let s=0;s<3;s++){const html=missionActivity({...p,screen:s});ok(html.includes('stageTitle'));ok(!/undefined|NaN/.test(html));}eq(missionCards(p).length,5);ok(missionScene(m).includes('Vista termica'));
+for(let s=0;s<3;s++)for(let u=0;u<P.PASSI[s].length;u++){const html=P.passo({...p,screen:s},s,u);ok(html.includes('stageTitle'));ok(!/undefined|NaN/.test(html));}eq(P.TOTALE,7);eq(P.TRE_COSE.length,3);ok(P.rivedi(p,true).includes('Torna al finale'));ok(!/ponte termico|VOC|kWh|APE/.test(P.passo({...p,screen:1},1,3)+P.rivedi(p,true)),'Niente parole da manuale');ok(missionScene(m).includes('Vista termica'));ok(!missionScene(m,{sobrio:true}).includes('DRONE'));
 const changed=C.clone(p);changed.mission.insulation='isolamento-sughero';C.invalidate(changed);eq(changed.done,[0,1,2,3,4,5]);eq(C.completed(changed),false);eq(changed.mission.runs,m.runs,'Tutte le prove restano');
 const cert=participantCertificate(p,{name:'Prova Locale',id:crypto.randomUUID(),date:new Date().toISOString()});eq(cert.snapshot.percorso,M.MISSION_JOURNEY);eq(cert.snapshot.laboratori,M.MISSION_LABS.map(l=>l.label));ok(certificateCSV([cert]).includes('CAT 4+2'));
 for(const mutate of [q=>q.screen=10,q=>q.unlocked=10,q=>q.mission.position=4,q=>q.mission.captures.push('sud'),q=>q.mission.observations.push('inventato'),q=>q.mission.runs[0].after=0,q=>q.mission.compare=200,q=>q.mission.applications[0].signature='inventata',q=>q.mission.finish='futura-non-riconosciuta']){const q=C.clone(p);mutate(q);eq(C.validProject(q),false);}

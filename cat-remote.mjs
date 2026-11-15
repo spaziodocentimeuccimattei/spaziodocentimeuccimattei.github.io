@@ -62,5 +62,5 @@ export function setupCatRemote(ctx){
   state.dirty=false;conflict=false;accept(reply);connected=true;keep();ctx.status('Versione salvata aperta.',false);
  }
  window.addEventListener('pagehide',keep);
- return {changed,sync,ensure:connect,reload,hasConflict:()=>conflict,token:()=>state.token,participant:()=>state.participant,revision:()=>state.revision};
+ return {changed,sync,ensure:connect,saved:()=>connected&&!state.dirty&&!conflict,reload,hasConflict:()=>conflict,token:()=>state.token,participant:()=>state.participant,revision:()=>state.revision};
 }
