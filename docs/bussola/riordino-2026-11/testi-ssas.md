@@ -71,7 +71,7 @@ Luca e Rosa: nessuna modifica. Non ho riscritto la trama né i personaggi (PROGE
 Dopo il secondo passo, uno schermo intero. Ogni storia mantiene la sua frase di passaggio (campo `handoff`, per esempio per Luca: «Fin qui hai ascoltato Luca da vicino. Per aiutarlo davvero serve chi lo fa di mestiere. Prova tu il lavoro dell'educatrice del centro giovani.»). Si aggiunge, uguale per tutte:
 
 - Titolo: «Ora cambi ruolo» · occhiello «Da amico a professionista».
-- **«Aiutare le persone è un mestiere che si impara. In SSAS cominci a scuola: impari a osservare i bisogni, comunicare e progettare attività.»**
+- **«Aiutare è un mestiere che si impara. In SSAS lo impari a scuola: osservi, ascolti e progetti attività.»**
 
 Fonte della seconda frase: `indirizzi.html` riga 271 («Impari a osservare i bisogni, comunicare e progettare attività che favoriscono benessere, autonomia e partecipazione») e `data/indirizzi.json`, SSAS, «learn». Il legame «mestiere che si impara a scuola» è una **mia interpretazione**: le fonti dicono che il diploma non dà da solo qualifiche come OSS o infermiere, e per questo la riga a fondo apertura lo ricorda.
 
@@ -81,11 +81,11 @@ Compare in testa all'ultimo schermo di ogni passo (`SSAS_LEGAMI`).
 
 | Passo | Frase | Fonte |
 |---|---|---|
-| 1 | In SSAS impari a osservare i bisogni delle persone. | `indirizzi.html` r. 271; `indirizzi.json` lenti «persone» («Osservare bisogni, relazioni e contesti di vita») e «dati» |
-| 2 | In SSAS impari ad ascoltare e a comunicare in modo chiaro. | `indirizzi.json` lente «comunicazione» («Ascoltare e comunicare in modo comprensibile»); `indirizzi.html` «Competenze in azione: ascolto, … comunicazione» |
-| 3 | In SSAS impari a cambiare aiuti e ambienti per tutti. | `indirizzi.json` lente «progetto» («Adattare attività e ambienti per favorire la partecipazione») |
-| 4 | In SSAS impari a progettare attività per il benessere. | `indirizzi.html` r. 271 («progettare attività che favoriscono benessere, autonomia e partecipazione») |
-| 5 | In SSAS impari a organizzare attività e a lavorare in gruppo. | `indirizzi.json` lente «organizzazione» («Progettare attività e collaborare con altre figure»); `indirizzi.html` «lavoro di gruppo» |
+| 1 | In SSAS osservi i bisogni delle persone. | `indirizzi.html` r. 271; `indirizzi.json` lenti «persone» («Osservare bisogni, relazioni e contesti di vita») e «dati» |
+| 2 | (non mostrata: subito dopo parla il passaggio «Ora cambi ruolo») In SSAS ascolti e comunichi con chiarezza. | `indirizzi.json` lente «comunicazione» («Ascoltare e comunicare in modo comprensibile»); `indirizzi.html` «Competenze in azione: ascolto, … comunicazione» |
+| 3 | In SSAS cambi aiuti e ambienti. | `indirizzi.json` lente «progetto» («Adattare attività e ambienti per favorire la partecipazione») |
+| 4 | In SSAS progetti attività per il benessere. | `indirizzi.html` r. 271 («progettare attività che favoriscono benessere, autonomia e partecipazione») |
+| 5 | In SSAS organizzi attività in gruppo. | `indirizzi.json` lente «organizzazione» («Progettare attività e collaborare con altre figure»); `indirizzi.html` «lavoro di gruppo» |
 
 Interpretazione mia: l'abbinamento di ciascuna competenza a un passo preciso (le fonti elencano le competenze, non dicono in quale prova si esercitano). «Per il benessere» e «in gruppo» sono parole delle fonti accorciate.
 
@@ -93,9 +93,9 @@ Interpretazione mia: l'abbinamento di ciascuna competenza a un passo preciso (le
 
 | N. | Testo | Fonte |
 |---|---|---|
-| 1 | Osservi i bisogni delle persone e le ascolti. | `indirizzi.json` lenti «persone», «comunicazione»; `indirizzi.html` r. 271 |
-| 2 | Cambi aiuti e ambienti, perché tutti possano partecipare. | `indirizzi.json` lente «progetto» |
-| 3 | Progetti attività e lavori con altri professionisti. | `indirizzi.json` lente «organizzazione» («collaborare con altre figure»); `indirizzi.html` r. 271 |
+| 1 | Osservi i bisogni e ascolti. | `indirizzi.json` lenti «persone», «comunicazione»; `indirizzi.html` r. 271 |
+| 2 | Cambi aiuti e ambienti per tutti. | `indirizzi.json` lente «progetto» |
+| 3 | Progetti attività con altri professionisti. | `indirizzi.json` lente «organizzazione» («collaborare con altre figure»); `indirizzi.html` r. 271 |
 
 Interpretazione mia: «professionisti» al posto di «altre figure», e l'unione di due lenti nella prima voce.
 Nessuna promessa di qualifica o di lavoro: coerente con `indirizzi.json`, «destination» («Il diploma non attribuisce automaticamente qualifiche come OSS, infermiere…»).
@@ -163,3 +163,45 @@ Nella schermata (`ssas-situazioni.mjs`):
 | Menu in alto | Menu proprio di SSAS | Invariato (è il modello copiato dalle altre quattro prove) |
 
 Copie per la gestione: `supabase/functions/bussola-gestione/ssas-situazioni-revisione.mjs` rigenerata identica (senza deploy).
+
+## Correzioni prima della pubblicazione (agente A12, 15 novembre 2026)
+
+Il verificatore indipendente aveva misurato 9,0-9,2 minuti. Stesso metodo (parole davvero visibili nel `main` ÷ 120 al minuto + 4 secondi a scelta, finale e «Come ti chiami?» compresi; telefono 390×844). Trama, personaggi, scelte, identificativi e testi salvati (risposte, esempi, frasi dell'attestato e del riepilogo) non sono cambiati.
+
+### Durata dopo le correzioni
+
+| Storia | Parole | Scelte | Secondi | Minuti |
+|---|---|---|---|---|
+| Luca | 659 | 21 | 414 | 6,9 |
+| Irene | 664 | 21 | 416 | 6,9 |
+| Sara | 637 | 21 | 402 | 6,7 |
+| Rosa | 648 | 21 | 408 | 6,8 |
+| Tommaso | 660 | 21 | 414 | 6,9 |
+| Nico | 654 | 21 | 411 | 6,8 |
+
+Con Irene e Nico anche su 1366×768: 6,9 e 6,8 minuti (stesse parole). I margini sono stretti (2-18 secondi): ogni parola in più rimette a rischio i 7 minuti.
+
+### Che cosa è stato tolto o accorciato
+
+Nella schermata (`ssas-situazioni.mjs`), per tutte le storie:
+
+| Dove | Prima | Dopo |
+|---|---|---|
+| Note sotto le scelte dei passi 3, 4 e 5 (campo `detail`) | Una riga di spiegazione dopo ogni scelta (7-10 parole) | Non si mostra più; il campo resta nei dati |
+| Passo 2, domanda «Come continui ad ascoltare…»: battuta del personaggio | Mostrata | Non si mostra (resta quella del primo sotto-passo) |
+| Frase che riprendeva quanto appena letto o scelto (passo 2 «Che cosa proponi», passo 4 «Che cosa prepari?», passo 5 «Che cosa controlli dopo?») | Ripeteva la battuta o la scelta precedente | Tolta |
+| Frase di contesto prima di «Che cosa chiedi a…?», «Come continui…», «Quali aiuti prepari?» | Una frase di 8-14 parole | Tolta |
+| Titolo accanto a «N di 5» | «2 di 5 · Ascolti e fai le domande giuste» | «2 di 5» |
+| Frase «In SSAS…» del passo 2 | Mostrata | Non mostrata (subito dopo c'è il passaggio «Ora cambi ruolo»); le altre quattro restano, senza la parola «SSAS» ripetuta in grassetto |
+| Bozza dell'IA, riquadro «Un ragazzo legge il tuo messaggio» | Contesto di 9 parole, domanda e nota | Etichetta «Chi legge» e solo la domanda |
+| Apertura | «Storie e persone sono inventate. Il diploma non dà da solo qualifiche come OSS o infermiere.» | Tolte entrambe (la prima resta nel menu) |
+| «IA» | «Bozza scritta con l'IA» | «Bozza dell'intelligenza artificiale» |
+
+Nei testi (`ssas-situazioni-revisione.mjs`): frasi-gancio delle sei storie a 4-6 parole («Luca: Gioca online, salta il basket»; Irene: «Non arriva al tavolo»; Sara: «Non capisce le istruzioni»; Rosa: «Non riesce a prenotare»; Tommaso: «Lo prendono in giro»; Nico: «Perde e lascia il gioco»); frase del passaggio «Hai ascoltato X. Ora fai l'educatrice/l'operatrice…»; frasi di apertura dei passi 1, 4 e 5 più brevi; qualche battuta più corta (Luca, Irene, Sara). Copia per la gestione: `supabase/functions/bussola-gestione/ssas-situazioni-revisione.mjs` rigenerata togliendo i `?v=` (senza deploy).
+
+### Altri cambiamenti di questa correzione
+
+- La barra in alto è un indicatore non cliccabile (`<progress class="bt-avanzamento">`), come nelle altre quattro prove; prima erano cinque pulsanti alti 28 px.
+- Ricaricando su «Ora cambi ruolo» lo schermo resta quello (indirizzo `#passaggio-3`).
+- «Inizia da capo» (apertura) e «Riprendere o iniziare un altro lavoro» (menu): nessuna finestra di conferma, come nelle altre quattro prove; il lavoro di prima resta conservato nel dispositivo.
+- Comandi per schermo: 5-6 nei passi; 8 solo nella scelta della storia (sei storie più Indietro e Avanti) e 7 nel quarto schermo del finale (comune a tutte le prove).
