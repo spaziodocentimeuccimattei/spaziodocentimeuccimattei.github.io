@@ -34,9 +34,13 @@ export function biglietto({corso, token, persona = null, conclusi = [], salvato 
   const scheda = el('div', {class: 'bt-biglietto', 'data-corso': corso});
   const qr = el('div', {class: 'bt-biglietto__qr'});
   const frase = el('p', {class: 'bt-biglietto__frase'}, 'A casa, con i tuoi genitori, torna qui: scarichi l’attestato e scopri di più.');
-  // L'etichetta serve solo quando c'è il codice da scrivere: senza, la frase basta (meno parole).
-  if (CODICE_BREVE_ATTIVO && codiceBreve) scheda.append(el('p', {class: 'bt-biglietto__etichetta'}, 'Il tuo codice'));
-  if (CODICE_BREVE_ATTIVO && codiceBreve) scheda.append(el('p', {class: 'bt-biglietto__codice'}, codiceBreve));
+  // L'etichetta compare solo insieme al codice da scrivere: senza codice basta la frase (meno parole).
+  const etichetta = el('p', {class: 'bt-biglietto__etichetta', hidden: true}, 'Il tuo codice');
+  scheda.append(etichetta);
+  // Codice breve: compare solo con CODICE_BREVE_ATTIVO, dopo che il server lo ha dato. Spento, qui non cambia nulla.
+  const codice = CODICE_BREVE_ATTIVO ? el('p', {class: 'bt-biglietto__codice', hidden: true, 'aria-label': 'Il tuo codice personale'}) : null;
+  const mostraCodice = c => { codice.textContent = c; codice.hidden = false; etichetta.hidden = false; frase.textContent = 'Scrivilo: a casa, con i tuoi genitori, torna qui.'; };
+  if (codice) { scheda.append(codice); if (codiceBreve) mostraCodice(codiceBreve); }
   scheda.append(frase, qr);
   const copia = el('button', {class: 'bt-link bt-ritorno__copia', type: 'button', hidden: true}, 'Copia il link');
   scheda.append(copia);
@@ -55,6 +59,7 @@ export function biglietto({corso, token, persona = null, conclusi = [], salvato 
     }
     qr.replaceChildren(qrElemento(link, 'Codice QR: inquadralo con il telefono per tornare qui da casa'));
     qr.dataset.link = link;
+    if (codice && codice.hidden) import('./bussola-ritorno-codice.mjs?v=20261115-a11').then(m => m.ottieniCodice(token)).then(c => { if (c) mostraCodice(c); }).catch(() => { /* il QR basta */ });
     copia.hidden = !navigator.clipboard?.writeText;
     copia.onclick = async () => { try { await navigator.clipboard.writeText(link); copia.textContent = 'Link copiato'; } catch { copia.textContent = 'Non riesco a copiare'; } };
   };
