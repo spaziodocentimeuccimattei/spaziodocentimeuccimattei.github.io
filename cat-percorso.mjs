@@ -123,6 +123,7 @@ export function intro(p,{mission,completed}){
    <p class="bt-occhiello bt-occhiello--corso">CAT 4+2 · Costruzioni, Ambiente e Territorio</p>
    <h1 class="bt-titolo" id="stageTitle" tabindex="-1">Pilota il drone. Cambia l’<em>edificio</em>.</h1>
    <p class="bt-frase">Trova dove l’edificio perde calore, poi scegli come sistemarlo.</p>
+   <p class="bt-nota cat-quattropiudue">4+2: diploma in 4 anni, poi 2 anni facoltativi di ITS Academy.</p>
   </div>
   <div class="cat-intro__demo" aria-hidden="true"><div class="cat-foglio cat-demo"><div class="cat-foglio__barra"><span>Missione Aurora</span><span>●●●</span></div><div class="cat-scena cat-scena--demo">${missionScene(m,{decorative:true,sobrio:true})}${droneSvg('cat-drone--demo')}</div></div><span class="cat-bollino">Tocca a te!</span></div>
   <div class="bt-azioni cat-intro__azioni">${missionBtn}${previousBtn}${started?'<button id="startOver" class="bt-link" type="button">Inizia da capo</button>':''}</div>
