@@ -16,7 +16,8 @@ export function setupClass(ctx){
   const panel=$('classSummary');panel.replaceChildren();
   $('classTitle').textContent=startMode?(offerGuest?'Come vuoi iniziare?':'Entra con la classe'):'Il tuo lavoro e la tua classe';
   $('classSubmit').textContent=startMode?(offerGuest?'Inizia con la mia classe':'Continua con la classe'):'Collega il mio lavoro';
-  $('classGuestBox').hidden=!offerGuest||!startMode||!!entry.classe||!!identity?.alunno;
+  const guestBox=$('classGuestBox');// il riquadro «Inizia» può mancare nella pagina: l'ingresso comune non lo usa
+  if(guestBox)guestBox.hidden=!offerGuest||!startMode||!!entry.classe||!!identity?.alunno;
   if(identity?.alunno){
    const text=document.createElement('span');text.textContent=`${identity.alunno.nome} ${identity.alunno.cognome} · ${identity.classe.classe} · ${identity.classe.scuola}`;panel.append(text);
    $('openClass').textContent='La mia classe';$('classIdentity').textContent=text.textContent;form.hidden=true;$('classResume').hidden=false;
@@ -58,7 +59,7 @@ export function setupClass(ctx){
  async function open(trigger,begin=false){
   if(identity?.alunno&&begin){ctx.start();return;}
   returnFocus=trigger;startMode=begin;$('classMessage').textContent='';show();if(!dialog.open)dialog.showModal();
-  (identity?.alunno?$('closeClass'):!$('classGuestBox').hidden&&!info?$('classGuest'):info?.modalita==='elenco'?$('classSubmit'):info?form.elements.nome:codeInput).focus();
+  (identity?.alunno?$('closeClass'):$('classGuestBox')&&!$('classGuestBox').hidden&&!info?$('classGuest'):info?.modalita==='elenco'?$('classSubmit'):info?form.elements.nome:codeInput).focus();
   if(ctx.token()||access)try{await refresh();if(dialog.open&&startMode&&identity?.alunno)start();}catch(e){if(dialog.open)$('classMessage').textContent=e.message;}
  }
  $('openClass').addEventListener('click',e=>{if(ctx.ingressoComune&&ctx.isIntro()&&!identity?.alunno)ctx.apriIngresso();else open(e.currentTarget,ctx.isIntro());});$('closeClass').addEventListener('click',()=>dialog.close());
@@ -72,7 +73,7 @@ export function setupClass(ctx){
    if(startMode)start();else dialog.close();
   }catch(e){$('classMessage').textContent=e.message;}finally{submit.disabled=false;}
  });
- $('classGuest').addEventListener('click',()=>{if(!offerGuest||!startMode||entry.classe||identity?.alunno)return;access='';info=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}start();});
+ $('classGuest')?.addEventListener('click',()=>{if(!offerGuest||!startMode||entry.classe||identity?.alunno)return;access='';info=null;codeInput.value='';try{localStorage.removeItem(ctx.key+':classe');}catch{}start();});
  const changePerson=document.createElement('button');changePerson.type='button';changePerson.className='secondary';changePerson.textContent='Cambia partecipante';changePerson.title='Il lavoro attuale resta conservato. L’altra persona entrerà con il proprio nome.';
  changePerson.addEventListener('click',()=>{
   const nextToken=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
