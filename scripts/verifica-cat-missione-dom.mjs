@@ -25,7 +25,10 @@ async function browser(url,storage=null){
 const token=env.people[0].token,original=(await env.db.query("select payload from bussola_v2_progetti where partecipante_id=$1 and corso='cat'",[env.people[0].id])).rows[0].payload;
 const b=await browser('http://127.0.0.1:8885/bussola-cat.html?prova=missione-dom#alunno='+token);
 await b.until(()=>b.$('startMission')&&b.stored()?.journey===undefined,'ripresa della variante storica');eq(b.$('startMission').textContent.includes('Inizia la missione'),true);b.click('startMission');
-await b.until(()=>b.$('mission-capture')||b.$('classDialog').open,'nuova missione pronta');if(b.$('classDialog').open&&b.$('classGuest')&&!b.$('classGuest').hidden)b.click('classGuest');
+await b.until(()=>b.$('mission-capture')||b.$('classDialog').open||b.w.document.querySelector('.bt-ingresso'),'nuova missione pronta');
+// Chi è già riconosciuto rivede «Ciao <nome>!» (così un altro ragazzo sullo stesso dispositivo può dire «Non sono…»): un tocco su «Inizia».
+if(b.w.document.querySelector('.bt-ingresso button[type=submit]')){eq(b.w.document.querySelector('.bt-ingresso h1').textContent.startsWith('Ciao'),true);eq(!!([...b.w.document.querySelectorAll('.bt-ingresso button')].find(x=>x.textContent.startsWith('Non sono'))),true);b.w.document.querySelector('.bt-ingresso button[type=submit]').click();}
+if(b.$('classDialog').open&&b.$('classGuest')&&!b.$('classGuest').hidden)b.click('classGuest');
 await b.until(()=>b.$('mission-capture'),'drone');eq(b.stored().journey,'cat-4plus2-missione');eq(b.stored()._cat_archives[0].project.heritage,original.heritage);eq(b.stored()._cat_archives[0].project.done,original.done);
 const back=n=>{for(let k=0;k<n;k++)b.click('previous');};
 for(let n=0;n<4;n++)b.click('mission-capture');eq(b.stored().mission.captures.length,4);eq(b.$('next').disabled,false);b.click('next');eq(b.$('stageTitle').textContent,'Guarda dove scappa il caldo.');eq(b.$('next').disabled,true);b.click('mission-camera-termica');for(const sp of ['parete','infissi','telaio'])b.click('mission-spot-'+sp);eq(b.$('next').disabled,false);ok(b.$('stage').textContent.includes('il calore scappa'));ok(!/ponte termico/.test(b.$('stage').textContent));
