@@ -52,7 +52,10 @@ export function canAdvance(p,screen=p.screen){const c=p.choices;return [!!c.plac
 export function costs(service,count=12){const n=Math.max(8,Math.min(20,Number(count)||12)),s=SERVICES.find(x=>x.id===service);const base=96+2*n,extra=s?s.fixed+s.perPerson*n:0;return {count:n,guide:72,space:24,materials:2*n,extra,total:base+extra,each:(base+extra)/n};}
 export function choose(p,key,value){if(p.choices[key]===value)return p;p.choices[key]=value;if(key==='place'){delete p.choices.angle;}if(key==='question'){delete p.choices.welcome;}if(key==='tone'){delete p.choices.repair;}const affected={place:0,angle:0,question:1,welcome:1,plan:2,rain:2,service:3,terms:3,tone:4,repair:4}[key];if(affected!==undefined)p.done=p.done.filter(i=>i!==affected);p.finished=false;return p;}
 export function next(p){if(!canAdvance(p))return false;if(p.screen%2===1&&!p.done.includes(Math.floor(p.screen/2)))p.done.push(Math.floor(p.screen/2));p.screen=Math.min(10,p.screen+1);return true;}
-export function complete(p){const ready=p.done.length===5&&Array.from({length:10},(_,i)=>canAdvance(p,i)).every(Boolean)&&p.interests.length>0;p.finished=ready;return ready;}
+// Il lavoro è concluso quando le cinque tappe sono fatte e ogni scelta è valida. La scelta degli «interessi» è facoltativa e non blocca più
+// il completamento (riordino novembre 2026): le prove vecchie con tutte le tappe fatte e senza interessi risultano concluse.
+export function isComplete(p){return p.done.length===5&&Array.from({length:10},(_,i)=>canAdvance(p,i)).every(Boolean);}
+export function complete(p){const ready=isComplete(p);p.finished=ready;return ready;}
 export function restore(raw){
  if(!raw||raw.format!==FORMAT||raw.course!=='tur'||!/^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i.test(raw.id))return null;
  const p=createProject(raw.id);p.version=1;p.started=raw.started===true;p.screen=Number.isInteger(raw.screen)?Math.max(0,Math.min(10,raw.screen)):0;
@@ -67,7 +70,7 @@ export function restore(raw){
  p.done=Array.isArray(raw.done)?[...new Set(raw.done)].filter(i=>Number.isInteger(i)&&i>=0&&i<5&&canAdvance(p,i*2)&&canAdvance(p,i*2+1)):[];
  p.notes=Array.isArray(raw.notes)?raw.notes.filter(n=>n&&typeof n.text==='string'&&typeof n.context==='string'):[];
  p.interests=Array.isArray(raw.interests)?[...new Set(raw.interests)].filter(id=>LABS.some(l=>l.id===id)):[];
- p.finished=raw.finished===true&&p.done.length===5&&p.interests.length>0;
+ p.finished=isComplete(p);
  p.updatedAt=typeof raw.updatedAt==='string'?raw.updatedAt:null;
  if(raw.attestato&&typeof raw.attestato==='object')p.attestato={id:raw.attestato.id,date:raw.attestato.date,name:typeof raw.attestato.name==='string'?raw.attestato.name.slice(0,161):''};
  if(typeof raw._save_operation==='string'&&/^[0-9a-f-]{36}$/i.test(raw._save_operation))p._save_operation=raw._save_operation;
