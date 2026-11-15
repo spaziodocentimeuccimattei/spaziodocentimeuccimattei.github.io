@@ -11,7 +11,7 @@ html.bt-tema .cat-titolo{font-size:clamp(1.6rem,4.6vw,2.6rem)}
 .cat-esito{grid-area:esito;display:grid;gap:10px;align-content:start;min-width:0}
 .cat-esito p{margin:0;font:700 1.0625rem/1.4 var(--bt-carattere);color:var(--bt-testo)}
 html.bt-tema .cat-esito .cat-legame{padding:12px 16px;border-radius:16px;border:2px solid var(--bt-colore-chiaro);background:rgba(255,255,255,.08);font-size:1.125rem}
-.cat-legame b{color:var(--bt-lime)}
+.cat-legame b{color:var(--bt-lime-chiaro)}
 .cat-nav{width:100%}
 html.bt-tema .cat-schermo .bt-scelta{min-height:56px;flex-wrap:nowrap;column-gap:12px}
 .cat-scelta__testo{display:grid;gap:2px;min-width:0;flex:1;text-align:left}

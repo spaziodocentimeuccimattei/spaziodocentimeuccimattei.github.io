@@ -225,7 +225,9 @@ export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriA
     const open = el('p', {class: 'bt-finale__opendays'}, el('strong', {}, 'Open Day: '), giorni.join(' · '));
     const schermo = el('section', {class: 'bt-schermo', 'aria-labelledby': 'finaleTitolo'},
       barra(), lista,
-      el('h1', {class: 'bt-titolo', id: 'finaleTitolo', tabindex: '-1'}, 'Prova un ', el('em', {}, 'altro indirizzo')),
+      (fatti.length >= CORSI.length
+        ? el('h1', {class: 'bt-titolo', id: 'finaleTitolo', tabindex: '-1'}, 'Li hai provati ', el('em', {}, 'tutti'), '!')   // tutti e cinque i distintivi: niente invito a provarne un altro
+        : el('h1', {class: 'bt-titolo', id: 'finaleTitolo', tabindex: '-1'}, 'Prova un ', el('em', {}, 'altro indirizzo'))),
       bottoni, el('div', {class: 'bt-finale__piccolo'}, video, open), piede());
     queueMicrotask(() => premio(schermo.querySelector(`.bt-distintivo[data-corso="${corso}"]`), corso));
     return schermo;

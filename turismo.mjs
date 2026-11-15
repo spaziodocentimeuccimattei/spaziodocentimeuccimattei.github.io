@@ -107,7 +107,7 @@ const PASSI=[
  {id:'servizio',titolo:'Che cosa aggiungi alla visita?',frase:'Guarda il prezzo a persona.'},
  {id:'condizione',titolo:'Che cosa dici se piove?',frase:'Chi prenota deve saperlo prima.'},
  {id:'invito',titolo:'Come inviti i visitatori?',frase:'Scegli la voce dell’invito.'},
- {id:'bozza',titolo:'Controlla la bozza dell’IA.',frase:'L’IA ha scritto l’invito: due promesse sono sbagliate.'}
+ {id:'bozza',titolo:'Controlla la bozza dell’intelligenza artificiale.',frase:'L’IA ha scritto l’invito: due promesse sono sbagliate.'}
 ];
 const TOTALE=PASSI.length;
 
@@ -213,7 +213,7 @@ function intro(){
  const label=p.started?'Riprendi':'Inizia';
  return `<section class="bt-schermo tur-intro" data-corso="turismo">
   <div class="tur-intro__testo">
-   <p class="bt-occhiello bt-occhiello--corso">Indirizzo Turismo</p>
+   <p class="bt-occhiello bt-occhiello--corso">TUR · Turismo</p>
    <h1 class="bt-titolo" id="stageTitle" tabindex="-1">Crea una visita da <em>ricordare</em>.</h1>
    <p class="bt-frase">In Turismo impari a progettare visite per persone diverse.</p>
   </div>
