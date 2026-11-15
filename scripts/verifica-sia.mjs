@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import * as c from '../sia-core.mjs';
+import {readFileSync} from 'node:fs';
 let checks=0;const eq=(a,b)=>{assert.deepEqual(a,b);checks++;},ok=a=>{assert.ok(a);checks++;};
 const p=c.createProject();eq(p.course,'sia');ok(!c.completed(p));eq(c.ready(p,0),false);p.started=true;p.identity={demo:true};
 eq(c.advance(p),false);p.screen=0;const bad=c.processRun(p);ok(bad.warning);ok(c.ready(p));eq(c.advance(p),true);eq(p.screen,1);
@@ -21,4 +22,10 @@ p.screen=3;const n1=c.addNote(p,{text:'Test dati',role:'alunno',kind:'chiarezza'
 p.unknownFuture={preserved:true};p.data.future='da conservare';const restored=JSON.parse(JSON.stringify(p));ok(c.validProject(restored));eq(restored.notes.length,2);eq(restored.unknownFuture,{preserved:true});eq(restored.data.future,'da conservare');eq(c.validProject({...restored,course:'afm'}),false);
 // Every permutation executes the student's order, rather than a hidden canonical program.
 for(const order of [['leggi','controlla','rispondi'],['leggi','rispondi','controlla'],['controlla','leggi','rispondi'],['controlla','rispondi','leggi'],['rispondi','leggi','controlla'],['rispondi','controlla','leggi']]){const x=c.createProject();x.program.blocks=order;const r=c.execute(x,{available:2,requested:1});eq(r.problem,order.join(',')!=='leggi,controlla,rispondi');}
-console.log(`${checks} asserzioni superate: modelli, esecuzione, dipendenze, archivio, permessi, note e conservazione.`);
+// Riordino di novembre 2026: dieci tappe con titoli brevi e senza codici; lo schermo non usa tendine né il vecchio finale.
+eq(c.STAGES.length,10);ok(c.STAGES.every(s=>s.length===4&&s.every(t=>typeof t==='string')&&!/\bR0\d\b/.test(s.join(' '))));
+eq(c.context({...c.createProject(),screen:3}).label,'Dati · 2/2 · Il controller è scritto due volte.');
+const ui=readFileSync(new URL('../sia.mjs',import.meta.url),'utf8'),page=readFileSync(new URL('../bussola-sia.html',import.meta.url),'utf8');
+ok(!/<select/.test(ui));ok(!/data-next-step|data-course-videos|certificateOpen|name="interest"/.test(ui));ok(!/certificateDialog/.test(page));
+ok(/mostraIngresso/.test(ui)&&/mostraFinale/.test(ui)&&/ingressoComune:true/.test(ui));ok(/bussola-ingresso-finale\.css/.test(page));
+console.log(`${checks} asserzioni superate: modelli, esecuzione, dipendenze, archivio, permessi, note e conservazione; testi e schermo del riordino.`);
