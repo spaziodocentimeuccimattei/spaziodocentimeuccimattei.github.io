@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import {createProject,choose,advance,moveTask,addNote,ready,completed,validProject,economics,cashflow,posterTitle} from '../afm-core.mjs';
+import {readFileSync} from 'node:fs';
+import {STAGES,context,createProject,choose,advance,moveTask,addNote,ready,completed,validProject,economics,cashflow,posterTitle} from '../afm-core.mjs';
 let checks=0;const check=(condition)=>{assert.ok(condition);checks++;};
 let p=createProject();p.screen=0;check(!advance(p));choose(p,'offer','segno');check(advance(p));check(p.screen===1);check(!advance(p));choose(p,'feature','gruppo');check(advance(p));check(p.screen===2);moveTask(p,'cliente',1);check(p.choices.order.join(',')==='risorse,cliente,riepilogo');moveTask(p,'risorse',-1);check(p.choices.order.join(',')==='risorse,cliente,riepilogo');check(advance(p));choose(p,'obstacle','dividi');check(advance(p));check(advance(p));check(p.screen===5);check(!advance(p));choose(p,'payment','anticipo');check(advance(p));choose(p,'agreement','prova');check(advance(p));choose(p,'amendment','separata');check(advance(p));choose(p,'tone','storia');check(advance(p));choose(p,'question','uso');check(!advance(p));choose(p,'response','gruppo');check(advance(p));check(completed(p)&&p.finished&&p.screen===10);
 // Baseline numerico verificato indipendentemente: 20*15 - (60+20*7) = 100.
@@ -17,4 +18,11 @@ choose(p,'offer','segno');choose(p,'feature','gruppo');p.choices.headline='Il ti
 // Cambiare domanda richiede una risposta coerente; ripristinare la domanda recupera la variante.
 choose(p,'question','uso');choose(p,'response','gruppo');choose(p,'question','tempo');check(!ready(p,9));choose(p,'question','uso');check(p.choices.response==='gruppo'&&ready(p,9));
 check(validProject(JSON.parse(JSON.stringify(p))));check(!validProject({...p,course:'ssas'}));check(!validProject({...p,choices:{...p.choices,quantity:999}}));check(!validProject({...p,done:[0,0]}));check(!validProject({...p,choices:{...p.choices,order:['cliente','cliente','risorse']}}));
+// Riordino di novembre 2026: dieci tappe con titolo e frase brevi; lo schermo non usa tendine né il vecchio finale; ingresso e finale comuni.
+check(STAGES.length===10&&STAGES.every(s=>s.length===4&&s.every(t=>typeof t==='string')&&s[1].split(/\s+/).length<=15));
+check(context({...createProject(),screen:4}).label==='Dati e finanza · 1/2 · Quanti kit vende Linea Studio?');
+const ui=readFileSync(new URL('../afm.mjs',import.meta.url),'utf8'),page=readFileSync(new URL('../bussola-afm.html',import.meta.url),'utf8');
+check(!/<select/.test(ui)&&!/data-next-step|data-course-videos|certificateOpen|name="interest"|mountNextStep|Materie coinvolte/.test(ui));check(!/certificateDialog/.test(page));
+check(/mostraIngresso/.test(ui)&&/mostraFinale/.test(ui)&&/ingressoComune:true/.test(ui)&&/bussola-ingresso-finale\.css/.test(page));
+check(/const TRE_COSE=\[('[^']+'),('[^']+'),('[^']+')\];/.test(ui));
 console.log(JSON.stringify({checks,status:'pass',scope:'Stato, conti, pagamenti, note, varianti e recupero; nessun database reale'},null,2));
