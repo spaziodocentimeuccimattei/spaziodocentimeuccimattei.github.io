@@ -7,17 +7,19 @@ export const LABS=[
  {id:'interfaccia',label:'Interfacce',product:'Una schermata da usare',client:'Spazio Mix',subjects:'Informatica · Economia aziendale · Comunicazione e inglese'},
  {id:'accessi',label:'Accessi e responsabilità',product:'Permessi messi alla prova',client:'Officina Ripresa',subjects:'Informatica · Diritto · Economia aziendale'}
 ];
+// Titoli e frasi del primo schermo di ogni tappa (riordino novembre 2026). Servono all'etichetta delle note
+// (context) e al monitoraggio; gli schermi completi stanno in sia.mjs. [titolo, frase, aiuto, pulsante]
 export const STAGES=[
- ['Una data promessa troppo presto?','Officina Ripresa rimette in uso cuffie e controller. Prima di promettere una consegna, deve organizzare il lavoro. Riordina i tre passaggi con le frecce, poi premi «Prova il processo».','Prova il processo per vedere che cosa succede.','Passa le informazioni'],
- ['Passa le informazioni, non il problema.','Il tecnico deve sapere che cosa fare sul controller R02. Scegli quali informazioni passargli, poi prova lo scambio.','Scegli una scheda e prova lo scambio.','Apri l’archivio'],
- ['Che cosa vuoi sapere degli interventi?','Costruisci l’archivio di Officina Ripresa. Aggiungi colonne: la tabella prende forma accanto a te. Per cercare le consegne ti serviranno stato e giorno.','Aggiungi almeno una colonna all’archivio.','Fai una ricerca'],
- ['L’archivio ti risponde davvero?','R02 compare due volte: è lo stesso intervento. Unisci le due schede, completa il giorno di R04 e cerca le consegne pronte.','Unisci il duplicato, scegli il giorno e aggiungi stato e giorno se mancano.','Passa al programma'],
- ['C’è posto per una prenotazione?','Un nuovo cliente: Spazio Mix organizza attività creative. Aggiungi tre blocchi e scegli una regola per le prenotazioni.','Aggiungi tutti e tre i blocchi.','Metti in esecuzione'],
- ['Il tuo programma, in azione.','Prova la regola con due posti e con zero posti disponibili. Osserva il risultato. Puoi cambiare i blocchi e riprovare: ogni prova riparte dai dati che leggi.','Esegui entrambe le prove con la regola attuale.','Disegna la schermata'],
- ['Disegna una schermata che si capisce.','Per Spazio Mix, componi la schermata: sposta i tre elementi, scegli uno stile e dai un nome al comando. Il tuo programma è già collegato.','Puoi usare i testi proposti o personalizzarli.','Usala come un visitatore'],
- ['Ora la tua idea si può usare.','Nel prototipo scegli un’attività e quanti posti chiedere. Premi il tuo pulsante: si esegue il programma che hai costruito.','Fai almeno una prenotazione di prova.','Torna a Officina Ripresa'],
- ['Dai a ciascuno il suo spazio.','Si torna all’archivio di Officina Ripresa. Un permesso stabilisce che cosa si può vedere o cambiare. Modifica la bozza: chi può cambiare l’importo concordato?','Puoi modificare i permessi o conservare la bozza.','Prova i permessi'],
- ['Chi può cambiare il prezzo?','Prova come cliente e come accoglienza: tenta di cambiare l’importo. Poi puoi modificare i permessi e riprovare.','Prova entrambi i ruoli con i permessi attuali.','Raccogli le tue soluzioni']
+ ['In che ordine lavora l’officina?','Tocca i tre passi, uno dopo l’altro.','Tocca i tre passi.','Avanti'],
+ ['Che cosa scrivi al tecnico?','Il tecnico deve riparare il controller.','Scegli una scheda.','Avanti'],
+ ['Che cosa salvi di ogni riparazione?','Tocca le informazioni da mettere nell’archivio.','Tocca almeno un’informazione.','Avanti'],
+ ['Il controller è scritto due volte.','Tocca «Unisci» per tenerne uno solo.','Unisci, scegli il giorno e cerca.','Avanti'],
+ ['Un programma è una fila di comandi.','Tocca i tre comandi nell’ordine che scegli.','Tocca i tre comandi.','Avanti'],
+ ['Prova il tuo programma.','Ci sono 2 posti liberi. Una persona prenota.','Avvia le due prove.','Avanti'],
+ ['Ora disegni la tua app.','Scegli il colore.','Scegli colore, nome e pulsante.','Avanti'],
+ ['Prova la tua app.','Scegli un’attività e tocca il tuo pulsante.','Fai una prenotazione di prova.','Avanti'],
+ ['Chi può cambiare il prezzo?','Tocca per dare o togliere il permesso.','Scegli chi può cambiarlo.','Avanti'],
+ ['Prova come cliente.','Il cliente vuole pagare 10 € invece di 18 €.','Prova come cliente e come accoglienza.','Avanti']
 ];
 export const PROCESS=[
  {id:'richiesta',label:'Raccogli la richiesta',role:'Accoglienza',text:'Oggetto, problema e data desiderata.'},

@@ -1,11 +1,18 @@
+// Percorso SIA della Bussola — riordino di novembre 2026 (agente A4).
+// Una scelta per schermo. I dati non cambiano: stesse dieci tappe (p.screen 0-9), stesso formato del progetto,
+// stessi identificativi delle scelte. Ogni tappa è divisa in uno o più «schermi» che il ragazzo vede uno alla volta
+// (variabile `sub`, solo in memoria: alla ripresa si riparte dal primo schermo ancora da fare).
+// Accanto a ogni schermo c'è l'anteprima dell'app che prende forma con le scelte.
 import {setupExperienceNavigation} from './bussola-navigazione.mjs?v=20261018-flow';
 import {classEntry,setupClass} from './bussola-classe.mjs?v=20261019-monitor';
 import {setupParticipantCertificate} from './bussola-attestato-alunno.mjs?v=20261029-missione';
-import {COURSE_VIDEO_NOTICE,mountNextStep} from './bussola-prossimo-passo.mjs?v=20261112-open-day';
 import {setupStudioRemote} from './bussola-studio-remote.mjs?v=20261019-monitor';
 import {restore,remoteProject} from './sia-records.mjs?v=20261010-all';
+import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261114-a3';
+import {mostraFinale} from './bussola-finale-comune.mjs?v=20261114-a3';
+import {scintilla,interruttoreSuono} from './bussola-effetti.mjs?v=20261114-tema';
+import {STORE as BASE_STORE,LABS,PROCESS,FIELDS,BLOCKS,ROLES,find,createProject,processRun,processSignature,handoffRun,records,query,programSignature,runProgram,uiSignature,runUI,accessSignature,runAccess,currentRuns,ready,completed,advance,context,addNote,validProject,invalidate} from './sia-core.mjs?v=20261115-a4';
 const COURSE='sia';
-import {FORMAT,STORE as BASE_STORE,LABS,STAGES,PROCESS,FIELDS,BLOCKS,CASES,PARTS,ROLES,find,createProject,move,processRun,processSignature,handoffRun,records,query,programSignature,execute,runProgram,uiSignature,runUI,accessSignature,runAccess,currentRuns,ready,completed,advance,context,addNote,validProject,invalidate} from './sia-core.mjs?v=20261024-esame';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
@@ -22,9 +29,57 @@ try{const parsed=initialRaw?JSON.parse(initialRaw):null;if(validProject(parsed))
 p ||= createProject(!initialRaw&&requested&&/^[0-9a-f-]{36}$/i.test(requested)?requested:undefined);
 const storageId=loadedInitial?initialKey:p.id;
 const navigation=setupExperienceNavigation(route=>{restoreRoute(route);render(true,false);});
+
+// ---------------------------------------------------------------------------------------------
+// Testi che il ragazzo legge. Le etichette dei dati (LABS, PROCESS, FIELDS, BLOCKS, ROLES in sia-core.mjs)
+// restano quelle di prima perché le leggono monitoraggio e attestato: qui ci sono solo i nomi «da schermo».
+const LAB_UI=[
+ {nome:'I passi del lavoro',cliente:'Officina Ripresa',legame:'studi come lavora un’azienda.'},
+ {nome:'Un archivio che risponde',cliente:'Officina Ripresa',legame:'impari a organizzare i dati di un’azienda.'},
+ {nome:'Una regola che decide',cliente:'Spazio Mix',legame:'impari a scrivere programmi come questo.'},
+ {nome:'La schermata dell’app',cliente:'Spazio Mix',legame:'progetti programmi facili da usare.'},
+ {nome:'Chi può fare che cosa',cliente:'Officina Ripresa',legame:'impari anche a proteggere i dati.'}
+];
+const PASSO_UI={richiesta:'Ascolta il cliente',risorse:'Controlla i ricambi',conferma:'Dai la data'};
+const PASSO_BREVE={richiesta:'Cliente',risorse:'Ricambi',conferma:'Data'};
+const CAMPO_UI={status:['Stato','pronta o no'],day:['Giorno','quando è pronta'],price:['Prezzo','quanto costa']};
+const BLOCCO_UI={leggi:'Leggi i posti liberi',controlla:'Controlla se bastano',rispondi:'Rispondi a chi prenota'};
+const BLOCCO_BREVE={leggi:'Leggi',controlla:'Controlla',rispondi:'Rispondi'};
+const RUOLO_UI={cliente:'Il cliente',tecnico:'Il tecnico',accoglienza:'Chi sta al banco'};
+const RUOLO_BREVE={cliente:'Cliente',tecnico:'Tecnico',accoglienza:'Banco'};
+const STILE_UI=[['viola','Viola'],['verde','Verde'],['sole','Arancio']];
+const PULSANTI_UI=['Prenota un posto','Vai','Clicca qui'];
+// Le tre cose del finale: fonti in docs/bussola/riordino-2026-11/testi-sia.md
+const TRE_COSE=['Organizzi i dati di aziende e servizi.','Crei programmi per aziende e servizi.','Unisci informatica ed economia.'];
+
+const corsa=(list,sig)=>currentRuns(list,sig).at(-1);
+
+// Gli schermi di ogni tappa: titolo, frase, azione (un solo compito) e «fatto» (sblocca Avanti).
+const PASSI=[
+ [{id:'ordine',titolo:'In che ordine lavora l’officina?',frase:'Tocca i tre passi.',fatto:()=>ready(p,0)}],
+ [{id:'scheda',titolo:'Che cosa scrivi al tecnico?',frase:'Deve riparare il controller.',fatto:()=>ready(p,1)}],
+ [{id:'colonne',titolo:'Che cosa salvi di ogni riparazione?',frase:'Tocca le informazioni per l’archivio.',fatto:()=>ready(p,2)}],
+ [{id:'doppio',titolo:'Il controller è scritto due volte.',frase:'Tienine uno solo.',fatto:()=>p.data.merged},
+  {id:'giorno',titolo:'Alle seconde cuffie manca il giorno.',frase:'Scegli tu.',fatto:()=>!!p.data.missingDay},
+  {id:'cerca',titolo:'Cerca le riparazioni pronte.',frase:'Scegli il giorno.',fatto:()=>ready(p,3)}],
+ [{id:'blocchi',titolo:'Un programma è una fila di comandi.',frase:'Toccali nell’ordine che vuoi.',fatto:()=>ready(p,4)},
+  {id:'regola',titolo:'E se i posti non bastano?',frase:'Scegli tu.',fatto:()=>ready(p,4)}],
+ [{id:'prova',titolo:'Prova il tuo programma.',frase:'Con 2 posti liberi e con 0.',fatto:()=>ready(p,5)}],
+ [{id:'colore',titolo:'Ora disegni la tua app.',frase:'Scegli il colore.',fatto:()=>true},
+  {id:'pulsante',titolo:'Che cosa scrivi sul pulsante?',frase:'Deve dire che cosa succede.',fatto:()=>ready(p,6)}],
+ [{id:'usa',titolo:'Prova la tua app.',frase:'Scegli e tocca il tuo pulsante.',fatto:()=>ready(p,7)}],
+ [{id:'permessi',titolo:'Chi può cambiare il prezzo?',frase:'✓ vuol dire: può cambiarlo.',fatto:()=>ready(p,8)}],
+ [{id:'prova',titolo:'Prova a cambiare il prezzo.',frase:'Ci provano il cliente e chi sta al banco.',fatto:()=>ready(p,9)}]
+];
+const TOTALE=PASSI.reduce((n,l)=>n+l.length,0);
+const prima=s=>PASSI.slice(0,s).reduce((n,l)=>n+l.length,0);
+let sub=0,ordine=[],rifaOrdine=false,app={activity:'animazione',requested:1},reviewing=false;
+function primoDaFare(s){const l=PASSI[s]||[];const i=l.findIndex(x=>!x.fatto());return i<0?Math.max(0,l.length-1):i;}
+function vaiA(s,quale='primo'){p.screen=s;sub=quale==='ultimo'?(PASSI[s]?.length||1)-1:quale==='zero'?0:primoDaFare(s);ordine=[];rifaOrdine=false;}
+
 function restoreRoute(route){
  const n=route==='conclusione'?10:Number(route.match(/^passaggio-(\d+)$/)?.[1])-1;
- if(p.started&&Number.isInteger(n)&&n>=0&&(n<=p.unlocked||n===10&&(p.screen===10||completed(p)))){navigation.enter();p.screen=n;}
+ if(p.started&&Number.isInteger(n)&&n>=0&&(n<=p.unlocked||n===10&&(p.screen===10||completed(p)))){navigation.enter();vaiA(n);}
  else navigation.showIntro();
 }
 
@@ -37,45 +92,194 @@ $('conflictDialog').addEventListener('cancel',e=>e.preventDefault());
 // «Inizia da capo»: sullo stesso dispositivo si alternano persone diverse. Conserva il lavoro presente,
 // dimentica il codice personale di chi c'era prima e apre un lavoro nuovo dall'ingresso.
 function startOver(){save();document.dispatchEvent(new CustomEvent('bussola-progetto-nuovo'));const u=new URL(location.href),h=new URLSearchParams(u.hash.includes('=')?u.hash.slice(1):'');h.delete('alunno');h.delete('passaggio');u.searchParams.set('progetto',crypto.randomUUID());u.hash=h.get('classe')?h.toString():'ingresso';location.assign(u.href);}
+
+// ---------------------------------------------------------------------------------------------
+// Anteprima: il telefono con l'app che prende forma.
+const tel=(testa,corpo,extra='')=>`<div class="sia-tel ${extra}" id="siaTel"><div class="sia-tel__barra"><span>${esc(testa)}</span><span aria-hidden="true">●●●</span></div><div class="sia-tel__schermo">${corpo}</div></div>`;
+const stileApp=()=>p.ui.style==='verde'?'sia-app--verde':p.ui.style==='sole'?'sia-app--sole':'sia-app--viola';
+function appSpazioMix({attiva=false,risultato=null,demo=false}={}){
+ const r=risultato,act=attiva?app.activity:(r?.activity||'animazione');
+ const scelte=attiva?`<div class="sia-app__riga" role="group" aria-label="Attività"><button type="button" class="sia-app__opz" data-app-activity="animazione" aria-pressed="${act==='animazione'}">Animazione<small>2 posti</small></button><button type="button" class="sia-app__opz" data-app-activity="foto" aria-pressed="${act==='foto'}">Fotografia<small>1 posto</small></button></div><div class="sia-app__riga" role="group" aria-label="Posti da chiedere"><button type="button" class="sia-app__opz" data-app-posti="1" aria-pressed="${app.requested===1}">1 posto</button><button type="button" class="sia-app__opz" data-app-posti="2" aria-pressed="${app.requested===2}">2 posti</button></div>`
+  :'';
+ const esito=r?`<p class="sia-app__esito sia-app__esito--${r.output==='conferma'&&r.remaining>=0?'si':r.output==='attesa'?'attesa':'no'}" role="status">${r.output==='problema'?'Il programma si è fermato.':r.output==='attesa'?'Sei in lista d’attesa.':'Prenotazione confermata ✓'}</p>`:demo?'<p class="sia-app__esito sia-app__esito--si sia-demo__toast">Prenotazione confermata ✓</p>':'';
+ const titolo=demo?'Crea con Spazio Mix':p.ui.title;
+ const pulsante=demo?'Prenota un posto':p.ui.button;
+ return `<div class="sia-app ${demo?'sia-app--viola':stileApp()}"><div class="sia-app__arte" aria-hidden="true"><span>✦</span><span>▧</span><span>▷</span></div><p class="sia-app__titolo" data-app-titolo>${esc(titolo)}</p>${scelte}<button type="button" class="sia-app__pulsante" ${attiva?'id="appSubmit"':'tabindex="-1" aria-hidden="true"'} data-app-pulsante>${esc(pulsante)}</button>${esito}</div>`;
+}
+function righeArchivio({evidenzia=()=>false,colonne=p.data.fields}={}){
+ const nomi=colonne;const lista=records(p);
+ return `<ul class="sia-archivio">${lista.map((r,i)=>{
+  const chip=f=>f==='status'?`<span class="sia-chip ${r.status==='Pronto'?'sia-chip--si':''}">${r.status==='Pronto'?'Pronta':'In lavoro'}</span>`:f==='day'?`<span class="sia-chip ${r.day?'':'sia-chip--manca'}">${r.day?esc(r.day):'Giorno ?'}</span>`:`<span class="sia-chip">${money(r.price)}</span>`;
+  return `<li class="${evidenzia(r,i)?'sia-archivio--luce':''}"><strong>${esc(r.object)}</strong><span class="sia-archivio__chip">${FIELDS.filter(f=>nomi.includes(f.id)).map(f=>chip(f.id)).join('')}</span></li>`;}).join('')}</ul>`;
+}
+function programma(){
+ const b=p.program.blocks;
+ return `<ol class="sia-blocchi">${[0,1,2].map(i=>b[i]?`<li class="sia-blocco sia-blocco--${b[i]}">${esc(BLOCCO_BREVE[b[i]])}</li>`:'<li class="sia-blocco sia-blocco--vuoto"></li>').join('')}</ol>`;
+}
+function regola(){return `<p class="sia-regola"><b>SE</b> bastano → conferma<br><b>ALTRIMENTI</b> → ${p.program.no==='attesa'?'attesa':'conferma'}</p>`;}
+function esitoCorsa(r){if(!r)return '';if(r.problem&&r.output==='problema')return 'Fermo';if(r.remaining<0)return 'Confermata senza posto!';return r.output==='conferma'?'Confermata':'In attesa';}
+function prezzoCuffie(){
+ const r=corsa(p.access.runs,accessSignature(p));
+ return `<div class="sia-prezzo"><span>Cuffie</span><strong>${money(r&&r.allowed?r.after:18)}</strong></div>`;
+}
+function anteprima(s,id){
+ if(s===0){
+  const r=rifaOrdine?null:corsa(p.process.runs,processSignature(p));const seq=r?p.process.order:ordine;
+  const brutti=new Set(['Manca ancora la richiesta','Una promessa da verificare']);
+  const righe=[0,1,2].map(i=>{const x=seq[i],t=r?.trace[i];return `<li class="${x?'':'sia-vuoto'}"><span class="sia-num">${t?(brutti.has(t.label)?'!':'✓'):i+1}</span>${x?esc(PASSO_BREVE[x]):''}</li>`;}).join('');
+  const msg=r?`<p class="sia-fumetto">«Pronto ${r.warning?'venerdì':'lunedì'}»</p>`:'';
+  return tel('Officina Ripresa',`<ol class="sia-passi">${righe}</ol>${msg}`);
+ }
+ if(s===1){
+  const h=p.process.handoff,ricca=h==='completa',v=t=>h?t:'?';
+  const r=corsa(p.process.handoffRuns,h);
+  return tel('Officina Ripresa',`<dl class="sia-scheda"><div><dt>Oggetto</dt><dd>Controller</dd></div><div><dt>Problema</dt><dd>${v(ricca?'Tasto bloccato':'—')}</dd></div><div><dt>Ricambio</dt><dd>${v(ricca?'Lunedì':'—')}</dd></div></dl>${r?`<p class="sia-fumetto">«${ricca?'Chiaro, comincio!':'Che cosa non va?'}»</p>`:''}`);
+ }
+ if(s===2)return tel('Officina Ripresa',righeArchivio());
+ if(s===3){
+  const q=query(p);
+  const luce=id==='doppio'?(r,i)=>!p.data.merged&&r.object==='Controller':id==='giorno'?r=>r.id==='R04':id==='cerca'&&p.data.searched&&q.known?r=>r.status==='Pronto'&&r.day===p.data.filter:()=>false;
+  const banner=id==='cerca'&&p.data.searched&&q.known?`<p class="sia-fumetto">${q.count===1?'1 pronta':`${q.count} pronte`}${q.total!==null?` · ${money(q.total)}`:''}</p>`:'';
+  const colonne=id==='doppio'?[]:id==='giorno'?['day']:p.data.fields.filter(f=>f!=='price');
+  return tel('Officina Ripresa',righeArchivio({evidenzia:luce,colonne})+banner);
+ }
+ if(s===4)return tel('Spazio Mix',programma()+(id==='regola'?regola():''));
+ if(s===5){
+  const runs=currentRuns(p.program.runs,programSignature(p));const r1=runs.filter(r=>r.caseId==='libero').at(-1),r2=runs.filter(r=>r.caseId==='pieno').at(-1);
+  return tel('Spazio Mix',programma()+`<ul class="sia-prove"><li><span>2 posti</span><strong>${r1?esc(esitoCorsa(r1)):''}</strong></li><li><span>0 posti</span><strong>${r2?esc(esitoCorsa(r2)):''}</strong></li></ul>`);
+ }
+ if(s===6)return tel('Spazio Mix',appSpazioMix(),'sia-tel--app');
+ if(s===7)return tel('Spazio Mix',appSpazioMix({attiva:true,risultato:corsa(p.ui.runs,uiSignature(p))}),'sia-tel--app');
+ if(s===8){
+  const chi=ROLES.filter(x=>p.access.permissions[x.id].edit);
+  return tel('Officina Ripresa',`${prezzoCuffie()}<ul class="sia-ruoli">${chi.length?chi.map(x=>`<li><span aria-hidden="true">🔓</span>${esc(RUOLO_BREVE[x.id])}</li>`).join(''):'<li><span aria-hidden="true">🔒</span>Nessuno</li>'}</ul>`);
+ }
+ if(s===9){
+  const prove=currentRuns(p.access.runs,accessSignature(p)),ultima=id=>prove.filter(x=>x.role===id).at(-1);
+  const righe=['cliente','accoglienza'].map(id=>{const t=ultima(id);return t?`<li class="${t.allowed?'':'sia-no'}"><span aria-hidden="true">${t.allowed?'🔓':'🔒'}</span>${esc(RUOLO_BREVE[id])}<small>${t.allowed?money(t.after):'bloccato'}</small></li>`:'';}).join('');
+  return tel('Officina Ripresa',`${prezzoCuffie()}<ul class="sia-ruoli">${righe}</ul>`);
+ }
+ return '';
+}
+
+// ---------------------------------------------------------------------------------------------
+// L'azione dello schermo (una sola) e il suo esito.
+const scelta=(attr,val,testo,premuto,extra='')=>`<button type="button" class="bt-scelta" id="sia-${attr}-${esc(val).replace(/\W+/g,'')}" data-${attr}="${esc(val)}" aria-pressed="${premuto}" ${extra}><span class="sia-scelta__testo">${testo}</span></button>`;
+function azione(s,id){
+ if(s===0){
+  const seq=ready(p,0)&&!rifaOrdine?p.process.order:ordine;
+  const bottoni=PROCESS.map(x=>{const i=seq.indexOf(x.id);return `<button type="button" class="bt-scelta sia-ordine" id="sia-passo-${x.id}" data-passo="${x.id}" aria-pressed="${i>=0}" ${i>=0?'disabled':''}><span class="sia-num">${i>=0?i+1:''}</span>${esc(PASSO_UI[x.id])}</button>`;}).join('');
+  return `<div class="bt-scelte">${bottoni}</div>${seq.length&&!(rifaOrdine&&seq.length<3)?'<button type="button" class="bt-link" id="ordineDaCapo">Cambia l’ordine</button>':''}`;
+ }
+ if(s===1)return `<div class="bt-scelte">${scelta('handoff','completa','Oggetto, problema, ricambio',p.process.handoff==='completa')}${scelta('handoff','essenziale','Solo l’oggetto',p.process.handoff==='essenziale')}</div>`;
+ if(s===2)return `<div class="bt-scelte">${FIELDS.map(f=>scelta('field',f.id,CAMPO_UI[f.id][0],p.data.fields.includes(f.id))).join('')}</div>`;
+ if(s===3&&id==='doppio')return `<div class="bt-scelte">${p.data.merged?'<button type="button" class="bt-scelta" aria-pressed="true" disabled>Unito ✓</button>':'<button type="button" class="bt-scelta" id="merge"><span class="sia-play" aria-hidden="true">⇄</span>Unisci</button>'}</div>`;
+ if(s===3&&id==='giorno')return `<div class="bt-scelte bt-scelte--due">${['Venerdì','Lunedì'].map(d=>scelta('missing-day',d,d,p.data.missingDay===d)).join('')}</div>`;
+ if(s===3&&id==='cerca'){
+  if(!(p.data.fields.includes('status')&&p.data.fields.includes('day')))return `<div class="bt-scelte"><button type="button" class="bt-scelta" id="aggiungiColonne">Aggiungili</button></div>`;
+  return `<div class="bt-scelte bt-scelte--due">${['Venerdì','Lunedì'].map(d=>scelta('filter',d,d,p.data.searched&&p.data.filter===d)).join('')}</div>`;
+ }
+ if(s===4&&id==='blocchi'){
+  const b=p.program.blocks;
+  return `<div class="bt-scelte">${BLOCKS.map(x=>{const i=b.indexOf(x.id);return `<button type="button" class="bt-scelta sia-ordine" id="sia-blocco-${x.id}" data-add-block="${x.id}" aria-pressed="${i>=0}" ${i>=0?'disabled':''}><span class="sia-num">${i>=0?i+1:''}</span>${esc(BLOCCO_UI[x.id])}</button>`;}).join('')}</div>${b.length?'<button type="button" class="bt-link" id="blocchiDaCapo">Cambia l’ordine</button>':''}`;
+ }
+ if(s===4&&id==='regola')return `<div class="bt-scelte">${scelta('regola','attesa','Lista d’attesa',p.program.no==='attesa')}${scelta('regola','conferma','Conferma lo stesso',p.program.no==='conferma')}</div>`;
+ if(s===5)return `<div class="bt-scelte"><button type="button" class="bt-scelta" id="siaAvvia" data-run="tutte"><span class="sia-play" aria-hidden="true">▶</span>Avvia</button></div>`;
+ if(s===6&&id==='colore')return `<div class="bt-scelte">${STILE_UI.map(([v,t])=>scelta('style',v,`<span class="sia-campione sia-app--${v}" aria-hidden="true"></span>${t}`,p.ui.style===v)).join('')}</div>`;
+ if(s===6&&id==='nome')return `<label class="bt-campo sia-campo">Nome dell’app<input id="uiTitle" name="uiTitle" maxlength="64" value="${esc(p.ui.title)}" autocomplete="off"></label>`;
+ if(s===6&&id==='pulsante'){const lista=PULSANTI_UI.includes(p.ui.button)?PULSANTI_UI:[...PULSANTI_UI,p.ui.button];return `<div class="bt-scelte">${lista.map(t=>scelta('bottone',t,esc(t),p.ui.button===t)).join('')}</div>`;}
+ if(s===7)return '';
+ if(s===8)return `<div class="bt-scelte">${ROLES.map(r=>scelta('perm',r.id,esc(RUOLO_UI[r.id]),p.access.permissions[r.id].edit)).join('')}</div>`;
+ if(s===9)return `<div class="bt-scelte"><button type="button" class="bt-scelta" id="siaProvaPermessi" data-access="tutti"><span class="sia-play" aria-hidden="true">▶</span>Prova</button></div>`;
+ return '';
+}
+function esito(s,id){
+ if(s===0){const r=rifaOrdine?null:corsa(p.process.runs,processSignature(p));return r?.warning?'Data promessa senza controllare i ricambi.':'';}
+ if(s===5){const runs=currentRuns(p.program.runs,programSignature(p));if(!runs.length)return '';
+  if(runs.some(r=>r.output==='problema'))return 'Si è fermato: un comando è fuori posto. <button type="button" class="bt-link" data-rifai="0">Cambia l’ordine</button>';
+  if(runs.some(r=>r.remaining<0))return 'Ha confermato senza posti! <button type="button" class="bt-link" data-rifai="1">Cambia la regola</button>';
+  return '';}
+ if(s===6&&id==='pulsante')return p.ui.button==='Vai'||p.ui.button==='Clicca qui'?'Vai dove? Chi lo tocca non lo sa.':'';
+ if(s===7){const r=corsa(p.ui.runs,uiSignature(p));return r?(r.output==='problema'?'Si è fermato: rivedi i comandi.':r.output==='conferma'&&r.remaining>=0?'':r.output==='conferma'?'Ha confermato senza posti!':''):'';}
+ return '';
+}
+
+function activity(){
+ const s=p.screen,lab=Math.floor(s/2),L=LAB_UI[lab];
+ sub=Math.max(0,Math.min(sub,PASSI[s].length-1));
+ const step=PASSI[s][sub],fatto=step.fatto();
+ const pos=prima(s)+sub+1;
+ const ultimo=sub===PASSI[s].length-1&&s%2===1;
+ const legame=ultimo&&ready(p,lab*2)&&ready(p,lab*2+1)?`<p class="sia-legame bt-entra"><b>In SIA</b> ${esc(L.legame)}</p>`:'';
+ const testo=esito(s,step.id);
+ return `<section class="bt-schermo bt-schermo--sinistra sia-schermo" data-corso="sia" data-passo="${s}-${step.id}">
+  <div class="sia-testa"><progress class="bt-avanzamento" value="${pos}" max="${TOTALE}" aria-label="Schermo ${pos} di ${TOTALE}"></progress></div>
+  <div class="sia-griglia">
+   <h1 class="bt-titolo bt-titolo--medio sia-titolo" id="stageTitle" tabindex="-1">${esc(step.titolo)}</h1>
+   <p class="bt-frase sia-frase">${s===3&&step.id==='cerca'&&!(p.data.fields.includes('status')&&p.data.fields.includes('day'))?'Servono Stato e Giorno.':esc(step.frase)}</p>
+   <div class="sia-anteprima" aria-label="La tua app">${anteprima(s,step.id)}</div>
+   <div class="sia-azione">${azione(s,step.id)}</div>
+   <div class="sia-esito" role="status" aria-live="polite">${testo?`<p>${testo}</p>`:''}${legame}</div>
+  </div>
+  <div class="bt-azioni bt-azioni--estremi sia-nav"><button id="previous" type="button" class="bt-pulsante bt-pulsante--secondario">Indietro</button><button id="next" type="button" class="bt-pulsante" ${fatto?'':'disabled'}>Avanti</button></div>
+ </section>`;
+}
+
 function intro(){
- const finished = p.screen === 10 && completed(p);
- const label = finished ? 'Rivedi il dossier' : p.started ? 'Riprendi i laboratori' : 'Inizia';
- const startButton=`<button id="start" class="primary bussola-start" type="button">${label} <span aria-hidden="true">→</span></button>`;
- return `<section class="hero"><div><p class="eyebrow">SIA · SISTEMI INFORMATIVI AZIENDALI</p><h1 id="stageTitle" tabindex="-1">Fai funzionare<span>le tue idee.</span></h1>${p.started?`<div class="bussola-entry-actions">${startButton}<button id="startOver" class="quiet" type="button">Inizia da capo</button></div>`:''}<p class="bussola-video-notice">${COURSE_VIDEO_NOTICE}</p><p class="lead">In questo indirizzo impari a unire informatica ed economia: organizzi dati, progetti programmi e costruisci soluzioni per imprese e servizi.</p><p>Entra in uno studio di soluzioni digitali. Aiuta due clienti immaginari: <strong>Officina Ripresa</strong> e <strong>Spazio Mix</strong>. Le soluzioni saranno tue.</p>${p.started?'':startButton}<p class="hero-note">Attraversa tutti e cinque i laboratori. Puoi cambiare le scelte e riprendere il lavoro.</p></div><div class="studio-art" aria-label="Studio illustrato con processo, dati e programma"><div class="art-top"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>STUDIO SIA / SOLUZIONI DIGITALI</div><div class="art-window"><p class="eyebrow">DA UNA RICHIESTA A UN’IDEA</p><h3>Qualcosa che funziona.<br>Per qualcuno.</h3><div class="mini-flow"><span>Persone</span><b aria-hidden="true">→</b><span>Dati</span><b aria-hidden="true">→</b><span>Azioni</span></div></div><div class="art-row"><div class="art-card">01 · Ripresa<small>Organizza gli interventi.</small></div><div class="art-card">02 · Mix<small>Fai partire le prenotazioni.</small></div></div></div></section><section class="lab-preview" aria-label="Che cosa costruirai">${LABS.map((l,i)=>`<article><span class="n">0${i+1}</span><h2>${l.label}</h2><p>${l.product}.</p></article>`).join('')}</section><section class="course-panel"><p><strong>SIA è un’articolazione di Amministrazione, Finanza e Marketing.</strong> Un sistema informativo mette insieme persone, procedure e dati per far funzionare un’organizzazione.</p><p>Materie di indirizzo: Informatica, Economia aziendale, Economia politica, Diritto e lingue. Qui ne incontri alcuni collegamenti attraverso cinque piccoli progetti.</p></section>`;}
-function listOrder(order,items,kind){return `<ol class="list">${order.map((id,i)=>{const x=find(items,id);return `<li class="move-row ${kind==='program'?'block':''}"><span class="index">${i+1}</span><div class="detail"><strong>${esc(x.label)}</strong><small>${esc(x.role||x.desc||'')}</small></div><div class="moves"><button type="button" id="${kind}-${id}-up" data-move="${kind}" data-item="${id}" data-delta="-1" aria-label="Sposta ${esc(x.label)} prima" ${i===0?'disabled':''}>↑</button><button type="button" id="${kind}-${id}-down" data-move="${kind}" data-item="${id}" data-delta="1" aria-label="Sposta ${esc(x.label)} dopo" ${i===order.length-1?'disabled':''}>↓</button></div></li>`;}).join('')}</ol>`;}
-const feedback=(s,warn=false)=>s?`<div class="feedback ${warn?'warn':''}" role="status">${s}</div>`:'';
-function trace(r){return r?`<ol class="trace">${r.trace.map(t=>`<li><strong>${esc(t.label)}</strong><p>${esc(t.text)}</p></li>`).join('')}</ol>${r.problem?feedback('Puoi cambiare la regola e riprovare. Questa è una prova del programma, non un voto.',true):''}`:'<div class="empty"><strong>Le tue istruzioni, i loro effetti.</strong>Premi uno dei comandi di prova per vedere l’esecuzione.</div>';}
-const current=(list,sig)=>currentRuns(list,sig).at(-1);
-function processMap(){return `<div class="map">${p.process.order.map((id,i)=>{const x=find(PROCESS,id);return `${i?'<div class="map-arrow" aria-hidden="true">↓</div>':''}<div class="map-node"><span class="number">${i+1}</span><div><strong>${esc(x.label)}</strong><small>${esc(x.role)} · ${esc(x.text)}</small></div></div>`;}).join('')}</div>`;}
-function fieldChips(){return `<div class="chips" aria-label="Colonne del database">${FIELDS.map(x=>`<button type="button" id="field-${x.id}" data-field="${x.id}" aria-pressed="${p.data.fields.includes(x.id)}">${p.data.fields.includes(x.id)?'✓ ': '+ '}${x.label}</button>`).join('')}</div>`;}
-function dataTable(){return `<div class="table-wrap" tabindex="0" role="region" aria-label="Archivio degli interventi"><table><caption class="helper">Officina Ripresa · dati inventati</caption><thead><tr><th scope="col">Codice</th><th scope="col">Oggetto</th>${FIELDS.filter(f=>p.data.fields.includes(f.id)).map(f=>`<th scope="col">${f.label}</th>`).join('')}</tr></thead><tbody>${records(p).map((r,i)=>`<tr class="${i===4?'dupe':''}"><td><strong>${r.id}</strong>${i===4?'<br><small>Duplicato di R02</small>':''}</td><td>${r.object}</td>${FIELDS.filter(f=>p.data.fields.includes(f.id)).map(f=>`<td class="${f.id==='day'&&!r.day?'missing':''}">${f.id==='price'?money(r.price):esc(r[f.id]||'Da completare')}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="helper" style="margin:12px 0 0">${records(p).length} schede · ${new Set(records(p).map(r=>r.id)).size} interventi distinti.</p>`;}
-function queryResult(){const q=query(p);if(!p.data.searched)return '<div class="empty" style="margin-top:18px"><strong>Una domanda all’archivio.</strong>Premi «Cerca le consegne» dopo le modifiche.</div>';return q.known?`<div class="stats"><div class="stat"><strong>${q.count}</strong><small>interventi pronti · ${p.data.filter.toLowerCase()}</small></div><div class="stat"><strong>${q.total===null?'—':money(q.total)}</strong><small>${q.total===null?'Aggiungi Importo per stimare gli incassi.':'Possibili incassi alla consegna.'}</small></div></div><p class="helper" style="margin-top:12px">${q.rows.map(r=>r.id).join(', ')||'Nessun intervento'} · Gli importi sono concordati, non ancora incassati. R04 usa la data ipotetica scelta da te.</p>`:feedback('Per questa ricerca servono le colonne Stato e Giorno: aggiungile con i pulsanti.',true);}
-function programControls(){return `<label>Quando i posti sono sufficienti?<select id="condition" name="condition"><option value="almeno" ${p.program.condition==='almeno'?'selected':''}>Posti disponibili almeno pari ai richiesti (≥)</option><option value="piu" ${p.program.condition==='piu'?'selected':''}>Posti disponibili maggiori dei richiesti (&gt;)</option></select></label><div class="branch"><label>Se la condizione è vera<select id="yes" name="yes"><option value="conferma" ${p.program.yes==='conferma'?'selected':''}>Conferma la prenotazione</option><option value="attesa" ${p.program.yes==='attesa'?'selected':''}>Metti in lista di attesa</option></select></label><label>Altrimenti<select id="no" name="no"><option value="attesa" ${p.program.no==='attesa'?'selected':''}>Metti in lista di attesa</option><option value="conferma" ${p.program.no==='conferma'?'selected':''}>Conferma la prenotazione</option></select></label></div>`;}
-function programText(){return `${p.program.blocks.map(id=>find(BLOCKS,id).label).join(' → ')}\nSe posti ${p.program.condition==='almeno'?'≥':'>'} richiesti: ${p.program.yes==='conferma'?'conferma':'attesa'}.\nAltrimenti: ${p.program.no==='conferma'?'conferma':'attesa'}.`;}
-function programHistory(){return `<details class="history"><summary>Le prove precedenti (${p.program.runs.length})</summary>${p.program.runs.map(r=>`<p><strong>${esc(find(CASES,r.caseId)?.label)}</strong> · ${r.signature===programSignature(p)?'Regola attuale':'Regola precedente'} · ${esc(r.output)} · ${r.remaining} ${r.remaining===1?'posto':'posti'} dopo.</p>`).join('')}</details>`;}
-function phone(active=false,summary=false){const r=current(p.ui.runs,uiSignature(p));const chosen=r?.activity||'animazione',requested=r?.input.requested||1;const parts={scheda:`<section><div class="app-art" aria-hidden="true"><span>▧</span><span>✦</span><span>▷</span></div><h3 id="phoneTitle">${esc(p.ui.title)}</h3><p>Animazione e fotografia: scegli un’attività da provare.</p><label>Attività<select id="demoActivity" ${active?'':'disabled'}><option value="animazione" ${chosen==='animazione'?'selected':''}>Animazione · 2 posti</option><option value="foto" ${chosen==='foto'?'selected':''}>Fotografia · 1 posto</option></select></label></section>`,posti:`<section><label>Quanti posti chiedi?<select id="demoRequested" ${active?'':'disabled'}><option value="1" ${requested===1?'selected':''}>1 posto</option><option value="2" ${requested===2?'selected':''}>2 posti</option></select></label></section>`,azione:`<section><button type="button" id="appSubmit" class="primary" ${active?'':'disabled'}>${esc(p.ui.button)}</button>${r?`<div class="app-result" role="status"><strong>${r.output==='conferma'?'Prenotazione confermata':r.output==='attesa'?'In lista di attesa':'Il programma si è fermato'}</strong>${r.output==='problema'?'Rivedi l’ordine dei blocchi.':r.output==='conferma'?`${r.remaining===1?'Resta 1 posto':`Restano ${r.remaining} posti`} per ${r.activity==='foto'?'Fotografia':'Animazione'}.`:'Nessun posto occupato.'}${r.remaining<0?'<p>La regola ha confermato senza posti disponibili: rivedi il ramo falso.</p>':''}</div>`:''}</section>`};return `<div class="phone-shell ${p.ui.style==='verde'?'teal':p.ui.style==='sole'?'sun':''}"><div class="phone-top"><span>SPAZIO MIX</span><span>PROTOTIPO</span></div><div class="phone-content">${p.ui.order.map(id=>parts[id]).join('')}</div></div>${!summary?'<p class="helper" style="margin-top:18px">Ogni prova riparte da 2 posti per Animazione e 1 per Fotografia. Nessuna prenotazione reale.</p>':''}`;}
-function permissions(){return `<div class="permission-row permission-head"><span>Ruolo</span><span>Vede<br>importo</span><span>Cambia<br>importo</span></div>${ROLES.map(r=>`<div class="permission-row"><div><p><strong>${r.label}</strong></p><small>${r.desc}</small></div><label><input id="perm-${r.id}-view" data-perm-role="${r.id}" data-perm-key="view" type="checkbox" aria-label="${r.label}: vede importo" ${p.access.permissions[r.id].view?'checked':''}></label><label><input id="perm-${r.id}-edit" data-perm-role="${r.id}" data-perm-key="edit" type="checkbox" aria-label="${r.label}: cambia importo" ${p.access.permissions[r.id].edit?'checked':''}></label></div>`).join('')}`;}
-function accessResult(){const r=current(p.access.runs,accessSignature(p));return r?`<div class="access-card"><span class="record-id">R01 · CUFFIE</span><p style="margin:18px 0 0">Prova come <strong>${esc(find(ROLES,r.role).label)}</strong></p><div class="price-line">${r.visible?money(r.after):'Importo nascosto'}</div><p>${r.allowed?`Modifica consentita: da ${money(r.before)} a ${money(r.after)}.`:`Modifica bloccata: l’importo resta ${money(r.before)}.`}</p>${!r.visible&&r.allowed?'<p class="feedback warn">Può cambiare un importo che non vede: è questo il comportamento che vuoi?</p>':''}<p class="helper">Registro della prova: ${esc(find(ROLES,r.role).label)} ha tentato la modifica. ${r.allowed?'Operazione applicata.':'Operazione respinta.'}</p></div>`:'<div class="empty"><strong>Un ruolo. Un’azione. Un effetto.</strong>Prova a cambiare l’importo e osserva se il sistema lo permette.</div>';}
-function content(s){let left='',right='',theme='';if(s===0){const r=current(p.process.runs,processSignature(p));left=listOrder(p.process.order,PROCESS,'process')+'<button id="runProcess" type="button" class="primary run-btn">Prova il processo</button><p class="helper">Un processo è una sequenza di attività: persone diverse si passano informazioni.</p>';right=r?trace(r)+feedback(r.warning?'Questa sequenza lascia un passaggio da chiarire. Puoi rivederla o conservarla per parlarne.':'La data si comunica dopo aver raccolto la richiesta e verificato le risorse.',r.warning):processMap();}
- if(s===1){left=`<button id="handoff-completa" data-handoff="completa" class="choice" type="button" aria-pressed="${p.process.handoff==='completa'}">Scheda condivisa completa<small>Codice, oggetto, descrizione del problema e ricambio previsto.</small></button><button id="handoff-essenziale" data-handoff="essenziale" class="choice" type="button" aria-pressed="${p.process.handoff==='essenziale'}">Scheda essenziale<small>Codice e oggetto: la descrizione verrà chiarita nello scambio.</small></button><button id="runHandoff" class="primary run-btn" type="button" ${!p.process.handoff?'disabled':''}>Prova lo scambio</button>`;const rich=p.process.handoff==='completa';right=`<div class="handoff-arrows"><span>Accoglienza</span><b aria-hidden="true">→</b><span>Tecnico</span></div><div class="shared-card"><h3>La scheda R02</h3><div class="line"><span>Oggetto</span><strong>Controller</strong></div>${rich?'<div class="line"><span>Problema</span><strong>Tasto bloccato</strong></div><div class="line"><span>Ricambio</span><strong>Lunedì</strong></div>':'<p class="helper" style="margin-top:12px">La descrizione non è ancora nella scheda.</p>'}</div>${feedback(esc(current(p.process.handoffRuns,p.process.handoff)?.text||''))}`;theme='mint';}
- if(s===2){left='<h2>Le colonne sono le informazioni.</h2><p>Codice e oggetto ci sono già. Aggiungi ciò che vuoi conservare.</p>'+fieldChips()+FIELDS.map(f=>`<p class="helper"><strong>${f.label}</strong> · ${f.why}</p>`).join('')+'<div class="feedback">Un <strong>database</strong> è un archivio organizzato: raccoglie dati e permette di ricavarne informazioni.</div>';right=dataTable();theme='mint';}
- if(s===3){left=`<p class="helper"><strong>Due righe R02, un solo intervento.</strong> Le schede sono identiche: uniscile senza perdere la richiesta.</p><button id="merge" class="quiet" type="button" ${p.data.merged?'disabled':''}>${p.data.merged?'✓ Duplicato unito':'Unisci il duplicato R02'}</button><label style="margin-top:20px">Giorno ipotetico per R04<select id="missingDay"><option value="">Scegli il giorno</option><option ${p.data.missingDay==='Venerdì'?'selected':''}>Venerdì</option><option ${p.data.missingDay==='Lunedì'?'selected':''}>Lunedì</option></select></label><p class="helper">La data manca: qui provi un’ipotesi. In un servizio reale va verificata, non inventata.</p>${fieldChips()}<label>Cerca gli interventi pronti per<select id="filter"><option ${p.data.filter==='Venerdì'?'selected':''}>Venerdì</option><option ${p.data.filter==='Lunedì'?'selected':''}>Lunedì</option></select></label><button id="searchData" class="primary" type="button">Cerca le consegne</button>`;right=dataTable()+queryResult();theme='mint';}
- if(s===4){left='<h2>I blocchi del tuo programma</h2><div class="chips">'+BLOCKS.map(b=>`<button type="button" data-add-block="${b.id}" ${p.program.blocks.includes(b.id)?'disabled':''}>+ ${b.label}</button>`).join('')+'</div>'+listOrder(p.program.blocks,BLOCKS,'program')+'<p class="helper" style="margin-top:16px">Un <strong>algoritmo</strong> è un insieme di istruzioni per svolgere un compito. Qui lo costruisci a blocchi.</p>';right='<p class="rule">SE i posti bastano → un risultato<br>ALTRIMENTI → un altro risultato</p>'+programControls()+'<p class="helper" style="margin-top:18px">La condizione sceglie quale ramo eseguire. Un posto è una risorsa: una conferma lo occupa, l’attesa lo lascia disponibile.</p>';}
- if(s===5){const runs=currentRuns(p.program.runs,programSignature(p)),r=runs.at(-1);left=CASES.map(c=>`<button type="button" class="run-case" data-run="${c.id}"><span class="tick">${runs.some(r=>r.caseId===c.id)?'✓ Provata':''}</span><strong>${c.label}</strong><small>Richiesta: ${c.requested} posto · premi per eseguire.</small></button>`).join('')+`<details class="history"><summary>Cambia la regola o l’ordine</summary>${programControls()}${listOrder(p.program.blocks,BLOCKS,'program')}</details>`+programHistory();right=trace(r)+'<p class="helper" style="margin-top:20px"><strong>Input:</strong> dati in ingresso. <strong>Output:</strong> risultato prodotto dal programma. Ogni prova esegue davvero i tuoi tre blocchi.</p>';}
- if(s===6){left=`<label>Titolo della tua schermata<input id="uiTitle" name="uiTitle" maxlength="64" value="${esc(p.ui.title)}"></label><label>Scritta sul pulsante<input id="uiButton" name="uiButton" maxlength="32" value="${esc(p.ui.button)}"></label><div class="chips" aria-label="Stile della schermata">${[['viola','Viola'],['verde','Verde'],['sole','Sole']].map(([id,t])=>`<button type="button" data-style="${id}" aria-pressed="${p.ui.style===id}">${t}</button>`).join('')}</div><h3>Componi la schermata</h3>${listOrder(p.ui.order,PARTS,'ui')}<p class="helper" style="margin-top:16px">L’<strong>interfaccia</strong> è la parte del programma con cui una persona interagisce. Il comando dovrebbe dire che cosa succede.</p>`;right=phone();}
- if(s===7){left=`<h2>Il visitatore prova la tua schermata.</h2><p>Usa i campi e il comando nel prototipo. La risposta dipende dal tuo programma.</p><label>Vuoi migliorare il comando?<input id="uiButton" name="uiButton" maxlength="32" value="${esc(p.ui.button)}"></label><p class="helper">«Vai» lascia un dubbio; «Prenota un posto» rende visibile l’azione. Puoi scegliere parole tue.</p><div class="rule">${esc(programText()).replace(/\n/g,'<br>')}</div><button type="button" class="quiet" data-goto="4">Rivedi il programma</button>${current(p.ui.runs,uiSignature(p))?feedback('Il comando e la regola sono collegati. Puoi rivederli e provare ancora.'):''}`;right=phone(true);}
- if(s===8){left=permissions()+'<p class="helper" style="margin-top:18px">Il cliente vede sempre solo il proprio intervento. Qui decidi se può vedere e modificare l’importo.</p>';right='<div class="access-card"><div class="access-lock" aria-hidden="true">⌘</div><span class="record-id">R01 · CUFFIE</span><h3 style="margin-top:18px">Un importo è anche un accordo.</h3><p>Il servizio affida all’accoglienza la conferma dei prezzi con il cliente. Il tecnico segue il lavoro.</p><p>La bozza dà a tutti la possibilità di cambiarli. Decidi come organizzare questa responsabilità.</p><p class="helper">È una regola dello scenario, non una norma di legge. I controlli reali vanno applicati dal server.</p></div>';theme='peach';}
- if(s===9){const runs=currentRuns(p.access.runs,accessSignature(p));left=`<label>Prova l’accesso come<select id="testRole">${ROLES.map(r=>`<option value="${r.id}">${r.label}${runs.some(x=>x.role===r.id)?' · provato':''}</option>`).join('')}</select></label><label>Nuovo importo da provare (€)<input id="testPrice" type="number" min="0" max="100" value="22"></label><button type="button" id="runAccess" class="primary">Prova la modifica</button><p class="helper" style="margin-top:15px">Ogni prova riparte da 18 €. Prova almeno Cliente e Accoglienza.</p><details class="history"><summary>Rivedi i permessi</summary>${permissions()}</details><details class="history"><summary>Le prove dei ruoli (${p.access.runs.length})</summary>${p.access.runs.map(r=>`<p>${esc(find(ROLES,r.role)?.label)} · ${r.signature===accessSignature(p)?'Regole attuali':'Regole precedenti'} · ${r.allowed?'modifica consentita':'modifica bloccata'}.</p>`).join('')}</details>`;right=accessResult();theme='peach';}
- return {left,right,theme};}
-function activity(){const s=p.screen,l=LABS[Math.floor(s/2)],d=STAGES[s],v=content(s);return `<div class="stage-heading"><div><p class="eyebrow">LABORATORIO ${Math.floor(s/2)+1} · ${l.label}</p><h1 id="stageTitle" tabindex="-1">${d[0]}</h1></div><span class="step-tag">${s%2+1} di 2</span></div><span class="client">CLIENTE · ${l.client}${s===4?' · NUOVO INCARICO':s===8?' · SI TORNA ALL’ARCHIVIO':''}</span><p class="stage-intro">${d[1]}</p><div class="workgrid"><section class="controls" aria-label="Che cosa fare adesso">${v.left}</section><section class="canvas ${v.theme}" aria-label="La tua soluzione"><span class="canvas-label">${l.product}</span>${v.right}</section></div><div class="stage-nav"><button id="previous" type="button" class="quiet">Indietro</button><p id="advanceHelp">${ready(p)?'Puoi continuare o rivedere il lavoro.':d[2]}</p><button id="next" type="button" class="primary" ${ready(p)?'':'disabled'} aria-describedby="advanceHelp">${d[3]} →</button></div><p class="subjects">Materie coinvolte: ${l.subjects}. Tutte le prove usano dati immaginari.</p>`;}
-function interestText(){return p.interests.length?`Hai indicato ${p.interests.map(id=>find(LABS,id)?.label).filter(Boolean).join(', ')}. Una domanda da portare alla scuola: «Quali progetti si fanno su questi aspetti nel corso SIA?»`:'Quale scelta ti ha incuriosito? Da quale progetto vorresti ripartire?';}
-function end(){const q=query(p),pr=current(p.program.runs,programSignature(p)),ar=current(p.access.runs,accessSignature(p));const missing=LABS.map((l,i)=>({l,i})).filter(({i})=>![i*2,i*2+1].every(s=>ready(p,s)&&p.done.includes(s)));return `<section class="end-top"><p class="eyebrow">IL TUO DOSSIER · CINQUE SOLUZIONI</p><h1 id="stageTitle" tabindex="-1">Hai fatto agire le tue idee.</h1><p>Processi, dati, programmi, interfacce e responsabilità: hai incontrato aspetti diversi dello stesso indirizzo. Qui ritrovi ciò che hai costruito per i due clienti.</p><label>Titolo del dossier, se vuoi<input id="dossierTitle" maxlength="80" value="${esc(p.title)}"></label></section>${missing.length?`<div class="pending">Hai cambiato un lavoro: per completare la nuova versione ripassa ${missing.map(({l})=>l.label).join(', ')}. Le prove precedenti sono conservate.</div>`:''}<div data-course-videos="sia"></div><div class="end-grid"><article class="end-card"><p class="eyebrow">01 · OFFICINA RIPRESA</p><h2>La tua mappa del lavoro</h2>${processMap()}<p>${esc(current(p.process.handoffRuns,p.process.handoff)?.text||'Lo scambio è da riprovare.')}</p><button class="quiet" data-goto="0" type="button">Rivedi i processi</button></article><article class="end-card"><p class="eyebrow">02 · OFFICINA RIPRESA</p><h2>Il tuo archivio</h2><p>Colonne: codice, oggetto${p.data.fields.length?', '+p.data.fields.map(id=>find(FIELDS,id)?.label).join(', '):''}. ${records(p).length} schede; duplicato ${p.data.merged?'unito':'ancora presente'}.</p><div class="stats"><div class="stat"><strong>${q.count??'—'}</strong><small>pronti · ${esc(p.data.filter)}</small></div><div class="stat"><strong>${q.total===null?'—':money(q.total)}</strong><small>possibili incassi alla consegna</small></div></div><p class="helper" style="margin-top:15px">R04: data ipotetica ${esc(p.data.missingDay||'da completare')}.</p><button class="quiet" data-goto="2" type="button">Rivedi l’archivio</button></article><article class="end-card"><p class="eyebrow">03 · SPAZIO MIX</p><h2>Il tuo programma</h2><div class="mini-program">${esc(programText())}</div><p style="margin-top:16px">${pr?`Ultima prova con la regola corrente: ${esc(find(CASES,pr.caseId)?.label)}; ${esc(pr.output)}, ${pr.remaining} ${pr.remaining===1?'posto':'posti'} dopo.`:'La regola è cambiata: riprovala.'}</p><button class="quiet" data-goto="4" type="button">Rivedi il programma</button></article><article class="end-card"><p class="eyebrow">04 · SPAZIO MIX</p><h2>La tua interfaccia</h2><p>«${esc(p.ui.title)}» · comando «${esc(p.ui.button)}».</p><p>Usa il programma del terzo laboratorio. ${current(p.ui.runs,uiSignature(p))?'Hai provato questa versione.':'La versione attuale è da provare.'}</p><button class="quiet" data-goto="6" type="button">Rivedi l’interfaccia</button></article><article class="end-card"><p class="eyebrow">05 · OFFICINA RIPRESA</p><h2>I permessi che hai progettato</h2><div class="workgrid"><div><ul class="small-list">${ROLES.map(r=>`<li><strong>${r.label}</strong>: ${p.access.permissions[r.id].view?'vede':'non vede'} l’importo; ${p.access.permissions[r.id].edit?'può cambiarlo':'non può cambiarlo'}.</li>`).join('')}</ul><p>${ar?`Ultima prova: ${esc(find(ROLES,ar.role)?.label)}, modifica ${ar.allowed?'consentita':'bloccata'}.`:'Le regole attuali sono da riprovare.'}</p><button class="quiet" data-goto="8" type="button">Rivedi gli accessi</button></div><div class="shared-card"><h3>Informatica, economia e diritto</h3><p>Un’applicazione deve funzionare per le persone, usare dati utili e rispettare responsabilità definite.</p><p>Nel corso incontri anche economia politica e lingue: questi piccoli incarichi aprono alcune possibilità, che puoi approfondire a scuola.</p></div></div></article></div><section class="interest-section"><h2>Quali parti vorresti approfondire?</h2><p>Puoi indicarne più di una. Conta ciò che ti ha incuriosito, non quanto velocemente hai svolto le prove.</p><div class="interests">${LABS.map(l=>`<label class="interest"><input type="checkbox" name="interest" value="${l.id}" ${p.interests.includes(l.id)?'checked':''}><span>${l.label}</span></label>`).join('')}</div><p id="interestMessage" class="interest-message">${interestText()}</p></section><div class="certificate-cta"><button id="certificateOpen" class="primary" type="button" ${completed(p)?'':'disabled'}>Visualizza il tuo attestato</button><p>Il lavoro resta nella pagina. Puoi visualizzare, stampare e scaricare il tuo attestato.</p></div><div data-next-step="sia"></div>`;}
+ const finished=p.screen===10&&completed(p);
+ const label=p.started?'Riprendi':'Inizia';
+ return `<section class="bt-schermo sia-intro" data-corso="sia">
+  <div class="sia-intro__testo">
+   <p class="bt-occhiello bt-occhiello--corso">SIA · Sistemi Informativi Aziendali</p>
+   <h1 class="bt-titolo" id="stageTitle" tabindex="-1">Costruisci un’app che <em>funziona</em>.</h1>
+   <p class="bt-frase">In SIA impari a creare programmi per aziende e servizi.</p>
+  </div>
+  <div class="sia-intro__app" aria-hidden="true"><div class="sia-tel sia-tel--app sia-demo"><div class="sia-tel__barra"><span>Spazio Mix</span><span>●●●</span></div><div class="sia-tel__schermo">${appSpazioMix({demo:true})}</div></div><span class="sia-bollino">La costruisci tu!</span></div>
+  <div class="bt-azioni sia-intro__azioni"><button id="start" class="bt-pulsante bt-pulsante--grande bt-pulsa" type="button">${finished?'Riprendi':label}</button>${p.started?'<button id="startOver" class="bt-link" type="button">Inizia da capo</button>':''}</div>
+  <p class="bt-nota sia-intro__nota">SIA si sceglie dal terzo anno: in prima ti iscrivi ad AFM.</p>
+ </section>`;
+}
+
+// Riepilogo del lavoro: dietro «Rivedi il tuo lavoro» del finale, o se il lavoro non è ancora completo.
+function end(){
+ const q=query(p),ui=corsa(p.ui.runs,uiSignature(p));
+ const testi=[
+  `${p.process.order.map(id=>PASSO_UI[id]).join(' → ')}. Al tecnico: scheda ${p.process.handoff==='completa'?'completa':'corta'}.`,
+  `Archivio con ${p.data.fields.length+1} colonne. ${q.known&&p.data.searched?`Pronte ${p.data.filter.toLowerCase()}: ${q.count}.`:'Ricerca da rifare.'}`,
+  `${p.program.blocks.map(id=>BLOCCO_UI[id]).join(' → ')||'Comandi da scegliere'}. Se i posti non bastano: ${p.program.no==='attesa'?'lista d’attesa':'conferma lo stesso'}.`,
+  `«${p.ui.title}», pulsante «${p.ui.button}». ${ui?'L’hai provata.':'Da provare.'}`,
+  `Possono cambiare il prezzo: ${ROLES.filter(r=>p.access.permissions[r.id].edit).map(r=>RUOLO_UI[r.id].toLowerCase()).join(', ')||'nessuno'}.`
+ ];
+ const manca=LABS.map((l,i)=>i).filter(i=>![i*2,i*2+1].every(s=>ready(p,s)&&p.done.includes(s)));
+ return `<section class="bt-schermo sia-rivedi" data-corso="sia">
+  <h1 class="bt-titolo bt-titolo--medio" id="stageTitle" tabindex="-1">Il tuo <em>lavoro</em></h1>
+  ${manca.length?`<p class="bt-frase">Per finire, rifai: ${manca.map(i=>esc(LAB_UI[i].nome)).join(', ')}.</p>`:''}
+  <ol class="sia-rivedi__lista">${LAB_UI.map((l,i)=>`<li class="bt-scheda bt-scheda--scura"><p class="sia-occhiello">${i+1} · ${esc(l.cliente)}</p><h2>${esc(l.nome)}</h2><p>${esc(testi[i])}</p><button class="bt-pulsante bt-pulsante--secondario bt-pulsante--piccolo" type="button" data-goto="${i*2}">Rivedi</button></li>`).join('')}</ol>
+  ${completed(p)?'<div class="bt-azioni"><button class="bt-pulsante bt-pulsante--grande" type="button" id="backToFinale">Torna al finale</button></div>':''}
+ </section>`;
+}
+
 function recovery(){let items=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k?.startsWith(`${STORE}.`)||k.includes('latest')||k.includes('unrecognised'))continue;try{const x=JSON.parse(localStorage.getItem(k));if(validProject(x))items.push(x);}catch{}}}catch{}items.sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt)));$('previousProjects').innerHTML=items.map(x=>`<option value="${esc(x.id)}" ${x.id===p.id?'selected':''}>${esc(x.title||'Nuova prova')} · ${new Date(x.updatedAt||Date.now()).toLocaleString('it-IT')} ${x.id===p.id?'· attuale':''}</option>`).join('');}
-function render(focus=false,notify=true){const active=document.activeElement?.id;$('journey').innerHTML=!navigation.isIntro()&&p.started?LABS.map((l,i)=>`<button type="button" id="lab-${i}" data-goto="${i*2}" ${p.unlocked<i*2?'disabled':''} ${p.screen>=i*2&&p.screen<i*2+2?'aria-current="step"':''} class="${[i*2,i*2+1].every(s=>ready(p,s)&&p.done.includes(s))?'done':''}"><span>0${i+1}</span>${l.label}</button>`).join('')+(p.unlocked===10?'<button class="quiet" data-goto="10" type="button">Dossier</button>':''):'';$('stage').innerHTML=navigation.isIntro()||p.screen<0?intro():p.screen===10?end():activity();mountNextStep($('stage'));navigation.write(navigation.isIntro()||p.screen<0?'ingresso':p.screen>=10?'conclusione':`passaggio-${p.screen+1}`,!notify,storageId);save(notify);recovery();if(focus){$('stageTitle')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}else if(active&&$(active)){let el=$(active);if(el.disabled)el=el.closest('.moves')?.querySelector('button:not(:disabled)')||el.closest('.chips')?.querySelector('button:not(:disabled)')||$('stageTitle');el?.focus({preventScroll:true});}}
+function showFinale(){mostraFinale({corso:COURSE,contenitore:$('stage'),treCose:TRE_COSE,apriAttestato:()=>attestato.prepara(),rivediLavoro:()=>{reviewing=true;render(true);},token:()=>remote.token(),salvato:async()=>{await remote.sync();return remote.saved();}});}
+function render(focus=false,notify=true){
+ const active=document.activeElement?.id;
+ $('journey').innerHTML='';
+ if(p.screen<10)reviewing=false;
+ const isIntro=navigation.isIntro()||p.screen<0;
+ if(p.screen>=10&&!isIntro&&completed(p)&&!reviewing){$('stage').replaceChildren();showFinale();}
+ else{$('main').classList.add('bt-scuro');$('stage').innerHTML=isIntro?intro():p.screen>=10?end():activity();}
+ navigation.write(isIntro?'ingresso':p.screen>=10?'conclusione':`passaggio-${p.screen+1}`,!notify,storageId);
+ save(notify);recovery();
+ if(focus){$('stageTitle')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
+ else if(active&&$(active)){let el=$(active);if(el.disabled)el=$('stage').querySelector('.sia-azione button:not(:disabled)')||$('next');el?.focus({preventScroll:true});}
+}
+// Effetto a ogni scelta: scintilla sul pulsante toccato e l'anteprima che «risponde».
+function effetto(id){const b=id&&$(id);if(b)scintilla(b,'sia');const t=$('siaTel');if(t){t.classList.remove('sia-tel--cambia');void t.offsetWidth;t.classList.add('sia-tel--cambia');}}
+// Dopo la scelta che completa lo schermo, «Avanti» entra nella vista (sul telefono può stare più in basso).
+function scegli(id,fn){const prima=PASSI[p.screen]?.[sub]?.fatto();fn();render();effetto(id);const n=$('next');if(!prima&&n&&!n.disabled)n.scrollIntoView?.({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
+
 function renderNotes(){$('noteContext').value=navigation.isIntro()?'Ingresso · presentazione':context(p).label;$('notesList').innerHTML=p.notes.length?p.notes.map(n=>`<article class="saved-note"><small>${n.role==='docente'?'Docente':'Alunno'} · ${esc(n.kind)} · ${new Date(n.createdAt).toLocaleString('it-IT')}</small><strong>${esc(n.label)}</strong><p>${esc(n.text)}</p></article>`).join(''):'<p class="helper">Non hai ancora scritto note.</p>';}
-function updateTextState(){if($('phoneTitle'))$('phoneTitle').textContent=p.ui.title;if($('appSubmit'))$('appSubmit').textContent=p.ui.button;const button=$('next');if(button){button.disabled=!ready(p);$('advanceHelp').textContent=ready(p)?'Puoi continuare o rivedere il lavoro.':STAGES[p.screen][2];}save();}
-document.addEventListener('input',e=>{const t=e.target;if(conflicted)return;if(t.id==='uiTitle'||t.id==='uiButton'){p.ui[t.id==='uiTitle'?'title':'button']=t.value;invalidate(p,3);updateTextState();}if(t.id==='dossierTitle'){p.title=t.value.slice(0,80);save();}});
-document.addEventListener('change',e=>{const t=e.target;if(conflicted)return;if(t.dataset.permRole){p.access.permissions[t.dataset.permRole][t.dataset.permKey]=t.checked;invalidate(p,4);render();}if(['condition','yes','no'].includes(t.id)){p.program[t.id]=t.value;invalidate(p,2);render();}if(t.id==='missingDay'||t.id==='filter'){p.data[t.id==='missingDay'?'missingDay':'filter']=t.value||null;p.data.searched=false;invalidate(p,1);render();}if(t.name==='interest'){p.interests=t.checked?[...new Set([...p.interests,t.value])]:p.interests.filter(x=>x!==t.value);save();$('interestMessage').textContent=interestText();}});
+document.addEventListener('input',e=>{const t=e.target;if(conflicted)return;if(t.id==='uiTitle'){p.ui.title=t.value;invalidate(p,3);document.querySelectorAll('[data-app-titolo]').forEach(x=>x.textContent=t.value);if($('next'))$('next').disabled=!PASSI[p.screen][sub].fatto();save();}});
 document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.close){$(b.dataset.close).close();return;}
  if(b.id==='reloadConflict'){
   if(remote.hasConflict()){try{await remote.reload();conflicted=false;$('conflictDialog').close();render(true);}catch{$('saveStatus').textContent='La versione recente non è disponibile. La tua copia è conservata.';}return;}
@@ -86,33 +290,45 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
   try{const copyStore=BASE_STORE+(localTest?':prova:'+localTest:'');localStorage.setItem(`${copyStore}.${copy.id}`,JSON.stringify(copy));const u=new URL(location.href);u.searchParams.set('progetto',copy.id);u.hash='ingresso';location.assign(u.href);}catch{$('saveStatus').textContent='Il dispositivo non permette di conservare la copia. Tieni aperta questa finestra.';}return;
  }
  if(conflicted)return;
- if(b.dataset.goto!==undefined){const s=Number(b.dataset.goto);if(s<=p.unlocked){navigation.enter();p.screen=s;render(true);}return;}
- if(b.dataset.move){const kind=b.dataset.move;const a=kind==='process'?p.process.order:kind==='program'?p.program.blocks:p.ui.order;if(move(a,b.dataset.item,Number(b.dataset.delta)))invalidate(p,kind==='process'?0:kind==='program'?2:3);render();return;}
- if(b.dataset.handoff){p.process.handoff=b.dataset.handoff;invalidate(p,0);render();return;}
- if(b.dataset.field){const id=b.dataset.field;p.data.fields=p.data.fields.includes(id)?p.data.fields.filter(x=>x!==id):[...p.data.fields,id];p.data.searched=false;invalidate(p,1);render();return;}
- if(b.dataset.addBlock){p.program.blocks.push(b.dataset.addBlock);invalidate(p,2);render();return;}
- if(b.dataset.run){runProgram(p,b.dataset.run);render();return;}
- if(b.dataset.style){p.ui.style=b.dataset.style;invalidate(p,3);render();return;}
- if(b.id==='start'){if(p.started){navigation.enter();p.screen=Math.max(0,p.screen);render(true);}else classAccess.begin(b);return;}
- if(b.id==='previous'){if(p.screen===0)navigation.showIntro();else p.screen--;render(true);return;}
- if(b.id==='next'){if(advance(p))render(true);return;}
- if(b.id==='runProcess'){processRun(p);render();return;}
- if(b.id==='runHandoff'){handoffRun(p);render();return;}
- if(b.id==='merge'){p.data.merged=true;p.data.searched=false;invalidate(p,1);render();return;}
- if(b.id==='searchData'){p.data.searched=true;render();return;}
- if(b.id==='appSubmit'){runUI(p,$('demoActivity').value,Number($('demoRequested').value));render();return;}
- if(b.id==='runAccess'){const role=$('testRole').value,price=Number($('testPrice').value);const result=runAccess(p,role,price);if(result){render();$('testRole').value=role;$('testPrice').value=price;}else $('advanceHelp').textContent='Inserisci un importo fra 0 e 100 €.';return;}
+ if(b.dataset.goto!==undefined){const s=Number(b.dataset.goto);if(s<=p.unlocked){navigation.enter();vaiA(s,'zero');render(true);}return;}
+ if(b.dataset.rifai!==undefined){vaiA(4,'zero');sub=Number(b.dataset.rifai);render(true);return;}
+ // Tappa 1: i tre passi toccati in fila; al terzo tocco il processo si prova da solo.
+ if(b.dataset.passo){const id=b.id;if(!ordine.includes(b.dataset.passo))ordine.push(b.dataset.passo);scegli(id,()=>{if(ordine.length===3){p.process.order=[...ordine];invalidate(p,0);processRun(p);ordine=[];rifaOrdine=false;}});return;}
+ if(b.id==='ordineDaCapo'){ordine=[];rifaOrdine=true;render();$('stage').querySelector('[data-passo]')?.focus();return;}
+ if(b.dataset.handoff){const id=b.id;scegli(id,()=>{p.process.handoff=b.dataset.handoff;invalidate(p,0);handoffRun(p);});return;}
+ if(b.dataset.field){const id=b.id,f=b.dataset.field;scegli(id,()=>{p.data.fields=p.data.fields.includes(f)?p.data.fields.filter(x=>x!==f):[...p.data.fields,f];p.data.searched=false;invalidate(p,1);});return;}
+ if(b.id==='merge'){scegli('merge',()=>{p.data.merged=true;p.data.searched=false;invalidate(p,1);});$('next')?.focus();return;}
+ if(b.dataset.missingDay){const id=b.id;scegli(id,()=>{p.data.missingDay=b.dataset.missingDay;p.data.searched=false;invalidate(p,1);});return;}
+ if(b.id==='aggiungiColonne'){scegli('',()=>{p.data.fields=[...new Set([...p.data.fields,'status','day'])];p.data.searched=false;invalidate(p,1);});$('stage').querySelector('[data-filter]')?.focus();return;}
+ if(b.dataset.filter){const id=b.id;scegli(id,()=>{p.data.filter=b.dataset.filter;p.data.searched=true;invalidate(p,1);});return;}
+ if(b.dataset.addBlock){const id=b.id;scegli(id,()=>{if(!p.program.blocks.includes(b.dataset.addBlock))p.program.blocks.push(b.dataset.addBlock);invalidate(p,2);});return;}
+ if(b.id==='blocchiDaCapo'){p.program.blocks=[];invalidate(p,2);render();$('stage').querySelector('[data-add-block]')?.focus();return;}
+ if(b.dataset.regola){const id=b.id;scegli(id,()=>{p.program.no=b.dataset.regola;invalidate(p,2);});return;}
+ if(b.dataset.run){const id=b.id;scegli(id,()=>{runProgram(p,'libero');runProgram(p,'pieno');});return;}
+ if(b.dataset.style){const id=b.id;scegli(id,()=>{p.ui.style=b.dataset.style;invalidate(p,3);});return;}
+ if(b.dataset.bottone){const id=b.id;scegli(id,()=>{p.ui.button=b.dataset.bottone;invalidate(p,3);});return;}
+ if(b.dataset.appActivity){app.activity=b.dataset.appActivity;if(app.activity==='foto')app.requested=1;render();return;}
+ if(b.dataset.appPosti){app.requested=Number(b.dataset.appPosti);render();return;}
+ if(b.id==='appSubmit'){scegli('appSubmit',()=>runUI(p,app.activity,app.requested));return;}
+ if(b.dataset.perm){const id=b.id,r=b.dataset.perm;scegli(id,()=>{p.access.permissions[r].edit=!p.access.permissions[r].edit;invalidate(p,4);});return;}
+ if(b.dataset.access){const id=b.id;scegli(id,()=>{runAccess(p,'cliente',10);runAccess(p,'accoglienza',22);});return;}
+ if(b.id==='start'){if(p.started){navigation.enter();vaiA(Math.max(0,p.screen));render(true);}else classAccess.begin(b);return;}
+ if(b.id==='previous'){if(sub>0){sub--;ordine=[];rifaOrdine=false;}else if(p.screen===0)navigation.showIntro();else vaiA(p.screen-1,'ultimo');render(true);return;}
+ if(b.id==='next'){const n=PASSI[p.screen]?.length||1;if(sub<n-1){if(PASSI[p.screen][sub].fatto()){sub++;ordine=[];rifaOrdine=false;render(true);}return;}if(advance(p)){vaiA(p.screen,'zero');render(true);}return;}
  if(b.id==='notesOpen'){renderNotes();$('noteStatus').textContent='';$('notesDialog').showModal();return;}
- if(b.id==='certificateOpen'&&completed(p)){save();attestato.open(b);return;}
  if(b.id==='startOver'){startOver();return;}
+ if(b.id==='backToFinale'){reviewing=false;render(true);return;}
  if(b.id==='newProject'){save();const u=new URL(location.href);u.searchParams.set('progetto',crypto.randomUUID());u.hash='ingresso';location.assign(u.href);return;}
  if(b.id==='recover'){const id=$('previousProjects').value,other=JSON.parse(get(`${STORE}.${id}`)||'null');if(validProject(other)){save();const u=new URL(location.href);u.searchParams.set('progetto',id);u.hash='ingresso';location.assign(u.href);}return;}
 });
 $('noteForm').addEventListener('submit',e=>{e.preventDefault();if(conflicted)return;const data=Object.fromEntries(new FormData(e.target)),before=p.notes.length;if(addNote(navigation.isIntro()?{...p,screen:-1}:p,data)){p.notes[before].pending=true;const ok=save();renderNotes();e.target.elements.text.value='';$('noteStatus').textContent=ok?'Nota conservata; aggiornamento online in corso.':'La nota resta in questa pagina: il browser non permette il salvataggio.';}});
 function loaded(value){p=value;p.revision=seenRevision;restoreRoute(navigation.route());render(false,false);}
 remote=setupStudioRemote({course:COURSE,restore,remoteProject,key:STORE+'.remote.'+storageId,entryToken,project:()=>p,keep:()=>save(false),loaded,localOK:()=>!memoryOnly,status:(text,retry)=>{$('saveStatus').textContent=text;$('retrySave').hidden=!retry;},notesChanged:()=>{$('noteCount').textContent=p.notes.length;if($('notesDialog').open)renderNotes();},conflict:()=>{conflicted=true;openConflict();}});
-classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:()=>remote.ensure(),isIntro:()=>navigation.isIntro()||p.screen<0,start:async()=>{try{await remote.ensure();}catch{}navigation.enter();p.started=true;p.screen=Math.max(0,p.screen);render(true);}});
+const startNow=async()=>{try{await remote.ensure();}catch{}navigation.enter();p.started=true;vaiA(Math.max(0,p.screen));render(true);};
+classAccess=setupClass({key:STORE+'.'+storageId,token:()=>remote.token(),ensure:()=>remote.ensure(),isIntro:()=>navigation.isIntro()||p.screen<0,start:startNow,
+ ingressoComune:true,apriIngresso:()=>mostraIngresso({corso:COURSE,contenitore:$('stage'),classe:classAccess,onInizia:startNow,onIndietro:()=>render(true)})});
 attestato=setupParticipantCertificate({project:()=>p,journey:()=>p,save,identity:()=>classAccess.identity(),participant:()=>remote.participant(),revision:()=>remote.revision()});
 $('retrySave').addEventListener('click',()=>remote.sync());
 window.addEventListener('online',()=>remote.sync());
+interruttoreSuono(document.querySelector('.site-header'));
 restoreRoute(navigation.route());render(false,false);if(remote.token())remote.sync();
