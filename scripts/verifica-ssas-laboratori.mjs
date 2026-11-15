@@ -10,6 +10,7 @@ j.creative.goal='emozioni';j.creative.setting='ponte';j.creative.title='Il ponte
 j.service.kind='salute';j.service.activity='incontro';j.service.name='Informazioni per tutti';j.service.access='telefono';j.service.check='utile';
 for(let s=1;s<=5;s++)assert.equal(issues(j,s,1).length,0);
 j.done=LABS.map(l=>l.id);j.step=6;j.interests=['salute','creativita'];j.finished=true;
+{const q=structuredClone(p);q.labJourney.interests=[];q.labJourney.finished=true;assert.equal(restoreProject(q).labJourney.finished,true,'senza interessi, tutti i laboratori fatti: concluso');assert.equal(issues(q.labJourney,6,1).length,0,'gli interessi non bloccano');}
 const oldUnknown={legacy:'keep'},nestedUnknown={future:3};p.extra=oldUnknown;j.health.future=nestedUnknown;
 const remote=serverRestore(p);assert.deepEqual(remote.labJourney,j);assert.deepEqual(remote.extra,oldUnknown);
 const restored=restoreProject(remote);assert.equal(restored.labJourney.finished,true);assert.deepEqual(restored.labJourney.health.future,nestedUnknown);assert.deepEqual(restored.extra,oldUnknown);
