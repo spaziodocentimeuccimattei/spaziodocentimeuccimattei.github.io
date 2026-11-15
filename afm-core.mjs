@@ -63,17 +63,19 @@ export const QUESTIONS=[
   {id:'modello',en:'I can prepare a sample so you can see how it would look.',it:'Posso preparare un esempio, così puoi vedere come verrebbe.',why:'Un esempio aiuta entrambe le parti a capire la richiesta.'}
  ]}
 ];
+// Titoli e frasi del primo schermo di ogni tappa (riordino novembre 2026). Servono all'etichetta delle note
+// (context) e al monitoraggio; gli schermi completi stanno in afm.mjs. [titolo, frase, aiuto, pulsante]
 export const STAGES=[
- ['Quale idea vuoi far crescere?','Scegli una proposta su cui lavorare. Il tuo studio comincia da qui.','Scegli una proposta per continuare.','Dai valore alla proposta'],
- ['Che cosa può significare per qualcuno?','Scegli una richiesta. La tua proposta cambierà per rispondere a quel bisogno.','Scegli una richiesta da accogliere.','Passa all’organizzazione'],
- ['Da una richiesta a un lavoro organizzato.','Per Officina Forme, prepara l’ordine di tre incarichi. Usa le frecce per spostarli; puoi anche conservare l’ordine che vedi.','Puoi provare un altro ordine o conservare questo.','Conserva l’organizzazione'],
- ['Un imprevisto. Tre modi per affrontarlo.','Officina Forme deve consegnare 8 lavori venerdì. Il materiale per 2 arriva lunedì. Scegli che cosa proporre al cliente.','Scegli come organizzare la nuova proposta.','Passa ai dati'],
- ['I numeri cambiano il progetto.','Per Linea Studio, prova quantità e prezzo di un kit creativo. Immaginiamo di vendere tutti i kit: i conti si aggiornano da soli.','Conserva questa ipotesi o prova altri numeri.','Conserva il piano'],
- ['Il denaro arriva in tempo?','Linea Studio ha 80 € disponibili. I costi vanno pagati oggi; il cliente pagherebbe fra 14 giorni. Scegli un accordo e guarda la linea del tempo.','Scegli un accordo sui pagamenti.','Passa agli accordi'],
- ['Una proposta che si capisce.','Torna alla tua idea. Scegli come definire la consegna: il cliente deve sapere che cosa aspettarsi prima di confermare.','Scegli una condizione di consegna.','Prova una nuova richiesta'],
- ['Una richiesta in più cambia l’accordo.','Il cliente chiede anche un’immagine per i social. Scegli come rispondere e guarda che cosa cambia nella proposta.','Scegli come rispondere alla richiesta aggiuntiva.','Passa alla comunicazione'],
- ['Dai una voce alla tua idea.','Scegli che cosa mettere in primo piano. Il messaggio si compone accanto a te; puoi anche cambiare il titolo.','Scegli la direzione del messaggio.','Apri la conversazione'],
- ['Un cliente ti scrive in inglese.','Fai una domanda, leggi la risposta e scegli come continuare. Le traduzioni ti accompagnano.','Scegli una domanda e poi una risposta.','Raccogli il tuo lavoro']
+ ['Quale idea lanci?','Scegli quella che ti piace.','Scegli un’idea.','Avanti'],
+ ['Che cosa dice il cliente?','Scegli a quale rispondere.','Scegli una richiesta.','Avanti'],
+ ['Da dove comincia Officina Forme?','Tocca i tre compiti in fila.','Tocca i tre compiti.','Avanti'],
+ ['Due lavori sono in ritardo.','Che cosa proponi al cliente?','Scegli una proposta.','Avanti'],
+ ['Quanti kit vende Linea Studio?','Li vende tutti a 15 € l’uno.','Scegli quanti kit.','Avanti'],
+ ['Oggi i soldi non bastano.','In cassa ci sono 80 €.','Scegli come fare.','Avanti'],
+ ['Quando consegni?','Il preventivo è l’offerta scritta.','Scegli la consegna.','Avanti'],
+ ['Il cliente vuole di più.','Come rispondi?','Scegli come rispondere.','Avanti'],
+ ['Come presenti la tua idea?','Che cosa metti al centro?','Scegli il tono.','Avanti'],
+ ['Un cliente ti scrive in inglese.','Scegli che cosa chiedergli.','Scegli una domanda e una risposta.','Avanti']
 ];
 export const find=(list,id)=>list.find(x=>x.id===id);
 export function createProject(id=crypto.randomUUID()){return {format:FORMAT,version:1,course:'afm',id,started:false,identity:null,screen:-1,unlocked:0,done:[],choices:{order:TASKS.map(x=>x.id),quantity:20,price:15},variants:{},notes:[],interests:[],finished:false,updatedAt:null};}
