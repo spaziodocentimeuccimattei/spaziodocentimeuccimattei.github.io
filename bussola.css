@@ -619,3 +619,7 @@ html .bussola-a2 .bussola-tessere--spente .bt-tessera { min-height: 84px; }
   html .missioni-a2 .missioni-scheda .bt-pulsante { grid-column: 1 / -1; grid-row: 4; }
   html .missioni-a2 #missionCatalog { padding-inline: 12px; }
 }
+
+/* Poche risposte o segnali deboli: una riga onesta sotto il nome */
+html .bussola-indizio { margin: 4px 0 0; color: var(--bt-testo); font: 700 1rem/1.3 var(--bt-carattere); text-align: center; }
+html .bussola-indizio--insieme { margin: 0 0 8px; }

@@ -188,6 +188,8 @@ function renderResults() {
     return;
   }
   const title = el('h2', selected.length > 1 ? 'I tuoi indirizzi' : 'Il tuo indirizzo', 'bt-occhiello bussola-risultato-titolo'); title.id = 'resultTitle';
+  // Poche risposte o segnali deboli (tentative/mixed di bussola-core): una riga onesta, senza togliere l'esplosione.
+  const primoIndizio = direction.reason !== 'suggested';
   const grid = el('div', null, `bussola-esiti bussola-esiti--${selected.length}`);
   const cards = [];
   for (const item of selected) {
@@ -204,10 +206,12 @@ function renderResults() {
     actions.append(prova, perche);
     card.append(name);
     if (fullName(course) !== shortName(course)) card.append(full);
+    if (primoIndizio && selected.length === 1) card.append(el('p', 'È un primo indizio: provalo e vedi.', 'bussola-indizio'));
     card.append(courseArt(course), actions);
     grid.append(card); cards.push([card, course.id]);
   }
-  results.replaceChildren(title, grid, smallLinks());
+  const multi = primoIndizio && selected.length > 1 ? [el('p', 'Sono primi indizi: provali e vedi.', 'bussola-indizio bussola-indizio--insieme')] : [];
+  results.replaceChildren(title, ...multi, grid, smallLinks());
   focusHeading(results);
   for (const [card, id] of cards) esplosione(card, id, selected.length > 1 ? { quanti: 90 } : undefined);
 }
