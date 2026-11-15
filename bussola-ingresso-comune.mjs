@@ -32,16 +32,13 @@ export async function mostraIngresso({corso, contenitore, classe = null, onInizi
   const chiudi = () => principale?.classList.remove('bt-scuro');
   principale?.classList.add('bt-scuro');
 
-  // 1. Chi arriva con link di classe o personale ed è già riconosciuto non rivede lo schermo.
+  // 1. Chi è già riconosciuto (codice classe) vede comunque «Ciao <nome>!» con «Non sono <nome>»:
+  //    su un dispositivo condiviso il secondo ragazzo non deve finire nel lavoro del primo.
   if (classe) {
     contenitore.replaceChildren(el('section', {class: 'bt-schermo', 'data-corso': corso}, el('p', {class: 'bt-frase', role: 'status'}, 'Un attimo…')));
     let riconosciuto = null;
     try { await classe.ready; riconosciuto = await classe.identity(); } catch { /* si prosegue con lo schermo */ }
-    if (riconosciuto?.alunno) {
-      salvaNomeOspite(riconosciuto.alunno.nome, riconosciuto.alunno.cognome);
-      try { await onInizia(riconosciuto.alunno.nome, riconosciuto.alunno.cognome); } finally { chiudi(); }
-      return;
-    }
+    if (riconosciuto?.alunno) salvaNomeOspite(riconosciuto.alunno.nome, riconosciuto.alunno.cognome);
   }
 
   return new Promise(fine => {
