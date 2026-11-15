@@ -79,7 +79,7 @@ async function risolvi(testo) {
     catch (e) { nonClasse = e; }
     // Con CODICE_BREVE_ATTIVO un codice che non è di una classe può essere un codice personale di ritorno (stesso formato, senza L).
     if (CODICE_BREVE_ATTIVO && nonClasse.stato === 404) {
-      const m = await import('./bussola-ritorno-codice.mjs?v=20261115-a11');
+      const m = await import('./bussola-ritorno-codice.mjs?v=20261115-riordino');
       if (m.eCodicePersonale(classe)) return m.apriConCodice(classe, {el, mostra, nonTrovato});
     }
     throw nonClasse;

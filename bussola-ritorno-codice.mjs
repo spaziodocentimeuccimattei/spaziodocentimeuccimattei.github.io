@@ -4,9 +4,9 @@
 // Lato server: supabase/sql/bussola-codice-ritorno.sql e azioni codice_ottieni / codice_apri di bussola-esperienze.
 // Il codice è un puntatore casuale al partecipante: non contiene dati personali. Il nome resta sul dispositivo
 // (o si scrive qui, senza salvarlo da nessuna parte) e il server non lo vede.
-import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261114-a3';
-import {CORSI, NOMI_BREVI, nomeOspite, nomeCompleto, pulisciNome} from './bussola-locale.mjs?v=20261114-a3';
-import {OPEN_DAY, OPEN_DAY_LUOGO} from './bussola-prossimo-passo.mjs?v=20261114-a3';
+import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261115-riordino';
+import {CORSI, NOMI_BREVI, nomeOspite, nomeCompleto, pulisciNome} from './bussola-locale.mjs?v=20261115-riordino';
+import {OPEN_DAY, OPEN_DAY_LUOGO} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 
 const prova = ['localhost', '127.0.0.1'].includes(location.hostname) && new URLSearchParams(location.search).has('prova');
 const API = prova ? '/__test/bussola-esperienze' : 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/bussola-esperienze';
@@ -50,9 +50,9 @@ export async function apriConCodice(testo, ui) {
   }
   const {el, mostra} = ui;
   const [{completion, courseDetails}, {participantCertificate}, {certificateCanvas, downloadCertificate}] = await Promise.all([
-    import('./bussola-records-core.mjs?v=20261029-missione'),
-    import('./bussola-attestato-alunno-core.mjs?v=20261029-missione'),
-    import('./bussola-attestati-render.mjs?v=20261029-missione'),
+    import('./bussola-records-core.mjs?v=20261115-riordino'),
+    import('./bussola-attestato-alunno-core.mjs?v=20261115-riordino'),
+    import('./bussola-attestati-render.mjs?v=20261115-riordino'),
   ]);
   // Gli indirizzi conclusi: il più recente per primo.
   const conclusi = (dati.projects || []).filter(p => CORSI.includes(p.corso) && p.payload).filter(p => { try { return completion({payload: p.payload}).completed; } catch { return false; } })
