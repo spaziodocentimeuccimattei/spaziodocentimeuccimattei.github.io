@@ -53,7 +53,9 @@ assert.equal(calendarModel(schools,[{scuola_id:schools[0].id,data:'2026-02-31',s
 // Gestione: date definite (confermate dalla scuola), da confermare e scuole senza data; i docenti restano con due filtri.
 model=calendarModel(schools,appointments,base);
 assert.deepEqual(TEACHER_FILTERS.map(([key])=>key),['all','bookable']);
-assert.deepEqual(filterCounts(model,ADMIN_FILTERS.map(([key])=>key)),{all:24,bookable:2,confirmed:1,planned:2,undated:22});
+assert.deepEqual(filterCounts(model,ADMIN_FILTERS.map(([key])=>key)),{all:24,bookable:2,confirmed:1,planned:2,past:1,undated:22});
+assert.deepEqual(filterDates(model.rows[2],'past').map(item=>item.id),['test-past']);
+assert.deepEqual(filterDates(model.rows[3],'past'),[]);
 assert.deepEqual(chronologicalRows(model.rows.filter(row=>filterDates(row,'confirmed').length),model.months,row=>filterDates(row,'confirmed')).flatMap(row=>row.all).map(item=>item.id),['test-second','test-confirmed']);
 const undatedRows=chronologicalRows(model.rows.filter(row=>!row.upcoming.length),model.months,()=>[]);
 assert.equal(undatedRows.length,22);assert.ok(undatedRows.every(row=>!row.all.length));

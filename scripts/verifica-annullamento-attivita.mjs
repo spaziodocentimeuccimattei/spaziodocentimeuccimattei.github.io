@@ -7,7 +7,16 @@ import {isolatedOrientation} from './verifica-conferma-visite.mjs';
 
 const base=new URL('../',import.meta.url),ids={pending:'11111111-1111-4111-8111-111111111111',future:'22222222-2222-4222-8222-222222222222',confirmed:'33333333-3333-4333-8333-333333333333'};
 const record=(id,data,stato)=>({id,nome:'Docente',cognome:'Esempio',tipo:'visita',scuola_id:'sanluri-calasanzio',data,stato,archiviata:false,titolo:'',nota:'Prova isolata',created_at:'2026-10-14T08:00:00Z'});
-const env=await isolatedOrientation({now:'2026-10-20T12:00:00Z',seed:{orientamento_attivita:[record(ids.pending,'2026-10-14','da_confermare'),record(ids.future,'2026-11-09','da_confermare'),record(ids.confirmed,'2026-10-13','confermata')]}});
+const appointment=(scuola_id,data,ora_inizio)=>({scuola_id,data,ora_inizio,stato:'confermata',tipo:'aule',archiviata:false});
+const env=await isolatedOrientation({now:'2026-10-20T12:00:00Z',seed:{
+ orientamento_attivita:[record(ids.pending,'2026-10-14','da_confermare'),record(ids.future,'2026-11-09','da_confermare'),record(ids.confirmed,'2026-10-13','confermata')],
+ orientamento_appuntamenti:[
+   appointment('uta-sede','2026-10-15','09:30'),
+   appointment('uta-sede','2026-10-15','10:30'),
+   appointment('sanluri-calasanzio','2026-10-14','09:00'),
+   appointment('decimoputzu-gramsci','2026-11-19','09:00'),
+ ],
+}});
 const errors=[],calls=[],virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e.message));
 const dom=new JSDOM(await readFile(new URL('gestione.html',base),'utf8'),{url:'http://127.0.0.1:8765/gestione.html',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});
 const w=dom.window,context=dom.getInternalVMContext(),modules=new Map();let failNextList=false,nativeDialogs=0,checks=0;
@@ -33,7 +42,33 @@ async function until(fn,label){const end=Date.now()+5000;while(Date.now()<end){i
 try{
  $('managePassword').value='ANTEPRIMA';submit($('passwordForm'));
  await until(()=>row(ids.pending)&&!$('workspacePanel').hidden,'accesso FS con credenziale fittizia');
- eq($('pendingList').querySelectorAll('article').length,2);
+ eq($('pendingList').querySelectorAll('article').length,1);
+ eq($('futureActivities').open,false);
+ eq($('futureActivities').querySelectorAll('article').length,1);
+ const calendar=$('manageSchoolCalendar');
+ const filter=key=>calendar.querySelector(`[data-calendar-filter="${key}"]`);
+ eq(filter('bookable').getAttribute('aria-pressed'),'true');
+ eq(calendar.querySelectorAll('[data-school="uta-sede"]').length,0);
+ filter('past').click();
+ eq(calendar.querySelectorAll('[data-school="uta-sede"]').length,2);
+ filter('all').click();
+ eq(new Set([...calendar.querySelectorAll('tr[data-school]')].map(row=>row.dataset.school)).size,24);
+ eq(calendar.querySelectorAll('.school-calendar__event.is-past').length,0);
+ const missing=$('unregisteredVisits');
+ eq(missing.open,false);
+ eq(missing.querySelectorAll('li').length,1,'una riga per scuola e giorno, anche con più orari');
+ const prepare=button(missing,'Apri il modulo');
+ prepare.click();
+ const form=$('activityForm');
+ eq(form.elements.scuola_id.value,'uta-sede');
+ eq(form.elements.data.value,'2026-10-15');
+ form.elements.nome.value='Bozza da mantenere';
+ form.elements.nome.dispatchEvent(new w.Event('input',{bubbles:true}));
+ prepare.click();
+ eq(form.elements.nome.value,'Bozza da mantenere');
+ eq(calls.includes('register_activity'),false,'aprire il modulo non registra la visita');
+ $('activityCancel').click();
+ w.document.querySelector('[data-tab="confermare"]').click();
  eq(recordById(ids.pending).stato,'da_confermare');
  eq([...row(ids.pending).querySelector('.review-actions').children].map(b=>b.textContent),['Annulla registrazione','Modifica dati o docente','Conferma che si è svolta']);
  eq(button(row(ids.future),'Conferma che si è svolta').disabled,true);
@@ -52,7 +87,6 @@ try{
  eq(button(row(ids.pending),'Mantieni la registrazione').disabled,false);
  button(row(ids.pending),'Mantieni la registrazione').click();env.failWrites(false);
  button(row(ids.pending),'Modifica dati o docente').click();
- const form=$('activityForm');
  eq(form.elements.id.value,ids.pending);eq($('activityDiscard').hidden,false);
  eq(w.document.querySelector('[data-panel="attivita"]').hidden,false,'modifica apre il modulo visibile');
  form.elements.nome.value='Docente corretto';form.elements.data.value='2026-10-15';submit(form);
@@ -65,7 +99,7 @@ try{
  $('activityDiscard').click();button(form,'Sì, annulla registrazione').click();
  await until(()=>recordById(ids.pending).archiviata&&!row(ids.pending),'annullamento dal modulo');
  eq(recordById(ids.pending).stato,'da_confermare','annullare non attesta svolgimento');
- eq(form.elements.id.value,'');eq($('activityDiscard').hidden,true);eq($('countConfermare').textContent,'1');
+ eq(form.elements.id.value,'');eq($('activityDiscard').hidden,true);eq($('countConfermare').textContent,'');
  const confirmedBefore=JSON.stringify(recordById(ids.confirmed));
  button(row(ids.confirmed),'Modifica dati o docente').click();form.elements.nota.value='Bozza da conservare';
  w.document.querySelector('[data-tab="confermare"]').click();

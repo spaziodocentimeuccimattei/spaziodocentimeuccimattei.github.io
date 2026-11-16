@@ -8,9 +8,9 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261009-home">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261109-modifica">
+  <link rel="stylesheet" href="gestione.css?v=20261116-agenda">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261014-leggibilita">
-  <link rel="stylesheet" href="scuole-calendario.css?v=20261022-definite">
+  <link rel="stylesheet" href="scuole-calendario.css?v=20261116-agenda">
 </head>
 <body class="gestione-page">
   <a class="manage-skip" href="#gestioneMain">Vai al contenuto</a>
@@ -65,8 +65,12 @@
         </div>
         <p id="globalMessage" class="global-message" role="status" aria-live="polite"></p>
         <section class="manage-dashboard" aria-labelledby="dashboardTitle">
-          <h3 id="dashboardTitle" class="manage-section-label">La situazione in un colpo d’occhio <span>Tocca un riquadro per aprire la sezione</span></h3>
+          <h3 id="dashboardTitle" class="manage-section-label">Situazione dell’orientamento</h3>
           <div class="dashboard-grid" id="summary"></div>
+          <details class="manage-disclosure">
+            <summary>Altri conteggi</summary>
+            <div class="dashboard-grid" id="extraSummary"></div>
+          </details>
         </section>
 
         <h3 class="manage-section-label" id="sectionsTitle">Che cosa vuoi fare</h3>
@@ -105,10 +109,19 @@
           <div id="bussolaManagement"></div>
         </section>
 
-        <section class="tab-panel" data-panel="confermare">
+        <section class="tab-panel" data-panel="confermare" hidden>
           <h3 class="panel-title">Attività da verificare</h3>
-          <p class="panel-help">Puoi <b>annullare una registrazione</b> oppure correggerne i dati. Solo tu, come Funzione Strumentale, puoi <b>confermare che l’attività si è svolta</b>: soltanto allora entra nei conteggi e nell’elenco per la Dirigente. Le date future restano in attesa.</p>
+          <p class="panel-help">La conferma dello svolgimento aggiunge l’attività al registro per la Dirigente e aggiorna i conteggi.</p>
           <div class="review-list" id="pendingList"></div>
+          <details class="manage-disclosure" id="futureActivities" hidden>
+            <summary>Attività in programma <span class="manage-disclosure-count"></span></summary>
+            <div class="review-list"></div>
+          </details>
+          <details class="manage-disclosure" id="unregisteredVisits" hidden>
+            <summary>Date trascorse senza registrazione <span class="manage-disclosure-count"></span></summary>
+            <p class="panel-help">Se la visita si è svolta, puoi aprire il modulo e registrarla.</p>
+            <ul class="unregistered-visits"></ul>
+          </details>
         </section>
 
         <section class="tab-panel" data-panel="candidature" hidden>
@@ -222,7 +235,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script type="module" src="gestione.js?v=20261115-riordino"></script>
+  <script type="module" src="gestione.js?v=20261116-agenda"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261115-riordino"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261022-definite';
+import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261116-agenda';
 const managementParams=new URLSearchParams(location.search);
 if(location.hash==='#bussola'&&managementParams.get('strumenti')!=='bussola'){
   const destination=new URL('bussola-docenti.html',location.href);
@@ -31,6 +31,7 @@ const PROPOSAL_STATES = { ricevuta: 'Da valutare', in_valutazione: 'In valutazio
 
 let sessionToken = sessionStorage.getItem(SESSION_KEY) || '';
 let data = null;
+let activityDraftDirty = false;
 const filters = { candidature: 'ricevuta', proposte: 'aperte', calendarioPeriodo: 'prossime' };
 const appointmentForm = document.getElementById('appointmentForm');
 const appointmentSchool = document.getElementById('appointmentSchool');
@@ -181,11 +182,13 @@ function stateTag(text, state) {
 // Riquadri colorati: ogni numero apre la sezione in cui si agisce.
 function renderSummary() {
   const summary = document.getElementById('summary');
+  const extraSummary = document.getElementById('extraSummary');
   summary.replaceChildren();
+  extraSummary.replaceChildren();
   const now = today();
   const pendingSupporters = data.disponibilita.filter((item) => item.stato === 'ricevuta').length;
   const pendingProposals = data.proposte.filter((item) => ['ricevuta', 'in_valutazione'].includes(item.stato)).length;
-  const pendingActivities = data.da_confermare.length;
+  const pendingActivities = data.da_confermare.filter(item => item.data <= now).length;
   const visited = new Set(data.attivita.filter((item) => item.tipo === 'visita' && item.data <= now).map((item) => item.scuola_id));
   const upcoming = data.appuntamenti.filter((item) => item.data >= now);
   const defined = upcoming.filter((item) => item.stato === 'confermata');
@@ -195,27 +198,28 @@ function renderSummary() {
   const next = upcoming[0];
   document.getElementById('nextAppointment').textContent = next ? `Prossimo appuntamento: ${new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(`${next.data}T12:00:00`))}${timeRange(next) ? `, ${timeRange(next)}` : ''} · ${schoolLabel(next.scuola_id)} (${next.stato === 'confermata' ? 'definito' : 'da confermare'})` : 'Nessun appuntamento in arrivo';
   const tiles = [
-    { tone: 'green', value: defined.length, label: defined.length === 1 ? 'data definita' : 'date definite', hint: 'Confermate dalla scuola', go: ['panoramica', 'confirmed'] },
-    { tone: 'amber', value: toConfirm.length, label: 'da confermare con la scuola', hint: 'Date previste, ancora da fissare', go: ['panoramica', 'planned'], hot: toConfirm.length > 0 },
-    { tone: 'grey', value: `${undated}/${data.scuole.length}`, label: 'scuole senza data', hint: 'Nessun appuntamento in arrivo', go: ['panoramica', 'undated'] },
     { tone: 'pink', value: pendingActivities, label: 'attività da verificare', hint: 'Conferma lo svolgimento', go: ['confermare'], hot: pendingActivities > 0 },
-    { tone: 'blue', value: pendingSupporters, label: 'disponibilità da assegnare', hint: 'Docenti in attesa di una scuola', go: ['candidature'], hot: pendingSupporters > 0 },
-    { tone: 'violet', value: pendingProposals, label: 'proposte da valutare', hint: 'Mattinée proposte dai docenti', go: ['proposte'], hot: pendingProposals > 0 },
-    { tone: 'teal', value: `${visited.size}/${data.scuole.length}`, label: 'scuole già visitate', hint: 'Visite confermate da te', go: ['scuole'] },
-    { tone: 'navy', value: data.attivita.length, label: 'attività a registro', hint: 'Confermate, docente per docente', go: ['attivita'] },
+    { tone: 'blue', value: defined.length, label: 'date definite in arrivo', hint: 'Confermate dalla scuola', go: ['panoramica', 'confirmed'] },
+    { tone: 'amber', value: toConfirm.length, label: 'date da concordare', hint: 'Da confermare con la scuola', go: ['panoramica', 'planned'], hot: toConfirm.length > 0 },
+    { tone: 'green', value: `${visited.size}/${data.scuole.length}`, label: 'scuole raggiunte', hint: 'Visite confermate da te', go: ['scuole'] },
+    { tone: 'grey', value: `${undated}/${data.scuole.length}`, label: 'scuole senza date in arrivo', go: ['panoramica', 'undated'], extra: true },
+    { tone: 'blue', value: pendingSupporters, label: 'disponibilità da assegnare', go: ['candidature'], extra: true },
+    { tone: 'violet', value: pendingProposals, label: 'proposte da valutare', go: ['proposte'], extra: true },
+    { tone: 'navy', value: data.attivita.length, label: 'attività a registro', go: ['attivita'], extra: true },
   ];
   for (const tile of tiles) {
     const box = el('button', `dashboard-tile tone-${tile.tone}${tile.hot ? ' is-hot' : ''}`);
     box.type = 'button';
-    box.append(el('strong', '', String(tile.value)), el('span', 'dashboard-label', tile.label), el('small', '', tile.hint));
+    box.append(el('strong', '', String(tile.value)), el('span', 'dashboard-label', tile.label));
+    if (tile.hint) box.append(el('small', '', tile.hint));
     box.addEventListener('click', () => {
       if (tile.go[1]) schoolCalendar.setFilter(tile.go[1]);
       showSection(tile.go[0], { focus: true });
     });
-    summary.append(box);
+    (tile.extra ? extraSummary : summary).append(box);
   }
   const count = (id, value) => { document.getElementById(id).textContent = value ? String(value) : ''; };
-  count('countPanoramica', toConfirm.length);
+  count('countPanoramica', upcoming.length);
   count('countCalendario', toConfirm.length);
   count('countConfermare', pendingActivities);
   count('countCandidature', pendingSupporters);
@@ -587,7 +591,7 @@ function renderAppointments(schoolNames) {
       group = el('div', 'review-list');
       list.append(group);
     }
-    const card = el('article', `review-card appointment appointment-${item.tipo}${item.stato === 'prevista' ? ' pending' : ''}`);
+    const card = el('article', `review-card appointment appointment-${item.tipo}${item.data < now ? ' past-appointment' : item.stato === 'prevista' ? ' pending' : ''}`);
     const head = el('div', 'review-head');
     const weekday = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(`${item.data}T12:00:00`));
     head.append(el('h4', '', weekday), stateTag(item.stato === 'confermata' ? 'Definita con la scuola' : 'Da confermare con la scuola', item.stato === 'confermata' ? 'assegnata' : 'ricevuta'));
@@ -637,6 +641,7 @@ function exportCalendar() {
 }
 
 function resetActivityForm() {
+  activityDraftDirty = false;
   for (const name of ['id', 'nome', 'cognome', 'nota', 'titolo']) activityForm.elements[name].value = '';
   activityForm.querySelector('button[type="submit"]').textContent = 'Inserisci da verificare';
   document.getElementById('activityCancel').hidden = true;
@@ -658,6 +663,24 @@ function editActivity(item) {
   activityMessage.textContent = 'Puoi cambiare data, scuola o docente. Dopo il salvataggio l’attività richiede di nuovo la tua conferma di svolgimento.';
   activityForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
   activityForm.elements.nome.focus({ preventScroll: true });
+}
+
+function prepareVisitRegistration(item) {
+  showSection('attivita', {scroll:false});
+  activityForm.scrollIntoView({behavior:'instant', block:'start'});
+  if (activityDraftDirty || activityForm.elements.id.value) {
+    document.getElementById('activityCancel').hidden = false;
+    activityMessage.textContent = 'Salva o annulla la registrazione in corso prima di aprire un’altra visita.';
+    return;
+  }
+  resetActivityForm();
+  activityType.value = 'visita';
+  syncActivityType();
+  activitySchool.value = item.scuola_id;
+  activityForm.elements.data.value = item.data;
+  document.getElementById('activityCancel').hidden = false;
+  activityMessage.textContent = 'Completa il modulo con il docente che ha svolto la visita.';
+  activityForm.elements.nome.focus({preventScroll:true});
 }
 
 function requestActivityCancellation(item, container, controls) {
@@ -716,9 +739,13 @@ function activityCard(item, schoolNames, className = 'review-card') {
 
 function renderPending(schoolNames) {
   const list = document.getElementById('pendingList');
+  const future = document.getElementById('futureActivities');
+  const futureList = future.querySelector('.review-list');
   list.replaceChildren();
-  if (!data.da_confermare.length) list.append(el('p', 'empty', 'Nessuna attività da verificare.'));
-  for (const item of data.da_confermare) {
+  futureList.replaceChildren();
+  const now = today();
+  const ordered = [...data.da_confermare].sort((a, b) => a.data.localeCompare(b.data));
+  for (const item of ordered) {
     const card = activityCard(item, schoolNames, 'review-card pending');
     const actions = el('div', 'review-actions');
     actions.append(actionButton('Annulla registrazione', 'no', () => requestActivityCancellation(item, card, actions)));
@@ -735,12 +762,32 @@ function renderPending(schoolNames) {
         handleError(error);
       }
     });
-    confirmButton.disabled = item.data > today();
+    confirmButton.disabled = item.data > now;
     if (confirmButton.disabled) card.append(el('p', 'panel-help', 'Potrai confermare lo svolgimento dal giorno della visita.'));
     actions.append(confirmButton);
     card.append(actions);
-    list.append(card);
+    (confirmButton.disabled ? futureList : list).append(card);
   }
+  if (!list.children.length) list.append(el('p', 'empty', 'Nessuna attività da verificare.'));
+  future.hidden = !futureList.children.length;
+  future.querySelector('.manage-disclosure-count').textContent = String(futureList.children.length);
+
+  const unregistered = document.getElementById('unregisteredVisits');
+  const missingList = unregistered.querySelector('ul');
+  missingList.replaceChildren();
+  const key = item => `${item.scuola_id}/${item.data}`;
+  const datesWithVisit = new Set([...data.attivita, ...data.da_confermare].filter(item => item.tipo === 'visita').map(key));
+  for (const item of data.appuntamenti) {
+    if (item.data >= now || datesWithVisit.has(key(item))) continue;
+    datesWithVisit.add(key(item));
+    const row = el('li');
+    const copy = el('div');
+    copy.append(el('strong', '', schoolNames.get(item.scuola_id) || item.scuola_id), el('span', '', formatDate(`${item.data}T12:00:00`, false)));
+    row.append(copy, actionButton('Apri il modulo', 'neutral', () => prepareVisitRegistration(item)));
+    missingList.append(row);
+  }
+  unregistered.hidden = !missingList.children.length;
+  unregistered.querySelector('.manage-disclosure-count').textContent = String(missingList.children.length);
 }
 
 // Elenco per la Dirigente: CSV con separatore ";" e BOM, così Excel lo apre con accenti e colonne corrette.
@@ -936,6 +983,8 @@ function syncActivityType() {
   activitySchool.required = isVisit;
 }
 activityType.addEventListener('change', syncActivityType);
+activityForm.addEventListener('input', () => { activityDraftDirty = true; });
+activityForm.addEventListener('change', () => { activityDraftDirty = true; });
 activityForm.elements.data.value = new Date().toISOString().slice(0, 10);
 syncActivityType();
 
