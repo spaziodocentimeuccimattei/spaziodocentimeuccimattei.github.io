@@ -6,40 +6,75 @@
 .school-calendar-page .hero-actions a { min-height:68px; padding:12px 16px; }
 .school-calendar-page .hero-stats { margin-top:20px; }
 .school-calendar-page .hero-stats span { font-size:.875rem; }
-.teacher-calendar-shell { margin:28px 0 36px; padding:clamp(20px,3vw,32px); border:1px solid #c4d3db; border-radius:22px; background:#fff; box-shadow:0 12px 34px #123c5708; }
-.calendar-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
-.calendar-heading h2 { margin:0; color:var(--navy); font-size:clamp(1.6rem,3vw,2.25rem); letter-spacing:-.035em; }
-.calendar-action { min-height:44px; padding:8px 14px; border:1px solid #a5b9c3; border-radius:9px; color:var(--navy); background:#fff; font:inherit; font-size:.92rem; font-weight:730; cursor:pointer; }
-.calendar-action:hover { background:#eef5f7; }
+.teacher-calendar-shell {
+  --agenda-padding:clamp(20px,3vw,32px);
+  --agenda-border:#cfdee7;
+  margin:28px 0 36px;
+  padding:0 var(--agenda-padding) var(--agenda-padding);
+  border:1px solid var(--agenda-border);
+  border-radius:22px;
+  background:#f6fafc;
+  box-shadow:0 12px 32px #123c5710;
+}
+.calendar-heading {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px 16px;
+  margin:0 calc(-1 * var(--agenda-padding)) 16px;
+  padding:18px var(--agenda-padding);
+  border-radius:21px 21px 0 0;
+  background:linear-gradient(112deg,#0e304a,#174e66);
+}
+.calendar-heading h2 { margin:0; color:#fff; font-size:clamp(1.6rem,3vw,2.25rem); letter-spacing:-.035em; }
+.calendar-action { min-height:44px; padding:8px 14px; border:1px solid #86a9bb; border-radius:9px; color:#17465f; background:#f2f8fb; font:inherit; font-size:.92rem; font-weight:750; cursor:pointer; }
+.calendar-action:hover { background:#e2f0f7; }
+.calendar-heading .calendar-action { border-color:#8daebd; color:#fff; background:transparent; }
+.calendar-heading .calendar-action:hover { background:#ffffff20; }
+.calendar-heading .calendar-action:focus-visible { outline-color:#fff; }
 .calendar-action:disabled { cursor:wait; }
 .calendar-action:focus-visible, .calendar-disclosure > summary:focus-visible, .visit-notice > summary:focus-visible { outline:3px solid #006c63; outline-offset:3px; }
 .calendar-message { margin:0 0 12px; color:var(--muted); }
 .calendar-message:empty { display:none; }
 .upcoming-visits, .past-visits > ul, #reachedSchools > ul { margin:0; padding:0; list-style:none; }
-.visit-row { display:grid; grid-template-columns:minmax(9.5rem, .3fr) minmax(0, 1fr) auto; align-items:center; gap:10px 22px; padding:14px 0; border-top:1px solid var(--line); }
+.upcoming-visits { display:grid; gap:7px; }
+.visit-row { display:grid; grid-template-columns:9.25rem minmax(0, 1fr) auto; align-items:center; gap:8px 20px; padding:10px 13px; border:1px solid var(--agenda-border); border-radius:12px; background:#fff; }
 .visit-row .calendar-action { justify-self:start; }
 .visit-timing, .visit-copy { display:grid; gap:3px; color:var(--muted); font-size:.9375rem; line-height:1.4; overflow-wrap:anywhere; }
-.visit-timing time, .visit-copy strong { color:var(--navy); font-weight:800; }
+.visit-date { display:flex; align-items:center; gap:7px; padding:5px 8px; border-radius:8px; color:#164765; background:#eaf3f9; font-weight:750; line-height:1.2; }
+.visit-date strong { flex:none; color:inherit; font-size:1.6rem; font-variant-numeric:tabular-nums; letter-spacing:-.045em; white-space:nowrap; }
+.visit-date span { font-size:.84rem; }
+.visit-timing > span { padding-left:8px; font-size:.9rem; font-variant-numeric:tabular-nums; }
+.visit-copy strong { color:var(--navy); font-weight:800; }
 .visit-copy > strong { font-size:1.125rem; }
-.visit-pending { color:#784700; }
+.visit-pending { justify-self:start; padding:2px 7px; border-radius:5px; color:#713f00; background:#fff1d6; font-size:.875rem; }
 .visit-notice > summary { padding:6px 0; color:var(--navy); font-weight:700; cursor:pointer; }
 .visit-notice p { margin:6px 0 0; }
-.mission { margin-top:16px; padding:16px 18px; border:1px solid #c2dbc9; border-radius:14px; background:#f1f8f3; }
-.mission h3 { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; margin:0; color:#174e31; font-size:1.125rem; }
-.mission h3 span { font-variant-numeric:tabular-nums; }
-.mission progress { width:100%; height:10px; margin:10px 0 3px; accent-color:#16733e; }
+.mission { margin-top:16px; padding:13px 16px; border:1px solid #c2dbc9; border-inline-start:5px solid #278653; border-radius:12px; background:linear-gradient(115deg,#f5fbf7,#e8f5ec); }
+.mission h3 { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:4px 12px; margin:0; color:#174e31; font-size:1.125rem; }
+.mission h3 span { font-size:1.375rem; font-variant-numeric:tabular-nums; letter-spacing:-.025em; }
+.mission progress { appearance:none; display:block; width:100%; height:8px; margin:9px 0 7px; border:0; border-radius:99px; overflow:hidden; background:#ccdfd3; }
+.mission progress::-webkit-progress-bar { background:#ccdfd3; }
+.mission progress::-webkit-progress-value { background:#16733e; }
+.mission progress::-moz-progress-bar { background:#16733e; }
 .mission p { margin:4px 0 0; color:#38594a; font-size:.9rem; }
 .calendar-disclosure > summary { min-height:44px; padding:12px 0; color:var(--navy); font-weight:750; line-height:1.4; cursor:pointer; }
-.group-count { display:inline-block; margin-left:5px; padding:1px 8px; border-radius:99px; color:#274b5e; background:#eaf1f4; font-size:.875rem; }
-.past-visits { margin-top:12px; }
-.past-visits .visit-row { grid-template-columns:minmax(9.5rem, .3fr) minmax(0, 1fr); }
+.group-count { display:inline-block; margin-left:5px; padding:1px 8px; border-radius:99px; color:#344c5c; background:#e2eaf0; font-size:.875rem; }
+.past-visits { margin-top:12px; padding:0 12px; border:1px solid #d7e1e7; border-radius:10px; background:#f1f5f7; }
+.past-visits > summary { color:#354e5f; }
+.past-visits .visit-row { grid-template-columns:9.25rem minmax(0, 1fr); padding:9px 0; border:0; border-top:1px solid #d7e1e7; border-radius:0; background:transparent; }
+.past-visits .visit-date { color:#3e5361; background:#e4ebf0; }
 #reachedSchools li { padding:4px 0; color:#174e31; font-size:.94rem; }
 @media(max-width:650px) {
   .school-calendar-page .support-main { width:calc(100% - 24px); }
   .school-calendar-page .support-hero { grid-template-columns:1fr; gap:22px; padding:26px 20px; }
-  .teacher-calendar-shell { padding:20px 16px; }
-  .visit-row, .past-visits .visit-row { grid-template-columns:minmax(0, 1fr); gap:6px; }
-  .visit-timing { display:flex; flex-wrap:wrap; align-items:baseline; gap:3px 10px; }
+  .teacher-calendar-shell { --agenda-padding:12px; }
+  .calendar-heading { padding-block:14px; }
+  .visit-row, .past-visits .visit-row { grid-template-columns:minmax(4.5rem, 5rem) minmax(0, 1fr); align-items:start; gap:6px 10px; }
+  .visit-date { flex-direction:column; align-items:flex-start; gap:2px; padding:6px; }
+  .visit-timing > span { padding-left:0; font-size:.8125rem; }
+  .visit-row .calendar-action { grid-column:2; }
 }
 
 .support-hero {
@@ -153,9 +188,15 @@
 .support-form .school-search { display:grid; margin-bottom:10px; font-size:.92rem; }
 .school-search input { min-height: 44px !important; background: white !important; }
 .school-group { margin: 0 0 10px; }
-details.school-group { border-top:1px solid var(--line); }
+.school-group--upcoming { padding:12px; border:1px solid #d3e2ed; border-radius:12px; background:#eef5fa; }
+.school-group--upcoming .school-option { border-color:#c8dbe7; background:#fff; }
+.school-group--upcoming .school-option:has(input:checked) { border-color:#508c68; background:#e9f6ed; }
+details.school-group { padding:0 12px; border:1px solid #d7e1e7; border-radius:10px; background:#f6f8fa; }
+details.school-group[open] { padding-bottom:12px; }
 .school-group h3 { margin: 0 0 10px; color: var(--navy); font-size: 1rem; }
 .school-help a { color:#00522a; text-underline-offset:3px; }
+#scuole > .support-heading { background:linear-gradient(115deg,#edf7f1,#fbfdfc); }
+#selectedSchoolNames { padding:8px 10px; border-inline-start:3px solid #278653; border-radius:6px; color:#174e31; background:#edf7f1; }
 .school-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .school-option { min-height: 72px; padding: 11px; display: flex; align-items: flex-start; gap: 9px; border: 1px solid var(--line); border-radius: 13px; background: #fbfdfd; cursor: pointer; transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease; }
 .school-option:hover { border-color: #9dc9bc; transform: translateY(-1px); }

@@ -19,7 +19,7 @@ const pastVisits = document.getElementById('pastVisits');
 const reachedSchools = document.getElementById('reachedSchools');
 const calendarMessage = document.getElementById('calendarMessage');
 const refreshCalendarButton = document.getElementById('refreshSchoolCalendar');
-const dateLabel = new Intl.DateTimeFormat('it-IT', {day:'numeric', month:'long', year:'numeric', timeZone:'UTC'});
+const dateLabel = new Intl.DateTimeFormat('it-IT', {month:'long', year:'numeric', timeZone:'UTC'});
 const choiceGroups = new Map();
 const schoolOptions = new Map();
 
@@ -148,10 +148,10 @@ function renderSchools(schools) {
   for (const [key, title] of [
     ['upcoming', 'Visite in programma'],
     ['other', 'Altre scuole'],
-    ['history', 'Date trascorse e visite confermate'],
+    ['history', 'Storico delle visite'],
   ]) {
     const primary = key === 'upcoming';
-    const section = element(primary ? 'section' : 'details', null, 'school-group calendar-disclosure');
+    const section = element(primary ? 'section' : 'details', null, primary ? 'school-group school-group--upcoming' : 'school-group calendar-disclosure');
     const heading = element(primary ? 'h3' : 'summary', title);
     const count = primary ? null : element('span', null, 'group-count');
     if (count) heading.append(' ', count);
@@ -250,8 +250,13 @@ function renderVisit({school, appointment}, upcoming) {
   const row = element('li', null, 'visit-row');
   row.dataset.school = school.id;
   const timing = element('div', null, 'visit-timing');
-  const date = element('time', dateLabel.format(new Date(`${appointment.data}T12:00:00Z`)));
+  const date = element('time', null, 'visit-date');
   date.dateTime = appointment.data;
+  date.append(
+    element('strong', String(Number(appointment.data.slice(-2)))),
+    ' ',
+    element('span', dateLabel.format(new Date(`${appointment.data}T12:00:00Z`))),
+  );
   timing.append(date, element('span', timeRange(appointment)));
   const copy = element('div', null, 'visit-copy');
   copy.append(element('strong', school.comune), element('span', school.etichetta));
