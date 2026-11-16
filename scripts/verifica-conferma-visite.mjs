@@ -122,6 +122,22 @@ async function verify() {
   // Due giorni dopo, il passare del tempo da solo non conferma alcuna visita.
   env.setNow('2026-10-18T12:00:00Z');
   assert.equal((await call('overview')).body.totali.scuole_visitate,0);
+  // Il cambio di giorno a Roma sposta la data nel riepilogo pubblico senza attestare la visita.
+  const appointment = {scuola_id:'uta-sede',tipo:'aule',data:'2026-10-18',ora_inizio:'10:30',ora_fine:'13:00',luogo:'Indicazioni pubbliche',nota:'Nota interna',stato:'confermata',archiviata:false};
+  tables.get('orientamento_appuntamenti').push(appointment, {...appointment, scuola_id:'assemini-pascoli', archiviata:true});
+  env.setNow('2026-10-18T21:59:59Z');
+  let calendar = (await call('overview')).body;
+  assert.equal(calendar.appuntamenti.length,1);
+  assert.equal(calendar.appuntamenti[0].luogo,appointment.luogo);
+  assert.equal(calendar.appuntamenti_trascorsi.length,0);
+  env.setNow('2026-10-18T22:00:00Z');
+  calendar = (await call('overview')).body;
+  assert.equal(calendar.appuntamenti.length,0);
+  assert.deepEqual(calendar.appuntamenti_trascorsi,[{
+    scuola_id:'uta-sede',tipo:'aule',data:'2026-10-18',ora_inizio:'10:30',ora_fine:'13:00',
+  }]);
+  assert.equal(calendar.totali.scuole_visitate,0);
+  env.setNow('2026-10-18T12:00:00Z');
   // Nuovo accesso ordinario: le sessioni del 16 ottobre sono scadute.
   const nextFs=(await call('login',{password:'ANTEPRIMA'})).body.token;
   assert.equal((await call('confirm_activity',{id:future.body.id},nextFs)).status,200);

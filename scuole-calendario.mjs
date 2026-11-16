@@ -67,7 +67,7 @@ const node = (tag, text, className) => {
   return element;
 };
 const normalize = text => String(text).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-function timeRange(item) {
+export function timeRange(item) {
   const start=(item.ora_inizio || '').slice(0,5), end=(item.ora_fine || '').slice(0,5);
   return start && end ? `${start}–${end}` : start ? `Dalle ${start}` : end ? `Fino alle ${end}` : 'Orario da definire';
 }

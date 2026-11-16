@@ -20,8 +20,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icona-32.png">
   <link rel="apple-touch-icon" href="assets/icona-180.png">
   <link rel="stylesheet" href="portal.css?v=20261009-home">
-  <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261108-doppioni">
-  <link rel="stylesheet" href="scuole-calendario.css?v=20261103-rosa">
+  <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261116-visite">
 </head>
 <body class="school-calendar-page">
   <header class="site-header">
@@ -40,7 +39,7 @@
       <div class="hero-copy">
         <p class="eyebrow">Una scuola da vivere · Orientamento 2026/27</p>
         <h1 id="page-title">Il calendario<br><span>delle scuole</span></h1>
-        <p class="hero-lead">Tutte le scuole, quando andare e dove. Consulta le date confermate e quelle ancora da concordare, poi offri la tua disponibilità.</p>
+        <p class="hero-lead">Consulta le prossime visite di orientamento e indica dove puoi partecipare.</p>
         <div class="hero-stats" id="heroStats" aria-live="polite">
           <div><strong data-stat="mattinee_proposte">–</strong><span>proposte ricevute</span></div>
         </div>
@@ -52,9 +51,26 @@
       </nav>
     </section>
 
-    <section class="teacher-calendar-shell" id="calendario-scuole" aria-label="Calendario completo delle scuole">
-      <div id="teacherSchoolCalendar"></div>
-      <button type="button" class="school-calendar__action" id="refreshSchoolCalendar">Aggiorna calendario</button>
+    <section class="teacher-calendar-shell" id="calendario-scuole" aria-labelledby="calendar-title">
+      <div class="calendar-heading">
+        <h2 id="calendar-title">Prossime visite</h2>
+        <button type="button" class="calendar-action" id="refreshSchoolCalendar" disabled>Aggiorna calendario</button>
+      </div>
+      <p id="calendarMessage" class="calendar-message" role="status">Caricamento del calendario…</p>
+      <ol id="upcomingVisits" class="upcoming-visits"></ol>
+      <section class="mission" aria-labelledby="mission-title">
+        <h3 id="mission-title">Scuole raggiunte <span id="missionCount">—</span></h3>
+        <progress id="missionProgress" aria-labelledby="mission-title" hidden></progress>
+        <p>Il conteggio si aggiorna dopo la conferma della Funzione Strumentale.</p>
+        <details class="calendar-disclosure" id="reachedSchools" hidden>
+          <summary>Vedi le scuole raggiunte</summary>
+          <ul></ul>
+        </details>
+      </section>
+      <details class="calendar-disclosure past-visits" id="pastVisits" hidden>
+        <summary>Date trascorse <span class="group-count"></span></summary>
+        <ul></ul>
+      </details>
     </section>
 
     <section class="territory-invitation" aria-labelledby="territory-title">
@@ -92,25 +108,7 @@
       <p class="how-note">Se eravate in due, ciascuno registra la propria visita. Vale lo stesso per le Mattinée: dopo averla realizzata, registrala con lo stesso modulo.</p>
     </section>
 
-    <section class="mission" aria-labelledby="mission-title">
-      <div class="mission-copy">
-        <p class="kicker">Obiettivo di squadra</p>
-        <h2 id="mission-title">Scuole raggiunte: <span data-stat="scuole_visitate">0</span> su <span data-stat="scuole">24</span></h2>
-        <p>La mappa mostra le scuole già visitate, quelle per cui un docente ha dato disponibilità e quelle ancora senza disponibilità.</p>
-        <div class="progress" role="progressbar" aria-label="Scuole raggiunte" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0" id="missionProgress">
-          <span id="missionBar"></span>
-        </div>
-        <p class="progress-caption" id="missionCaption">Caricamento della mappa…</p>
-      </div>
-      <div class="school-lights" id="schoolLights" aria-label="Stato delle scuole"></div>
-      <ul class="lights-legend">
-        <li><i class="lit"></i>Visitata</li>
-        <li><i class="warm"></i>Disponibilità presente</li>
-        <li><i></i>Senza disponibilità</li>
-      </ul>
-    </section>
-
-    <details class="support-section action-panel" id="scuole" open>
+    <details class="support-section action-panel" id="scuole">
       <summary class="support-heading"><span class="section-number">01</span><span class="summary-copy"><span class="eyebrow">Prima fase · circa 2 minuti</span><strong id="scuole-title">Disponibilità per le visite</strong><small>Indica le scuole in cui potresti presentare il nostro istituto.</small></span><span class="summary-action"><span>Apri il modulo</span><b aria-hidden="true">⌄</b></span></summary>
       <div class="action-panel-body">
       <form id="supporterForm" class="support-form" novalidate>
@@ -120,7 +118,10 @@
         </div>
         <fieldset class="school-fieldset">
           <legend>Scegli fino a cinque scuole <span class="optional" id="schoolCounter">0 di 5 scelte</span></legend>
-          <p class="school-help">Lo stato serve soltanto a distribuire meglio le disponibilità. Date, orari, luoghi e indicazioni delle scuole sono nel calendario in alto.</p>
+          <p class="school-help"><a href="#calendario-scuole">Vedi date, orari e scuole raggiunte.</a></p>
+          <label class="school-search">Cerca per comune o scuola <input id="schoolSearch" type="search" autocomplete="off"></label>
+          <p class="school-help" id="selectedSchoolNames" hidden></p>
+          <p class="school-help" id="schoolSearchEmpty" role="status" hidden>Nessuna scuola corrisponde alla ricerca.</p>
           <div id="schoolChoices" class="school-choices"></div>
           <p id="schoolError" class="field-error" role="alert" hidden>Seleziona almeno una scuola, fino a un massimo di cinque.</p>
         </fieldset>
@@ -216,7 +217,7 @@
   </main>
 
   <footer class="site-footer"><p>IIS Meucci - Mattei, sede di Decimomannu</p><p>Spazio curato dai docenti · Non sostituisce il <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a></p></footer>
-  <script type="module" src="una-scuola-da-vivere.js?v=20261108-nomi"></script>
+  <script type="module" src="una-scuola-da-vivere.js?v=20261116-visite"></script>
   <!-- Cloudflare Web Analytics: conteggio delle pagine pubbliche -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"59b3a938ff634bfaaa1caa774a713401","spa":false}'></script>
 </body>

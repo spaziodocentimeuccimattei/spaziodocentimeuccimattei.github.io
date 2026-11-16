@@ -14,6 +14,7 @@
     "ordine": 20,
     "avviso": {
       "titolo": "Orientamento I.C. Assemini 2 · date proposte",
+      "fino_al": "2026-11-04",
       "indicazioni": [
         "Date alternative: 27 ottobre o 4 novembre 2026. Data e orario da concordare e confermare con la scuola.",
         "Fasce proposte: 10:00–11:00 oppure 11:00–12:00. Indicare una fascia preferita e una seconda alternativa; assegnazione in ordine di arrivo delle conferme.",
@@ -79,6 +80,7 @@
     "ordine": 100,
     "avviso": {
       "titolo": "Settimana dell’orientamento · 9 novembre 2026",
+      "fino_al": "2026-11-09",
       "indicazioni": [
         "Lunedì 9 novembre 2026: presenza dalle 10:30 alle 13:00. Dalle 10:30 allestimento; incontri con le classi dalle 11:00 alle 13:00.",
         "Un’aula a disposizione: i gruppi classe si alterneranno per ascoltare la nostra offerta formativa, come lo scorso anno.",

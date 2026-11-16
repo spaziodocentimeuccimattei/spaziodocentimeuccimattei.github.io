@@ -1,4 +1,4 @@
-import {createSchoolCalendar,compareAppointments} from './scuole-calendario.mjs?v=20261108-nomi';
+import {calendarModel, compareAppointments, italyToday, timeRange} from './scuole-calendario.mjs?v=20261116-visite';
 const ORIENTATION_API = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const MAX_SCHOOLS = 5;
 const previewCatalog = document.getElementById('school-preview-data');
@@ -9,25 +9,48 @@ const reportForm = document.getElementById('reportForm');
 const reportType = document.getElementById('reportType');
 const reportSchool = document.getElementById('reportSchool');
 const schoolChoices = document.getElementById('schoolChoices');
+const schoolSearch = document.getElementById('schoolSearch');
+const schoolSearchEmpty = document.getElementById('schoolSearchEmpty');
 const schoolError = document.getElementById('schoolError');
 const schoolCounter = document.getElementById('schoolCounter');
+const selectedSchoolNames = document.getElementById('selectedSchoolNames');
+const upcomingVisits = document.getElementById('upcomingVisits');
+const pastVisits = document.getElementById('pastVisits');
+const reachedSchools = document.getElementById('reachedSchools');
+const calendarMessage = document.getElementById('calendarMessage');
+const refreshCalendarButton = document.getElementById('refreshSchoolCalendar');
+const dateLabel = new Intl.DateTimeFormat('it-IT', {day:'numeric', month:'long', year:'numeric', timeZone:'UTC'});
+const choiceGroups = new Map();
+const schoolOptions = new Map();
 
 let schoolStates = new Map();
 let schoolNames = new Map();
-let overviewLoaded = false;
-const schoolCalendar = createSchoolCalendar(document.getElementById('teacherSchoolCalendar'), {
-  onChoose(school) {
-    openActionPanel('#scuole');
-    const input = [...schoolChoices.querySelectorAll('input[name="scuole"]')].find(item => item.value === school.id);
-    if (input && !input.checked && selectedSchools().length < MAX_SCHOOLS) {
-      input.checked = true;
-      input.dispatchEvent(new Event('change', {bubbles:true}));
-    }
-    if (input && !input.checked) setMessage('supporterMessage', 'Hai già selezionato cinque scuole. Togli una scelta prima di aggiungerne un’altra.');
-    supporterForm.scrollIntoView({block:'start',behavior:'instant'});
-    supporterForm.elements.nome.focus({preventScroll:true});
-  },
-});
+let currentOverview;
+let calendarDay;
+let overviewError = false;
+
+function element(tag, text, className) {
+  const node = document.createElement(tag);
+  if (text != null) node.textContent = text;
+  if (className) node.className = className;
+  return node;
+}
+
+function chooseSchool(school) {
+  openActionPanel('#scuole');
+  schoolSearch.value = '';
+  filterSchoolChoices();
+  const option = schoolOptions.get(school.id);
+  const input = option.querySelector('input');
+  option.closest('details.school-group')?.setAttribute('open', '');
+  if (!input.checked && selectedSchools().length < MAX_SCHOOLS) {
+    input.checked = true;
+    input.dispatchEvent(new Event('change', {bubbles:true}));
+  }
+  supporterForm.scrollIntoView({block:'start',behavior:'instant'});
+  if (input.checked) supporterForm.elements.nome.focus({preventScroll:true});
+  else setMessage('supporterMessage', 'Hai già selezionato cinque scuole. Togli una scelta prima di aggiungerne un’altra.');
+}
 
 function setMessage(id, message, kind = '') {
   const element = document.getElementById(id);
@@ -63,65 +86,94 @@ function selectedSchools() {
 }
 
 function updateSchoolCounter() {
-  const count = selectedSchools().length;
+  const selected = selectedSchools();
+  const count = selected.length;
   schoolCounter.textContent = `${count} di ${MAX_SCHOOLS} scelte`;
   schoolCounter.classList.toggle('full', count === MAX_SCHOOLS);
+  selectedSchoolNames.hidden = count === 0;
+  selectedSchoolNames.textContent = count ? `Scelte: ${selected.map(id => schoolOptions.get(id).dataset.label).join(' · ')}` : '';
 }
 
-function applySchoolStates() {
-  for (const option of schoolChoices.querySelectorAll('.school-option')) {
-    const state = schoolStates.get(option.dataset.school) || 'libera';
+function applySchoolStates(rows) {
+  for (const row of rows) {
+    const id = row.school.id;
+    const option = schoolOptions.get(id);
+    const state = schoolStates.get(id) || 'libera';
     option.dataset.state = state;
     const tag = option.querySelector('.school-tag');
-    const who = schoolNames.get(option.dataset.school) || [];
-    tag.textContent = !overviewLoaded ? 'Stato non disponibile' : state === 'visitata' ? 'Già visitata' : state === 'in_arrivo' ? (who.length ? `Già data da ${who.join(', ')}` : 'Disponibilità presente') : 'Nessuna disponibilità';
+    const who = schoolNames.get(id) || [];
+    tag.textContent = [
+      state === 'visitata' ? 'Visita confermata' : '',
+      row.all.some(item => item.data < calendarDay) && !row.upcoming.length ? 'Data trascorsa' : '',
+      who.length ? `Disponibilità di ${who.join(', ')}` : state === 'in_arrivo' ? 'Disponibilità presente' : '',
+    ].filter(Boolean).join(' · ');
+    tag.hidden = !tag.textContent;
+    const key = row.upcoming.length ? 'upcoming' : row.all.length || state === 'visitata' ? 'history' : 'other';
+    const grid = choiceGroups.get(key).grid;
+    if (option.parentElement !== grid) {
+      if (option.querySelector('input').checked && key !== 'upcoming') grid.parentElement.open = true;
+      grid.append(option);
+    }
   }
+  filterSchoolChoices();
 }
 
-function normalize(value) {
-  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function filterSchoolChoices() {
+  const normalize = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const query = normalize(schoolSearch.value.trim());
+  let matches = 0;
+  for (const group of choiceGroups.values()) {
+    const {section, grid, count} = group;
+    const options = [...grid.children];
+    for (const option of options) option.hidden = !normalize(option.dataset.label).includes(query);
+    const visible = options.filter(option => !option.hidden).length;
+    matches += visible;
+    section.hidden = !visible;
+    if (count) {
+      count.textContent = String(visible);
+      if (query) {
+        group.wasOpen ??= section.open;
+        if (visible) section.open = true;
+      } else if (group.wasOpen != null) {
+        section.open = group.wasOpen || Boolean(grid.querySelector('input:checked'));
+        group.wasOpen = undefined;
+      }
+    }
+  }
+  schoolSearchEmpty.hidden = !query || matches > 0;
 }
 
 function renderSchools(schools) {
   schoolChoices.replaceChildren();
-  const groups = new Map();
-  for (const school of schools) {
-    const key = school.area === 'esterno' ? 'Altri comuni dell’elenco operativo' : 'Comuni del bacino di Decimomannu';
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(school);
-  }
-  for (const [groupName, items] of groups) {
-    const section = document.createElement('div');
-    section.className = 'school-group';
-    const heading = document.createElement('h3');
-    heading.textContent = groupName;
-    section.append(heading);
-    const grid = document.createElement('div');
-    grid.className = 'school-grid';
-    for (const school of items) {
-      const label = document.createElement('label');
-      label.className = 'school-option';
-      label.dataset.school = school.id;
-      label.dataset.search = normalize(`${school.comune} ${school.etichetta}`);
-      const input = document.createElement('input');
-      input.type = 'checkbox';
-      input.name = 'scuole';
-      input.value = school.id;
-      const copy = document.createElement('span');
-      const town = document.createElement('strong');
-      town.textContent = school.comune;
-      const name = document.createElement('small');
-      name.textContent = school.etichetta;
-      const tag = document.createElement('em');
-      tag.className = 'school-tag';
-      copy.append(town, name, tag);
-      label.append(input, copy);
-      grid.append(label);
-    }
-    section.append(grid);
+  for (const [key, title] of [
+    ['upcoming', 'Visite in programma'],
+    ['other', 'Altre scuole'],
+    ['history', 'Date trascorse e visite confermate'],
+  ]) {
+    const primary = key === 'upcoming';
+    const section = element(primary ? 'section' : 'details', null, 'school-group calendar-disclosure');
+    const heading = element(primary ? 'h3' : 'summary', title);
+    const count = primary ? null : element('span', null, 'group-count');
+    if (count) heading.append(' ', count);
+    const grid = element('div', null, 'school-grid');
+    section.append(heading, grid);
+    choiceGroups.set(key, {section, grid, count});
     schoolChoices.append(section);
   }
-  applySchoolStates();
+  for (const school of schools) {
+    const label = element('label', null, 'school-option');
+    label.dataset.school = school.id;
+    label.dataset.label = `${school.comune} – ${school.etichetta}`;
+    const input = element('input');
+    input.type = 'checkbox';
+    input.name = 'scuole';
+    input.value = school.id;
+    const copy = element('span');
+    copy.append(element('strong', school.comune), element('small', school.etichetta), element('em', null, 'school-tag'));
+    label.append(input, copy);
+    schoolOptions.set(school.id, label);
+  }
+  applySchoolStates(calendarModel(schools, []).rows);
   schoolChoices.addEventListener('change', (event) => {
     if (selectedSchools().length > MAX_SCHOOLS) event.target.checked = false;
     schoolError.hidden = selectedSchools().length > 0;
@@ -163,13 +215,14 @@ async function loadSchools() {
     if (previewCatalog) {
       schools = JSON.parse(previewCatalog.textContent);
     } else {
-      const response = await fetch('scuole-orientamento.json?v=20261012-uta', { cache: 'no-store' });
+      const response = await fetch('scuole-orientamento.json?v=20261116-visite', { cache: 'no-store' });
       if (!response.ok) throw new Error();
       schools = await response.json();
     }
     if (!Array.isArray(schools) || !schools.length) throw new Error();
     renderSchools(schools);
     fillReportSchools(schools);
+    supporterForm.querySelector('button[type="submit"]').disabled = false;
     return schools;
   } catch {
     schoolChoices.textContent = 'L’elenco delle scuole non è disponibile. Riprova più tardi.';
@@ -182,63 +235,86 @@ function setStat(name, value) {
   for (const element of document.querySelectorAll(`[data-stat="${name}"]`)) element.textContent = String(value);
 }
 
-function renderLights(schools) {
-  const container = document.getElementById('schoolLights');
-  container.replaceChildren();
-  // Nei comuni con più scuole (Assemini) il solo nome del comune comparirebbe due volte: si aggiunge la scuola.
-  const perTown = new Map();
-  for (const school of schools) perTown.set(school.comune, (perTown.get(school.comune) || 0) + 1);
-  for (const school of schools) {
-    const light = document.createElement('span');
-    const state = schoolStates.get(school.id) || 'libera';
-    light.className = `light ${state === 'visitata' ? 'lit' : state === 'in_arrivo' ? 'warm' : ''}`;
-    light.textContent = perTown.get(school.comune) > 1 ? `${school.comune} · ${school.etichetta}` : school.comune;
-    const who = schoolNames.get(school.id) || [];
-    light.title = `${school.comune} · ${school.etichetta}${who.length ? ` · disponibilità: ${who.join(', ')}` : ''}`;
-    container.append(light);
-  }
+function renderMission(schools, total, visited) {
+  const progress = document.getElementById('missionProgress');
+  progress.max = total || 1;
+  progress.value = visited;
+  progress.hidden = !total;
+  document.getElementById('missionCount').textContent = `${visited} di ${total}`;
+  const reached = schools.filter(school => schoolStates.get(school.id) === 'visitata');
+  reachedSchools.hidden = reached.length === 0;
+  reachedSchools.querySelector('ul').replaceChildren(...reached.map(school => element('li', `${school.comune} · ${school.etichetta}`)));
 }
 
-function renderMission(total, visited, offered) {
-  const percent = total ? Math.round((visited / total) * 100) : 0;
-  document.getElementById('missionBar').style.width = `${percent}%`;
-  const progress = document.getElementById('missionProgress');
-  progress.setAttribute('aria-valuemax', String(total));
-  progress.setAttribute('aria-valuenow', String(visited));
-  const caption = document.getElementById('missionCaption');
-  if (visited === 0) {
-    caption.textContent = offered
-      ? `Nessuna scuola è stata ancora visitata. Per ${offered} ${offered === 1 ? 'scuola è già presente una disponibilità' : 'scuole sono già presenti disponibilità'}.`
-      : 'Nessuna scuola è stata ancora visitata.';
-  } else if (visited === total) {
-    caption.textContent = 'Tutte le scuole dell’elenco sono state raggiunte.';
+function renderVisit({school, appointment}, upcoming) {
+  const row = element('li', null, 'visit-row');
+  row.dataset.school = school.id;
+  const timing = element('div', null, 'visit-timing');
+  const date = element('time', dateLabel.format(new Date(`${appointment.data}T12:00:00Z`)));
+  date.dateTime = appointment.data;
+  timing.append(date, element('span', timeRange(appointment)));
+  const copy = element('div', null, 'visit-copy');
+  copy.append(element('strong', school.comune), element('span', school.etichetta));
+  const type = appointment.tipo === 'stand' ? 'Open Day con stand' : 'Orientamento nelle aule';
+  if (upcoming) {
+    copy.append(element('span', appointment.luogo ? `${type} · ${appointment.luogo}` : type));
+    if (appointment.stato !== 'confermata') copy.append(element('span', 'Data da confermare con la scuola', 'visit-pending'));
+    if (school.avviso && (!school.avviso.fino_al || appointment.data <= school.avviso.fino_al)) {
+      const notice = element('details', null, 'visit-notice');
+      notice.append(element('summary', 'Indicazioni della scuola'), element('strong', school.avviso.titolo));
+      for (const text of school.avviso.indicazioni || []) notice.append(element('p', text));
+      copy.append(notice);
+    }
+    const choose = element('button', 'Dai disponibilità', 'calendar-action');
+    choose.type = 'button';
+    choose.setAttribute('aria-label', `Dai disponibilità per ${school.comune} · ${school.etichetta}`);
+    choose.addEventListener('click', () => chooseSchool(school));
+    row.append(timing, copy, choose);
   } else {
-    caption.textContent = `${visited} su ${total} scuole raggiunte (${percent}%). Ne mancano ${total - visited}.`;
+    copy.append(element('span', type));
+    row.append(timing, copy);
   }
+  return row;
+}
+
+function renderOverview(schools, today = italyToday()) {
+  if (!currentOverview) return;
+  calendarDay = today;
+  const {totali, appuntamenti = [], appuntamenti_trascorsi = []} = currentOverview;
+  const {rows} = calendarModel(schools, [...appuntamenti, ...appuntamenti_trascorsi], {today});
+  const visits = rows.flatMap(row => row.all.map(appointment => ({school:row.school, appointment})))
+    .sort((a, b) => compareAppointments(a.appointment, b.appointment));
+  const upcoming = visits.filter(visit => visit.appointment.data >= today);
+  const past = visits.filter(visit => visit.appointment.data < today);
+  upcomingVisits.replaceChildren(...upcoming.map(visit => renderVisit(visit, true)));
+  pastVisits.hidden = !past.length;
+  pastVisits.querySelector('.group-count').textContent = String(past.length);
+  pastVisits.querySelector('ul').replaceChildren(...past.map(visit => renderVisit(visit, false)));
+  calendarMessage.textContent = overviewError ? 'Aggiornamento non riuscito. Vedi le ultime date caricate.' : upcoming.length ? '' : 'Nessuna visita in programma.';
+  renderMission(schools, totali.scuole, totali.scuole_visitate);
+  applySchoolStates(rows);
+}
+
+function refreshCalendarDay() {
+  const today = italyToday();
+  if (today !== calendarDay) renderOverview(currentSchools, today);
 }
 
 async function loadOverview(schools) {
   try {
-    if (previewCatalog) throw new Error();
     const data = await send('overview', {});
-    overviewLoaded = true;
     schoolStates = new Map(data.scuole.map((school) => [school.id, school.stato]));
     schoolNames = new Map(data.scuole.map((school) => [school.id, Array.isArray(school.docenti) ? school.docenti : []]));
-    const appointments=[...(data.appuntamenti || [])].sort(compareAppointments);
     for (const [key, value] of Object.entries(data.totali)) setStat(key, value);
-    renderMission(data.totali.scuole, data.totali.scuole_visitate, data.totali.scuole_con_disponibilita);
-    schoolCalendar.update(schools, appointments, schoolStates, schoolNames);
+    currentOverview = data;
+    overviewError = false;
+    renderOverview(schools);
   } catch {
-    schoolCalendar.setError(schools);
-    if (!overviewLoaded) {
-      for (const key of ['scuole_visitate', 'scuole_con_disponibilita', 'mattinee_proposte']) setStat(key, '—');
-      setStat('scuole', schools.length || '—');
-      document.getElementById('missionCaption').textContent = 'Il riepilogo delle visite non è disponibile. Aggiorna il calendario per riprovare.';
-      document.getElementById('missionProgress').removeAttribute('aria-valuenow');
-    }
+    overviewError = true;
+    calendarMessage.textContent = currentOverview
+      ? 'Aggiornamento non riuscito. Vedi le ultime date caricate.'
+      : 'Calendario non disponibile. Riprova con «Aggiorna calendario».';
   }
-  applySchoolStates();
-  renderLights(schools);
 }
 
 function fields(form) {
@@ -271,6 +347,7 @@ async function submitForm(event, action, messageId) {
     form.reset();
     schoolError.hidden = true;
     updateSchoolCounter();
+    filterSchoolChoices();
     if (action === 'report_activity') resetReportForm();
     const text = {
       submit_supporter: `Disponibilità inviata. Codice: ${result.codice}. La Funzione Strumentale ti contatterà per concordare scuola, data e orario.`,
@@ -288,16 +365,23 @@ async function submitForm(event, action, messageId) {
 
 function openActionPanel(hash = window.location.hash) {
   if (!hash) return;
-  const panel = document.querySelector(hash);
+  const panel = document.getElementById(hash.slice(1));
   if (panel instanceof HTMLDetailsElement && panel.classList.contains('action-panel')) panel.open = true;
 }
 
 let currentSchools = [];
-document.getElementById('refreshSchoolCalendar').addEventListener('click', async (event) => {
-  const button = event.currentTarget;
-  button.disabled = true;
-  try { await loadOverview(currentSchools); } finally { button.disabled = false; }
-});
+async function refreshCalendar() {
+  refreshCalendarButton.disabled = true;
+  try {
+    if (!currentSchools.length) currentSchools = await loadSchools();
+    if (currentSchools.length) await loadOverview(currentSchools);
+    else calendarMessage.textContent = 'Elenco delle scuole non disponibile. Riprova con «Aggiorna calendario».';
+  } finally {
+    refreshCalendarButton.disabled = false;
+  }
+}
+refreshCalendarButton.addEventListener('click', refreshCalendar);
+schoolSearch.addEventListener('input', filterSchoolChoices);
 supporterForm.addEventListener('submit', (event) => submitForm(event, 'submit_supporter', 'supporterMessage'));
 proposalForm.addEventListener('submit', (event) => submitForm(event, 'submit_proposal', 'proposalMessage'));
 reportForm.addEventListener('submit', (event) => submitForm(event, 'report_activity', 'reportMessage'));
@@ -312,10 +396,11 @@ for (const link of document.querySelectorAll('a[href^="#"]')) {
   link.addEventListener('click', () => openActionPanel(link.getAttribute('href')));
 }
 window.addEventListener('hashchange', () => openActionPanel());
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) refreshCalendarDay();
+});
+setInterval(refreshCalendarDay, 60000);
 for (const form of [supporterForm, proposalForm, reportForm]) form.querySelector('button[type="submit"]').disabled = false;
 resetReportForm();
-loadSchools().then((schools) => {
-  currentSchools = schools;
-  return loadOverview(schools);
-});
+refreshCalendar();
 openActionPanel();

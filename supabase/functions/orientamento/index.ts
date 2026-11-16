@@ -370,6 +370,10 @@ async function overview(request: Request) {
         scuola_id: item.scuola_id, tipo: item.tipo, data: item.data,
         ora_inizio: item.ora_inizio, ora_fine: item.ora_fine, luogo: item.luogo, stato: item.stato,
       })),
+      appuntamenti_trascorsi: data.appointments.filter((item) => item.data < today).map((item) => ({
+        scuola_id: item.scuola_id, tipo: item.tipo, data: item.data,
+        ora_inizio: item.ora_inizio, ora_fine: item.ora_fine,
+      })),
     });
   } catch {
     return json(request, { error: "Dati di partecipazione non disponibili." }, 503);
