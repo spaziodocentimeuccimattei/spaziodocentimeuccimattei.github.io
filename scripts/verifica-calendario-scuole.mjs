@@ -65,17 +65,16 @@ console.log('Calendario scuole: conservazione, 24 scuole, stati, ordine, periodi
 // La nuova apertura non deve mai sovrascrivere una data non ancora salvata.
 const managementSource=await readFile(new URL('../gestione.js',import.meta.url),'utf8');
 const start=managementSource.indexOf('function openCalendarForm(');
-const end=managementSource.indexOf('\ndocument.',start);
-const draft=[{value:'2026-10-27'},{value:'Bozza da conservare'}];
-const form={querySelectorAll:()=>draft,scrollIntoView:()=>{},elements:{data:{focus:()=>{}}}};
-const tools={open:false}, message={textContent:''}, cancel={hidden:true,textContent:''}, schoolSelect={value:'scuola-in-compilazione'};
+const end=managementSource.indexOf('\nfunction timeRange(',start);
+const form={scrollIntoView:()=>{},elements:{data:{value:'2026-10-27',focus:()=>{}},nota:{value:'Bozza da conservare'}}};
+const message={textContent:''}, cancel={hidden:true,textContent:''}, schoolSelect={value:'scuola-in-compilazione'};
 let editing=0,resetting=0;
-const open=new Function('appointmentForm','managementTools','document','appointmentMessage','appointmentCancel','editAppointment','resetAppointmentForm','appointmentSchool','return ('+managementSource.slice(start,end)+');')(form,tools,{querySelector:()=>({click:()=>{}})},message,cancel,()=>editing++,()=>resetting++,schoolSelect);
-open({id:'altra-scuola'});
+const open=dirty=>new Function('appointmentForm','showSection','appointmentDraftDirty','appointmentMessage','appointmentCancel','editAppointment','resetAppointmentForm','appointmentSchool','return ('+managementSource.slice(start,end)+');')(form,()=>{},dirty,message,cancel,()=>editing++,()=>resetting++,schoolSelect);
+open(true)({id:'altra-scuola'});
 assert.equal(schoolSelect.value,'scuola-in-compilazione');
-assert.deepEqual(draft.map(x=>x.value),['2026-10-27','Bozza da conservare']);
+assert.deepEqual([form.elements.data.value,form.elements.nota.value],['2026-10-27','Bozza da conservare']);
 assert.equal(editing,0);assert.equal(resetting,0);assert.equal(cancel.hidden,false);
 assert.match(message.textContent,/non ancora salvata/);
-draft.forEach(x=>x.value='');open({id:'altra-scuola'});
+open(false)({id:'altra-scuola'});
 assert.equal(schoolSelect.value,'altra-scuola');assert.equal(resetting,1);
 console.log('Bozza calendario: apertura di un’altra scuola protetta senza cancellazioni.');
