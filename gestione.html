@@ -8,7 +8,7 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261009-home">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261116-essenziale">
+  <link rel="stylesheet" href="gestione.css?v=20261116-visite">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261014-leggibilita">
 </head>
 <body class="gestione-page">
@@ -55,12 +55,12 @@
         </div>
         <p id="globalMessage" class="global-message" role="status" aria-live="polite"></p>
         <nav class="manage-nav" aria-label="Gestione orientamento">
-          <button type="button" data-tab="panoramica" aria-current="true">Calendario</button>
-          <button type="button" data-tab="confermare">Da verificare <span class="manage-disclosure-count" id="countConfermare" hidden></span></button>
-          <button type="button" data-tab="attivita">Registro</button>
+          <button type="button" data-tab="panoramica" hidden>← Tutte le visite</button>
           <details id="otherTools" class="manage-tools">
             <summary>Altri strumenti</summary>
             <div>
+              <button type="button" id="newActivity" disabled>Aggiungi un’attività senza data in agenda</button>
+              <button type="button" data-tab="datePassate">Modifica date passate</button>
               <button type="button" data-tab="candidature">Disponibilità docenti</button>
               <button type="button" data-tab="proposte">Mattinée</button>
               <button type="button" data-tab="scuole">Scuole e visite</button>
@@ -70,23 +70,39 @@
           </details>
         </nav>
 
-        <section class="tab-panel" data-panel="panoramica" tabindex="-1" aria-labelledby="agendaTitle">
-          <div class="panel-heading">
-            <h2 class="panel-title" id="agendaTitle">Prossime visite</h2>
-            <button type="button" class="act ok" id="addAppointment" aria-label="Aggiungi data" disabled>Aggiungi</button>
-          </div>
-          <div id="manageSchoolCalendar">
+        <section class="tab-panel" data-panel="panoramica" tabindex="-1">
+          <section id="pendingSection" aria-labelledby="pendingTitle" tabindex="-1">
+            <h2 class="panel-title" id="pendingTitle">Visite da completare</h2>
+            <p class="panel-help" id="visitHelp" hidden>Aggiungi chi è andato solo se la visita si è svolta.</p>
+            <p id="pendingEmpty" class="agenda-message" hidden>Nessuna visita da completare.</p>
+            <ul class="agenda-list visit-list" id="pendingList"></ul>
+          </section>
+
+          <details class="manage-disclosure" id="completedVisits">
+            <summary>Visite confermate</summary>
+            <p class="school-progress" id="schoolProgress"></p>
+            <p class="agenda-message" id="confirmedEmpty" hidden>Nessuna attività confermata.</p>
+            <ul class="agenda-list visit-list" id="activityList"></ul>
+          </details>
+
+          <section class="upcoming-section" aria-labelledby="agendaTitle">
+            <div class="panel-heading">
+              <h2 class="panel-title" id="agendaTitle">Prossime visite</h2>
+              <button type="button" class="act neutral" id="addAppointment" disabled>Aggiungi data</button>
+            </div>
             <p id="agendaMessage" class="agenda-message" role="status"></p>
-            <ul class="agenda-list" id="upcomingAppointments"></ul>
-            <details class="manage-disclosure" id="pastAppointments" hidden>
-              <summary>Date trascorse <span class="manage-disclosure-count"></span></summary>
-              <ul class="agenda-list"></ul>
+            <ul class="agenda-list visit-list" id="upcomingAppointments"></ul>
+            <details class="manage-disclosure" id="futureActivities" hidden>
+              <summary>Docenti già assegnati</summary>
+              <ul class="agenda-list visit-list"></ul>
             </details>
-            <details class="manage-disclosure" id="undatedSchools" hidden>
-              <summary>Scuole senza date in arrivo</summary>
-              <ul class="undated-list"></ul>
-            </details>
-          </div>
+          </section>
+
+        </section>
+
+        <section class="tab-panel" data-panel="datePassate" tabindex="-1" hidden>
+          <h2 class="panel-title">Date passate in agenda</h2>
+          <ul class="agenda-list visit-list" id="pastAppointments"></ul>
         </section>
 
         <section class="tab-panel" data-panel="excel" tabindex="-1" hidden>
@@ -114,20 +130,6 @@
             <p class="panel-help">I colleghi della Commissione Orientamento non entrano in questa Gestione: con la loro password usano l’<a href="bussola-docenti.html">Area docenti Bussola</a>, dove creano le classi, mostrano codice e QR e seguono i lavori delle classi che hanno creato o aperto con il codice.</p>
           </div>
           <div id="bussolaManagement"></div>
-        </section>
-
-        <section class="tab-panel" data-panel="confermare" tabindex="-1" hidden>
-          <h2 class="panel-title">Attività da verificare</h2>
-          <div class="review-list" id="pendingList"></div>
-          <details class="manage-disclosure" id="futureActivities" hidden>
-            <summary>Attività in programma <span class="manage-disclosure-count"></span></summary>
-            <div class="review-list"></div>
-          </details>
-          <details class="manage-disclosure" id="unregisteredVisits" hidden>
-            <summary>Date trascorse senza registrazione <span class="manage-disclosure-count"></span></summary>
-            <p class="panel-help">Se la visita si è svolta, puoi aprire il modulo e registrarla.</p>
-            <ul class="unregistered-visits"></ul>
-          </details>
         </section>
 
         <section class="tab-panel" data-panel="candidature" tabindex="-1" hidden>
@@ -194,18 +196,14 @@
           </details>
         </section>
 
-        <section class="tab-panel" data-panel="attivita" tabindex="-1" hidden>
-          <div class="panel-heading">
-            <h2 class="panel-title">Registro</h2>
-            <p class="school-progress" id="schoolProgress"></p>
-          </div>
-          <details class="manage-disclosure" id="activityEditor">
-            <summary id="activityEditorTitle">Registra un’attività</summary>
+        <dialog id="activityEditor" class="visit-editor" aria-labelledby="activityEditorTitle">
+          <h2 class="panel-title" id="activityEditorTitle">Aggiungi chi è andato</h2>
+          <div class="visit-editor-context" id="activityEditorContext" hidden></div>
             <form id="activityForm" class="activity-form appointment-form">
               <input type="hidden" name="id">
-              <label>Nome <input name="nome" list="teacherNames" maxlength="80" required></label>
-              <label>Cognome <input name="cognome" list="teacherSurnames" maxlength="80" required></label>
-              <label>Attività
+              <label>Nome del docente <input name="nome" list="teacherNames" maxlength="80" required></label>
+              <label>Cognome del docente <input name="cognome" list="teacherSurnames" maxlength="80" required></label>
+              <label id="activityTypeField">Attività
                 <select name="tipo" id="activityType" required>
                   <option value="visita">Visita in una scuola</option>
                   <option value="mattinee">Mattinée diffusa realizzata</option>
@@ -213,20 +211,17 @@
               </label>
               <label id="activitySchoolField">Scuola <select name="scuola_id" id="activitySchool"></select></label>
               <label id="activityTitleField" hidden>Titolo della Mattinée <input name="titolo" maxlength="160"></label>
-              <label>Data <input name="data" type="date" required></label>
-              <label class="activity-wide">Nota <span>facoltativa</span><input name="nota" maxlength="600"></label>
+              <label id="activityDateField">Data <input name="data" type="date" required></label>
+              <label id="activityNoteField" class="activity-wide">Nota <span>facoltativa</span><input name="nota" maxlength="600"></label>
               <div class="appointment-buttons">
                 <button type="button" class="act no" id="activityDiscard" hidden>Annulla registrazione</button>
-                <button type="submit">Inserisci da verificare</button>
-                <button type="button" class="act neutral" id="activityCancel" hidden>Annulla la modifica</button>
+                <button type="submit">Salva il docente</button>
+                <button type="button" class="act neutral" id="activityCancel">Annulla</button>
               </div>
             </form>
             <datalist id="teacherNames"></datalist><datalist id="teacherSurnames"></datalist>
             <p id="activityMessage" class="global-message" role="status" aria-live="polite"></p>
-          </details>
-          <h3 class="sub-title">Attività confermate</h3>
-          <div class="review-list" id="activityList"></div>
-        </section>
+        </dialog>
       </div>
     </section>
   </main>
@@ -235,7 +230,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script type="module" src="gestione.js?v=20261116-essenziale"></script>
+  <script type="module" src="gestione.js?v=20261116-visite"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261115-riordino"></script>
 </body>
 </html>

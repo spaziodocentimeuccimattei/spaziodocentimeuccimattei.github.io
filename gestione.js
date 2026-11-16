@@ -44,6 +44,9 @@ const appointmentArchive = document.getElementById('archiveAppointment');
 const appointmentTitle = document.getElementById('appointmentTitle');
 const activityEditor = document.getElementById('activityEditor');
 const activityEditorTitle = document.getElementById('activityEditorTitle');
+const activityEditorContext = document.getElementById('activityEditorContext');
+const otherTools = document.getElementById('otherTools');
+const visitDate = new Intl.DateTimeFormat('it-IT', {weekday:'long', day:'numeric', month:'long', year:'numeric',timeZone:'UTC'});
 
 function openCalendarForm(school, item) {
   showSection('calendario', {scroll:false});
@@ -108,7 +111,7 @@ function showWorkspace() {
 }
 
 // Ogni sezione ha il suo indirizzo, così si può tenere nei preferiti (#bussola resta quello storico).
-const SECTION_HASHES = { panoramica: 'calendario-scuole', calendario: 'date', confermare: 'da-verificare', candidature: 'disponibilita', proposte: 'mattinee', scuole: 'scuole-visite', attivita: 'registro', bussola: 'classi-bussola', excel: 'excel' };
+const SECTION_HASHES = { panoramica: 'calendario-scuole', calendario: 'date', confermare: 'da-verificare', candidature: 'disponibilita', proposte: 'mattinee', scuole: 'scuole-visite', attivita: 'registro', bussola: 'classi-bussola', excel: 'excel', datePassate: 'date-passate' };
 function sectionFromHash() {
   const hash = location.hash.slice(1);
   if (hash === 'bussola') return 'bussola';
@@ -116,17 +119,18 @@ function sectionFromHash() {
 }
 
 function showSection(key, { focus = false, scroll = true } = {}) {
-  const selected = document.querySelector(`[data-panel="${key}"]`);
+  const overview = ['panoramica', 'confermare', 'attivita'].includes(key);
+  const selected = document.querySelector(`[data-panel="${overview ? 'panoramica' : key}"]`);
   if (!selected) return;
   for (const panel of document.querySelectorAll('.tab-panel')) panel.hidden = panel !== selected;
-  for (const button of document.querySelectorAll('[data-tab]')) {
-    if (button.dataset.tab === key || (key === 'calendario' && button.dataset.tab === 'panoramica')) button.setAttribute('aria-current', 'true');
-    else button.removeAttribute('aria-current');
-  }
-  document.getElementById('otherTools').open = false;
+  document.querySelector('[data-tab="panoramica"]').hidden = overview;
+  otherTools.open = false;
+  const completed = document.getElementById('completedVisits');
+  if (key === 'attivita') completed.open = true;
+  const target = key === 'confermare' ? document.getElementById('pendingSection') : key === 'attivita' ? completed.querySelector('summary') : selected;
   if (!workspacePanel.hidden) history.replaceState(null, '', `#${SECTION_HASHES[key]}`);
-  if (focus) selected.focus({preventScroll:true});
-  if (scroll) selected.scrollIntoView({block:'start',behavior:'instant'});
+  if (focus) target.focus({preventScroll:true});
+  if (scroll) target.scrollIntoView({block:'start',behavior:'instant'});
 }
 
 function openRequestedManagementSection() {
@@ -143,6 +147,9 @@ function resetSession() {
   sessionToken = '';
   data = null;
   renderAgenda(new Map());
+  renderVisits(new Map());
+  resetActivityForm();
+  if (activityEditor.open) activityEditor.close();
   sessionStorage.removeItem(SESSION_KEY);
   document.dispatchEvent(new CustomEvent('bussola-gestione-uscita'));
   workspacePanel.hidden = true;
@@ -177,16 +184,6 @@ function actionButton(label, className, handler) {
 
 function stateTag(text, state) {
   return el('span', `state state-${state}`, text);
-}
-
-function renderCounts() {
-  const now = today();
-  const pendingActivities = data.da_confermare.filter(item => item.data <= now).length;
-  const visited = new Set(data.attivita.filter((item) => item.tipo === 'visita' && item.data <= now).map((item) => item.scuola_id));
-  const count = document.getElementById('countConfermare');
-  count.hidden = pendingActivities === 0;
-  count.textContent = pendingActivities ? String(pendingActivities) : '';
-  document.getElementById('schoolProgress').textContent = `${visited.size} di ${data.scuole.length} scuole raggiunte`;
 }
 
 function schoolLabel(id) {
@@ -402,7 +399,7 @@ function renderSchools() {
     const pending = data.da_confermare.filter((item) => item.tipo === 'visita' && item.scuola_id === school.id);
     const accepted = register.filter((item) => item.data > today());
     const card = el('article', `school-card ${visits.length ? 'visited' : accepted.length ? 'accepted' : candidates.length ? 'offered' : ''}`);
-    card.append(el('h4', '', school.comune), el('small', '', school.etichetta));
+    card.append(el('h4', '', `${school.comune} – ${school.etichetta}`));
     const status = visits.length ? `Visita svolta (${visits.length})` : pending.length ? `Visite da confermare (${pending.length})` : accepted.length ? `Docenti a registro (${accepted.length})` : candidates.length ? 'Disponibilità ricevute' : 'Nessuna disponibilità';
     card.append(el('p', 'school-status', status));
     const names = el('ul');
@@ -417,7 +414,7 @@ function renderSchools() {
     const calendar = el('ul', 'school-dates');
     for (const item of dates) {
       calendar.append(el('li', item.stato === 'confermata' ? 'accepted' : '',
-        `${formatDate(`${item.data}T12:00:00`, false)} · ${APPOINTMENT_TYPES[item.tipo]}${item.stato === 'confermata' ? ' ✓' : ' (prevista)'}`));
+        `${visitDate.format(new Date(`${item.data}T12:00:00Z`))} · ${timeRange(item) || 'Orario non indicato'}${item.stato === 'confermata' ? '' : ' · Data da concordare'}`));
     }
     card.append(dates.length ? calendar : el('p', 'school-nodate', 'Nessuna data in calendario'));
     board.append(card);
@@ -443,7 +440,7 @@ function fillDatalist(id, values) {
   }
 }
 
-function renderActivities(schoolNames) {
+function renderActivityFields() {
   const current = activitySchool.value;
   activitySchool.replaceChildren();
   for (const school of data.scuole) {
@@ -457,26 +454,6 @@ function renderActivities(schoolNames) {
   fillDatalist('teacherNames', people.map((item) => item.nome));
   fillDatalist('teacherSurnames', people.map((item) => item.cognome));
 
-  const list = document.getElementById('activityList');
-  list.replaceChildren();
-  if (!data.attivita.length) list.append(el('p', 'empty', 'Nessuna attività confermata.'));
-  // Un blocco per docente: quando e dove è andato, dalla data più vecchia alla più recente.
-  let teacher = '';
-  let group = null;
-  for (const item of [...data.attivita].sort(byTeacher)) {
-    if (personKey(item) !== teacher) {
-      teacher = personKey(item);
-      const count = data.attivita.filter((other) => personKey(other) === teacher).length;
-      list.append(el('h4', 'month-title teacher-title', `${item.cognome} ${item.nome} · ${count} ${count === 1 ? 'attività confermata' : 'attività confermate'}`));
-      group = el('div', 'review-list');
-      list.append(group);
-    }
-    const card = activityCard(item, schoolNames);
-    const actions = el('div', 'review-actions');
-    actions.append(registrationOptions(item, card, actions));
-    card.append(actions);
-    group.append(card);
-  }
 }
 
 function resetAppointmentForm() {
@@ -518,51 +495,42 @@ function renderAppointmentSchools() {
   if (current) appointmentSchool.value = current;
 }
 
+function visitHeading(item, label, appointments) {
+  const school = el('strong', 'visit-school', label);
+  const date = el('time', 'visit-day', visitDate.format(new Date(`${item.data}T12:00:00Z`)));
+  date.dateTime = item.data;
+  const slots = [...new Set(appointments.map(timeRange).filter(Boolean))];
+  const row = el('li', 'visit-row');
+  const name = el('div', 'visit-heading');
+  const timing = el('div', 'visit-timing');
+  timing.append(date);
+  if (slots.length) timing.append(el('strong', 'visit-hour', slots.join(' · ')));
+  else if (item.tipo!=='mattinee') timing.append(el('span', 'visit-place', 'Orario non indicato'));
+  name.append(school, timing);
+  if (item.scuola_id) row.dataset.school = item.scuola_id;
+  row.append(name);
+  return {row, name};
+}
+
 function renderAgenda(schoolNames) {
   const upcoming = document.getElementById('upcomingAppointments');
   const past = document.getElementById('pastAppointments');
-  const undated = document.getElementById('undatedSchools');
-  const historyList = past.querySelector('ul');
-  const undatedList = undated.querySelector('ul');
-  const message = document.getElementById('agendaMessage');
-  document.getElementById('addAppointment').disabled = !data;
   upcoming.replaceChildren();
-  historyList.replaceChildren();
-  undatedList.replaceChildren();
+  past.replaceChildren();
   const now = today();
-  const dated = new Set();
+  document.getElementById('addAppointment').disabled = !data;
   for (const item of data?.appuntamenti || []) {
     const label = schoolNames.get(item.scuola_id) || item.scuola_id;
-    const date = el('time', '', formatDate(`${item.data}T12:00:00`, false));
-    date.dateTime = item.data;
-    const when = el('div', 'agenda-when');
-    when.append(date);
-    if (timeRange(item)) when.append(el('span', '', timeRange(item)));
-    const details = el('div', 'agenda-copy');
-    details.append(el('strong', '', label));
-    details.append(el('span', '', [APPOINTMENT_TYPES[item.tipo], item.luogo].filter(Boolean).join(' · ')));
-    if (item.stato !== 'confermata') details.append(el('span', 'agenda-pending', 'Data da concordare'));
-    const edit = actionButton('Modifica', 'agenda-edit', () => openCalendarForm(null, item));
-    edit.setAttribute('aria-label', `Modifica la data di ${label} del ${date.textContent}`);
-    const row = el('li');
-    row.dataset.school = item.scuola_id;
-    row.append(when, details, edit);
-    if (item.data >= now) {
-      upcoming.append(row);
-      dated.add(item.scuola_id);
-    } else historyList.append(row);
+    const {row, name} = visitHeading(item, label, [item]);
+    if (item.luogo) name.append(el('span', 'visit-place', item.luogo));
+    else if (item.tipo === 'stand') name.append(el('span', 'visit-place', 'Open day con stand'));
+    if (item.stato !== 'confermata') name.append(el('span', 'agenda-pending', 'Data da concordare'));
+    const edit = actionButton('Modifica data', 'agenda-edit', () => openCalendarForm(null, item));
+    edit.setAttribute('aria-label', `Modifica la data di ${label} del ${item.data.split('-').reverse().join('/')}`);
+    row.append(edit);
+    (item.data >= now ? upcoming : past).append(row);
   }
-  for (const school of data?.scuole || []) {
-    if (!dated.has(school.id)) {
-      const row = el('li', '', schoolNames.get(school.id));
-      row.dataset.school = school.id;
-      undatedList.append(row);
-    }
-  }
-  past.hidden = !historyList.children.length;
-  undated.hidden = !undatedList.children.length;
-  past.querySelector('.manage-disclosure-count').textContent = String(historyList.children.length);
-  message.textContent = data && !upcoming.children.length ? 'Nessuna visita in programma.' : '';
+  document.getElementById('agendaMessage').textContent = data && !upcoming.children.length ? 'Nessuna visita in programma.' : '';
 }
 
 // Calendario per la Commissione: stesso formato CSV dell’elenco per la Dirigente.
@@ -593,55 +561,46 @@ function exportCalendar() {
 
 function resetActivityForm() {
   activityDraftDirty = false;
-  activityEditorTitle.textContent = 'Registra un’attività';
+  activityEditorContext.hidden = true;
+  activityEditorContext.replaceChildren();
+  for (const id of ['activityTypeField','activityDateField','activityNoteField']) document.getElementById(id).hidden = false;
   for (const name of ['id', 'nome', 'cognome', 'nota', 'titolo']) activityForm.elements[name].value = '';
-  activityForm.querySelector('button[type="submit"]').textContent = 'Inserisci da verificare';
-  document.getElementById('activityCancel').hidden = true;
+  activityType.value = 'visita';
+  activityForm.elements.data.value = today();
+  syncActivityType();
+  activityForm.querySelector('button[type="submit"]').textContent = 'Salva attività';
   document.getElementById('activityDiscard').hidden = true;
   activityForm.querySelector('.activity-cancel-prompt')?.remove();
   activityForm.querySelector('.appointment-buttons').hidden = false;
+  activityMessage.textContent = '';
+}
+
+function openActivityEditor(title) {
+  activityEditorTitle.textContent = title;
+  if (!activityEditor.open) activityEditor.showModal();
+  activityForm.elements.nome.focus();
+  otherTools.open = false;
 }
 
 function editActivity(item) {
-  showSection('attivita', {scroll:false});
-  activityEditor.open = true;
-  if (activityDraftDirty) {
-    document.getElementById('activityCancel').hidden = false;
-    activityMessage.textContent = 'Salva o annulla la registrazione in corso.';
-    activityForm.scrollIntoView({block:'start',behavior:'instant'});
-    return;
-  }
-  activityEditorTitle.textContent = 'Modifica registrazione';
+  resetActivityForm();
   for (const name of ['id', 'nome', 'cognome', 'tipo', 'data', 'nota', 'titolo']) activityForm.elements[name].value = item[name] || '';
   syncActivityType();
   if (item.scuola_id) activitySchool.value = item.scuola_id;
-  activityForm.querySelector('button[type="submit"]').textContent = 'Salva le modifiche';
-  document.getElementById('activityCancel').hidden = false;
+  activityForm.querySelector('button[type="submit"]').textContent = 'Salva modifiche';
   document.getElementById('activityDiscard').hidden = false;
-  activityForm.querySelector('.activity-cancel-prompt')?.remove();
-  activityForm.querySelector('.appointment-buttons').hidden = false;
-  activityMessage.textContent = 'Puoi cambiare data, scuola o docente. Dopo il salvataggio l’attività richiede di nuovo la tua conferma di svolgimento.';
-  activityForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  activityForm.elements.nome.focus({ preventScroll: true });
+  openActivityEditor('Modifica attività');
 }
 
-function prepareVisitRegistration(item) {
-  showSection('attivita', {scroll:false});
-  activityEditor.open = true;
-  activityForm.scrollIntoView({behavior:'instant', block:'start'});
-  if (activityDraftDirty || activityForm.elements.id.value) {
-    document.getElementById('activityCancel').hidden = false;
-    activityMessage.textContent = 'Salva o annulla la registrazione in corso prima di aprire un’altra visita.';
-    return;
-  }
+function prepareVisitRegistration(item, label, appointments) {
   resetActivityForm();
-  activityType.value = 'visita';
-  syncActivityType();
   activitySchool.value = item.scuola_id;
   activityForm.elements.data.value = item.data;
-  document.getElementById('activityCancel').hidden = false;
-  activityMessage.textContent = 'Completa il modulo con il docente che ha svolto la visita.';
-  activityForm.elements.nome.focus({preventScroll:true});
+  for (const id of ['activityTypeField','activitySchoolField','activityDateField','activityNoteField']) document.getElementById(id).hidden = true;
+  activityEditorContext.append(visitHeading(item, label, appointments).name);
+  activityEditorContext.hidden = false;
+  activityForm.querySelector('button[type="submit"]').textContent = 'Salva docente';
+  openActivityEditor('Aggiungi il docente');
 }
 
 function requestActivityCancellation(item, container, controls) {
@@ -667,10 +626,12 @@ function requestActivityCancellation(item, container, controls) {
       data = {...data, attivita:data.attivita.filter(row => row.id !== item.id), da_confermare:data.da_confermare.filter(row => row.id !== item.id)};
       prompt.remove();
       controls.hidden = false;
-      if (activityForm.elements.id.value === item.id) resetActivityForm();
+      if (activityForm.elements.id.value === item.id) {
+        resetActivityForm();
+        activityEditor.close();
+      }
       render();
-      globalMessage.textContent = 'Registrazione annullata. Nessuna attività è stata confermata.';
-      activityMessage.textContent = 'Registrazione annullata.';
+      globalMessage.textContent = 'Registrazione annullata.';
       await load();
     } catch (error) {
       cancel.disabled = false;
@@ -687,15 +648,8 @@ function requestActivityCancellation(item, container, controls) {
   cancel.focus({preventScroll:true});
 }
 
-function activityCard(item, schoolNames, className = 'review-card') {
-  const card = el('article', className);
-  card.dataset.activityId = item.id;
-  card.append(el('h4', '', `${item.tipo === 'visita' ? 'Visita' : 'Mattinée'} · ${item.nome} ${item.cognome}`),
-    el('small', '', `${item.data > today() ? 'In programma il' : item.stato === 'confermata' ? 'Svolta il' : 'Data indicata:'} ${formatDate(`${item.data}T12:00:00`, false)} · registrata il ${formatDate(item.created_at)}`));
-  if (item.tipo === 'visita') card.append(line('Scuola', schoolNames.get(item.scuola_id) || item.scuola_id));
-  if (item.titolo) card.append(line('Titolo', item.titolo));
-  if (item.nota) card.append(line('Nota', item.nota));
-  return card;
+function visitKey(item) {
+  return JSON.stringify([item.tipo==='mattinee'?'mattinee':'visita',item.scuola_id || item.titolo,item.data]);
 }
 
 function registrationOptions(item, card, actions) {
@@ -710,56 +664,96 @@ function registrationOptions(item, card, actions) {
   return options;
 }
 
-function renderPending(schoolNames) {
-  const list = document.getElementById('pendingList');
-  const future = document.getElementById('futureActivities');
-  const futureList = future.querySelector('.review-list');
-  list.replaceChildren();
-  futureList.replaceChildren();
-  const now = today();
-  const ordered = [...data.da_confermare].sort((a, b) => a.data.localeCompare(b.data));
-  for (const item of ordered) {
-    const card = activityCard(item, schoolNames, 'review-card pending');
-    const actions = el('div', 'review-actions');
-    const canConfirm = item.data <= now;
-    if (canConfirm) {
-      actions.append(actionButton('Conferma svolgimento', 'ok', async (button) => {
-        button.disabled = true;
-        globalMessage.textContent = 'Salvataggio…';
-        try {
-          await api('confirm_activity', { id: item.id });
-          globalMessage.textContent = 'Attività confermata e aggiunta al registro.';
-          await load();
-        } catch (error) {
-          button.disabled = false;
-          handleError(error);
-        }
-      }));
-    }
-    actions.append(registrationOptions(item, card, actions));
-    card.append(actions);
-    (canConfirm ? list : futureList).append(card);
+function renderTeacher(item, confirmed, canConfirm) {
+  const teacher = el('div', 'visit-teacher');
+  teacher.dataset.activityId = item.id;
+  teacher.append(el('span', 'visit-teacher-name', `${item.nome} ${item.cognome}`));
+  if (item.nota) teacher.append(el('small', 'visit-place', item.nota));
+  const actions = el('div', 'visit-actions');
+  if (confirmed) actions.append(el('span', 'visit-complete', 'Confermata'));
+  if (canConfirm) {
+    actions.append(actionButton(item.tipo==='visita'?'Conferma visita':'Conferma attività', 'ok', async button => {
+      button.disabled = true;
+      globalMessage.textContent = 'Salvataggio…';
+      try {
+        await api('confirm_activity', {id:item.id});
+        globalMessage.textContent = item.tipo==='visita'?'Visita confermata.':'Attività confermata.';
+        await load();
+      } catch (error) {
+        button.disabled = false;
+        handleError(error);
+      }
+    }));
   }
-  if (!list.children.length) list.append(el('p', 'empty', 'Nessuna attività da verificare.'));
-  future.hidden = !futureList.children.length;
-  future.querySelector('.manage-disclosure-count').textContent = String(futureList.children.length);
+  actions.append(registrationOptions(item, teacher, actions));
+  teacher.append(actions);
+  return teacher;
+}
 
-  const unregistered = document.getElementById('unregisteredVisits');
-  const missingList = unregistered.querySelector('ul');
-  missingList.replaceChildren();
-  const key = item => `${item.scuola_id}/${item.data}`;
-  const datesWithVisit = new Set([...data.attivita, ...data.da_confermare].filter(item => item.tipo === 'visita').map(key));
-  for (const item of data.appuntamenti) {
-    if (item.data >= now || datesWithVisit.has(key(item))) continue;
-    datesWithVisit.add(key(item));
-    const row = el('li');
-    const copy = el('div');
-    copy.append(el('strong', '', schoolNames.get(item.scuola_id) || item.scuola_id), el('span', '', formatDate(`${item.data}T12:00:00`, false)));
-    row.append(copy, actionButton('Apri il modulo', 'neutral', () => prepareVisitRegistration(item)));
-    missingList.append(row);
+function renderVisits(schoolNames) {
+  const pending = document.getElementById('pendingList');
+  const completed = document.getElementById('activityList');
+  const future = document.getElementById('futureActivities');
+  const futureList = future.querySelector('ul');
+  document.getElementById('newActivity').disabled = !data;
+  for (const list of [pending,completed,futureList]) list.replaceChildren();
+
+  const now = today();
+  const groups = new Map();
+  const dates = new Map();
+  const reported = data?.da_confermare || [];
+  const confirmed = data?.attivita || [];
+  for (const [records,kind] of [[reported,'reported'],[confirmed,'confirmed']]) {
+    for (const item of records) {
+      const key = visitKey(item);
+      if (!groups.has(key)) groups.set(key,{item,reported:[],confirmed:[]});
+      groups.get(key)[kind].push(item);
+    }
   }
-  unregistered.hidden = !missingList.children.length;
-  unregistered.querySelector('.manage-disclosure-count').textContent = String(missingList.children.length);
+  for (const item of data?.appuntamenti || []) {
+    const key = visitKey(item);
+    if (!dates.has(key)) dates.set(key,[]);
+    dates.get(key).push(item);
+    if (item.data < now && item.stato==='confermata' && !groups.has(key)) {
+      groups.set(key,{item,reported:[],confirmed:[]});
+    }
+  }
+  let needsTeacher = false;
+  const chronologically = [...groups].sort(([firstKey, first], [secondKey, second]) =>
+    compareAppointments(dates.get(firstKey)?.[0] || first.item, dates.get(secondKey)?.[0] || second.item));
+  for (const [key,group] of chronologically) {
+    const {item} = group;
+    const appointments = dates.get(key) || [];
+    const label = item.tipo==='mattinee' ? item.titolo : schoolNames.get(item.scuola_id) || item.scuola_id;
+    const {row, name} = visitHeading(item,label,appointments);
+    const list = item.data>now ? futureList : group.reported.length || !group.confirmed.length ? pending : completed;
+    if (!group.reported.length && !group.confirmed.length) {
+      needsTeacher = true;
+      const add = actionButton('Aggiungi docente', 'ok', () => prepareVisitRegistration(item,label,appointments));
+      add.setAttribute('aria-label', `Aggiungi docente per ${label}`);
+      row.append(add);
+    } else {
+      const people = el('div', 'visit-teachers');
+      for (const teacher of group.reported) people.append(renderTeacher(teacher,false,item.data<=now));
+      for (const teacher of group.confirmed) people.append(renderTeacher(teacher,list!==completed,false));
+      if (list===completed) {
+        const details = el('details','visit-people');
+        const summary = el('summary');
+        summary.append(name);
+        details.append(summary,people);
+        row.replaceChildren(details);
+        row.classList.add('visit-history-row');
+      } else row.append(people);
+    }
+    list.append(row);
+  }
+  const schoolsReached = new Set(confirmed.filter(item => item.tipo==='visita' && item.data<=now).map(item => item.scuola_id));
+  document.getElementById('schoolProgress').textContent = data ? `${schoolsReached.size} di ${data.scuole.length} scuole raggiunte` : '';
+  document.getElementById('visitHelp').hidden = !needsTeacher;
+  document.getElementById('pendingTitle').hidden = !pending.children.length;
+  document.getElementById('pendingEmpty').hidden = !data || pending.children.length>0;
+  document.getElementById('confirmedEmpty').hidden = !data || completed.children.length>0;
+  future.hidden = !futureList.children.length;
 }
 
 // Elenco per la Dirigente: CSV con separatore ";" e BOM, così Excel lo apre con accenti e colonne corrette.
@@ -876,13 +870,12 @@ async function exportExcel(kind, target) {
 }
 
 function render() {
-  const schoolNames = new Map(data.scuole.map((school) => [school.id, `${school.comune} · ${school.etichetta}`]));
-  renderCounts();
-  renderPending(schoolNames);
+  const schoolNames = new Map(data.scuole.map((school) => [school.id, `${school.comune} – ${school.etichetta}`]));
+  renderVisits(schoolNames);
   renderSupporters(schoolNames);
   renderProposals();
   renderSchools();
-  renderActivities(schoolNames);
+  renderActivityFields();
   renderAppointmentSchools();
   renderAgenda(schoolNames);
 }
@@ -924,6 +917,10 @@ for (const button of document.querySelectorAll('[data-tab]')) {
   button.addEventListener('click', () => showSection(button.dataset.tab, {focus:true,scroll:false}));
 }
 document.getElementById('addAppointment').addEventListener('click', () => openCalendarForm());
+document.getElementById('newActivity').addEventListener('click', () => {
+  resetActivityForm();
+  openActivityEditor('Aggiungi un’attività');
+});
 const excelMessage = document.getElementById('excelMessage');
 document.getElementById('exportCalendarXlsx').addEventListener('click', () => exportExcel('calendario', excelMessage));
 document.getElementById('exportActivitiesXlsx').addEventListener('click', () => exportExcel('dirigente', excelMessage));
@@ -951,9 +948,15 @@ function syncActivityType() {
 activityType.addEventListener('change', syncActivityType);
 activityForm.addEventListener('input', () => { activityDraftDirty = true; });
 activityForm.addEventListener('change', () => { activityDraftDirty = true; });
-activityForm.elements.data.value = new Date().toISOString().slice(0, 10);
+activityForm.elements.data.value = today();
 syncActivityType();
 
+activityEditor.addEventListener('cancel', event => {
+  if (activityDraftDirty || activityForm.querySelector('button[type="submit"]').disabled) {
+    event.preventDefault();
+    activityMessage.textContent = 'Premi Annulla per chiudere il modulo.';
+  } else resetActivityForm();
+});
 activityForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (!activityForm.reportValidity()) return;
@@ -962,17 +965,33 @@ activityForm.addEventListener('submit', async (event) => {
   const editing = Boolean(payload.id);
   if (!editing) delete payload.id;
   const button = activityForm.querySelector('button[type="submit"]');
+  if (button.disabled) return;
+  const cancel = document.getElementById('activityCancel');
   button.disabled = true;
+  cancel.disabled = true;
   activityMessage.textContent = 'Registrazione in corso…';
   try {
-    await api(editing ? 'update_activity' : 'register_activity', payload);
-    activityMessage.textContent = `Attività ${editing ? 'aggiornata' : 'inserita'} per ${payload.nome} ${payload.cognome}. La trovi in «Da verificare»: solo la tua conferma di svolgimento la farà entrare nel registro.`;
+    const result = await api(editing ? 'update_activity' : 'register_activity', payload);
     resetActivityForm();
+    activityEditor.close();
+    globalMessage.textContent = payload.data <= today()
+      ? (payload.tipo==='visita'?'Docente salvato. Ora puoi confermare la visita.':'Attività salvata. Ora puoi confermarla.')
+      : 'Docente aggiunto all’attività in programma.';
     await load();
+    if (!workspacePanel.hidden) {
+      showSection('panoramica', {scroll:false});
+      const card = [...document.querySelectorAll('#pendingList [data-activity-id]')].find(item => item.dataset.activityId === (result.id || payload.id));
+      const confirm = card?.querySelector('.act.ok');
+      if (confirm) {
+        confirm.scrollIntoView({block:'nearest'});
+        confirm.focus({preventScroll:true});
+      }
+    }
   } catch (error) {
     handleError(error, activityMessage);
   } finally {
     button.disabled = false;
+    cancel.disabled = false;
   }
 });
 
@@ -1049,7 +1068,10 @@ passwordForm.addEventListener('submit', async (event) => {
   }
 });
 
-document.getElementById('activityCancel').addEventListener('click', () => { resetActivityForm(); activityMessage.textContent = ''; });
+document.getElementById('activityCancel').addEventListener('click', () => {
+  resetActivityForm();
+  activityEditor.close();
+});
 document.getElementById('activityDiscard').addEventListener('click', () => {
   const item = [...data.attivita, ...data.da_confermare].find(row => row.id === activityForm.elements.id.value);
   if (item) requestActivityCancellation(item, activityForm, activityForm.querySelector('.appointment-buttons'));
