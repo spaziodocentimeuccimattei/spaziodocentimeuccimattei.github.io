@@ -268,6 +268,7 @@
 .visit-heading { display:grid; gap:4px; }
 .visit-school { color:#123c57; font-size:1.125rem; font-weight:800; line-height:1.35; }
 .visit-timing { display:flex; flex-wrap:wrap; align-items:baseline; gap:3px 12px; color:#375467; line-height:1.45; }
+.visit-day { color:#123c57; font-size:clamp(1.375rem,2.4vw,1.5rem); font-weight:850; line-height:1.25; }
 .visit-hour { color:#123c57; font-weight:800; font-variant-numeric:tabular-nums; }
 .visit-place { color:#486173; font-size:.9rem; }
 .agenda-pending { color:#794500; font-weight:700; }
