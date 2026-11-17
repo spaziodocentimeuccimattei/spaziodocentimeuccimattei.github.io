@@ -17,15 +17,15 @@ const newEntries = document.getElementById('newEntries');
 const newEntryList = document.getElementById('newEntryList');
 const CODE_KEY = 'orientamento-codice-personale';
 const SESSION_KEY = 'orientamento-sessione-commissione';
+const LEVEL_KEY = 'orientamento-livello-commissione';
+const LEVEL_NAMES = {funzione_strumentale:'Funzione Strumentale', orientatore:'Commissione Orientamento'};
 const ENTRY_STATES = {ricevuta:'In attesa di assegnazione', assegnata:'Assegnata dalla Funzione Strumentale'};
 const longDate = new Intl.DateTimeFormat('it-IT', {weekday:'short', day:'numeric', month:'long', year:'numeric', timeZone:'UTC'});
 const draftNotes = new Map();
 const draftDates = new Map();
 const upcomingVisits = document.getElementById('upcomingVisits');
 const pastVisits = document.getElementById('pastVisits');
-const reachedSchools = document.getElementById('reachedSchools');
 const calendarMessage = document.getElementById('calendarMessage');
-const refreshCalendarButton = document.getElementById('refreshSchoolCalendar');
 const dateLabel = new Intl.DateTimeFormat('it-IT', {month:'long', year:'numeric', timeZone:'UTC'});
 const choiceGroups = new Map();
 const schoolOptions = new Map();
@@ -37,6 +37,7 @@ let appointmentsBySchool = new Map();
 // Chi sta modificando: il docente con il suo codice oppure la Commissione con la sessione e il docente scelto.
 let teacherCode = storage(localStorage, CODE_KEY);
 let commissionToken = storage(sessionStorage, SESSION_KEY);
+let commissionLevel = storage(sessionStorage, LEVEL_KEY);
 let commissionTeacher = '';
 let teacherData = null;
 let calendarDay;
@@ -59,6 +60,8 @@ function storage(area, key, value) {
 
 function chooseSchool(school, appointment) {
   openActionPanel('#scuole');
+  setAdding(true);
+  renderTeacher();
   if (appointment?.id) draftDates.set(school.id, appointment.id);
   schoolSearch.value = '';
   filterSchoolChoices();
@@ -332,15 +335,57 @@ function setStat(name, value) {
   for (const element of document.querySelectorAll(`[data-stat="${name}"]`)) element.textContent = String(value);
 }
 
-function renderMission(schools, total, visited) {
+function renderMission(total, visited) {
   const progress = document.getElementById('missionProgress');
   progress.max = total || 1;
   progress.value = visited;
   progress.hidden = !total;
-  document.getElementById('missionCount').textContent = `${visited} di ${total}`;
-  const reached = schools.filter(school => schoolStates.get(school.id) === 'visitata');
-  reachedSchools.hidden = reached.length === 0;
-  reachedSchools.querySelector('ul').replaceChildren(...reached.map(school => element('li', `${school.comune} · ${school.etichetta}`)));
+  document.getElementById('missionCount').textContent = `${visited} su ${total}`;
+}
+
+// Controllo: con la password FS o della Commissione ogni visita dice chi va (o chi è andato), con stato e nota;
+// per gli altri restano iniziale e cognome di chi ha dato disponibilità, mai le note.
+function controlMode() { return Boolean(commissionToken) && staff.length > 0; }
+
+function visitPeople(school, appointment, upcoming) {
+  const box = element('div', null, 'visit-people');
+  if (!controlMode()) {
+    const names = schoolNames.get(school.id) || [];
+    box.append(names.length ? element('span', `Disponibili: ${names.join(', ')}`, 'visit-who')
+      : element('span', upcoming ? 'Nessun docente ha ancora dato disponibilità' : 'Nessun docente indicato', 'visit-alert'));
+    return box;
+  }
+  const lines = [];
+  for (const person of staff) {
+    const name = `${person.docente.nome.charAt(0)}. ${person.docente.cognome}`;
+    if (upcoming) {
+      const {fulfilled} = fulfilledEntries(person);
+      for (const entry of person.voci) {
+        if (entry.scuola_id !== school.id || fulfilled.has(entry.id) || (entry.appuntamento_id && entry.appuntamento_id !== appointment.id)) continue;
+        const assigned = entry.stato === 'assegnata';
+        lines.push([name, assigned ? 'assegnato' : 'disponibile', assigned ? 'is-confirmed' : 'is-pending', entry.nota]);
+      }
+    } else {
+      for (const activity of person.attivita) {
+        if (activity.tipo !== 'visita' || activity.scuola_id !== school.id || activity.data !== appointment.data) continue;
+        const confirmed = activity.stato === 'confermata';
+        lines.push([name, confirmed ? 'confermata' : 'da confermare', confirmed ? 'is-confirmed' : 'is-pending', activity.nota]);
+      }
+    }
+  }
+  if (!lines.length) {
+    box.append(element('span', upcoming ? 'Scoperta: nessun docente' : 'Nessuno ha registrato questa visita', 'visit-alert'));
+    return box;
+  }
+  const list = element('ul', null, 'visit-people-list');
+  for (const [name, state, stateClass, note] of lines) {
+    const item = element('li');
+    item.append(element('strong', name), element('span', state, `entry-state ${stateClass}`));
+    if (note) item.append(element('small', note));
+    list.append(item);
+  }
+  box.append(list);
+  return box;
 }
 
 function renderVisit({school, appointment}, upcoming) {
@@ -367,19 +412,30 @@ function renderVisit({school, appointment}, upcoming) {
       for (const text of school.avviso.indicazioni || []) notice.append(element('p', text));
       copy.append(notice);
     }
-    const choose = element('button', 'Dai disponibilità', 'calendar-action');
-    choose.type = 'button';
-    choose.setAttribute('aria-label', `Dai disponibilità per ${school.comune} · ${school.etichetta}`);
-    choose.addEventListener('click', () => chooseSchool(school, appointment));
-    row.append(timing, copy, choose);
+    copy.append(visitPeople(school, appointment, true));
+    row.append(timing, copy);
+    if (!controlMode()) {
+      const choose = element('button', 'Dai disponibilità', 'calendar-action');
+      choose.type = 'button';
+      choose.setAttribute('aria-label', `Dai disponibilità per ${school.comune} · ${school.etichetta}`);
+      choose.addEventListener('click', () => chooseSchool(school, appointment));
+      row.append(choose);
+    }
   } else {
+    // Una scuola conta come raggiunta solo dopo la conferma della Funzione Strumentale.
+    const reached = schoolStates.get(school.id) === 'visitata';
     copy.append(element('span', type));
+    if (!controlMode()) copy.append(element('span', reached ? 'Scuola raggiunta' : 'In attesa di conferma', `entry-state ${reached ? 'is-confirmed' : 'is-pending'}`));
     // Storico: chi c'era registra la propria presenza con la nota per le attività oltre il servizio.
-    const report = element('button', 'Registra la tua presenza', 'calendar-action');
-    report.type = 'button';
-    report.setAttribute('aria-label', `Registra la tua presenza a ${school.comune} · ${school.etichetta}, ${appointment.data}`);
-    report.addEventListener('click', () => reportVisit(school, appointment));
-    row.append(timing, copy, report);
+    copy.append(visitPeople(school, appointment, false));
+    row.append(timing, copy);
+    if (!controlMode()) {
+      const report = element('button', 'Registra la tua presenza', 'calendar-action');
+      report.type = 'button';
+      report.setAttribute('aria-label', `Registra la tua presenza a ${school.comune} · ${school.etichetta}, ${appointment.data}`);
+      report.addEventListener('click', () => reportVisit(school, appointment));
+      row.append(report);
+    }
   }
   return row;
 }
@@ -394,11 +450,14 @@ function renderOverview(schools, today = italyToday()) {
   const upcoming = visits.filter(visit => visit.appointment.data >= today);
   const past = visits.filter(visit => visit.appointment.data < today);
   upcomingVisits.replaceChildren(...upcoming.map(visit => renderVisit(visit, true)));
-  pastVisits.hidden = !past.length;
-  pastVisits.querySelector('.group-count').textContent = String(past.length);
-  pastVisits.querySelector('ul').replaceChildren(...past.map(visit => renderVisit(visit, false)));
+  // Una sola lista: le date trascorse, più le scuole raggiunte senza una data in calendario.
+  const pastSchools = new Set(past.map(visit => visit.school.id));
+  const extra = schools.filter(school => schoolStates.get(school.id) === 'visitata' && !pastSchools.has(school.id))
+    .map(school => element('li', `${school.comune} · ${school.etichetta} · Scuola raggiunta`, 'visit-extra'));
+  pastVisits.hidden = !past.length && !extra.length;
+  pastVisits.querySelector('ul').replaceChildren(...past.map(visit => renderVisit(visit, false)), ...extra);
   calendarMessage.textContent = overviewError ? 'Aggiornamento non riuscito. Vedi le ultime date caricate.' : upcoming.length ? '' : 'Nessuna visita in programma.';
-  renderMission(schools, totali.scuole, totali.scuole_visitate);
+  renderMission(totali.scuole, totali.scuole_visitate);
   applySchoolStates(rows);
 }
 
@@ -428,7 +487,7 @@ async function loadOverview(schools) {
     overviewError = true;
     calendarMessage.textContent = currentOverview
       ? 'Aggiornamento non riuscito. Vedi le ultime date caricate.'
-      : 'Calendario non disponibile. Riprova con «Aggiorna calendario».';
+      : 'Calendario non disponibile. Ricarica la pagina tra poco.';
   }
 }
 
@@ -456,7 +515,7 @@ async function submitForm(event, action, messageId) {
     if (commissionToken && commissionTeacher) return submitForCommission(form, data.voci);
   } else if (action === 'report_activity') {
     if (data.tipo !== 'visita') delete data.scuola_id;
-    if (teacherCode) data.codice = teacherCode;
+    if (teacherCode && !commissionToken) data.codice = teacherCode;
   } else {
     data.durata_minuti = Number(data.durata_minuti);
     data.partecipanti = data.partecipanti ? Number(data.partecipanti) : null;
@@ -470,6 +529,7 @@ async function submitForm(event, action, messageId) {
     if (action === 'submit_supporter') {
       draftNotes.clear();
       draftDates.clear();
+      setAdding(false);
       if (result.codice_personale) {
         teacherCode = storage(localStorage, CODE_KEY, result.codice_personale);
         loadTeacher();
@@ -478,7 +538,7 @@ async function submitForm(event, action, messageId) {
     schoolError.hidden = true;
     updateSchoolCounter();
     filterSchoolChoices();
-    if (action === 'report_activity') { resetReportForm(); if (teacherCode) loadTeacher(); }
+    if (action === 'report_activity') { resetReportForm(); setReporting(false); renderTeacher(); if (teacherCode) loadTeacher(); }
     const text = {
       submit_supporter: result.codice_personale
         ? `Disponibilità inviata. Il tuo codice personale è ${result.codice_personale}: annotalo. Su questo dispositivo resta salvato; altrove ti serve per modificare scuole, date e note.`
@@ -486,7 +546,7 @@ async function submitForm(event, action, messageId) {
           ? 'Disponibilità aggiunta al tuo nome. Per vederla e modificarla inserisci il tuo codice personale in «Le tue voci»; se non lo hai, chiedilo alla Funzione Strumentale.'
           : 'Disponibilità aggiunta. La trovi qui sopra, in «Disponibilità per le visite».',
       submit_proposal: `Proposta inviata. Codice: ${result.codice}. La Commissione la valuterà e ti comunicherà l’esito.`,
-      report_activity: `Attività registrata. Codice: ${result.codice}. Dopo la verifica della Funzione Strumentale entrerà nel riepilogo destinato alla Dirigente.`,
+      report_activity: teacherCode ? 'Visita registrata: la trovi nel tuo storico qui sopra, in attesa di conferma.' : 'Visita registrata: resta in attesa di conferma della Funzione Strumentale.',
     }[action];
     setMessage(messageId, text, 'success');
     loadOverview(currentSchools);
@@ -499,6 +559,12 @@ async function submitForm(event, action, messageId) {
 
 function openActionPanel(hash = window.location.hash) {
   if (!hash) return;
+  // La registrazione delle visite sta dentro la sezione 01: #visita apre quella sezione e il suo modulo.
+  if (hash === '#visita') {
+    document.getElementById('scuole').open = true;
+    if (!commissionToken) { setReporting(true); renderTeacher(); }
+    return;
+  }
   const panel = document.getElementById(hash.slice(1));
   if (panel instanceof HTMLDetailsElement && panel.classList.contains('action-panel')) panel.open = true;
 }
@@ -507,7 +573,6 @@ function openActionPanel(hash = window.location.hash) {
 const teacherArea = document.getElementById('teacherArea');
 const accessEntry = document.getElementById('accessEntry');
 const commissionArea = document.getElementById('commissionArea');
-const teacherPick = document.getElementById('teacherPick');
 const entryList = document.getElementById('entryList');
 const activityList = document.getElementById('activityList');
 const renameForm = document.getElementById('renameForm');
@@ -575,14 +640,18 @@ function entryCard(entry) {
 
 // Una disponibilità diventata visita nel registro (stessa scuola, visita non precedente all'invio e, se indicata,
 // nella stessa data) non si ripete: resta solo la scheda dello storico, che ne riporta la nota.
-function fulfilledEntries() {
+function appointmentDates() {
+  return new Map([...appointmentsBySchool.values()].flat().map(item => [item.id, item.data]));
+}
+
+function fulfilledEntries(data = teacherData) {
   const byActivity = new Map();
   const fulfilled = new Set();
-  const dates = new Map([...appointmentsBySchool.values()].flat().map(item => [item.id, item.data]));
-  for (const entry of teacherData.voci) {
+  const dates = appointmentDates();
+  for (const entry of data.voci) {
     const sent = entry.created_at.slice(0, 10);
     const chosen = entry.appuntamento_id ? dates.get(entry.appuntamento_id) : null;
-    const visit = teacherData.attivita.find(item => item.tipo === 'visita' && item.scuola_id === entry.scuola_id
+    const visit = data.attivita.find(item => item.tipo === 'visita' && item.scuola_id === entry.scuola_id
       && (chosen ? item.data === chosen : item.data >= sent));
     if (!visit) continue;
     fulfilled.add(entry.id);
@@ -622,21 +691,44 @@ function activityCard(activity, entries = []) {
   return card;
 }
 
+const addEntryToggle = document.getElementById('addEntryToggle');
+const reportToggle = document.getElementById('reportToggle');
+const reportBlock = document.getElementById('visita');
+const staffList = document.getElementById('staffList');
+let staff = [];
+
 function renderTeacher() {
   const commission = Boolean(commissionToken);
+  const picked = commission && Boolean(commissionTeacher);
+  document.body.classList.toggle('is-signed-in', commission || Boolean(teacherCode));
   accessEntry.hidden = Boolean(teacherCode) || commission;
   commissionArea.hidden = !commission;
-  teacherArea.hidden = !teacherData;
+  document.getElementById('staffPanel').hidden = picked;
+  document.getElementById('staffBack').hidden = !picked;
+  document.getElementById('roleName').textContent = LEVEL_NAMES[commissionLevel] || 'Commissione Orientamento';
+  document.getElementById('gestioneLink').hidden = commissionLevel !== 'funzione_strumentale';
+  teacherArea.hidden = !teacherData || (commission && !picked);
+  document.getElementById('teacherRole').textContent = picked ? 'Stai modificando le voci di' : 'Stai lavorando come docente, con il tuo codice personale';
   const names = document.getElementById('supporterNames');
   const as = document.getElementById('supporterAs');
   const reportNames = document.getElementById('reportNames');
   const reportAs = document.getElementById('reportAs');
-  const known = teacherData && (teacherCode || (commission && commissionTeacher));
-  names.hidden = Boolean(known);
+  const known = Boolean(teacherData && (commission ? picked : teacherCode));
+  // Chi ha già le sue voci aggiunge disponibilità con il pulsante; chi non è ancora registrato vede subito il modulo.
+  // Un modulo alla volta, solo quando serve: disponibilità oppure visita svolta.
+  const adding = addEntryToggle.getAttribute('aria-expanded') === 'true';
+  const reporting = reportToggle.getAttribute('aria-expanded') === 'true';
+  document.getElementById('entryChoices').hidden = commission && !picked;
+  reportToggle.hidden = commission;
+  supporterForm.hidden = (commission && !picked) || !adding;
+  reportBlock.hidden = commission || !reporting;
+  addEntryToggle.textContent = adding ? 'Chiudi il modulo' : known ? '+ Aggiungi una disponibilità' : 'Dai la disponibilità';
+  reportToggle.textContent = reporting ? 'Chiudi il modulo' : 'Registra una visita svolta';
+  names.hidden = known;
   for (const input of names.querySelectorAll('input')) input.required = !known;
   as.hidden = !known;
-  document.getElementById('supporterTitle').textContent = known ? 'Aggiungi altre disponibilità' : 'Dai la disponibilità';
-  const reportKnown = Boolean(teacherData && teacherCode);
+  document.getElementById('supporterTitle').textContent = known ? 'Aggiungi una disponibilità' : 'Dai la disponibilità';
+  const reportKnown = Boolean(teacherData && teacherCode && !commission);
   reportNames.hidden = reportKnown;
   for (const input of reportNames.querySelectorAll('input')) input.required = !reportKnown;
   reportAs.hidden = !reportKnown;
@@ -646,45 +738,130 @@ function renderTeacher() {
   as.textContent = `Le nuove voci vanno a ${fullName}.`;
   reportAs.textContent = `Registri come ${fullName}.`;
   document.getElementById('teacherName').textContent = fullName;
-  document.getElementById('teacherCode').textContent = docente.codice ? `Codice personale: ${docente.codice}` : 'Voci modificate con l’accesso della Commissione';
-  document.getElementById('teacherLogout').hidden = !teacherCode;
+  document.getElementById('teacherCode').textContent = docente.codice ? `Codice personale: ${docente.codice}` : '';
+  document.getElementById('teacherLogout').hidden = commission;
   renameForm.elements.nome.value = docente.nome;
   renameForm.elements.cognome.value = docente.cognome;
   const {fulfilled, byActivity} = fulfilledEntries();
   const open = teacherData.voci.filter(entry => !fulfilled.has(entry.id));
-  entryList.replaceChildren(...(open.length ? open.map(entryCard) : [element('li', fulfilled.size ? 'Nessuna disponibilità in sospeso: le visite già svolte sono nello storico qui sotto.' : 'Nessuna disponibilità: aggiungila con il modulo qui sotto.', 'entry-empty')]));
+  entryList.replaceChildren(...(open.length ? open.map(entryCard) : [element('li', fulfilled.size ? 'Nessuna disponibilità in sospeso: le visite già svolte sono nello storico qui sotto.' : 'Nessuna disponibilità per ora.', 'entry-empty')]));
   activityList.replaceChildren(...(teacherData.attivita.length ? teacherData.attivita.map(item => activityCard(item, byActivity.get(item.id))) : [element('li', 'Nessuna visita nel registro.', 'entry-empty')]));
 }
 
 async function loadTeacher() {
-  if (!teacherCode && !(commissionToken && commissionTeacher)) { teacherData = null; renderTeacher(); return; }
+  if (commissionToken ? !commissionTeacher : !teacherCode) { teacherData = null; renderTeacher(); return; }
   try {
     teacherData = await editorSend('teacher_entries', {});
   } catch (error) {
     teacherData = null;
-    if (teacherCode && /Codice non riconosciuto/.test(error.message)) {
+    if (!commissionToken && /Codice non riconosciuto/.test(error.message)) {
       teacherCode = storage(localStorage, CODE_KEY, '');
       setMessage('codeMessage', 'Il codice salvato su questo dispositivo non è più valido. Inseriscilo di nuovo o chiedilo alla Funzione Strumentale.', 'error');
     } else if (commissionToken && /Sessione scaduta/.test(error.message)) {
-      commissionToken = storage(sessionStorage, SESSION_KEY, '');
-      commissionTeacher = '';
+      leaveCommission();
+      setMessage('commissionMessage', 'Sessione scaduta: entra di nuovo con la password.', 'error');
     } else {
-      setMessage('codeMessage', error.message, 'error');
+      setMessage(commissionToken ? 'commissionMessage' : 'codeMessage', error.message, 'error');
     }
   }
   renderTeacher();
 }
 
+const shortDate = new Intl.DateTimeFormat('it-IT', {day:'numeric', month:'short', timeZone:'UTC'});
+function dayLabel(iso) { return iso ? shortDate.format(new Date(`${iso}T12:00:00Z`)) : 'data da fissare'; }
+
+function staffLine(where, when, state, stateClass, note) {
+  const li = element('li', null, 'staff-line');
+  const head = element('div', null, 'staff-line-head');
+  head.append(element('strong', where), element('span', when, 'staff-when'), element('span', state, `entry-state ${stateClass}`));
+  li.append(head);
+  if (note) li.append(element('p', note, 'staff-note'));
+  return li;
+}
+
+function staffCard(person) {
+  const card = element('article', null, 'staff-card');
+  const head = element('header', null, 'staff-head');
+  const title = element('h5', `${person.docente.cognome} ${person.docente.nome}`);
+  const open = cardButton('Apri e modifica', () => pickTeacher(person.docente.id), 'calendar-action is-primary');
+  head.append(title);
+  if (person.docente.codice) head.append(element('span', `Codice ${person.docente.codice}`, 'staff-code'));
+  head.append(open);
+  const {fulfilled, byActivity} = fulfilledEntries(person);
+  const dates = appointmentDates();
+  const entries = person.voci.filter(entry => !fulfilled.has(entry.id));
+  const columns = element('div', null, 'staff-columns');
+  const available = element('section');
+  available.append(element('h6', `Disponibilità per le visite · ${entries.length}`));
+  const list = element('ul');
+  list.append(...(entries.length ? entries.map(entry => staffLine(schoolLabel(entry.scuola_id), dayLabel(dates.get(entry.appuntamento_id)),
+    entry.stato === 'assegnata' ? 'Assegnata' : 'Da assegnare', `is-${entry.stato}`, entry.nota)) : [element('li', 'Nessuna in sospeso', 'staff-empty')]));
+  available.append(list);
+  const done = element('section');
+  done.append(element('h6', `Visite svolte · ${person.attivita.length}`));
+  const history = element('ul');
+  history.append(...(person.attivita.length ? person.attivita.map(activity => {
+    const where = activity.tipo === 'visita' ? schoolLabel(activity.scuola_id) : `Mattinée · ${activity.titolo || 'senza titolo'}`;
+    const confirmed = activity.stato === 'confermata';
+    const origin = (byActivity.get(activity.id) || []).map(entry => entry.nota).filter(Boolean);
+    const note = [activity.nota, ...origin.map(text => `Disponibilità: ${text}`)].filter(Boolean).join(' · ');
+    return staffLine(where, dayLabel(activity.data), confirmed ? 'Confermata' : 'Da confermare', confirmed ? 'is-confirmed' : 'is-pending', note || 'Nessuna nota');
+  }) : [element('li', 'Nessuna visita', 'staff-empty')]));
+  done.append(history);
+  columns.append(available, done);
+  card.append(head, columns);
+  return card;
+}
+
+function renderStaff() {
+  const people = [...staff].sort((a, b) => `${a.docente.cognome} ${a.docente.nome}`.localeCompare(`${b.docente.cognome} ${b.docente.nome}`, 'it'));
+  const pending = people.reduce((sum, person) => sum + person.attivita.filter(item => item.stato !== 'confermata').length, 0);
+  const open = people.reduce((sum, person) => sum + person.voci.length - fulfilledEntries(person).fulfilled.size, 0);
+  document.getElementById('staffTotals').textContent = `${people.length} docenti · ${open} disponibilità in sospeso · ${pending} visite da confermare`;
+  staffList.replaceChildren(...people.map(staffCard));
+}
+
 async function loadTeacherList() {
+  document.getElementById('staffTotals').textContent = 'Caricamento dei docenti…';
   try {
     const result = await send('list_teachers', {}, commissionToken);
-    teacherPick.replaceChildren(new Option('Scegli il docente', ''), ...result.docenti.map(item => new Option(`${item.cognome} ${item.nome}${item.codice ? ` · ${item.codice}` : ''}`, item.id)));
-    teacherPick.value = commissionTeacher;
+    if (result.accesso) commissionLevel = storage(sessionStorage, LEVEL_KEY, result.accesso);
+    renderTeacher();
+    staff = await Promise.all(result.docenti.map(item => send('teacher_entries', {docente_id:item.id}, commissionToken)));
+    renderStaff();
+    if (currentOverview) { renderOverview(currentSchools); pastVisits.open = true; }
   } catch (error) {
-    commissionToken = storage(sessionStorage, SESSION_KEY, '');
+    leaveCommission();
     setMessage('commissionMessage', error.message, 'error');
     renderTeacher();
   }
+}
+
+function pickTeacher(id) {
+  commissionTeacher = id;
+  teacherData = staff.find(person => person.docente.id === id) || null;
+  setAdding(false);
+  renderTeacher();
+  loadTeacher();
+  document.getElementById('scuole').scrollIntoView({behavior:'smooth'});
+}
+
+function leaveCommission() {
+  commissionToken = storage(sessionStorage, SESSION_KEY, '');
+  commissionLevel = storage(sessionStorage, LEVEL_KEY, '');
+  commissionTeacher = '';
+  staff = [];
+  teacherData = null;
+}
+
+function setAdding(value) {
+  addEntryToggle.setAttribute('aria-expanded', String(value));
+  if (value) reportToggle.setAttribute('aria-expanded', 'false');
+}
+
+function setReporting(value) {
+  reportToggle.setAttribute('aria-expanded', String(value));
+  if (value) addEntryToggle.setAttribute('aria-expanded', 'false');
 }
 
 async function submitForCommission(form, voci) {
@@ -697,6 +874,7 @@ async function submitForCommission(form, voci) {
     draftNotes.clear();
     draftDates.clear();
     updateSchoolCounter();
+    setAdding(false);
     setMessage('supporterMessage', 'Disponibilità aggiunte al docente scelto.', 'success');
     await loadTeacher();
     loadOverview(currentSchools);
@@ -733,6 +911,9 @@ document.getElementById('commissionForm').addEventListener('submit', async event
     const result = await send('login', {password:form.elements.password.value});
     if (result.access_level === 'supporter') throw new Error('Questa password consente soltanto la consultazione.');
     commissionToken = storage(sessionStorage, SESSION_KEY, result.token);
+    commissionLevel = storage(sessionStorage, LEVEL_KEY, result.access_level);
+    commissionTeacher = '';
+    teacherData = null;
     form.reset();
     setMessage('commissionMessage', '');
     renderTeacher();
@@ -742,17 +923,30 @@ document.getElementById('commissionForm').addEventListener('submit', async event
   }
 });
 
-teacherPick.addEventListener('change', () => {
-  commissionTeacher = teacherPick.value;
+document.getElementById('staffBack').addEventListener('click', () => {
+  commissionTeacher = '';
   teacherData = null;
-  loadTeacher();
+  setAdding(false);
+  renderTeacher();
+  loadTeacherList();
+});
+
+reportToggle.addEventListener('click', () => {
+  setReporting(reportToggle.getAttribute('aria-expanded') !== 'true');
+  renderTeacher();
+  if (!reportBlock.hidden) reportBlock.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+addEntryToggle.addEventListener('click', () => {
+  setAdding(addEntryToggle.getAttribute('aria-expanded') !== 'true');
+  renderTeacher();
+  if (!supporterForm.hidden) supporterForm.scrollIntoView({behavior:'smooth', block:'start'});
 });
 
 document.getElementById('commissionLogout').addEventListener('click', () => {
   if (commissionToken) send('logout', {}, commissionToken).catch(() => {});
-  commissionToken = storage(sessionStorage, SESSION_KEY, '');
-  commissionTeacher = '';
-  teacherData = null;
+  leaveCommission();
+  if (currentOverview) renderOverview(currentSchools);
   loadTeacher();
 });
 
@@ -789,16 +983,10 @@ renameForm.addEventListener('submit', async event => {
 
 let currentSchools = [];
 async function refreshCalendar() {
-  refreshCalendarButton.disabled = true;
-  try {
-    if (!currentSchools.length) currentSchools = await loadSchools();
-    if (currentSchools.length) await loadOverview(currentSchools);
-    else calendarMessage.textContent = 'Elenco delle scuole non disponibile. Riprova con «Aggiorna calendario».';
-  } finally {
-    refreshCalendarButton.disabled = false;
-  }
+  if (!currentSchools.length) currentSchools = await loadSchools();
+  if (currentSchools.length) await loadOverview(currentSchools);
+  else calendarMessage.textContent = 'Elenco delle scuole non disponibile. Ricarica la pagina tra poco.';
 }
-refreshCalendarButton.addEventListener('click', refreshCalendar);
 schoolSearch.addEventListener('input', filterSchoolChoices);
 supporterForm.addEventListener('submit', (event) => submitForm(event, 'submit_supporter', 'supporterMessage'));
 proposalForm.addEventListener('submit', (event) => submitForm(event, 'submit_proposal', 'proposalMessage'));
@@ -820,6 +1008,7 @@ document.addEventListener('visibilitychange', () => {
 setInterval(refreshCalendarDay, 60000);
 for (const form of [supporterForm, proposalForm, reportForm]) form.querySelector('button[type="submit"]').disabled = false;
 resetReportForm();
+if (teacherCode || commissionToken) document.getElementById('scuole').open = true;
 renderTeacher();
 refreshCalendar().then(() => {
   if (commissionToken) loadTeacherList();

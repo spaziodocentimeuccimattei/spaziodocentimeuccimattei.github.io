@@ -431,3 +431,71 @@ details.school-group[open] { padding-bottom:12px; }
   .entries-title.is-main { font-size:1.3rem; }
   .entry-school { font-size:1.15rem; }
 }
+
+/* Chi sta lavorando e, per la Funzione Strumentale e la Commissione, tutti i docenti (17/11/2026) */
+.is-signed-in .territory-invitation, .is-signed-in .how-to { display:none; }
+#supporterMessage:empty { display:none; }
+.role-label { margin:0; color:#33495a; font-size:.82rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+.role-banner { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 18px; padding:16px 18px; border-radius:14px; color:#fff; background:#123c57; }
+.role-banner p { display:grid; gap:4px; margin:0; }
+.role-banner .role-label { color:#cfe3ee; }
+.role-banner strong { font-size:clamp(1.5rem, 3.4vw, 2rem); font-weight:800; line-height:1.15; }
+.role-banner #roleHelp { color:#e6f0f5; font-size:1rem; }
+.role-banner .calendar-action { display:inline-flex; align-items:center; border-color:#cfe3ee; color:#fff; background:transparent; text-decoration:none; }
+.role-banner .calendar-action:hover { background:#ffffff22; }
+.role-banner .calendar-action:focus-visible { outline-color:#fff; }
+.staff-totals { margin:6px 0 0; color:var(--navy); font-size:1.05rem; font-weight:800; }
+.staff-list { display:grid; gap:14px; }
+.staff-card { display:grid; gap:12px; padding:16px; border:1px solid #c8d8e1; border-radius:14px; background:#fff; }
+.staff-head { display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; }
+.staff-head h5 { margin:0; color:var(--navy); font-size:1.4rem; font-weight:800; }
+.staff-code { padding:2px 9px; border-radius:7px; color:#33495a; background:#eef3f6; font-family:ui-monospace, Menlo, monospace; font-size:.9rem; }
+.staff-head .calendar-action { margin-left:auto; border-color:#00522a; color:#fff; background:#00522a; }
+.staff-head .calendar-action:hover { background:#006b37; }
+.staff-columns { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.staff-columns h6 { margin:0 0 8px; color:#00522a; font-size:.95rem; font-weight:800; }
+.staff-columns ul { display:grid; gap:8px; margin:0; padding:0; list-style:none; }
+.staff-line { padding:8px 10px; border-left:4px solid #c8d8e1; border-radius:4px; background:#f6f9fb; }
+.staff-line-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; }
+.staff-line-head strong { color:var(--ink); font-size:1.02rem; }
+.staff-when { color:#33495a; font-size:.92rem; font-weight:700; }
+.staff-note { margin:4px 0 0; color:#33495a; font-size:.92rem; line-height:1.45; }
+.staff-empty { color:#5a6b78; font-size:.92rem; }
+.back-action { justify-self:start; }
+.add-action { margin-top:10px; border-color:#00522a; color:#00522a; background:#e5f3ea; }
+@media (max-width: 700px) {
+  .staff-columns { grid-template-columns:1fr; }
+  .staff-head .calendar-action { margin-left:0; width:100%; }
+}
+
+/* Visite svolte: un solo blocco con il conteggio delle scuole raggiunte e le date trascorse (17/11/2026) */
+.mission.past-visits { margin-top:16px; padding:0 16px; border:1px solid #c2dbc9; border-inline-start:5px solid #278653; border-radius:12px; background:linear-gradient(115deg,#f5fbf7,#e8f5ec); }
+.mission.past-visits > summary { display:grid; gap:2px; padding:13px 0; list-style:none; cursor:pointer; }
+.mission.past-visits > summary::-webkit-details-marker { display:none; }
+.mission.past-visits > summary:focus-visible { outline:3px solid #006c63; outline-offset:3px; }
+.mission-head { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:4px 12px; color:#174e31; font-size:1.125rem; font-weight:800; }
+.mission-count { color:#174e31; font-size:1rem; font-weight:700; }
+.mission-count b { font-size:1.375rem; font-variant-numeric:tabular-nums; letter-spacing:-.025em; }
+.mission.past-visits progress { margin:9px 0 4px; }
+.mission-open { color:#174e31; font-size:.92rem; font-weight:750; text-decoration:underline; text-underline-offset:3px; }
+.mission.past-visits[open] .mission-open { display:none; }
+.mission.past-visits .visit-row { border-top-color:#c2dbc9; }
+.mission.past-visits .visit-copy .entry-state { justify-self:start; margin-top:4px; }
+.visit-extra { padding:9px 0; border-top:1px solid #c2dbc9; color:#174e31; font-weight:700; }
+
+/* Chi va e chi è andato, visita per visita */
+.visit-people { margin-top:6px; }
+.visit-who { color:#174e31; font-weight:700; }
+.visit-alert { display:inline-block; padding:2px 9px; border-radius:7px; color:#7a2a00; background:#fde7d9; font-size:.9rem; font-weight:800; }
+.visit-people-list { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
+.visit-people-list li { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 8px; }
+.visit-people-list strong { color:var(--ink); font-size:1rem; }
+.visit-people-list small { flex-basis:100%; color:#33495a; font-size:.88rem; line-height:1.4; }
+
+/* Due scelte, un modulo alla volta (17/11/2026) */
+.entry-choices { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 6px; }
+.entry-choices .add-action { margin-top:0; font-size:1rem; }
+.entry-choices .add-action[aria-expanded="true"] { color:#fff; background:#00522a; }
+.report-block { margin-top:14px; }
+#reportMessage:empty { display:none; }
+@media (max-width: 640px) { .entry-choices { display:grid; } }

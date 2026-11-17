@@ -130,8 +130,9 @@ che servono al riconoscimento.
   solo le proprie voci: data e nota delle disponibilità, nota delle visite del registro
   (storico), nome e cognome (cambiano in tutte le sue voci e nel registro, senza toccare
   le conferme).
-- Con la **password della Commissione** (orientatore) si sceglie un docente e si modificano
-  le sue voci; i codici non si vedono. La password di consultazione (supporter) non modifica.
+- Con la **password della Commissione** (orientatore) o della **FS** si vedono tutti i docenti
+  e, con «Apri e modifica», si cambiano le voci di uno; i codici li vede solo la FS. La
+  password di consultazione (supporter) non modifica.
 - La **Funzione Strumentale** vede i codici in Gestione → Disponibilità → «Codici personali
   dei docenti» e con «Nuovo codice» sostituisce un codice perso (il vecchio non vale più).
 - Se il docente o la Commissione cambia la nota di una visita già confermata, la visita torna
@@ -148,3 +149,25 @@ Attivazione: `supabase/sql/orientamento-codice-docenti.sql`, poi, una tantum,
 `supabase/sql/orientamento-codice-docenti-dati.sql` (divide i vecchi invii per scuola con la
 stessa nota, assegna i codici ai docenti già presenti, collega il registro), poi la funzione,
 infine i file statici. Prova: `node scripts/verifica-codice-docenti.mjs`.
+
+## Pagina come strumento di controllo (dal 17/11/2026)
+
+Richiesta di Salvatore: la pagina serve soprattutto a controllare chi va dove e che cosa è
+stato fatto, senza doppioni.
+
+- **Calendario.** Ogni visita mostra i docenti: per tutti iniziale e cognome di chi ha dato
+  disponibilità (o «Nessun docente ha ancora dato disponibilità»); con la password FS o
+  della Commissione, per le date future chi è assegnato o disponibile, per quelle passate
+  chi ha registrato la visita, lo stato e la nota («Scoperta: nessun docente» se manca).
+  In quella vista spariscono i pulsanti per i docenti.
+- **Visite svolte.** Un solo blocco con «N su 24 scuole raggiunte» e le date trascorse: sono
+  stati tolti l’elenco separato delle scuole raggiunte, «Aggiorna calendario» e il conteggio
+  delle proposte Mattinée nell’apertura.
+- **Sezione 01 «Disponibilità e visite svolte».** La vecchia sezione 03 «Registra
+  un’attività» non c’è più: il suo modulo (stesso `reportForm`, ancora raggiungibile con
+  `#visita`) sta nella 01. Due pulsanti, «Dai la disponibilità» e «Registra una visita
+  svolta», aprono un modulo alla volta. In alto si legge sempre con quale ruolo si lavora:
+  «Stai lavorando come Funzione Strumentale / Commissione Orientamento» oppure «come
+  docente, con il tuo codice personale».
+- Chi è già entrato (codice o password) trova la sezione aperta e non vede i riquadri
+  «Conosci il territorio» e «Come funziona».
