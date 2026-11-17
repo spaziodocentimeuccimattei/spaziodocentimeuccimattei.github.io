@@ -573,7 +573,26 @@ function entryCard(entry) {
   return card;
 }
 
-function activityCard(activity) {
+// Una disponibilità diventata visita nel registro (stessa scuola, visita non precedente all'invio e, se indicata,
+// nella stessa data) non si ripete: resta solo la scheda dello storico, che ne riporta la nota.
+function fulfilledEntries() {
+  const byActivity = new Map();
+  const fulfilled = new Set();
+  const dates = new Map([...appointmentsBySchool.values()].flat().map(item => [item.id, item.data]));
+  for (const entry of teacherData.voci) {
+    const sent = entry.created_at.slice(0, 10);
+    const chosen = entry.appuntamento_id ? dates.get(entry.appuntamento_id) : null;
+    const visit = teacherData.attivita.find(item => item.tipo === 'visita' && item.scuola_id === entry.scuola_id
+      && (chosen ? item.data === chosen : item.data >= sent));
+    if (!visit) continue;
+    fulfilled.add(entry.id);
+    if (!byActivity.has(visit.id)) byActivity.set(visit.id, []);
+    byActivity.get(visit.id).push(entry);
+  }
+  return {fulfilled, byActivity};
+}
+
+function activityCard(activity, entries = []) {
   const card = element('li', null, 'entry-card is-history');
   card.dataset.activity = activity.id;
   const head = element('div', null, 'entry-head');
@@ -596,7 +615,9 @@ function activityCard(activity) {
   }, 'calendar-action is-primary');
   const actions = element('div', null, 'entry-actions');
   actions.append(save);
-  card.append(head, field('Nota per il riconoscimento', area, 'attività oltre il servizio'), actions, element('p', null, 'form-message'));
+  card.append(head);
+  for (const entry of entries.filter(item => item.nota)) card.append(element('p', `Nota della disponibilità: «${entry.nota}»`, 'entry-origin'));
+  card.append(field('Nota per il riconoscimento', area, 'attività oltre il servizio'), actions, element('p', null, 'form-message'));
   card.querySelector('.form-message').setAttribute('role', 'status');
   return card;
 }
@@ -629,8 +650,10 @@ function renderTeacher() {
   document.getElementById('teacherLogout').hidden = !teacherCode;
   renameForm.elements.nome.value = docente.nome;
   renameForm.elements.cognome.value = docente.cognome;
-  entryList.replaceChildren(...(teacherData.voci.length ? teacherData.voci.map(entryCard) : [element('li', 'Nessuna disponibilità: aggiungila con il modulo qui sotto.', 'entry-empty')]));
-  activityList.replaceChildren(...(teacherData.attivita.length ? teacherData.attivita.map(activityCard) : [element('li', 'Nessuna visita nel registro.', 'entry-empty')]));
+  const {fulfilled, byActivity} = fulfilledEntries();
+  const open = teacherData.voci.filter(entry => !fulfilled.has(entry.id));
+  entryList.replaceChildren(...(open.length ? open.map(entryCard) : [element('li', fulfilled.size ? 'Nessuna disponibilità in sospeso: le visite già svolte sono nello storico qui sotto.' : 'Nessuna disponibilità: aggiungila con il modulo qui sotto.', 'entry-empty')]));
+  activityList.replaceChildren(...(teacherData.attivita.length ? teacherData.attivita.map(item => activityCard(item, byActivity.get(item.id))) : [element('li', 'Nessuna visita nel registro.', 'entry-empty')]));
 }
 
 async function loadTeacher() {

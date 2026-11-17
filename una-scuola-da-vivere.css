@@ -416,3 +416,4 @@ details.school-group[open] { padding-bottom:12px; }
   .past-visits .visit-row .calendar-action { grid-column:2; justify-self:start; }
 }
 .entry-card .optional { color:#33495a; font-size:.86rem; font-weight:650; }
+.entry-origin { margin:0; padding:6px 10px; border-left:3px solid #8aa6b5; color:#33495a; background:#f3f8fb; font-size:.92rem; }
