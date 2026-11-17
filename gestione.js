@@ -326,10 +326,14 @@ function renderSupporters(schoolNames) {
         }
       } else if (item.stato !== 'archiviata') {
         const dates = data.appuntamenti.filter((date) => date.scuola_id === id && date.data >= today());
+        // La data scelta dal docente, anche se già trascorsa, ha la precedenza sulla prima in calendario.
+        const chosen = data.appuntamenti.find((date) => date.id === item.appuntamento_id);
         const input = document.createElement('input');
         input.type = 'date';
         input.setAttribute('aria-label', `Data per ${schoolNames.get(id) || id}`);
-        if (dates.length) input.value = dates[0].data;
+        if (chosen) input.value = chosen.data;
+        else if (dates.length) input.value = dates[0].data;
+        if (chosen) row.append(el('small', '', `Data indicata dal docente: ${chosen.data.split('-').reverse().join('/')}`));
         row.append(input, actionButton('Assegna la visita', 'ok', (button) => confirmSupporter(item, id, input, button)));
         if (dates.length > 1) row.append(el('small', '', `Date in calendario: ${dates.map((date) => date.data.split('-').reverse().join('/')).join(', ')}`));
         if (!dates.length) row.append(el('small', '', 'Nessuna data in calendario per questa scuola: indicala qui.'));
@@ -346,12 +350,35 @@ function renderSupporters(schoolNames) {
   }
 }
 
+// Codici personali: visibili solo alla Funzione Strumentale, da consegnare a ciascun docente.
+function renderTeacherCodes() {
+  const list = document.getElementById('teacherCodeList');
+  const teachers = [...(data.docenti || [])].sort((a, b) => `${a.cognome} ${a.nome}`.localeCompare(`${b.cognome} ${b.nome}`, 'it'));
+  list.replaceChildren(...(teachers.length ? teachers.map((teacher) => {
+    const item = el('li', 'teacher-code');
+    item.append(el('span', 'teacher-code-name', `${teacher.cognome} ${teacher.nome}`), el('code', '', teacher.codice));
+    item.append(actionButton('Nuovo codice', 'neutral', async (button) => {
+      if (!window.confirm(`Creare un nuovo codice per ${teacher.nome} ${teacher.cognome}? Quello attuale smetterà di funzionare.`)) return;
+      button.disabled = true;
+      try {
+        const result = await api('new_code', { docente_id: teacher.id });
+        globalMessage.textContent = `Nuovo codice di ${teacher.nome} ${teacher.cognome}: ${result.codice}.`;
+        await load();
+      } catch (error) {
+        button.disabled = false;
+        handleError(error);
+      }
+    }));
+    return item;
+  }) : [el('li', 'empty', 'Nessun docente registrato.')]));
+}
+
 async function confirmSupporter(item, schoolId, input, button) {
   if (!input.value) { globalMessage.textContent = 'Indica la data prima di assegnare la visita.'; input.focus(); return; }
   button.disabled = true;
   globalMessage.textContent = 'Salvataggio…';
   try {
-    await api('register_activity', { nome: item.nome, cognome: item.cognome, tipo: 'visita', scuola_id: schoolId, data: input.value });
+    await api('register_activity', { nome: item.nome, cognome: item.cognome, tipo: 'visita', scuola_id: schoolId, data: input.value, nota: item.nota || '' });
     if (item.stato !== 'assegnata') await api('update_contribution', { kind: 'supporter', id: item.id, stato: 'assegnata' });
     globalMessage.textContent = `Visita assegnata a ${item.nome} ${item.cognome} per il ${input.value.split('-').reverse().join('/')}. Resta in attesa della tua conferma di svolgimento.`;
     await load();
@@ -669,6 +696,10 @@ function renderTeacher(item, confirmed, canConfirm) {
   teacher.dataset.activityId = item.id;
   teacher.append(el('span', 'visit-teacher-name', `${item.nome} ${item.cognome}`));
   if (item.nota) teacher.append(el('small', 'visit-place', item.nota));
+  // Nota cambiata dal docente o dalla Commissione dopo la conferma: si vede che cosa è cambiato prima di riconfermare.
+  if (!confirmed && item.modificata_dal_docente_at) {
+    teacher.append(el('small', 'visit-note-changed', `Nota cambiata il ${formatDate(item.modificata_dal_docente_at)}. Prima: «${item.nota_precedente || 'nessuna nota'}»`));
+  }
   const actions = el('div', 'visit-actions');
   if (confirmed) actions.append(el('span', 'visit-complete', 'Confermata'));
   if (canConfirm) {
@@ -873,6 +904,7 @@ function render() {
   const schoolNames = new Map(data.scuole.map((school) => [school.id, `${school.comune} – ${school.etichetta}`]));
   renderVisits(schoolNames);
   renderSupporters(schoolNames);
+  renderTeacherCodes();
   renderProposals();
   renderSchools();
   renderActivityFields();

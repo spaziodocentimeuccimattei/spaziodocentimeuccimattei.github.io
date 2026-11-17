@@ -20,7 +20,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icona-32.png">
   <link rel="apple-touch-icon" href="assets/icona-180.png">
   <link rel="stylesheet" href="portal.css?v=20261009-home">
-  <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261116-agenda">
+  <link rel="stylesheet" href="una-scuola-da-vivere.css?v=20261117-codice">
 </head>
 <body class="school-calendar-page">
   <header class="site-header">
@@ -45,7 +45,7 @@
         </div>
       </div>
       <nav class="hero-actions" aria-label="Scegli che cosa devi fare">
-        <a href="#scuole"><span class="action-number">01</span><span><strong>Offri la tua disponibilità</strong><small>Indica le scuole in cui potresti andare.</small></span><b aria-hidden="true">→</b></a>
+        <a href="#scuole"><span class="action-number">01</span><span><strong>Offri la tua disponibilità</strong><small>Scuola per scuola, con le tue note.</small></span><b aria-hidden="true">→</b></a>
         <a href="#mattinee"><span class="action-number">02</span><span><strong>Proponi una Mattinée</strong><small>Presenta un laboratorio o una lezione aperta.</small></span><b aria-hidden="true">→</b></a>
         <a href="#visita"><span class="action-number">03</span><span><strong>Registra un’attività</strong><small>Comunica una visita o una Mattinée già svolta.</small></span><b aria-hidden="true">→</b></a>
       </nav>
@@ -100,7 +100,7 @@
       <p class="kicker">Istruzioni</p>
       <h2 id="how-title">Come funziona, in quattro passi</h2>
       <ol class="how-steps">
-        <li><span class="how-num">1</span><div><h3>Dai la disponibilità</h3><p>Scegli fino a cinque scuole e invia il modulo <a href="#scuole">Disponibilità per le visite</a>.</p></div></li>
+        <li><span class="how-num">1</span><div><h3>Dai la disponibilità</h3><p>Scegli le scuole, con una nota per ciascuna, nel modulo <a href="#scuole">Disponibilità e note</a>. Al primo invio ricevi il codice personale per modificarle.</p></div></li>
         <li><span class="how-num">2</span><div><h3>Ricevi l’assegnazione</h3><p>La Funzione Strumentale ti assegna una o più scuole e concorda con te data e orario della visita.</p></div></li>
         <li><span class="how-num">3</span><div><h3>Svolgi la visita</h3><p>Presenti il nostro istituto ai ragazzi con i materiali della Commissione Orientamento.</p></div></li>
         <li class="how-key"><span class="how-num">4</span><div><h3>Segnala l’attività svolta</h3><p>Lo stesso giorno, o al più tardi il giorno dopo, compila il modulo <a href="#visita">Registra un’attività svolta</a>.</p></div></li>
@@ -109,27 +109,73 @@
     </section>
 
     <details class="support-section action-panel" id="scuole">
-      <summary class="support-heading"><span class="section-number">01</span><span class="summary-copy"><span class="eyebrow">Prima fase · circa 2 minuti</span><strong id="scuole-title">Disponibilità per le visite</strong><small>Indica le scuole in cui potresti presentare il nostro istituto.</small></span><span class="summary-action"><span>Apri il modulo</span><b aria-hidden="true">⌄</b></span></summary>
+      <summary class="support-heading"><span class="section-number">01</span><span class="summary-copy"><span class="eyebrow">Visite e storico · con il tuo codice personale</span><strong id="scuole-title">Disponibilità e note</strong><small>Dai la disponibilità scuola per scuola, poi correggi nome, date e note quando vuoi.</small></span><span class="summary-action"><span>Apri il modulo</span><b aria-hidden="true">⌄</b></span></summary>
       <div class="action-panel-body">
+      <section class="teacher-access" id="teacherAccess" aria-labelledby="teacher-access-title">
+        <div id="accessEntry">
+          <h3 id="teacher-access-title">Le tue voci</h3>
+          <p class="panel-intro">Con il <strong>codice personale</strong> ritrovi le tue disponibilità e lo storico delle tue visite: puoi cambiare date e note e correggere nome e cognome. Il codice arriva al primo invio; se lo hai perso chiedilo alla Funzione Strumentale.</p>
+          <form id="codeForm" class="support-form code-form" novalidate>
+            <label>Codice personale <input name="codice" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" placeholder="Per esempio ABCD-2345" required></label>
+            <button type="submit">Apri le mie voci</button>
+            <p class="form-message" id="codeMessage" role="status" aria-live="polite"></p>
+          </form>
+          <details class="commission-access">
+            <summary>Hai la password della Commissione Orientamento?</summary>
+            <form id="commissionForm" class="support-form code-form" novalidate>
+              <label>Password della Commissione <input name="password" type="password" autocomplete="current-password" maxlength="200" required></label>
+              <button type="submit">Modifica le voci dei colleghi</button>
+              <p class="form-message" id="commissionMessage" role="status" aria-live="polite"></p>
+            </form>
+          </details>
+        </div>
+        <div id="commissionArea" class="commission-area" hidden>
+          <div class="teacher-bar"><p><strong>Accesso della Commissione</strong><span>Puoi modificare le voci e le note di tutti i docenti.</span></p><button type="button" class="calendar-action" id="commissionLogout">Esci</button></div>
+          <label class="teacher-pick">Docente <select id="teacherPick"><option value="">Scegli il docente</option></select></label>
+        </div>
+        <div id="teacherArea" class="teacher-area" hidden>
+          <div class="teacher-bar">
+            <p><strong id="teacherName"></strong><span id="teacherCode"></span></p>
+            <span class="teacher-bar-actions"><button type="button" class="calendar-action" id="renameToggle" aria-expanded="false">Modifica nome e cognome</button><button type="button" class="calendar-action" id="teacherLogout">Esci da questo dispositivo</button></span>
+          </div>
+          <form id="renameForm" class="support-form rename-form" novalidate hidden>
+            <div class="form-grid">
+              <label>Nome <input name="nome" autocomplete="given-name" maxlength="80" required></label>
+              <label>Cognome <input name="cognome" autocomplete="family-name" maxlength="80" required></label>
+            </div>
+            <p class="school-help">Il nome cambia in tutte le tue disponibilità e nelle tue visite del registro.</p>
+            <button type="submit">Salva nome e cognome</button>
+            <p class="form-message" id="renameMessage" role="status" aria-live="polite"></p>
+          </form>
+          <h4 class="entries-title">Disponibilità per le visite</h4>
+          <ul class="entry-list" id="entryList"></ul>
+          <h4 class="entries-title">Storico delle visite svolte</h4>
+          <p class="school-help">Nella nota scrivi le attività svolte oltre l’orario di servizio (giorno, orari, ore): servono al riconoscimento. Se cambi la nota di una visita già confermata, la visita torna da confermare.</p>
+          <ul class="entry-list" id="activityList"></ul>
+          <p class="school-help"><a href="#visita" id="reportLink">Manca una visita? Registrala qui.</a></p>
+        </div>
+      </section>
       <form id="supporterForm" class="support-form" novalidate>
-        <div class="form-grid">
+        <h3 class="form-title" id="supporterTitle">Dai la disponibilità</h3>
+        <div class="form-grid" id="supporterNames">
           <label>Nome <input name="nome" autocomplete="given-name" maxlength="80" required></label>
           <label>Cognome <input name="cognome" autocomplete="family-name" maxlength="80" required></label>
         </div>
+        <p class="school-help" id="supporterAs" hidden></p>
         <fieldset class="school-fieldset">
-          <legend>Scegli fino a cinque scuole <span class="optional" id="schoolCounter">0 di 5 scelte</span></legend>
+          <legend>Scegli fino a cinque scuole per invio <span class="optional" id="schoolCounter">0 di 5 scelte</span></legend>
           <p class="school-help"><a href="#calendario-scuole">Vedi date, orari e scuole raggiunte.</a></p>
           <label class="school-search">Cerca per comune o scuola <input id="schoolSearch" type="search" autocomplete="off"></label>
-          <p class="school-help" id="selectedSchoolNames" hidden></p>
           <p class="school-help" id="schoolSearchEmpty" role="status" hidden>Nessuna scuola corrisponde alla ricerca.</p>
           <div id="schoolChoices" class="school-choices"></div>
           <p id="schoolError" class="field-error" role="alert" hidden>Seleziona almeno una scuola, fino a un massimo di cinque.</p>
         </fieldset>
-        <label>Nota sulla tua disponibilità <span class="optional">facoltativa</span>
-          <textarea name="nota" rows="3" maxlength="600" placeholder="Per esempio: conosco già questa scuola o posso accompagnare un collega."></textarea>
-        </label>
+        <section class="new-entries" id="newEntries" aria-labelledby="new-entries-title" hidden>
+          <h4 id="new-entries-title">Data e nota per ciascuna scuola</h4>
+          <ul class="entry-list" id="newEntryList"></ul>
+        </section>
         <label class="website-trap" aria-hidden="true">Sito web <input name="website" tabindex="-1" autocomplete="off"></label>
-        <div class="form-footer"><p>Iniziale del nome e cognome (per esempio «M. Rossi») compaiono in questa pagina accanto alle scuole scelte, così i colleghi vedono chi ha già dato disponibilità. La nota arriva solo alla Commissione Orientamento.</p><button type="submit" disabled>Invia la disponibilità</button></div>
+        <div class="form-footer"><p>Iniziale del nome e cognome (per esempio «M. Rossi») compaiono in questa pagina accanto alle scuole scelte, così i colleghi vedono chi ha già dato disponibilità. Le note le vedono solo tu con il tuo codice, la Commissione Orientamento e la Funzione Strumentale.</p><button type="submit" disabled>Invia la disponibilità</button></div>
         <p class="form-message" id="supporterMessage" role="status" aria-live="polite"></p>
       </form>
       </div>
@@ -186,7 +232,8 @@
       <div class="action-panel-body">
       <p class="panel-intro">Compila il modulo lo stesso giorno o, al più tardi, il giorno successivo. Dopo la verifica della Funzione Strumentale, l’attività entra nel riepilogo destinato alla Dirigente.</p>
       <form id="reportForm" class="support-form" novalidate>
-        <div class="form-grid">
+        <p class="school-help" id="reportAs" hidden></p>
+        <div class="form-grid" id="reportNames">
           <label>Nome <input name="nome" autocomplete="given-name" maxlength="80" required></label>
           <label>Cognome <input name="cognome" autocomplete="family-name" maxlength="80" required></label>
         </div>
@@ -204,7 +251,7 @@
         </label>
         <label id="reportTitleField" hidden>Titolo della Mattinée <input name="titolo" maxlength="160"></label>
         <label>Note <span class="optional">facoltative</span>
-          <textarea name="nota" rows="2" maxlength="600" placeholder="Per esempio: classi incontrate, collega presente."></textarea>
+          <textarea name="nota" rows="2" maxlength="600" placeholder="Per esempio: fuori orario di servizio 11.30–13.30, classi incontrate, collega presente."></textarea>
         </label>
         <label class="website-trap" aria-hidden="true">Sito web <input name="website" tabindex="-1" autocomplete="off"></label>
         <div class="form-footer"><p>La registrazione viene trasmessa alla Funzione Strumentale e resta in attesa di verifica.</p><button type="submit" disabled>Invia la registrazione</button></div>
@@ -217,7 +264,7 @@
   </main>
 
   <footer class="site-footer"><p>IIS Meucci - Mattei, sede di Decimomannu</p><p>Spazio curato dai docenti · Non sostituisce il <a href="https://www.iismeuccimattei.edu.it/" target="_blank" rel="noopener">sito istituzionale <span aria-hidden="true">↗</span></a></p></footer>
-  <script type="module" src="una-scuola-da-vivere.js?v=20261116-agenda"></script>
+  <script type="module" src="una-scuola-da-vivere.js?v=20261117-codice"></script>
   <!-- Cloudflare Web Analytics: conteggio delle pagine pubbliche -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"59b3a938ff634bfaaa1caa774a713401","spa":false}'></script>
 </body>

@@ -364,3 +364,55 @@ details.school-group[open] { padding-bottom:12px; }
 
 
 .school-calendar-page .hero-stats { grid-template-columns: minmax(0, 220px); }
+
+/* Codice personale del docente: le sue voci per scuola e lo storico con le note (17/11/2026). */
+.teacher-access { margin:0 0 26px; padding:18px; border:1px solid #c9dbe5; border-radius:16px; background:#f3f8fb; }
+.teacher-access h3, .form-title { margin:0 0 8px; color:var(--navy); font-size:1.15rem; }
+.teacher-access .panel-intro { margin:0 0 14px; font-size:.95rem; }
+.code-form { grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:10px 12px; }
+.code-form .form-message { grid-column:1 / -1; }
+.code-form button, .rename-form button { min-height:48px; padding:0 20px; border:0; border-radius:12px; color:#fff; background:#00522a; font:inherit; font-size:1rem; font-weight:800; cursor:pointer; }
+.code-form button:focus-visible, .rename-form button:focus-visible { outline:3px solid #123c57; outline-offset:3px; }
+.commission-access { margin-top:14px; }
+.commission-access > summary { color:#123c57; font-size:.95rem; font-weight:750; cursor:pointer; }
+.commission-access > summary:focus-visible { outline:3px solid #006c63; outline-offset:3px; }
+.commission-access form { margin-top:12px; }
+.commission-area { display:grid; gap:12px; margin-bottom:16px; }
+.teacher-pick { display:grid; gap:6px; color:var(--navy); font-size:.95rem; font-weight:800; }
+.teacher-pick select { min-height:48px; padding:10px 12px; border:1px solid #8aa6b5; border-radius:11px; color:var(--ink); background:#fff; font:inherit; font-size:1rem; }
+.teacher-bar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; }
+.teacher-bar p { display:grid; gap:2px; margin:0; }
+.teacher-bar strong { color:var(--navy); font-size:1.1rem; }
+.teacher-bar span { color:#33495a; font-size:.95rem; }
+.teacher-bar-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.rename-form { margin-top:14px; padding:14px; border:1px solid #c9dbe5; border-radius:12px; background:#fff; }
+.rename-form .school-help { margin:0; }
+.entries-title { margin:22px 0 8px; color:var(--navy); font-size:1.02rem; }
+.new-entries h4 { margin:0 0 8px; color:var(--navy); font-size:1.02rem; }
+.entry-list { display:grid; gap:10px; margin:0 0 10px; padding:0; list-style:none; }
+.entry-card { display:grid; gap:10px; padding:14px; border:1px solid #c8d8e1; border-radius:12px; background:#fff; }
+.entry-card label { display:grid; gap:6px; color:var(--navy); font-size:.92rem; font-weight:800; }
+.entry-card select, .entry-card textarea { width:100%; min-height:46px; padding:10px 12px; border:1px solid #8aa6b5; border-radius:10px; color:var(--ink); background:#fff; font:inherit; font-size:.95rem; font-weight:500; }
+.entry-card textarea { min-height:76px; resize:vertical; line-height:1.5; }
+.entry-card select:focus, .entry-card textarea:focus { border-color:#00522a; outline:3px solid rgb(0 82 42 / 22%); }
+.entry-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; }
+.entry-school { color:var(--navy); font-size:1rem; }
+.entry-date { color:#33495a; font-size:.95rem; }
+.entry-state { padding:2px 9px; border-radius:999px; color:#33495a; background:#eef3f6; font-size:.86rem; font-weight:750; }
+.entry-state.is-assegnata, .entry-state.is-confirmed { color:#00522a; background:#e5f3ea; }
+.entry-state.is-pending { color:#5c3800; background:#fbf1de; }
+.entry-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.entry-actions .calendar-action.is-primary { border-color:#00522a; color:#fff; background:#00522a; }
+.entry-actions .calendar-action.is-primary:hover { background:#006b37; }
+.entry-card .form-message:empty { display:none; }
+.entry-empty { padding:12px 14px; border:1px dashed #a9bfcc; border-radius:12px; color:#33495a; font-size:.95rem; }
+.past-visits .visit-row { grid-template-columns:9.25rem minmax(0, 1fr) auto; }
+@media (max-width: 640px) {
+  .teacher-access { padding:14px; }
+  .code-form { grid-template-columns:1fr; }
+  .code-form button, .rename-form button { width:100%; }
+  .teacher-bar-actions, .entry-actions { display:grid; width:100%; }
+  .past-visits .visit-row { grid-template-columns:minmax(4.5rem, 5rem) minmax(0, 1fr); }
+  .past-visits .visit-row .calendar-action { grid-column:2; justify-self:start; }
+}
+.entry-card .optional { color:#33495a; font-size:.86rem; font-weight:650; }

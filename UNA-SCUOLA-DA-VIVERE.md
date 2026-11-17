@@ -30,7 +30,7 @@ Commissione può segnare un supporter come `assegnata` e una proposta come
 `in_valutazione` o `approvata`. Date e orari saranno aggiunti soltanto quando
 verranno definiti.
 
-Chi invia senza password non può più correggere il proprio invio. Dal 9/11/2026 la
+(Superato dal 17/11/2026, vedi «Codice personale dei docenti».) Chi invia senza password non può più correggere il proprio invio. Dal 9/11/2026 la
 Funzione Strumentale corregge tutto dalla Gestione, con «Modifica o aggiungi una nota»
 sulla scheda: nella disponibilità nome, cognome, scuole (da una a cinque) e nota; nella
 proposta tutti i campi del modulo. Azioni `edit_supporter` ed `edit_proposal`, riservate
@@ -113,3 +113,38 @@ possono confermare più docenti. Una visita a registro conta come svolta solo da
 Se il docente non va, la riga si corregge o si sostituisce il docente con «Modifica o
 sostituisci» (azione `update_activity`) oppure si annulla. Il registro, ordinato per
 docente, è l’elenco che si consegna alla Dirigente.
+
+## Codice personale dei docenti (dal 17/11/2026)
+
+Decisione di Salvatore: ogni docente dà la disponibilità **scuola per scuola**, con una nota
+per ciascuna scuola e, se vuole, la data precisa (in programma o già trascorsa), e può
+modificarla. Nelle note si scrivono anche le attività svolte oltre l’orario di servizio,
+che servono al riconoscimento.
+
+- Tabella `orientamento_docenti` (nome, cognome, codice di 8 caratteri senza I, O, 0, 1).
+  Ogni voce di `orientamento_disponibilita` ha una sola scuola, `docente_id` e
+  `appuntamento_id` facoltativo; le righe del registro hanno `docente_id`.
+- Al primo invio il docente riceve il **codice personale**, salvato anche nel browser. Chi è
+  già registrato e invia senza codice aggiunge le voci al proprio nome, ma il codice non gli
+  viene mostrato. Con il codice, nella sezione 01 della pagina, il docente vede e modifica
+  solo le proprie voci: data e nota delle disponibilità, nota delle visite del registro
+  (storico), nome e cognome (cambiano in tutte le sue voci e nel registro, senza toccare
+  le conferme).
+- Con la **password della Commissione** (orientatore) si sceglie un docente e si modificano
+  le sue voci; i codici non si vedono. La password di consultazione (supporter) non modifica.
+- La **Funzione Strumentale** vede i codici in Gestione → Disponibilità → «Codici personali
+  dei docenti» e con «Nuovo codice» sostituisce un codice perso (il vecchio non vale più).
+- Se il docente o la Commissione cambia la nota di una visita già confermata, la visita torna
+  `da_confermare`; la nota precedente resta in `nota_precedente` e la Gestione mostra
+  «Nota cambiata il … Prima: «…»». La conferma della FS toglie l’avviso.
+- Le note non compaiono mai nella pagina pubblica (`overview`), né i codici.
+
+Azioni della funzione `orientamento`: `teacher_entries`, `save_entry`, `remove_entry`,
+`save_activity_note`, `rename_teacher` (codice oppure sessione orientatore/FS con
+`docente_id`), `list_teachers` (sessione), `new_code` (solo FS). `submit_supporter` accetta
+`voci` (una per scuola) e, per le copie vecchie della pagina, ancora `scuole` + `nota`.
+
+Attivazione: `supabase/sql/orientamento-codice-docenti.sql`, poi, una tantum,
+`supabase/sql/orientamento-codice-docenti-dati.sql` (divide i vecchi invii per scuola con la
+stessa nota, assegna i codici ai docenti già presenti, collega il registro), poi la funzione,
+infine i file statici. Prova: `node scripts/verifica-codice-docenti.mjs`.

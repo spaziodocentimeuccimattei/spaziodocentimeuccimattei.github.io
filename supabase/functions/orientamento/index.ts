@@ -197,6 +197,124 @@ class PublicServiceError extends Error {
   constructor() { super("Il modulo non è disponibile. Riprova più tardi."); }
 }
 
+// Codice personale del docente (decisione di Salvatore del 17/11/2026): 8 caratteri senza I, O, 0, 1, come «K7P2-QX4M».
+const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const UUID = /^[0-9a-f-]{36}$/i;
+const MAX_ENTRIES_PER_SUBMISSION = 5;
+type Teacher = { id: string; nome: string; cognome: string; codice: string };
+type Editor = { teacher: Teacher; level: "docente" | AccessLevel };
+
+function newTeacherCode() {
+  const chars = Array.from(crypto.getRandomValues(new Uint8Array(8)), (byte) => CODE_ALPHABET[byte % 32]).join("");
+  return `${chars.slice(0, 4)}-${chars.slice(4)}`;
+}
+
+function normalizeCode(value: unknown) {
+  if (typeof value !== "string") return "";
+  const raw = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return /^[A-HJ-NP-Z2-9]{8}$/.test(raw) ? `${raw.slice(0, 4)}-${raw.slice(4)}` : "";
+}
+
+class EditorError extends Error {
+  status: number;
+  constructor(message: string, status: number) { super(message); this.status = status; }
+}
+
+async function teacherByCode(code: string) {
+  const { data, error } = await admin.from("orientamento_docenti").select("id,nome,cognome,codice").eq("codice", code).maybeSingle();
+  if (error) throw new PublicServiceError();
+  return data as Teacher | null;
+}
+
+async function teacherByName(nome: string, cognome: string) {
+  const { data, error } = await admin.from("orientamento_docenti").select("id,nome,cognome,codice").limit(1000);
+  if (error) throw new PublicServiceError();
+  const key = personKey(nome, cognome);
+  return ((data ?? []) as Teacher[]).find((item) => personKey(item.nome, item.cognome) === key) ?? null;
+}
+
+async function createTeacher(nome: string, cognome: string) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const { data, error } = await admin.from("orientamento_docenti")
+      .insert({ nome, cognome, codice: newTeacherCode() }).select("id,nome,cognome,codice").single();
+    if (!error && data) return data as Teacher;
+  }
+  throw new PublicServiceError();
+}
+
+// Chi modifica: il docente con il suo codice, oppure la Commissione o la Funzione Strumentale con la sessione, scegliendo il docente.
+async function resolveEditor(request: Request, payload: Record<string, unknown>): Promise<Editor> {
+  if (payload.codice !== undefined && payload.codice !== null && payload.codice !== "") {
+    const code = normalizeCode(payload.codice);
+    const teacher = code ? await teacherByCode(code) : null;
+    if (!teacher) throw new EditorError("Codice non riconosciuto. Controlla le lettere oppure chiedilo alla Funzione Strumentale.", 404);
+    return { teacher, level: "docente" };
+  }
+  const session = await verifySession(request);
+  if (!session) throw new EditorError("Inserisci il tuo codice personale.", 401);
+  if (session.accessLevel === "supporter") throw new EditorError("Questa password consente soltanto la consultazione.", 403);
+  const id = payload.docente_id;
+  if (typeof id !== "string" || !UUID.test(id)) throw new EditorError("Scegli il docente.", 400);
+  const { data, error } = await admin.from("orientamento_docenti").select("id,nome,cognome,codice").eq("id", id).maybeSingle();
+  if (error) throw new PublicServiceError();
+  if (!data) throw new EditorError("Docente non trovato: aggiorna la pagina.", 404);
+  return { teacher: data as Teacher, level: session.accessLevel };
+}
+
+function editorFailure(request: Request, error: unknown, fallback: string) {
+  if (error instanceof EditorError) return json(request, { error: error.message }, error.status);
+  if (error instanceof PublicServiceError) return json(request, { error: error.message }, 503);
+  return json(request, { error: error instanceof Error ? error.message : fallback }, 400);
+}
+
+// La data scelta deve essere una data non archiviata della stessa scuola.
+async function checkAppointment(value: unknown, schoolId: string) {
+  if (value === undefined || value === null || value === "") return null;
+  if (typeof value !== "string" || !UUID.test(value)) throw new Error("Data non valida.");
+  const { data, error } = await admin.from("orientamento_appuntamenti").select("id,scuola_id")
+    .eq("id", value).eq("archiviata", false).maybeSingle();
+  if (error) throw new PublicServiceError();
+  if (!data || data.scuola_id !== schoolId) throw new Error("La data scelta non appartiene a questa scuola. Ricarica la pagina.");
+  return value;
+}
+
+// Voci di disponibilità: una per scuola (con data facoltativa) e la sua nota.
+async function entryFields(payload: Record<string, unknown>) {
+  let raw = payload.voci;
+  // Compatibilità con le copie della pagina precedente: elenco di scuole con un’unica nota.
+  if (raw === undefined && Array.isArray(payload.scuole)) {
+    raw = (payload.scuole as unknown[]).map((scuola_id) => ({ scuola_id, nota: payload.nota ?? "" }));
+  }
+  if (!Array.isArray(raw) || raw.length < 1 || raw.length > MAX_ENTRIES_PER_SUBMISSION) throw new Error("Seleziona da una a cinque scuole.");
+  const entries = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") throw new Error("Seleziona da una a cinque scuole.");
+    const entry = item as Record<string, unknown>;
+    const scuola = typeof entry.scuola_id === "string" && /^[a-z0-9-]{3,80}$/.test(entry.scuola_id) ? entry.scuola_id : "";
+    if (!scuola) throw new Error("Seleziona da una a cinque scuole.");
+    entries.push({ scuola, nota: publicText(entry.nota ?? "", 0, 600), appuntamento: entry.appuntamento_id });
+  }
+  if (new Set(entries.map((entry) => `${entry.scuola}|${entry.appuntamento ?? ""}`)).size !== entries.length) throw new Error("Hai scelto due volte la stessa scuola.");
+  const schools = [...new Set(entries.map((entry) => entry.scuola))];
+  const { data: valid, error } = await admin.from("orientamento_scuole").select("id").in("id", schools).eq("attiva", true);
+  if (error) throw new PublicServiceError();
+  if (!valid || valid.length !== schools.length) throw new Error("L’elenco delle scuole è cambiato. Ricarica la pagina.");
+  const result = [];
+  for (const entry of entries) result.push({ scuola: entry.scuola, nota: entry.nota, appuntamento_id: await checkAppointment(entry.appuntamento, entry.scuola) });
+  return result;
+}
+
+async function activeEntries(teacherId: string) {
+  const { data, error } = await admin.from("orientamento_disponibilita")
+    .select("id,scuole,appuntamento_id,nota,stato,created_at,updated_at").eq("docente_id", teacherId).order("created_at");
+  if (error) throw new PublicServiceError();
+  return (data ?? []).filter((item) => item.stato !== "archiviata");
+}
+
+function duplicateEntry(entries: { scuole: string[]; appuntamento_id: string | null }[], school: string, appointment: string | null) {
+  return entries.some((item) => item.scuole?.[0] === school && (item.appuntamento_id ?? null) === appointment);
+}
+
 async function publicQuota(request: Request) {
   const ip = request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   const day = new Date().toISOString().slice(0, 10);
@@ -227,18 +345,201 @@ async function supporterFields(payload: Record<string, unknown>) {
   return { nome, cognome, scuole: scuole as string[], nota };
 }
 
+// Invio pubblico: una voce per scuola, ognuna con la sua nota. Al primo invio il docente riceve il codice personale.
+// Chi è già registrato e invia senza codice aggiunge le voci al proprio nome, ma il codice non viene mostrato.
 async function submitSupporter(request: Request, payload: Record<string, unknown>) {
   try {
     if (payload.website) return json(request, { ok: true, codice: "RICEVUTA" });
-    const fields = await supporterFields(payload);
-    if (!await publicQuota(request)) return json(request, { error: "Troppe richieste da questa connessione. Riprova domani." }, 429);
-    const { data, error } = await admin.from("orientamento_disponibilita")
-      .insert(fields).select("id").single();
-    if (error || !data) throw new PublicServiceError();
-    return json(request, { ok: true, codice: confirmationCode(data.id) }, 201);
+    const entries = await entryFields(payload);
+    let teacher: Teacher | null = null;
+    let known = false;
+    let created = false;
+    const hasCode = payload.codice !== undefined && payload.codice !== null && payload.codice !== "";
+    if (hasCode) {
+      const code = normalizeCode(payload.codice);
+      teacher = code ? await teacherByCode(code) : null;
+      if (!teacher) return json(request, { error: "Codice non riconosciuto. Controlla le lettere oppure chiedilo alla Funzione Strumentale." }, 404);
+    } else {
+      const nome = publicName(payload.nome);
+      const cognome = publicName(payload.cognome);
+      teacher = await teacherByName(nome, cognome);
+      known = Boolean(teacher);
+      if (!await publicQuota(request)) return json(request, { error: "Troppe richieste da questa connessione. Riprova domani." }, 429);
+      if (!teacher) {
+        teacher = await createTeacher(nome, cognome);
+        created = true;
+      }
+    }
+    if (hasCode && !await publicQuota(request)) return json(request, { error: "Troppe richieste da questa connessione. Riprova domani." }, 429);
+    const existing = await activeEntries(teacher.id);
+    const repeated = entries.find((entry) => duplicateEntry(existing, entry.scuola, entry.appuntamento_id));
+    if (repeated) {
+      return json(request, { error: "Hai già dato disponibilità per una di queste scuole con la stessa data: modifica quella voce in «Le tue disponibilità»." }, 409);
+    }
+    const rows = entries.map((entry) => ({ nome: teacher!.nome, cognome: teacher!.cognome, scuole: [entry.scuola], nota: entry.nota,
+      appuntamento_id: entry.appuntamento_id, docente_id: teacher!.id }));
+    const { data, error } = await admin.from("orientamento_disponibilita").insert(rows).select("id");
+    if (error || !data?.length) throw new PublicServiceError();
+    return json(request, {
+      ok: true,
+      codice: confirmationCode(data[0].id),
+      codice_personale: created ? teacher.codice : null,
+      gia_registrato: known,
+      docente: { nome: teacher.nome, cognome: teacher.cognome },
+    }, 201);
   } catch (error) {
     return json(request, { error: error instanceof Error ? error.message : "Invio non riuscito." }, error instanceof PublicServiceError ? 503 : 400);
   }
+}
+
+// Le voci e lo storico di un docente: lo vede lui con il codice, la Commissione e la Funzione Strumentale con la sessione.
+async function teacherEntries(request: Request, payload: Record<string, unknown>) {
+  try {
+    const editor = await resolveEditor(request, payload);
+    const [entries, activities] = await Promise.all([
+      activeEntries(editor.teacher.id),
+      admin.from("orientamento_attivita").select("id,tipo,scuola_id,titolo,data,nota,stato,nota_precedente,modificata_dal_docente_at")
+        .eq("docente_id", editor.teacher.id).eq("archiviata", false).order("data", { ascending: false }),
+    ]);
+    if (activities.error) throw new PublicServiceError();
+    const { teacher } = editor;
+    return json(request, {
+      docente: { id: teacher.id, nome: teacher.nome, cognome: teacher.cognome,
+        codice: editor.level === "docente" || editor.level === "funzione_strumentale" ? teacher.codice : null },
+      accesso: editor.level,
+      voci: entries.map((item) => ({ id: item.id, scuola_id: item.scuole[0], appuntamento_id: item.appuntamento_id ?? null,
+        nota: item.nota, stato: item.stato, created_at: item.created_at, updated_at: item.updated_at })),
+      attivita: activities.data ?? [],
+    });
+  } catch (error) {
+    return editorFailure(request, error, "Impossibile caricare le tue voci.");
+  }
+}
+
+// Elenco dei docenti per chi entra con la password della Commissione o della Funzione Strumentale.
+async function listTeachers(request: Request) {
+  const session = await verifySession(request);
+  if (!session) return json(request, { error: "Sessione scaduta. Accedi di nuovo." }, 401);
+  if (session.accessLevel === "supporter") return json(request, { error: "Questa password consente soltanto la consultazione." }, 403);
+  const { data, error } = await admin.from("orientamento_docenti").select("id,nome,cognome,codice").order("cognome").limit(1000);
+  if (error) return json(request, { error: "Elenco dei docenti non disponibile." }, 503);
+  const fs = session.accessLevel === "funzione_strumentale";
+  const teachers = ((data ?? []) as Teacher[]).map((item) => ({ id: item.id, nome: item.nome, cognome: item.cognome, codice: fs ? item.codice : null }))
+    .sort((a, b) => personKey(a.cognome, a.nome).localeCompare(personKey(b.cognome, b.nome)));
+  return json(request, { accesso: session.accessLevel, docenti: teachers });
+}
+
+// Nuova voce o modifica di nota e data di una voce del docente.
+async function saveEntry(request: Request, payload: Record<string, unknown>) {
+  try {
+    const editor = await resolveEditor(request, payload);
+    const nota = publicText(payload.nota ?? "", 0, 600);
+    const entries = await activeEntries(editor.teacher.id);
+    const now = new Date().toISOString();
+    if (payload.id !== undefined && payload.id !== null && payload.id !== "") {
+      const id = payload.id;
+      if (typeof id !== "string" || !UUID.test(id)) throw new Error("Voce non valida.");
+      const current = entries.find((item) => item.id === id);
+      if (!current) throw new EditorError("Voce non trovata: aggiorna la pagina.", 404);
+      const appointment = await checkAppointment(payload.appuntamento_id, current.scuole[0]);
+      if (appointment !== (current.appuntamento_id ?? null) && duplicateEntry(entries.filter((item) => item.id !== id), current.scuole[0], appointment)) {
+        throw new EditorError("Hai già una voce per questa scuola con la stessa data.", 409);
+      }
+      const { data, error } = await admin.from("orientamento_disponibilita").update({ nota, appuntamento_id: appointment, updated_at: now })
+        .eq("id", id).eq("docente_id", editor.teacher.id).select("id").maybeSingle();
+      if (error) throw new PublicServiceError();
+      if (!data) throw new EditorError("Voce non trovata: aggiorna la pagina.", 404);
+      return json(request, { ok: true, id });
+    }
+    const [entry] = await entryFields({ voci: [{ scuola_id: payload.scuola_id, appuntamento_id: payload.appuntamento_id, nota }] });
+    if (duplicateEntry(entries, entry.scuola, entry.appuntamento_id)) throw new EditorError("Hai già una voce per questa scuola con la stessa data: modifica quella.", 409);
+    if (editor.level === "docente" && !await publicQuota(request)) throw new EditorError("Troppe richieste da questa connessione. Riprova domani.", 429);
+    const { data, error } = await admin.from("orientamento_disponibilita").insert({ nome: editor.teacher.nome, cognome: editor.teacher.cognome,
+      scuole: [entry.scuola], nota, appuntamento_id: entry.appuntamento_id, docente_id: editor.teacher.id }).select("id").single();
+    if (error || !data) throw new PublicServiceError();
+    return json(request, { ok: true, id: data.id }, 201);
+  } catch (error) {
+    return editorFailure(request, error, "Salvataggio non riuscito.");
+  }
+}
+
+// Il docente toglie una propria disponibilità: la voce si archivia, non si cancella.
+async function removeEntry(request: Request, payload: Record<string, unknown>) {
+  try {
+    const editor = await resolveEditor(request, payload);
+    const id = payload.id;
+    if (typeof id !== "string" || !UUID.test(id)) throw new Error("Voce non valida.");
+    const { data, error } = await admin.from("orientamento_disponibilita").update({ stato: "archiviata", updated_at: new Date().toISOString() })
+      .eq("id", id).eq("docente_id", editor.teacher.id).select("id").maybeSingle();
+    if (error) throw new PublicServiceError();
+    if (!data) throw new EditorError("Voce non trovata: aggiorna la pagina.", 404);
+    return json(request, { ok: true });
+  } catch (error) {
+    return editorFailure(request, error, "Operazione non riuscita.");
+  }
+}
+
+// Nota di una visita del registro (lo storico): se era già confermata e non la cambia la Funzione Strumentale,
+// torna da confermare e la nota precedente resta visibile nella Gestione.
+async function saveActivityNote(request: Request, payload: Record<string, unknown>) {
+  try {
+    const editor = await resolveEditor(request, payload);
+    const id = payload.id;
+    if (typeof id !== "string" || !UUID.test(id)) throw new Error("Voce non valida.");
+    const nota = publicText(payload.nota ?? "", 0, 600);
+    const { data: current, error: readError } = await admin.from("orientamento_attivita").select("id,nota,stato,nota_precedente")
+      .eq("id", id).eq("docente_id", editor.teacher.id).eq("archiviata", false).maybeSingle();
+    if (readError) throw new PublicServiceError();
+    if (!current) throw new EditorError("Visita non trovata: aggiorna la pagina.", 404);
+    if (current.nota === nota) return json(request, { ok: true, stato: current.stato });
+    const reconfirm = current.stato === "confermata" && editor.level !== "funzione_strumentale";
+    const fields: Record<string, unknown> = { nota };
+    if (reconfirm) Object.assign(fields, { stato: "da_confermare", nota_precedente: current.nota, modificata_dal_docente_at: new Date().toISOString() });
+    const { data, error } = await admin.from("orientamento_attivita").update(fields)
+      .eq("id", id).eq("docente_id", editor.teacher.id).eq("archiviata", false).select("id,stato").maybeSingle();
+    if (error) throw new PublicServiceError();
+    if (!data) throw new EditorError("Visita non trovata: aggiorna la pagina.", 404);
+    return json(request, { ok: true, stato: data.stato, da_riconfermare: reconfirm });
+  } catch (error) {
+    return editorFailure(request, error, "Salvataggio non riuscito.");
+  }
+}
+
+// Correzione di nome e cognome: vale per il docente, per tutte le sue disponibilità e per le sue righe del registro.
+// La stessa persona, riconosciuta dal codice: le conferme restano.
+async function renameTeacher(request: Request, payload: Record<string, unknown>) {
+  try {
+    const editor = await resolveEditor(request, payload);
+    const nome = publicName(payload.nome);
+    const cognome = publicName(payload.cognome);
+    const other = await teacherByName(nome, cognome);
+    if (other && other.id !== editor.teacher.id) throw new EditorError("Esiste già un docente con questo nome: chiedi alla Funzione Strumentale di unire le voci.", 409);
+    const now = new Date().toISOString();
+    const { error } = await admin.from("orientamento_docenti").update({ nome, cognome, updated_at: now }).eq("id", editor.teacher.id);
+    if (error) throw new PublicServiceError();
+    const [entries, activities] = await Promise.all([
+      admin.from("orientamento_disponibilita").update({ nome, cognome, updated_at: now }).eq("docente_id", editor.teacher.id),
+      admin.from("orientamento_attivita").update({ nome, cognome }).eq("docente_id", editor.teacher.id),
+    ]);
+    if (entries.error || activities.error) throw new PublicServiceError();
+    return json(request, { ok: true, docente: { nome, cognome } });
+  } catch (error) {
+    return editorFailure(request, error, "Modifica non riuscita.");
+  }
+}
+
+// Solo la Funzione Strumentale: un nuovo codice per chi ha perso il suo. Il vecchio smette di funzionare.
+async function newCode(request: Request, payload: Record<string, unknown>) {
+  const id = payload.docente_id;
+  if (typeof id !== "string" || !UUID.test(id)) return json(request, { error: "Scegli il docente." }, 400);
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const codice = newTeacherCode();
+    const { data, error } = await admin.from("orientamento_docenti").update({ codice, updated_at: new Date().toISOString() })
+      .eq("id", id).select("id,codice").maybeSingle();
+    if (!error && data) return json(request, { ok: true, codice: data.codice });
+    if (!error && !data) return json(request, { error: "Docente non trovato." }, 404);
+  }
+  return json(request, { error: "Nuovo codice non riuscito." }, 503);
 }
 
 // Campi di una proposta di Mattinée: gli stessi controlli per l’invio pubblico e per la correzione della Funzione Strumentale.
@@ -318,9 +619,9 @@ function localToday() {
 async function loadParticipationData() {
   const [schools, supporter, proposals, activities, appointments] = await Promise.all([
     admin.from("orientamento_scuole").select("id,comune,etichetta,area,verificata").eq("attiva", true).order("ordine"),
-    admin.from("orientamento_disponibilita").select("id,nome,cognome,scuole,nota,stato,created_at").order("created_at", { ascending: false }).limit(500),
+    admin.from("orientamento_disponibilita").select("id,nome,cognome,scuole,nota,stato,docente_id,appuntamento_id,created_at").order("created_at", { ascending: false }).limit(500),
     admin.from("orientamento_proposte").select("id,nome,cognome,titolo,area,tipologia,descrizione,durata_minuti,partecipanti,esigenze,nota,stato,created_at").order("created_at", { ascending: false }).limit(500),
-    admin.from("orientamento_attivita").select("id,nome,cognome,tipo,scuola_id,titolo,data,nota,stato,created_at").eq("archiviata", false).order("data", { ascending: false }).limit(1000),
+    admin.from("orientamento_attivita").select("id,nome,cognome,tipo,scuola_id,titolo,data,nota,stato,docente_id,nota_precedente,modificata_dal_docente_at,created_at").eq("archiviata", false).order("data", { ascending: false }).limit(1000),
     admin.from("orientamento_appuntamenti").select("id,scuola_id,tipo,data,ora_inizio,ora_fine,luogo,nota,stato,updated_at").eq("archiviata", false).order("data").order("ora_inizio", { nullsFirst: true }).limit(1000),
   ]);
   if (schools.error || supporter.error || proposals.error || activities.error || appointments.error) throw new PublicServiceError();
@@ -367,11 +668,11 @@ async function overview(request: Request) {
       })),
       // Date da oggi in poi, senza la nota: è ciò che i docenti vedono prima di candidarsi.
       appuntamenti: data.appointments.filter((item) => item.data >= today).map((item) => ({
-        scuola_id: item.scuola_id, tipo: item.tipo, data: item.data,
+        id: item.id, scuola_id: item.scuola_id, tipo: item.tipo, data: item.data,
         ora_inizio: item.ora_inizio, ora_fine: item.ora_fine, luogo: item.luogo, stato: item.stato,
       })),
       appuntamenti_trascorsi: data.appointments.filter((item) => item.data < today).map((item) => ({
-        scuola_id: item.scuola_id, tipo: item.tipo, data: item.data,
+        id: item.id, scuola_id: item.scuola_id, tipo: item.tipo, data: item.data,
         ora_inizio: item.ora_inizio, ora_fine: item.ora_fine,
       })),
     });
@@ -383,7 +684,10 @@ async function overview(request: Request) {
 async function listContributions(request: Request) {
   try {
     const data = await loadParticipationData();
+    const teachers = await admin.from("orientamento_docenti").select("id,nome,cognome,codice").limit(1000);
+    if (teachers.error) throw new PublicServiceError();
     return json(request, {
+      docenti: teachers.data ?? [],
       scuole: data.schools,
       disponibilita: data.supporters,
       proposte: data.proposals,
@@ -414,7 +718,9 @@ async function activityFields(payload: Record<string, unknown>, allowFuture = fa
     if (error) throw new PublicServiceError();
     if (!school) throw new Error("Scuola non valida.");
   }
-  return { nome, cognome, tipo, scuola_id: scuolaId, titolo, data, nota };
+  // Il registro si lega al docente con lo stesso nome e cognome: così la visita compare tra le sue voci.
+  const teacher = await teacherByName(nome, cognome);
+  return { nome, cognome, tipo, scuola_id: scuolaId, titolo, data, nota, docente_id: teacher?.id ?? null };
 }
 
 async function registerActivity(request: Request, payload: Record<string, unknown>) {
@@ -451,6 +757,13 @@ async function updateActivity(request: Request, payload: Record<string, unknown>
 async function reportActivity(request: Request, payload: Record<string, unknown>) {
   try {
     if (payload.website) return json(request, { ok: true, codice: "RICEVUTA" });
+    // Con il codice personale nome e cognome sono quelli del docente registrato.
+    if (payload.codice !== undefined && payload.codice !== null && payload.codice !== "") {
+      const code = normalizeCode(payload.codice);
+      const teacher = code ? await teacherByCode(code) : null;
+      if (!teacher) return json(request, { error: "Codice non riconosciuto. Controlla le lettere oppure chiedilo alla Funzione Strumentale." }, 404);
+      payload = { ...payload, nome: teacher.nome, cognome: teacher.cognome };
+    }
     const fields = await activityFields(payload);
     if (!await publicQuota(request)) return json(request, { error: "Troppe richieste da questa connessione. Riprova domani." }, 429);
     const { data: row, error } = await admin.from("orientamento_attivita")
@@ -466,7 +779,7 @@ async function reportActivity(request: Request, payload: Record<string, unknown>
 async function confirmActivity(request: Request, payload: Record<string, unknown>) {
   const id = payload.id;
   if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) return json(request, { error: "Voce non valida." }, 400);
-  const { data, error } = await admin.from("orientamento_attivita").update({ stato: "confermata" })
+  const { data, error } = await admin.from("orientamento_attivita").update({ stato: "confermata", modificata_dal_docente_at: null })
     .eq("id", id).eq("archiviata", false).eq("stato", "da_confermare").lte("data", localToday())
     .select("id").maybeSingle();
   if (error) return json(request, { error: "Conferma non riuscita." }, 500);
@@ -816,6 +1129,13 @@ Deno.serve(async (request: Request) => {
   // "leaderboard" resta come alias temporaneo per le copie in cache della pagina precedente.
   if (action === "overview" || action === "leaderboard") return await overview(request);
   if (action === "report_activity") return await reportActivity(request, payload);
+  // Voci del docente: con il codice personale oppure con la sessione della Commissione o della Funzione Strumentale.
+  if (action === "teacher_entries") return await teacherEntries(request, payload);
+  if (action === "save_entry") return await saveEntry(request, payload);
+  if (action === "remove_entry") return await removeEntry(request, payload);
+  if (action === "save_activity_note") return await saveActivityNote(request, payload);
+  if (action === "rename_teacher") return await renameTeacher(request, payload);
+  if (action === "list_teachers") return await listTeachers(request);
 
   const session = await verifySession(request);
   if (!session) return json(request, { error: "Sessione scaduta. Accedi di nuovo." }, 401);
@@ -823,7 +1143,7 @@ Deno.serve(async (request: Request) => {
   if (action === "list") return await listDocuments(request, session.accessLevel);
   if (action === "view_presentation") return await viewPresentation(request, payload, session.accessLevel);
   // La gestione di candidature, proposte, attività e calendario è riservata alla password personale della Funzione Strumentale.
-  if (["list_contributions", "update_contribution", "edit_supporter", "edit_proposal", "register_activity", "update_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment"].includes(action) && session.accessLevel !== "funzione_strumentale") {
+  if (["list_contributions", "update_contribution", "edit_supporter", "edit_proposal", "register_activity", "update_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment", "new_code"].includes(action) && session.accessLevel !== "funzione_strumentale") {
     return json(request, { error: "Accesso riservato alla Funzione Strumentale." }, 403);
   }
   if (action === "list_contributions") return await listContributions(request);
@@ -836,6 +1156,7 @@ Deno.serve(async (request: Request) => {
   if (action === "confirm_activity") return await confirmActivity(request, payload);
   if (action === "save_appointment") return await saveAppointment(request, payload);
   if (action === "archive_appointment") return await archiveAppointment(request, payload);
+  if (action === "new_code") return await newCode(request, payload);
   if (["upload", "replace", "upload_presentation", "replace_presentation", "update", "archive"].includes(action) && session.accessLevel === "supporter") {
     return json(request, { error: "Questa password consente soltanto la consultazione." }, 403);
   }

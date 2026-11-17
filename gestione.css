@@ -321,3 +321,13 @@
   .visit-teachers { grid-column:auto; }
   .visit-timing { font-size:.9375rem; }
 }
+
+/* Codici personali dei docenti e note cambiate dopo la conferma (17/11/2026). */
+.teacher-codes { margin-top:24px; padding:14px 16px; border:1px solid #c9d8e0; border-radius:14px; background:#f6f9fb; }
+.teacher-codes > summary { color:#123c57; font-size:1rem; font-weight:800; cursor:pointer; }
+.teacher-codes > summary:focus-visible { outline:3px solid #006c63; outline-offset:3px; }
+.teacher-code-list { display:grid; gap:8px; margin:12px 0 0; padding:0; list-style:none; }
+.teacher-code { display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; padding:10px 12px; border:1px solid #d3e0e7; border-radius:10px; background:#fff; }
+.teacher-code-name { min-width:12rem; color:#123c57; font-weight:750; }
+.teacher-code code { padding:3px 8px; border-radius:6px; color:#17314a; background:#eef3f6; font-size:1rem; letter-spacing:.06em; }
+.visit-note-changed { display:block; margin-top:4px; padding:6px 9px; border-radius:8px; color:#5c3800; background:#fbf1de; font-size:.9rem; font-weight:700; }

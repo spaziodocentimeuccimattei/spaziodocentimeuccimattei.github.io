@@ -13,7 +13,14 @@ const schoolSearch = document.getElementById('schoolSearch');
 const schoolSearchEmpty = document.getElementById('schoolSearchEmpty');
 const schoolError = document.getElementById('schoolError');
 const schoolCounter = document.getElementById('schoolCounter');
-const selectedSchoolNames = document.getElementById('selectedSchoolNames');
+const newEntries = document.getElementById('newEntries');
+const newEntryList = document.getElementById('newEntryList');
+const CODE_KEY = 'orientamento-codice-personale';
+const SESSION_KEY = 'orientamento-sessione-commissione';
+const ENTRY_STATES = {ricevuta:'In attesa di assegnazione', assegnata:'Assegnata dalla Funzione Strumentale'};
+const longDate = new Intl.DateTimeFormat('it-IT', {weekday:'short', day:'numeric', month:'long', year:'numeric', timeZone:'UTC'});
+const draftNotes = new Map();
+const draftDates = new Map();
 const upcomingVisits = document.getElementById('upcomingVisits');
 const pastVisits = document.getElementById('pastVisits');
 const reachedSchools = document.getElementById('reachedSchools');
@@ -26,6 +33,12 @@ const schoolOptions = new Map();
 let schoolStates = new Map();
 let schoolNames = new Map();
 let currentOverview;
+let appointmentsBySchool = new Map();
+// Chi sta modificando: il docente con il suo codice oppure la Commissione con la sessione e il docente scelto.
+let teacherCode = storage(localStorage, CODE_KEY);
+let commissionToken = storage(sessionStorage, SESSION_KEY);
+let commissionTeacher = '';
+let teacherData = null;
 let calendarDay;
 let overviewError = false;
 
@@ -36,8 +49,17 @@ function element(tag, text, className) {
   return node;
 }
 
-function chooseSchool(school) {
+function storage(area, key, value) {
+  try {
+    if (value === undefined) return area.getItem(key) || '';
+    if (value) area.setItem(key, value); else area.removeItem(key);
+  } catch {}
+  return value || '';
+}
+
+function chooseSchool(school, appointment) {
   openActionPanel('#scuole');
+  if (appointment?.id) draftDates.set(school.id, appointment.id);
   schoolSearch.value = '';
   filterSchoolChoices();
   const option = schoolOptions.get(school.id);
@@ -48,7 +70,8 @@ function chooseSchool(school) {
     input.dispatchEvent(new Event('change', {bubbles:true}));
   }
   supporterForm.scrollIntoView({block:'start',behavior:'instant'});
-  if (input.checked) supporterForm.elements.nome.focus({preventScroll:true});
+  updateSchoolCounter();
+  if (input.checked) (teacherCode ? newEntryList.querySelector(`[data-school="${school.id}"] textarea`) : supporterForm.elements.nome)?.focus({preventScroll:true});
   else setMessage('supporterMessage', 'Hai già selezionato cinque scuole. Togli una scelta prima di aggiungerne un’altra.');
 }
 
@@ -62,14 +85,14 @@ function setMessage(id, message, kind = '') {
   }
 }
 
-async function send(action, data) {
+async function send(action, data, token = '') {
   if (previewCatalog) throw new Error('Questa è un’anteprima: gli invii saranno attivi dopo la pubblicazione.');
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
   try {
     const response = await fetch(ORIENTATION_API, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(token ? {'x-orientamento-session': token} : {}) },
       body: JSON.stringify({ action, ...data }),
       signal: controller.signal,
     });
@@ -90,8 +113,62 @@ function updateSchoolCounter() {
   const count = selected.length;
   schoolCounter.textContent = `${count} di ${MAX_SCHOOLS} scelte`;
   schoolCounter.classList.toggle('full', count === MAX_SCHOOLS);
-  selectedSchoolNames.hidden = count === 0;
-  selectedSchoolNames.textContent = count ? `Scelte: ${selected.map(id => schoolOptions.get(id).dataset.label).join(' · ')}` : '';
+  renderNewEntries(selected);
+}
+
+function schoolLabel(id) {
+  const school = currentSchools.find(item => item.id === id);
+  return school ? `${school.comune} · ${school.etichetta}` : id;
+}
+
+function appointmentLabel(item, today = italyToday()) {
+  const type = item.tipo === 'stand' ? 'Open Day con stand' : 'Orientamento nelle aule';
+  return `${longDate.format(new Date(`${item.data}T12:00:00Z`))} · ${type}${item.data < today ? ' · trascorsa' : ''}`;
+}
+
+// Elenco delle date di una scuola, in ordine, per scegliere a quale visita si riferisce la voce.
+function dateSelect(schoolId, value) {
+  const select = element('select');
+  select.name = 'appuntamento_id';
+  select.append(new Option('Nessuna data precisa', ''));
+  const dates = appointmentsBySchool.get(schoolId) || [];
+  for (const item of dates) select.append(new Option(appointmentLabel(item), item.id));
+  if (value && !dates.some(item => item.id === value)) select.append(new Option('Data non più in calendario', value));
+  select.value = value || '';
+  return select;
+}
+
+function field(text, control, optional) {
+  const label = element('label');
+  const title = element('span', text);
+  if (optional) title.append(' ', element('span', optional, 'optional'));
+  label.append(title, control);
+  return label;
+}
+
+function noteArea(value, placeholder) {
+  const area = element('textarea');
+  area.name = 'nota';
+  area.rows = 3;
+  area.maxLength = 600;
+  area.value = value || '';
+  area.placeholder = placeholder;
+  return area;
+}
+
+function renderNewEntries(selected) {
+  newEntries.hidden = selected.length === 0;
+  newEntryList.replaceChildren(...selected.map(id => {
+    const item = element('li', null, 'entry-card');
+    item.dataset.school = id;
+    item.append(element('strong', schoolLabel(id), 'entry-school'));
+    const select = dateSelect(id, draftDates.get(id));
+    select.addEventListener('change', () => draftDates.set(id, select.value));
+    const area = noteArea(draftNotes.get(id), 'Per esempio: posso dalle 10, conosco questa scuola, vado con un collega.');
+    area.addEventListener('input', () => draftNotes.set(id, area.value));
+    item.append(field('Data della visita', select, 'facoltativa'), field('Nota per questa scuola', area, 'facoltativa'));
+    return item;
+  }));
 }
 
 function applySchoolStates(rows) {
@@ -195,6 +272,26 @@ function localToday() {
   return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 }
 
+function reportVisit(school, appointment) {
+  // Se la visita è già nel tuo storico si corregge la sua nota, senza registrarla due volte.
+  const existing = teacherData?.attivita?.find(item => item.tipo === 'visita' && item.scuola_id === school.id && item.data === appointment.data);
+  const card = existing && activityList.querySelector(`[data-activity="${existing.id}"]`);
+  if (card) {
+    openActionPanel('#scuole');
+    card.scrollIntoView({block:'center', behavior:'instant'});
+    card.querySelector('textarea').focus({preventScroll:true});
+    cardMessage(card, 'Questa visita è già nel tuo storico: aggiungi qui la nota.');
+    return;
+  }
+  openActionPanel('#visita');
+  reportType.value = 'visita';
+  syncReportType();
+  reportSchool.value = school.id;
+  reportForm.elements.data.value = appointment.data;
+  reportForm.scrollIntoView({block:'start', behavior:'instant'});
+  (teacherCode ? reportForm.elements.nota : reportForm.elements.nome).focus({preventScroll:true});
+}
+
 function syncReportType() {
   const isVisit = reportType.value === 'visita';
   document.getElementById('reportSchoolField').hidden = !isVisit;
@@ -273,11 +370,16 @@ function renderVisit({school, appointment}, upcoming) {
     const choose = element('button', 'Dai disponibilità', 'calendar-action');
     choose.type = 'button';
     choose.setAttribute('aria-label', `Dai disponibilità per ${school.comune} · ${school.etichetta}`);
-    choose.addEventListener('click', () => chooseSchool(school));
+    choose.addEventListener('click', () => chooseSchool(school, appointment));
     row.append(timing, copy, choose);
   } else {
     copy.append(element('span', type));
-    row.append(timing, copy);
+    // Storico: chi c'era registra la propria presenza con la nota per le attività oltre il servizio.
+    const report = element('button', 'Registra la tua presenza', 'calendar-action');
+    report.type = 'button';
+    report.setAttribute('aria-label', `Registra la tua presenza a ${school.comune} · ${school.etichetta}, ${appointment.data}`);
+    report.addEventListener('click', () => reportVisit(school, appointment));
+    row.append(timing, copy, report);
   }
   return row;
 }
@@ -308,12 +410,20 @@ function refreshCalendarDay() {
 async function loadOverview(schools) {
   try {
     const data = await send('overview', {});
+    appointmentsBySchool = new Map();
+    for (const item of [...(data.appuntamenti || []), ...(data.appuntamenti_trascorsi || [])].sort(compareAppointments)) {
+      if (!item.id) continue;
+      if (!appointmentsBySchool.has(item.scuola_id)) appointmentsBySchool.set(item.scuola_id, []);
+      appointmentsBySchool.get(item.scuola_id).push(item);
+    }
     schoolStates = new Map(data.scuole.map((school) => [school.id, school.stato]));
     schoolNames = new Map(data.scuole.map((school) => [school.id, Array.isArray(school.docenti) ? school.docenti : []]));
     for (const [key, value] of Object.entries(data.totali)) setStat(key, value);
     currentOverview = data;
     overviewError = false;
     renderOverview(schools);
+    updateSchoolCounter();
+    renderTeacher();
   } catch {
     overviewError = true;
     calendarMessage.textContent = currentOverview
@@ -332,14 +442,21 @@ async function submitForm(event, action, messageId) {
   if (!form.reportValidity()) return;
   const data = fields(form);
   if (action === 'submit_supporter') {
-    data.scuole = selectedSchools();
-    if (data.scuole.length < 1 || data.scuole.length > MAX_SCHOOLS) {
+    const selected = selectedSchools();
+    if (selected.length < 1 || selected.length > MAX_SCHOOLS) {
       schoolError.hidden = false;
       schoolChoices.scrollIntoView({ block: 'center', behavior: 'smooth' });
       return;
     }
+    delete data.nota;
+    delete data.appuntamento_id;
+    data.voci = selected.map(id => ({scuola_id:id, appuntamento_id:draftDates.get(id) || null, nota:draftNotes.get(id) || ''}));
+    if (teacherCode) data.codice = teacherCode;
+    // La Commissione aggiunge le voci al docente scelto, una per scuola.
+    if (commissionToken && commissionTeacher) return submitForCommission(form, data.voci);
   } else if (action === 'report_activity') {
     if (data.tipo !== 'visita') delete data.scuola_id;
+    if (teacherCode) data.codice = teacherCode;
   } else {
     data.durata_minuti = Number(data.durata_minuti);
     data.partecipanti = data.partecipanti ? Number(data.partecipanti) : null;
@@ -350,12 +467,24 @@ async function submitForm(event, action, messageId) {
   try {
     const result = await send(action, data);
     form.reset();
+    if (action === 'submit_supporter') {
+      draftNotes.clear();
+      draftDates.clear();
+      if (result.codice_personale) {
+        teacherCode = storage(localStorage, CODE_KEY, result.codice_personale);
+        loadTeacher();
+      } else if (teacherCode) loadTeacher();
+    }
     schoolError.hidden = true;
     updateSchoolCounter();
     filterSchoolChoices();
-    if (action === 'report_activity') resetReportForm();
+    if (action === 'report_activity') { resetReportForm(); if (teacherCode) loadTeacher(); }
     const text = {
-      submit_supporter: `Disponibilità inviata. Codice: ${result.codice}. La Funzione Strumentale ti contatterà per concordare scuola, data e orario.`,
+      submit_supporter: result.codice_personale
+        ? `Disponibilità inviata. Il tuo codice personale è ${result.codice_personale}: annotalo. Su questo dispositivo resta salvato; altrove ti serve per modificare scuole, date e note.`
+        : result.gia_registrato
+          ? 'Disponibilità aggiunta al tuo nome. Per vederla e modificarla inserisci il tuo codice personale in «Le tue voci»; se non lo hai, chiedilo alla Funzione Strumentale.'
+          : 'Disponibilità aggiunta. La trovi qui sopra, in «Disponibilità per le visite».',
       submit_proposal: `Proposta inviata. Codice: ${result.codice}. La Commissione la valuterà e ti comunicherà l’esito.`,
       report_activity: `Attività registrata. Codice: ${result.codice}. Dopo la verifica della Funzione Strumentale entrerà nel riepilogo destinato alla Dirigente.`,
     }[action];
@@ -373,6 +502,267 @@ function openActionPanel(hash = window.location.hash) {
   const panel = document.getElementById(hash.slice(1));
   if (panel instanceof HTMLDetailsElement && panel.classList.contains('action-panel')) panel.open = true;
 }
+
+// --- Le voci del docente: disponibilità per scuola e storico delle visite ---
+const teacherArea = document.getElementById('teacherArea');
+const accessEntry = document.getElementById('accessEntry');
+const commissionArea = document.getElementById('commissionArea');
+const teacherPick = document.getElementById('teacherPick');
+const entryList = document.getElementById('entryList');
+const activityList = document.getElementById('activityList');
+const renameForm = document.getElementById('renameForm');
+const renameToggle = document.getElementById('renameToggle');
+
+function editorPayload(extra = {}) {
+  return commissionToken && commissionTeacher ? {...extra, docente_id:commissionTeacher} : {...extra, codice:teacherCode};
+}
+
+function editorSend(action, extra) {
+  return send(action, editorPayload(extra), commissionToken && commissionTeacher ? commissionToken : '');
+}
+
+function cardMessage(card, text, kind = '') {
+  const message = card.querySelector('.form-message');
+  message.textContent = text;
+  message.className = `form-message ${kind}`;
+}
+
+function cardButton(text, handler, className = 'calendar-action') {
+  const button = element('button', text, className);
+  button.type = 'button';
+  button.addEventListener('click', handler);
+  return button;
+}
+
+async function runCard(card, button, work) {
+  button.disabled = true;
+  cardMessage(card, 'Salvataggio in corso…');
+  try {
+    await work();
+  } catch (error) {
+    cardMessage(card, error.name === 'AbortError' ? 'Nessuna risposta: aggiorna la pagina e controlla prima di riprovare.' : error.message, 'error');
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function entryCard(entry) {
+  const card = element('li', null, 'entry-card');
+  card.dataset.entry = entry.id;
+  const head = element('div', null, 'entry-head');
+  head.append(element('strong', schoolLabel(entry.scuola_id), 'entry-school'), element('span', ENTRY_STATES[entry.stato] || entry.stato, `entry-state is-${entry.stato}`));
+  const select = dateSelect(entry.scuola_id, entry.appuntamento_id);
+  const area = noteArea(entry.nota, 'Per esempio: posso dalle 10, conosco questa scuola, vado con un collega.');
+  const actions = element('div', null, 'entry-actions');
+  const save = cardButton('Salva le modifiche', () => runCard(card, save, async () => {
+    await editorSend('save_entry', {id:entry.id, nota:area.value, appuntamento_id:select.value || null});
+    cardMessage(card, 'Modifiche salvate.', 'success');
+    loadOverview(currentSchools);
+  }), 'calendar-action is-primary');
+  const remove = cardButton('Togli questa disponibilità', () => {
+    if (!window.confirm(`Togliere la disponibilità per ${schoolLabel(entry.scuola_id)}?`)) return;
+    runCard(card, remove, async () => {
+      await editorSend('remove_entry', {id:entry.id});
+      await loadTeacher();
+      loadOverview(currentSchools);
+    });
+  });
+  actions.append(save, remove);
+  card.append(head, field('Data della visita', select, 'facoltativa'), field('Nota', area, 'facoltativa'), actions, element('p', null, 'form-message'));
+  card.querySelector('.form-message').setAttribute('role', 'status');
+  return card;
+}
+
+function activityCard(activity) {
+  const card = element('li', null, 'entry-card is-history');
+  card.dataset.activity = activity.id;
+  const head = element('div', null, 'entry-head');
+  const where = activity.tipo === 'visita' ? schoolLabel(activity.scuola_id) : `Mattinée · ${activity.titolo || 'senza titolo'}`;
+  const date = element('time', longDate.format(new Date(`${activity.data}T12:00:00Z`)), 'entry-date');
+  date.dateTime = activity.data;
+  const confirmed = activity.stato === 'confermata';
+  head.append(element('strong', where, 'entry-school'), date,
+    element('span', confirmed ? 'Confermata dalla Funzione Strumentale' : activity.modificata_dal_docente_at ? 'Nota cambiata: in attesa di nuova conferma' : 'In attesa di conferma', `entry-state ${confirmed ? 'is-confirmed' : 'is-pending'}`));
+  const area = noteArea(activity.nota, 'Per esempio: fuori orario di servizio 11.30–13.30 (2 ore).');
+  const save = cardButton('Salva la nota', () => {
+    if (confirmed && area.value.trim() !== activity.nota && !(commissionToken && commissionTeacher && teacherData?.accesso === 'funzione_strumentale')
+      && !window.confirm('La visita è già confermata: se cambi la nota tornerà da confermare. Continuare?')) return;
+    runCard(card, save, async () => {
+      const result = await editorSend('save_activity_note', {id:activity.id, nota:area.value});
+      await loadTeacher();
+      const fresh = activityList.querySelector(`[data-activity="${activity.id}"]`);
+      if (fresh) cardMessage(fresh, result.da_riconfermare ? 'Nota salvata. La visita torna da confermare.' : 'Nota salvata.', 'success');
+    });
+  }, 'calendar-action is-primary');
+  const actions = element('div', null, 'entry-actions');
+  actions.append(save);
+  card.append(head, field('Nota per il riconoscimento', area, 'attività oltre il servizio'), actions, element('p', null, 'form-message'));
+  card.querySelector('.form-message').setAttribute('role', 'status');
+  return card;
+}
+
+function renderTeacher() {
+  const commission = Boolean(commissionToken);
+  accessEntry.hidden = Boolean(teacherCode) || commission;
+  commissionArea.hidden = !commission;
+  teacherArea.hidden = !teacherData;
+  const names = document.getElementById('supporterNames');
+  const as = document.getElementById('supporterAs');
+  const reportNames = document.getElementById('reportNames');
+  const reportAs = document.getElementById('reportAs');
+  const known = teacherData && (teacherCode || (commission && commissionTeacher));
+  names.hidden = Boolean(known);
+  for (const input of names.querySelectorAll('input')) input.required = !known;
+  as.hidden = !known;
+  document.getElementById('supporterTitle').textContent = known ? 'Aggiungi altre disponibilità' : 'Dai la disponibilità';
+  const reportKnown = Boolean(teacherData && teacherCode);
+  reportNames.hidden = reportKnown;
+  for (const input of reportNames.querySelectorAll('input')) input.required = !reportKnown;
+  reportAs.hidden = !reportKnown;
+  if (!teacherData) return;
+  const {docente} = teacherData;
+  const fullName = `${docente.nome} ${docente.cognome}`;
+  as.textContent = `Le nuove voci vanno a ${fullName}.`;
+  reportAs.textContent = `Registri come ${fullName}.`;
+  document.getElementById('teacherName').textContent = fullName;
+  document.getElementById('teacherCode').textContent = docente.codice ? `Codice personale: ${docente.codice}` : 'Voci modificate con l’accesso della Commissione';
+  document.getElementById('teacherLogout').hidden = !teacherCode;
+  renameForm.elements.nome.value = docente.nome;
+  renameForm.elements.cognome.value = docente.cognome;
+  entryList.replaceChildren(...(teacherData.voci.length ? teacherData.voci.map(entryCard) : [element('li', 'Nessuna disponibilità: aggiungila con il modulo qui sotto.', 'entry-empty')]));
+  activityList.replaceChildren(...(teacherData.attivita.length ? teacherData.attivita.map(activityCard) : [element('li', 'Nessuna visita nel registro.', 'entry-empty')]));
+}
+
+async function loadTeacher() {
+  if (!teacherCode && !(commissionToken && commissionTeacher)) { teacherData = null; renderTeacher(); return; }
+  try {
+    teacherData = await editorSend('teacher_entries', {});
+  } catch (error) {
+    teacherData = null;
+    if (teacherCode && /Codice non riconosciuto/.test(error.message)) {
+      teacherCode = storage(localStorage, CODE_KEY, '');
+      setMessage('codeMessage', 'Il codice salvato su questo dispositivo non è più valido. Inseriscilo di nuovo o chiedilo alla Funzione Strumentale.', 'error');
+    } else if (commissionToken && /Sessione scaduta/.test(error.message)) {
+      commissionToken = storage(sessionStorage, SESSION_KEY, '');
+      commissionTeacher = '';
+    } else {
+      setMessage('codeMessage', error.message, 'error');
+    }
+  }
+  renderTeacher();
+}
+
+async function loadTeacherList() {
+  try {
+    const result = await send('list_teachers', {}, commissionToken);
+    teacherPick.replaceChildren(new Option('Scegli il docente', ''), ...result.docenti.map(item => new Option(`${item.cognome} ${item.nome}${item.codice ? ` · ${item.codice}` : ''}`, item.id)));
+    teacherPick.value = commissionTeacher;
+  } catch (error) {
+    commissionToken = storage(sessionStorage, SESSION_KEY, '');
+    setMessage('commissionMessage', error.message, 'error');
+    renderTeacher();
+  }
+}
+
+async function submitForCommission(form, voci) {
+  const button = form.querySelector('button[type="submit"]');
+  button.disabled = true;
+  setMessage('supporterMessage', 'Invio in corso…');
+  try {
+    for (const voce of voci) await editorSend('save_entry', voce);
+    form.reset();
+    draftNotes.clear();
+    draftDates.clear();
+    updateSchoolCounter();
+    setMessage('supporterMessage', 'Disponibilità aggiunte al docente scelto.', 'success');
+    await loadTeacher();
+    loadOverview(currentSchools);
+  } catch (error) {
+    setMessage('supporterMessage', error.message, 'error');
+    loadTeacher();
+  } finally {
+    button.disabled = false;
+  }
+}
+
+document.getElementById('codeForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const value = form.elements.codice.value.trim();
+  if (!value) { setMessage('codeMessage', 'Scrivi il codice personale.', 'error'); return; }
+  setMessage('codeMessage', 'Verifica del codice…');
+  try {
+    teacherData = await send('teacher_entries', {codice:value});
+    teacherCode = storage(localStorage, CODE_KEY, teacherData.docente.codice);
+    form.reset();
+    setMessage('codeMessage', '');
+    renderTeacher();
+  } catch (error) {
+    setMessage('codeMessage', error.message, 'error');
+  }
+});
+
+document.getElementById('commissionForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  setMessage('commissionMessage', 'Accesso in corso…');
+  try {
+    const result = await send('login', {password:form.elements.password.value});
+    if (result.access_level === 'supporter') throw new Error('Questa password consente soltanto la consultazione.');
+    commissionToken = storage(sessionStorage, SESSION_KEY, result.token);
+    form.reset();
+    setMessage('commissionMessage', '');
+    renderTeacher();
+    loadTeacherList();
+  } catch (error) {
+    setMessage('commissionMessage', error.message, 'error');
+  }
+});
+
+teacherPick.addEventListener('change', () => {
+  commissionTeacher = teacherPick.value;
+  teacherData = null;
+  loadTeacher();
+});
+
+document.getElementById('commissionLogout').addEventListener('click', () => {
+  if (commissionToken) send('logout', {}, commissionToken).catch(() => {});
+  commissionToken = storage(sessionStorage, SESSION_KEY, '');
+  commissionTeacher = '';
+  teacherData = null;
+  loadTeacher();
+});
+
+document.getElementById('teacherLogout').addEventListener('click', () => {
+  if (!window.confirm('Togliere il codice da questo dispositivo? Per rientrare dovrai scriverlo di nuovo.')) return;
+  teacherCode = storage(localStorage, CODE_KEY, '');
+  teacherData = null;
+  renderTeacher();
+});
+
+renameToggle.addEventListener('click', () => {
+  renameForm.hidden = !renameForm.hidden;
+  renameToggle.setAttribute('aria-expanded', String(!renameForm.hidden));
+  if (!renameForm.hidden) renameForm.elements.nome.focus();
+});
+
+renameForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!renameForm.reportValidity()) return;
+  const button = renameForm.querySelector('button[type="submit"]');
+  button.disabled = true;
+  setMessage('renameMessage', 'Salvataggio in corso…');
+  try {
+    await editorSend('rename_teacher', {nome:renameForm.elements.nome.value, cognome:renameForm.elements.cognome.value});
+    await loadTeacher();
+    loadOverview(currentSchools);
+    setMessage('renameMessage', 'Nome e cognome aggiornati in tutte le tue voci.', 'success');
+  } catch (error) {
+    setMessage('renameMessage', error.message, 'error');
+  } finally {
+    button.disabled = false;
+  }
+});
 
 let currentSchools = [];
 async function refreshCalendar() {
@@ -407,5 +797,9 @@ document.addEventListener('visibilitychange', () => {
 setInterval(refreshCalendarDay, 60000);
 for (const form of [supporterForm, proposalForm, reportForm]) form.querySelector('button[type="submit"]').disabled = false;
 resetReportForm();
-refreshCalendar();
+renderTeacher();
+refreshCalendar().then(() => {
+  if (commissionToken) loadTeacherList();
+  loadTeacher();
+});
 openActionPanel();

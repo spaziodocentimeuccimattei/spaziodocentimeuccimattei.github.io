@@ -13,7 +13,7 @@ export async function isolatedOrientation({now = '2026-10-16T12:00:00Z', seed = 
   const tables = new Map(Object.entries({
     orientamento_scuole: schools.map(s => ({...s, attiva:true})),
     orientamento_appuntamenti: [], orientamento_attivita: [], orientamento_disponibilita: [],
-    orientamento_proposte: [], orientamento_sessioni: [], orientamento_documenti: [], ...seed,
+    orientamento_proposte: [], orientamento_sessioni: [], orientamento_documenti: [], orientamento_docenti: [], ...seed,
   }));
   let instant = now;
   let failWrites = false;
@@ -41,9 +41,14 @@ export async function isolatedOrientation({now = '2026-10-16T12:00:00Z', seed = 
       let rows=records.filter(r=>this.filters.every(fn=>fn(r)));
       if(this.operation==='insert') {
         const defaults=this.table==='orientamento_attivita'?{stato:'da_confermare',archiviata:false}:{};
-        const row={id:webcrypto.randomUUID(),created_at:instant,...defaults,...structuredClone(this.fields)};
-        records.push(row); rows=[row];
-      } else if(this.operation==='update') rows.forEach(r=>Object.assign(r,structuredClone(this.fields)));
+        const list=Array.isArray(this.fields)?this.fields:[this.fields];
+        if(this.table==='orientamento_docenti'&&list.some(f=>records.some(r=>r.codice===f.codice)))return {data:null,error:{message:'duplicate key'}};
+        rows=list.map(fields=>({id:webcrypto.randomUUID(),created_at:instant,...defaults,...structuredClone(fields)}));
+        records.push(...rows);
+      } else if(this.operation==='update') {
+        if(this.table==='orientamento_docenti'&&this.fields.codice&&records.some(r=>r.codice===this.fields.codice&&!rows.includes(r)))return {data:null,error:{message:'duplicate key'}};
+        rows.forEach(r=>Object.assign(r,structuredClone(this.fields)));
+      }
       else if(this.operation==='delete') tables.set(this.table,records.filter(r=>!rows.includes(r)));
       return {data:single?structuredClone(rows[0]??null):structuredClone(rows),error:null};
     }
