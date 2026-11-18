@@ -18,6 +18,23 @@ function el(tag, attributi = {}, ...figli) {
 }
 const SIGLA_VIDEO = corso => `presentazione-orientamento/assets/video/${corso}`;
 
+/** «Scarica l'immagine»: prepara al tocco la cartolina da condividere (JPEG 1080×1920, non l'attestato) e la scarica. */
+function pulsanteImmagine(el, {corso, nome, id}) {
+  const b = el('button', {class: 'bt-link bt-attestato__scarica', type: 'button', id}, 'Scarica l’immagine da condividere');
+  b.addEventListener('click', async () => {
+    const testo = b.textContent; b.disabled = true; b.textContent = 'Preparo l’immagine…';
+    try {
+      const {cartolinaFile} = await import('./bussola-immagine-social.mjs?v=20261118-social');
+      const f = await cartolinaFile({corso, nome: typeof nome === 'function' ? nome() : nome});
+      const a = document.createElement('a'); a.href = f.url; a.download = f.name; document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(f.url), 60000);
+      b.textContent = testo;
+    } catch { b.textContent = 'Non riesco a preparare l’immagine. Riprova.'; }
+    finally { b.disabled = false; }
+  });
+  return b;
+}
+
 /** Biglietto per il ritorno da casa: QR (link personale) e, quando sarà attivo sul server, il codice breve. */
 export function biglietto({corso, token, persona = null, conclusi = [], salvato = () => true, codiceBreve = ''}) {
   const scheda = el('div', {class: 'bt-biglietto', 'data-corso': corso});
@@ -141,12 +158,11 @@ export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriA
       if (nomeAtt && titolo.textContent !== nomeAtt) { titolo.textContent = nomeAtt; titolo.classList.toggle('bt-titolo--medio', nomeAtt.length > 14); }
       const foglio = el('figure', {class: 'bt-attestato__foglio'});
       if (r?.canvas) { r.canvas.setAttribute('role', 'img'); r.canvas.setAttribute('aria-label', `Attestato di ${nomeAtt}`); foglio.append(r.canvas); }
-      // Un solo «Scarica», discreto sotto l'attestato: non compete con «Avanti» (Stampa non serve: il file si stampa da sé).
-      const scarica = r?.file?.url ? el('a', {class: 'bt-link bt-attestato__scarica', href: r.file.url, download: r.file.name, id: 'finaleScarica'}, 'Scarica l’attestato') : null;
-      zona.replaceChildren(foglio, ...(scarica ? [scarica] : []));
+      // Sotto l'attestato, discreto: l'immagine da condividere sui social (non l'attestato). Non compete con «Avanti».
+      zona.replaceChildren(foglio, pulsanteImmagine(el, {corso, nome: () => titolo.textContent, id: 'finaleScarica'}));
       const tok = typeof token === 'function' ? token() : token || sharedParticipant();
       const bigl = tok ? biglietto({corso, token: tok, persona: nomeOspite(), conclusi, salvato}) : null;
-      // L'attestato si guarda a schermo (con un solo «Scarica» discreto). Chi lo vuole per email lo chiede qui (blocco spento finché EMAIL_ATTIVA è falso).
+      // L'attestato si guarda a schermo (sotto, l'immagine da condividere). Chi lo vuole per email lo chiede qui (blocco spento finché EMAIL_ATTIVA è falso).
       coda.append(...[bigl, bloccoEmailAttestato({corso, nome: () => titolo.textContent, token: () => tok}), avanti('Avanti', 'bt-pulsante bt-pulsante--secondario bt-pulsante--grande')].filter(Boolean));
     }).catch(e => {
       attestatoPronto = null;
