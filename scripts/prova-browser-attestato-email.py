@@ -71,7 +71,8 @@ with sync_playwright() as p:
     from PIL import Image
     verifica(Image.open(percorso).size == (1080, 1920), 'l\'immagine è 1080×1920, il formato delle storie di Instagram')
     verifica(pg.locator('.bt-biglietto__qr svg').count() == 1, 'il QR c\'è')
-    verifica('inquadra il QR' in pg.inner_text('.bt-biglietto') and 'scarichi' not in pg.inner_text('.bt-biglietto'), 'la frase del QR non parla più di scaricare')
+    verifica('Inquadra il QR con il telefono: scarichi il tuo attestato' in pg.inner_text('.bt-biglietto'), 'la frase del QR dice che con il telefono si scarica l\'attestato')
+    verifica(pg.evaluate("(()=>{const b=document.querySelector('.bt-biglietto').getBoundingClientRect(),r=document.querySelector('.bt-attestato').getBoundingClientRect();return b.left>=r.left&&b.right<=r.right})()"), 'il biglietto del QR resta dentro il riquadro')
     verifica(pg.locator('.bt-email-blocco, .bt-email').count() == 0, 'spento: nessun campo email')
     verifica(not any(a == 'attestato_email' for _, a in f.log), 'spento: nessuna richiesta email')
     pg.screenshot(path=f'{ANTEPRIME}/finale-spento-390.png')

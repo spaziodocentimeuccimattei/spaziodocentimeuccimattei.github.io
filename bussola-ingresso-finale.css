@@ -59,9 +59,11 @@
 @media (max-width: 420px) { .bt-attestato .bt-biglietto__qr, .bt-bentornato .bt-biglietto__qr { width: 200px; } }
 .bt-ritorno__nonpronto { margin: 0; color: var(--bt-inchiostro); font: 600 1rem/1.35 var(--bt-carattere); }
 .bt-ritorno__copia { justify-self: start; }
-@media (min-width: 900px) {
-  /* Chromebook: l'attestato a sinistra, a destra scarica/stampa, biglietto e «Avanti» */
-  .bt-attestato__corpo { grid-template-columns: auto minmax(0, 480px); gap: 36px; justify-content: center; }
+/* Il biglietto non esce mai dal riquadro: si stringe e, se serve, mette il QR sotto la frase */
+.bt-attestato .bt-biglietto { max-width: 100%; min-width: 0; box-sizing: border-box; }
+@media (min-width: 1100px) {
+  /* Schermo largo: l'attestato a sinistra, a destra biglietto e «Avanti». Sotto i 1100 px stanno uno sotto l'altro. */
+  .bt-attestato__corpo { grid-template-columns: minmax(0, 300px) minmax(0, 480px); gap: 36px; justify-content: center; }
   .bt-attestato__foglio canvas { max-height: 46vh; }
   .bt-attestato .bt-schermo, .bt-esplosione.bt-attestato { min-height: 0; }
 }

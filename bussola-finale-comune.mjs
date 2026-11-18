@@ -23,7 +23,7 @@ const SIGLA_VIDEO = corso => `presentazione-orientamento/assets/video/${corso}`;
 export function biglietto({corso, token, persona = null, conclusi = [], salvato = () => true, codiceBreve = ''}) {
   const scheda = el('div', {class: 'bt-biglietto', 'data-corso': corso});
   const qr = el('div', {class: 'bt-biglietto__qr'});
-  const frase = el('p', {class: 'bt-biglietto__frase'}, 'A casa, con i tuoi genitori, inquadra il QR: ritrovi l’attestato e scopri di più.');
+  const frase = el('p', {class: 'bt-biglietto__frase'}, 'Inquadra il QR con il telefono: scarichi il tuo attestato e lo fai vedere a casa.');
   // L'etichetta compare solo insieme al codice da scrivere: senza codice basta la frase (meno parole).
   const etichetta = el('p', {class: 'bt-biglietto__etichetta', hidden: true}, 'Il tuo codice');
   scheda.append(etichetta);
