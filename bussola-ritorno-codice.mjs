@@ -4,7 +4,8 @@
 // Lato server: supabase/sql/bussola-codice-ritorno.sql e azioni codice_ottieni / codice_apri di bussola-esperienze.
 // Il codice è un puntatore casuale al partecipante: non contiene dati personali. Il nome resta sul dispositivo
 // (o si scrive qui, senza salvarlo da nessuna parte) e il server non lo vede.
-import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-email';
+import {pulsanteImmagine, pulsanteAttestato} from './bussola-scarica.mjs?v=20261118-qr';
+import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-qr';
 import {CORSI, NOMI_BREVI, nomeOspite, nomeCompleto, pulisciNome} from './bussola-locale.mjs?v=20261115-riordino';
 import {OPEN_DAY, OPEN_DAY_LUOGO} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 
@@ -14,22 +15,6 @@ const API = prova ? '/__test/bussola-esperienze' : 'https://ruplzgcnheddmqqdephp
 const PERSONALE = /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{6}$/;
 
 /** Il testo scritto dal ragazzo, ripulito: maiuscole, senza spazi né trattini. */
-/** «Scarica l'immagine»: prepara al tocco la cartolina da condividere (JPEG 1080×1920, non l'attestato) e la scarica. */
-function pulsanteImmagine(el, {corso, nome, id}) {
-  const b = el('button', {class: 'bt-link bt-attestato__scarica', type: 'button', id}, 'Scarica l’immagine da condividere');
-  b.addEventListener('click', async () => {
-    const testo = b.textContent; b.disabled = true; b.textContent = 'Preparo l’immagine…';
-    try {
-      const {cartolinaFile} = await import('./bussola-immagine-social.mjs?v=20261118-social');
-      const f = await cartolinaFile({corso, nome: typeof nome === 'function' ? nome() : nome});
-      const a = document.createElement('a'); a.href = f.url; a.download = f.name; document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(f.url), 60000);
-      b.textContent = testo;
-    } catch { b.textContent = 'Non riesco a preparare l’immagine. Riprova.'; }
-    finally { b.disabled = false; }
-  });
-  return b;
-}
 
 export function normalizza(testo) { return typeof testo === 'string' ? testo.replace(/[\s-]/g, '').toUpperCase() : ''; }
 /** Vero se può essere un codice personale (6 caratteri dell'alfabeto, senza L). */
@@ -99,6 +84,7 @@ export async function apriConCodice(testo, ui) {
       el('h1', {class: 'bt-titolo', id: 'bentornatoTitolo', tabindex: '-1'}, 'Bentornato, ', el('em', {}, nome.split(' ')[0]), '!'),
       el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_BREVI[progetto.corso]}.`),
       el('figure', {class: 'bt-attestato__foglio'}, canvas),
+      el('div', {class: 'bt-bentornato__azioni'}, pulsanteAttestato(el, {canvas, corso: progetto.corso, nome, id: 'bentornatoAttestato'})),
       pulsanteImmagine(el, {corso: progetto.corso, nome, id: 'bentornatoScarica'}),
       altri.length ? el('p', {class: 'bt-nota'}, ...altri) : null,
       el('ul', {class: 'bt-distintivi', 'aria-label': 'I distintivi ottenuti'}, [...mostrati].map(c => el('li', {}, el('span', {class: 'bt-distintivo bt-distintivo--piccolo', 'data-corso': c, 'aria-label': `${NOMI_BREVI[c]}: ottenuto`}, NOMI_BREVI[c])))),

@@ -116,6 +116,10 @@ export async function monitorAction(admin,req,p){
  // Richieste dell'attestato via email (supabase/sql/bussola-richieste-attestato.sql): solo la Funzione Strumentale le vede e le gestisce.
  if(p.action==='monitor_email_list'){
   requireAdmin();
+  // Conservazione dichiarata nell'informativa (privacy-bussola.html): 30 giorni dall'invio, 90 dalla richiesta.
+  const giorni=n=>new Date(Date.now()-n*86400000).toISOString();
+  await data(admin.from('bussola_v2_richieste_attestato').delete().lt('inviato_at',giorni(30)));
+  await data(admin.from('bussola_v2_richieste_attestato').delete().lt('created_at',giorni(90)));
   const rows=await all(()=>admin.from('bussola_v2_richieste_attestato').select('id,corso,nome,email,consenso_at,informativa,inviato_at,created_at').order('created_at',{ascending:false}));
   return {richieste:rows};
  }

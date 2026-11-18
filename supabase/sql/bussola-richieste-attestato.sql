@@ -5,8 +5,9 @@
 -- Che cosa registra, e solo questo: a quale lavoro (partecipante e indirizzo) si riferisce, il nome che va sull'attestato,
 -- l'email di un genitore, data e ora del consenso, versione dell'informativa accettata, data dell'invio fatto dalla scuola.
 -- Una richiesta per lavoro e indirizzo: se il genitore la ripete, si aggiorna (nuova email, nuovo consenso).
--- Conservazione: la riga si cancella con il partecipante (on delete cascade), quindi alla scadenza dei lavori;
--- la scuola può cancellarla prima dall'area docenti dopo l'invio. Accesso solo dalle Edge Function (service_role).
+-- Conservazione (informativa privacy-bussola.html, v1): entro 30 giorni dall'invio e comunque entro 90 giorni dalla richiesta.
+-- Le funzioni cancellano le righe scadute a ogni nuova richiesta e a ogni apertura dell'elenco; la scuola può cancellare prima.
+-- La riga si cancella anche con il partecipante (on delete cascade). Accesso solo dalle Edge Function (service_role).
 begin;
 
 create table public.bussola_v2_richieste_attestato (

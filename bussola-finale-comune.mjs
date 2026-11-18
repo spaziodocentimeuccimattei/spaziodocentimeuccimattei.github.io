@@ -7,8 +7,9 @@ import {OPEN_DAY} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 import {sharedParticipant, personalDestination} from './bussola-identita.mjs?v=20261019-monitor';
 import {CORSI, NOMI_BREVI, NOMI_CORSI, nomeOspite, nomeCompleto, salvaNomeOspite, pulisciNome, distintivi, aggiungiDistintivo, linkRitorno} from './bussola-locale.mjs?v=20261115-riordino';
 import {qrElemento} from './bussola-qr.mjs?v=20261115-riordino';
-import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-email';
-import {bloccoEmailAttestato} from './bussola-email-attestato.mjs?v=20261118-email';
+import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-qr';
+import {pulsanteImmagine, pulsanteAttestato} from './bussola-scarica.mjs?v=20261118-qr';
+import {bloccoEmailAttestato} from './bussola-email-attestato.mjs?v=20261118-qr';
 
 function el(tag, attributi = {}, ...figli) {
   const nodo = document.createElement(tag);
@@ -17,23 +18,6 @@ function el(tag, attributi = {}, ...figli) {
   return nodo;
 }
 const SIGLA_VIDEO = corso => `presentazione-orientamento/assets/video/${corso}`;
-
-/** «Scarica l'immagine»: prepara al tocco la cartolina da condividere (JPEG 1080×1920, non l'attestato) e la scarica. */
-function pulsanteImmagine(el, {corso, nome, id}) {
-  const b = el('button', {class: 'bt-link bt-attestato__scarica', type: 'button', id}, 'Scarica l’immagine da condividere');
-  b.addEventListener('click', async () => {
-    const testo = b.textContent; b.disabled = true; b.textContent = 'Preparo l’immagine…';
-    try {
-      const {cartolinaFile} = await import('./bussola-immagine-social.mjs?v=20261118-social');
-      const f = await cartolinaFile({corso, nome: typeof nome === 'function' ? nome() : nome});
-      const a = document.createElement('a'); a.href = f.url; a.download = f.name; document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(f.url), 60000);
-      b.textContent = testo;
-    } catch { b.textContent = 'Non riesco a preparare l’immagine. Riprova.'; }
-    finally { b.disabled = false; }
-  });
-  return b;
-}
 
 /** Biglietto per il ritorno da casa: QR (link personale) e, quando sarà attivo sul server, il codice breve. */
 export function biglietto({corso, token, persona = null, conclusi = [], salvato = () => true, codiceBreve = ''}) {
@@ -65,7 +49,7 @@ export function biglietto({corso, token, persona = null, conclusi = [], salvato 
     }
     qr.replaceChildren(qrElemento(link, 'Codice QR: inquadralo con il telefono per tornare qui da casa'));
     qr.dataset.link = link;
-    if (codice && codice.hidden) import('./bussola-ritorno-codice.mjs?v=20261118-email').then(m => m.ottieniCodice(token)).then(c => { if (c) mostraCodice(c); }).catch(() => { /* il QR basta */ });
+    if (codice && codice.hidden) import('./bussola-ritorno-codice.mjs?v=20261118-qr').then(m => m.ottieniCodice(token)).then(c => { if (c) mostraCodice(c); }).catch(() => { /* il QR basta */ });
     copia.hidden = !navigator.clipboard?.writeText;
     copia.onclick = async () => { try { await navigator.clipboard.writeText(link); copia.textContent = 'Link copiato'; } catch { copia.textContent = 'Non riesco a copiare'; } };
   };

@@ -88,6 +88,8 @@ Deno.serve(async req=>{
      const nome=typeof p.nome==='string'?p.nome.trim().normalize('NFC').slice(0,160):'';
      const fatto=await admin.from('bussola_v2_richieste_attestato').upsert({partecipante_id:person.id,corso,nome,email,informativa,consenso_at:new Date().toISOString(),inviato_at:null},{onConflict:'partecipante_id,corso'});
      if(fatto.error)throw fatto.error;
+     // Conservazione dichiarata nell'informativa: 30 giorni dall'invio, 90 dalla richiesta.
+     await admin.from('bussola_v2_richieste_attestato').delete().lt('created_at',new Date(Date.now()-90*86400000).toISOString());
      return reply(req,{ok:true});
    }
    if(p.action==='start'||p.action==='load'){

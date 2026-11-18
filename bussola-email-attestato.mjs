@@ -5,7 +5,7 @@
 // art. 8 GDPR e art. 2-quinquies del Codice privacy); la scuola la usa solo per mandare l'attestato;
 // il server registra email, consenso, data e ora, versione dell'informativa. L'invio lo fa la scuola a mano
 // dall'area docenti: nessun servizio di posta automatico.
-import {EMAIL_ATTIVA, INFORMATIVA_URL, INFORMATIVA_VERSIONE} from './bussola-interruttori.mjs?v=20261118-email';
+import {EMAIL_ATTIVA, INFORMATIVA_URL, INFORMATIVA_VERSIONE} from './bussola-interruttori.mjs?v=20261118-qr';
 import {sharedParticipant} from './bussola-identita.mjs?v=20261019-monitor';
 
 const prova = ['localhost', '127.0.0.1'].includes(location.hostname) && new URLSearchParams(location.search).has('prova');
@@ -43,12 +43,12 @@ export function bloccoEmailAttestato({corso, nome, token}) {
   const stato = el('p', {class: 'bt-nota', role: 'status'});
   const conferma = el('button', {class: 'bt-pulsante bt-pulsante--secondario', type: 'submit'}, 'Mandatemelo');
   const informativa = INFORMATIVA_URL
-    ? el('a', {class: 'bt-link', href: INFORMATIVA_URL, target: '_blank', rel: 'noopener'}, 'Informativa privacy')
-    : el('span', {}, 'Informativa privacy');
+    ? el('a', {class: 'bt-link', href: INFORMATIVA_URL, target: '_blank', rel: 'noopener'}, 'informativa privacy')
+    : el('span', {}, 'informativa privacy');
   const forma = el('form', {class: 'bt-email', novalidate: true, hidden: true},
     el('label', {class: 'bt-campo'}, 'Email di un genitore', email),
     el('label', {class: 'bt-email__consenso'}, consenso,
-      el('span', {}, 'Sono il genitore e sono d’accordo: la scuola userà questa email solo per mandare l’attestato. ', informativa, '.')),
+      el('span', {}, 'Sono il genitore e sono d’accordo: la scuola userà questa email solo per mandare l’attestato (', informativa, ').')),
     conferma, stato);
   apri.addEventListener('click', () => { forma.hidden = false; apri.hidden = true; apri.setAttribute('aria-expanded', 'true'); email.focus(); });
   forma.addEventListener('submit', async e => {

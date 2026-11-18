@@ -2,9 +2,10 @@
 // Si apre da solo con il link del QR (bussola.html#alunno=…&corso=…) e dal link «Ho un codice» della prima pagina.
 // Ritorno in due passi: (1) QR = link personale già previsto dal sistema, senza modifiche al server;
 // (2) codice breve da scrivere: nascosto finché CODICE_BREVE_ATTIVO è falso (vedi bussola-interruttori.mjs).
+import {pulsanteImmagine, pulsanteAttestato} from './bussola-scarica.mjs?v=20261118-qr';
 import {CORSI, NOMI_BREVI, NOMI_CORSI, leggiRitorno, pulisciNome, nomeCompleto} from './bussola-locale.mjs?v=20261115-riordino';
-import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-email';
-import {bloccoEmailAttestato} from './bussola-email-attestato.mjs?v=20261118-email';
+import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-qr';
+import {bloccoEmailAttestato} from './bussola-email-attestato.mjs?v=20261118-qr';
 import {OPEN_DAY, OPEN_DAY_LUOGO} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 import {personalDestination} from './bussola-identita.mjs?v=20261019-monitor';
 import {classCode} from './bussola-codice.mjs?v=20261008-codice';
@@ -80,7 +81,7 @@ async function risolvi(testo) {
     catch (e) { nonClasse = e; }
     // Con CODICE_BREVE_ATTIVO un codice che non è di una classe può essere un codice personale di ritorno (stesso formato, senza L).
     if (CODICE_BREVE_ATTIVO && nonClasse.stato === 404) {
-      const m = await import('./bussola-ritorno-codice.mjs?v=20261118-email');
+      const m = await import('./bussola-ritorno-codice.mjs?v=20261118-qr');
       if (m.eCodicePersonale(classe)) return m.apriConCodice(classe, {el, mostra, nonTrovato});
     }
     throw nonClasse;
@@ -98,22 +99,6 @@ function classeRiconosciuta(codice, info) {
     el('p', {class: 'bt-nota'}, 'Per riprendere un lavoro già fatto usa il QR o il link personale che hai salvato.')));
 }
 
-/** «Scarica l'immagine»: prepara al tocco la cartolina da condividere (JPEG 1080×1920, non l'attestato) e la scarica. */
-function pulsanteImmagine(el, {corso, nome, id}) {
-  const b = el('button', {class: 'bt-link bt-attestato__scarica', type: 'button', id}, 'Scarica l’immagine da condividere');
-  b.addEventListener('click', async () => {
-    const testo = b.textContent; b.disabled = true; b.textContent = 'Preparo l’immagine…';
-    try {
-      const {cartolinaFile} = await import('./bussola-immagine-social.mjs?v=20261118-social');
-      const f = await cartolinaFile({corso, nome: typeof nome === 'function' ? nome() : nome});
-      const a = document.createElement('a'); a.href = f.url; a.download = f.name; document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(f.url), 60000);
-      b.textContent = testo;
-    } catch { b.textContent = 'Non riesco a preparare l’immagine. Riprova.'; }
-    finally { b.disabled = false; }
-  });
-  return b;
-}
 
 // ---- 2. «Bentornato» -------------------------------------------------------------------------------
 export async function apriBentornato(ritorno) {
@@ -161,6 +146,7 @@ export async function apriBentornato(ritorno) {
       el('h1', {class: 'bt-titolo', id: 'bentornatoTitolo', tabindex: '-1'}, 'Bentornato, ', el('em', {}, nomeFinale.split(' ')[0]), '!'),
       el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_BREVI[corso]}.`),
       el('figure', {class: 'bt-attestato__foglio'}, canvas),
+      el('div', {class: 'bt-bentornato__azioni'}, pulsanteAttestato(el, {canvas, corso, nome: nomeFinale, id: 'bentornatoAttestato'})),
       pulsanteImmagine(el, {corso, nome: nomeFinale, id: 'bentornatoScarica'}),
       // L'attestato si guarda a schermo; a casa il genitore c'è davvero: qui la richiesta via email è al posto giusto.
       bloccoEmailAttestato({corso, nome: nomeFinale, token}),

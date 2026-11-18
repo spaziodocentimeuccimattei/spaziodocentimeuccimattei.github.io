@@ -8,5 +8,5 @@ const provaEmail = ['localhost', '127.0.0.1'].includes(location.hostname) && new
 export const EMAIL_ATTIVA = false || provaEmail;
 export const CODICE_BREVE_ATTIVO = false;
 // Pagina dell'informativa (vuota finché non è approvata) e sua versione, registrata con ogni consenso.
-export const INFORMATIVA_URL = '';
-export const INFORMATIVA_VERSIONE = 'bozza-2026-11-18';
+export const INFORMATIVA_URL = 'privacy-bussola.html';
+export const INFORMATIVA_VERSIONE = 'v1-2026-11-18';
