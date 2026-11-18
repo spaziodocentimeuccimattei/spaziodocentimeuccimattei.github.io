@@ -49,7 +49,7 @@ export async function apriConCodice(testo, ui) {
     throw new Error(e.stato === 404 ? 'Il codice non è valido. Controlla di averlo scritto bene.' : e.stato === 429 ? 'Troppi tentativi. Aspetta qualche minuto e riprova.' : 'Non riesco a collegarmi. Controlla la connessione e riprova.');
   }
   const {el, mostra} = ui;
-  const [{completion, courseDetails}, {participantCertificate}, {certificateCanvas}] = await Promise.all([
+  const [{completion, courseDetails}, {participantCertificate}, {certificateCanvas, downloadCertificate}] = await Promise.all([
     import('./bussola-records-core.mjs?v=20261115-riordino'),
     import('./bussola-attestato-alunno-core.mjs?v=20261115-riordino'),
     import('./bussola-attestati-render.mjs?v=20261115-riordino'),
@@ -70,7 +70,7 @@ export async function apriConCodice(testo, ui) {
     const attestato = courseDetails(progetto.payload).journey?.attestato;
     const valido = /^[0-9a-f-]{36}$/i.test(attestato?.id) && Number.isFinite(Date.parse(attestato?.date));
     const record = participantCertificate(progetto.payload, {identity: null, name: nome, participant: dati.participant, revision: progetto.revision, id: valido ? attestato.id : crypto.randomUUID(), date: valido ? attestato.date : new Date().toISOString()});
-    const canvas = await certificateCanvas(record);
+    const [canvas, file] = await Promise.all([certificateCanvas(record), downloadCertificate(record)]);
     canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', `Attestato di ${nome}`);
     const giorni = OPEN_DAY.map(g => `${g.giorno.toLowerCase()} ${g.testo}, ${g.orario.charAt(0).toLowerCase()}${g.orario.slice(1)}`);
     const altri = conclusi.filter(p => p.corso !== progetto.corso).map(p => {
@@ -82,6 +82,7 @@ export async function apriConCodice(testo, ui) {
       el('h1', {class: 'bt-titolo', id: 'bentornatoTitolo', tabindex: '-1'}, 'Bentornato, ', el('em', {}, nome.split(' ')[0]), '!'),
       el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_BREVI[progetto.corso]}.`),
       el('figure', {class: 'bt-attestato__foglio'}, canvas),
+      el('a', {class: 'bt-link bt-attestato__scarica', href: file.url, download: file.name, id: 'bentornatoScarica'}, 'Scarica l’attestato'),
       altri.length ? el('p', {class: 'bt-nota'}, ...altri) : null,
       el('ul', {class: 'bt-distintivi', 'aria-label': 'I distintivi ottenuti'}, [...mostrati].map(c => el('li', {}, el('span', {class: 'bt-distintivo bt-distintivo--piccolo', 'data-corso': c, 'aria-label': `${NOMI_BREVI[c]}: ottenuto`}, NOMI_BREVI[c])))),
       el('div', {class: 'bt-bentornato__azioni'},

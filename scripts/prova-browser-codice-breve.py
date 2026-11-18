@@ -178,7 +178,7 @@ with sync_playwright() as p:
     testo = pgB.inner_text('.bt-bentornato')
     verifica('Bentornato, Luca' in testo, 'B: «Bentornato» con il nome scritto qui')
     verifica(pgB.locator('.bt-bentornato canvas').count() == 1, 'B: l\'attestato è disegnato')
-    verifica(pgB.locator('#bentornatoScarica').count() == 0, 'B: l\'attestato si guarda a schermo, senza «Scarica» (18/11/2026)')
+    verifica(pgB.get_attribute('#bentornatoScarica', 'download') not in (None, '') and 'bt-link' in (pgB.get_attribute('#bentornatoScarica', 'class') or ''), 'B: «Scarica l\'attestato» discreto (18/11/2026)')
     verifica(pgB.locator('.bt-bentornato .bt-distintivo[data-corso=afm]').count() == 1, 'B: il distintivo AFM è tra quelli ottenuti')
     verifica(pgB.get_attribute('#bentornatoAltro', 'href') == 'missioni.html' and 'famiglie.html#iscrizione' in pgB.get_attribute('#bentornatoIscrizione', 'href'), 'B: «Prova un altro indirizzo» e «Come ci si iscrive»')
     verifica('Open Day' in testo, 'B: le date dell\'Open Day')

@@ -141,10 +141,12 @@ export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriA
       if (nomeAtt && titolo.textContent !== nomeAtt) { titolo.textContent = nomeAtt; titolo.classList.toggle('bt-titolo--medio', nomeAtt.length > 14); }
       const foglio = el('figure', {class: 'bt-attestato__foglio'});
       if (r?.canvas) { r.canvas.setAttribute('role', 'img'); r.canvas.setAttribute('aria-label', `Attestato di ${nomeAtt}`); foglio.append(r.canvas); }
-      zona.replaceChildren(foglio);
+      // Un solo «Scarica», discreto sotto l'attestato: non compete con «Avanti» (Stampa non serve: il file si stampa da sé).
+      const scarica = r?.file?.url ? el('a', {class: 'bt-link bt-attestato__scarica', href: r.file.url, download: r.file.name, id: 'finaleScarica'}, 'Scarica l’attestato') : null;
+      zona.replaceChildren(foglio, ...(scarica ? [scarica] : []));
       const tok = typeof token === 'function' ? token() : token || sharedParticipant();
       const bigl = tok ? biglietto({corso, token: tok, persona: nomeOspite(), conclusi, salvato}) : null;
-      // L'attestato si guarda a schermo: niente PDF da scaricare o stampare. Chi lo vuole lo chiede via email (blocco spento finché EMAIL_ATTIVA è falso).
+      // L'attestato si guarda a schermo (con un solo «Scarica» discreto). Chi lo vuole per email lo chiede qui (blocco spento finché EMAIL_ATTIVA è falso).
       coda.append(...[bigl, bloccoEmailAttestato({corso, nome: () => titolo.textContent, token: () => tok}), avanti('Avanti', 'bt-pulsante bt-pulsante--secondario bt-pulsante--grande')].filter(Boolean));
     }).catch(e => {
       attestatoPronto = null;

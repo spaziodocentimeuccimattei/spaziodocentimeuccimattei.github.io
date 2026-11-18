@@ -113,7 +113,7 @@ export async function apriBentornato(ritorno) {
   if (!carico.project?.payload) return nonTrovato('Non trovo il lavoro di questo indirizzo. Puoi rifare la prova quando vuoi.');
 
   // Moduli pesanti caricati solo qui: la prima pagina della Bussola resta leggera.
-  const [{completion, courseDetails}, {participantCertificate}, {certificateCanvas}] = await Promise.all([
+  const [{completion, courseDetails}, {participantCertificate}, {certificateCanvas, downloadCertificate}] = await Promise.all([
     import('./bussola-records-core.mjs?v=20261115-riordino'),
     import('./bussola-attestato-alunno-core.mjs?v=20261115-riordino'),
     import('./bussola-attestati-render.mjs?v=20261115-riordino'),
@@ -133,10 +133,10 @@ export async function apriBentornato(ritorno) {
 
   async function schermoAttestato(nomeFinale) {
     const record = participantCertificate(payload, {identity: identita, name: nomeFinale, participant: carico.participant, revision: carico.project.revision, id, date: data});
-    const canvas = await certificateCanvas(record);
-    disegna(nomeFinale, canvas);
+    const [canvas, file] = await Promise.all([certificateCanvas(record), downloadCertificate(record)]);
+    disegna(nomeFinale, canvas, file);
   }
-  function disegna(nomeFinale, canvas) {
+  function disegna(nomeFinale, canvas, file) {
     const conclusi = [...new Set([...ritorno.conclusi, corso])];
     canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', `Attestato di ${nomeFinale}`);
     const giorni = OPEN_DAY.map(g => `${g.giorno.toLowerCase()} ${g.testo}, ${g.orario.charAt(0).toLowerCase()}${g.orario.slice(1)}`);
@@ -144,6 +144,7 @@ export async function apriBentornato(ritorno) {
       el('h1', {class: 'bt-titolo', id: 'bentornatoTitolo', tabindex: '-1'}, 'Bentornato, ', el('em', {}, nomeFinale.split(' ')[0]), '!'),
       el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_BREVI[corso]}.`),
       el('figure', {class: 'bt-attestato__foglio'}, canvas),
+      el('a', {class: 'bt-link bt-attestato__scarica', href: file.url, download: file.name, id: 'bentornatoScarica'}, 'Scarica l’attestato'),
       // L'attestato si guarda a schermo; a casa il genitore c'è davvero: qui la richiesta via email è al posto giusto.
       bloccoEmailAttestato({corso, nome: nomeFinale, token}),
       el('ul', {class: 'bt-distintivi', 'aria-label': 'I distintivi ottenuti'}, conclusi.map(c => el('li', {}, el('span', {class: 'bt-distintivo bt-distintivo--piccolo', 'data-corso': c, 'aria-label': `${NOMI_BREVI[c]}: ottenuto`}, NOMI_BREVI[c])))),
