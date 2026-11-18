@@ -3,7 +3,8 @@
 // Ritorno in due passi: (1) QR = link personale già previsto dal sistema, senza modifiche al server;
 // (2) codice breve da scrivere: nascosto finché CODICE_BREVE_ATTIVO è falso (vedi bussola-interruttori.mjs).
 import {CORSI, NOMI_BREVI, NOMI_CORSI, leggiRitorno, pulisciNome, nomeCompleto} from './bussola-locale.mjs?v=20261115-riordino';
-import {EMAIL_ATTIVA, CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261115-riordino';
+import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-email';
+import {bloccoEmailAttestato} from './bussola-email-attestato.mjs?v=20261118-email';
 import {OPEN_DAY, OPEN_DAY_LUOGO} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 import {personalDestination} from './bussola-identita.mjs?v=20261019-monitor';
 import {classCode} from './bussola-codice.mjs?v=20261008-codice';
@@ -79,7 +80,7 @@ async function risolvi(testo) {
     catch (e) { nonClasse = e; }
     // Con CODICE_BREVE_ATTIVO un codice che non è di una classe può essere un codice personale di ritorno (stesso formato, senza L).
     if (CODICE_BREVE_ATTIVO && nonClasse.stato === 404) {
-      const m = await import('./bussola-ritorno-codice.mjs?v=20261115-riordino');
+      const m = await import('./bussola-ritorno-codice.mjs?v=20261118-email');
       if (m.eCodicePersonale(classe)) return m.apriConCodice(classe, {el, mostra, nonTrovato});
     }
     throw nonClasse;
@@ -112,7 +113,7 @@ export async function apriBentornato(ritorno) {
   if (!carico.project?.payload) return nonTrovato('Non trovo il lavoro di questo indirizzo. Puoi rifare la prova quando vuoi.');
 
   // Moduli pesanti caricati solo qui: la prima pagina della Bussola resta leggera.
-  const [{completion, courseDetails}, {participantCertificate}, {certificateCanvas, downloadCertificate}] = await Promise.all([
+  const [{completion, courseDetails}, {participantCertificate}, {certificateCanvas}] = await Promise.all([
     import('./bussola-records-core.mjs?v=20261115-riordino'),
     import('./bussola-attestato-alunno-core.mjs?v=20261115-riordino'),
     import('./bussola-attestati-render.mjs?v=20261115-riordino'),
@@ -132,10 +133,10 @@ export async function apriBentornato(ritorno) {
 
   async function schermoAttestato(nomeFinale) {
     const record = participantCertificate(payload, {identity: identita, name: nomeFinale, participant: carico.participant, revision: carico.project.revision, id, date: data});
-    const [canvas, file] = await Promise.all([certificateCanvas(record), downloadCertificate(record)]);
-    disegna(nomeFinale, canvas, file);
+    const canvas = await certificateCanvas(record);
+    disegna(nomeFinale, canvas);
   }
-  function disegna(nomeFinale, canvas, file) {
+  function disegna(nomeFinale, canvas) {
     const conclusi = [...new Set([...ritorno.conclusi, corso])];
     canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', `Attestato di ${nomeFinale}`);
     const giorni = OPEN_DAY.map(g => `${g.giorno.toLowerCase()} ${g.testo}, ${g.orario.charAt(0).toLowerCase()}${g.orario.slice(1)}`);
@@ -143,14 +144,14 @@ export async function apriBentornato(ritorno) {
       el('h1', {class: 'bt-titolo', id: 'bentornatoTitolo', tabindex: '-1'}, 'Bentornato, ', el('em', {}, nomeFinale.split(' ')[0]), '!'),
       el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_BREVI[corso]}.`),
       el('figure', {class: 'bt-attestato__foglio'}, canvas),
-      el('div', {class: 'bt-bentornato__azioni'},
-        el('a', {class: 'bt-pulsante bt-pulsante--grande', href: file.url, download: file.name, id: 'bentornatoScarica'}, 'Scarica l’attestato')),
+      // L'attestato si guarda a schermo; a casa il genitore c'è davvero: qui la richiesta via email è al posto giusto.
+      bloccoEmailAttestato({corso, nome: nomeFinale, token}),
       el('ul', {class: 'bt-distintivi', 'aria-label': 'I distintivi ottenuti'}, conclusi.map(c => el('li', {}, el('span', {class: 'bt-distintivo bt-distintivo--piccolo', 'data-corso': c, 'aria-label': `${NOMI_BREVI[c]}: ottenuto`}, NOMI_BREVI[c])))),
       el('div', {class: 'bt-bentornato__azioni'},
         el('a', {class: 'bt-pulsante bt-pulsante--secondario', href: personalDestination('missioni.html', token), id: 'bentornatoAltro'}, 'Prova un altro indirizzo'),
         el('a', {class: 'bt-pulsante bt-pulsante--secondario', href: 'famiglie.html#iscrizione', id: 'bentornatoIscrizione'}, 'Come ci si iscrive')),
       el('p', {class: 'bt-finale__opendays'}, el('strong', {}, 'Open Day a Decimomannu: '), giorni.join(' · '), ` · ${OPEN_DAY_LUOGO}`),
-      EMAIL_ATTIVA ? el('p', {class: 'bt-nota'}, 'Qui compare il campo per l’email di un genitore.') : null);
+      );
     mostra(schermo, corso);
   }
 

@@ -67,3 +67,14 @@ Con `CODICE_BREVE_ATTIVO = true` su una copia di prova: finire una prova AFM con
 - `node scripts/verifica-bussola-scadenza.mjs` — il file della scadenza: segnaposto che lo ferma, date non accettabili, solo allungamento, valore per i nuovi.
 - `python3 scripts/prova-browser-codice-breve.py` (con `python3 -m http.server 8781 --bind 127.0.0.1` dalla radice) — Chrome con server finto: spento nulla si vede e non parte nessuna chiamata nuova; acceso, il dispositivo A vede il codice e il dispositivo B arriva a «Bentornato» con l'attestato.
 - Non provati: server Supabase vero, scansione del QR con un telefono, ripetizione sotto carico reale.
+
+## C. Richiesta dell'attestato via email (aggiunta del 18 novembre 2026)
+
+Stato: **preparato, non applicato**. Richiesta di Salvatore del 18/11: l'attestato si guarda a schermo (via «Scarica» e «Stampa»); chi lo vuole lo chiede via email con la spunta del consenso.
+
+1. Prima: l'informativa `docs/bussola/informativa-attestato-email.md` approvata dalla Dirigente e rivista dall'RPD; poi `INFORMATIVA_URL` e `INFORMATIVA_VERSIONE` in `bussola-interruttori.mjs`.
+2. `supabase/sql/bussola-richieste-attestato.sql` — tabella nuova `bussola_v2_richieste_attestato` (email del genitore, nome sull'attestato, indirizzo, consenso con data e ora, versione dell'informativa, data d'invio). Si cancella con il partecipante.
+3. Funzione `bussola-esperienze` (azione nuova `attestato_email`) e funzione `bussola-gestione` (azioni `monitor_email_list`, `monitor_email_sent`, `monitor_email_delete`, solo Funzione Strumentale). **Attenzione:** l'`index.ts` di `bussola-esperienze` nel repository contiene già le azioni del codice breve (punto A): pubblicarla vuol dire pubblicare anche quelle. Applicare prima `bussola-codice-ritorno.sql`, oppure pubblicare insieme A e C.
+4. Ultimo: `EMAIL_ATTIVA = true`. Nell'area docenti compare «Attestati da mandare via email» (elenco, CSV, «Segna come inviato», «Cancella»).
+
+Prova locale: `python3 scripts/prova-browser-attestato-email.py` (server finto, interruttore acceso solo nella prova).

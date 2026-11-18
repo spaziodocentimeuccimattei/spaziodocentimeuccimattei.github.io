@@ -67,6 +67,9 @@
 }
 
 /* email del genitore (visibile solo con EMAIL_ATTIVA) */
+.bt-email[hidden], .bt-email__apri[hidden] { display: none; }
+.bt-email-blocco { display: grid; justify-items: center; gap: 10px; width: 100%; }
+.bt-email__apri { font-size: 1.05rem; }
 .bt-email { display: grid; gap: 10px; width: min(100%, 460px); padding: 14px 16px; border-radius: var(--bt-raggio); background: rgba(255, 255, 255, .1); text-align: left; }
 .bt-email .bt-campo input { min-height: 52px; font-size: 1.05rem; }
 .bt-email__consenso { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; color: var(--bt-testo); font: 500 .95rem/1.35 var(--bt-carattere); }

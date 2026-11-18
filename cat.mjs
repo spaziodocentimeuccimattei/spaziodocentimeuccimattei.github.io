@@ -1,7 +1,7 @@
 import {isMission,MISSION_LABS,phaseReady,savedCatProjects,startNewMission,restoreCatArchive} from './cat-missione-core.mjs?v=20261029-missione';
 import * as P from './cat-percorso.mjs?v=20261115-riordino';
 import {mostraIngresso} from './bussola-ingresso-comune.mjs?v=20261115-riordino';
-import {mostraFinale} from './bussola-finale-comune.mjs?v=20261115-riordino';
+import {mostraFinale} from './bussola-finale-comune.mjs?v=20261118-email';
 import {scintilla} from './bussola-effetti.mjs?v=20261115-riordino';
 import {iniziaMenu} from './bussola-menu.mjs?v=20261115-riordino';
 import {BUILDING_LABS,isBuilding} from './cat-edificio-core.mjs?v=20261028-edificio';

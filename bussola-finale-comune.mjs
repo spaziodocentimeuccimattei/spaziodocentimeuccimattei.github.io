@@ -7,7 +7,8 @@ import {OPEN_DAY} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 import {sharedParticipant, personalDestination} from './bussola-identita.mjs?v=20261019-monitor';
 import {CORSI, NOMI_BREVI, NOMI_CORSI, nomeOspite, nomeCompleto, salvaNomeOspite, pulisciNome, distintivi, aggiungiDistintivo, linkRitorno} from './bussola-locale.mjs?v=20261115-riordino';
 import {qrElemento} from './bussola-qr.mjs?v=20261115-riordino';
-import {EMAIL_ATTIVA, CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261115-riordino';
+import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-email';
+import {bloccoEmailAttestato} from './bussola-email-attestato.mjs?v=20261118-email';
 
 function el(tag, attributi = {}, ...figli) {
   const nodo = document.createElement(tag);
@@ -17,23 +18,11 @@ function el(tag, attributi = {}, ...figli) {
 }
 const SIGLA_VIDEO = corso => `presentazione-orientamento/assets/video/${corso}`;
 
-/** Stampa l'attestato (un'immagine dal canvas) senza dipendere dalla finestra dell'attestato di ogni percorso. */
-async function stampaCanvas(canvas) {
-  const img = el('img', {alt: 'Attestato', src: canvas.toDataURL('image/jpeg', 0.92)});
-  const foglio = el('div', {class: 'bt-stampa'}, img);
-  document.body.append(foglio);
-  document.body.classList.add('bt-stampa-attiva');
-  const pulisci = () => { document.body.classList.remove('bt-stampa-attiva'); foglio.remove(); window.removeEventListener('afterprint', pulisci); };
-  window.addEventListener('afterprint', pulisci);
-  try { await img.decode(); } catch { /* si stampa comunque */ }
-  window.print();
-}
-
 /** Biglietto per il ritorno da casa: QR (link personale) e, quando sarà attivo sul server, il codice breve. */
 export function biglietto({corso, token, persona = null, conclusi = [], salvato = () => true, codiceBreve = ''}) {
   const scheda = el('div', {class: 'bt-biglietto', 'data-corso': corso});
   const qr = el('div', {class: 'bt-biglietto__qr'});
-  const frase = el('p', {class: 'bt-biglietto__frase'}, 'A casa, con i tuoi genitori, torna qui: scarichi l’attestato e scopri di più.');
+  const frase = el('p', {class: 'bt-biglietto__frase'}, 'A casa, con i tuoi genitori, inquadra il QR: ritrovi l’attestato e scopri di più.');
   // L'etichetta compare solo insieme al codice da scrivere: senza codice basta la frase (meno parole).
   const etichetta = el('p', {class: 'bt-biglietto__etichetta', hidden: true}, 'Il tuo codice');
   scheda.append(etichetta);
@@ -59,31 +48,12 @@ export function biglietto({corso, token, persona = null, conclusi = [], salvato 
     }
     qr.replaceChildren(qrElemento(link, 'Codice QR: inquadralo con il telefono per tornare qui da casa'));
     qr.dataset.link = link;
-    if (codice && codice.hidden) import('./bussola-ritorno-codice.mjs?v=20261115-riordino').then(m => m.ottieniCodice(token)).then(c => { if (c) mostraCodice(c); }).catch(() => { /* il QR basta */ });
+    if (codice && codice.hidden) import('./bussola-ritorno-codice.mjs?v=20261118-email').then(m => m.ottieniCodice(token)).then(c => { if (c) mostraCodice(c); }).catch(() => { /* il QR basta */ });
     copia.hidden = !navigator.clipboard?.writeText;
     copia.onclick = async () => { try { await navigator.clipboard.writeText(link); copia.textContent = 'Link copiato'; } catch { copia.textContent = 'Non riesco a copiare'; } };
   };
   disegna();
   return scheda;
-}
-
-/** Campo facoltativo per l'email di un genitore. Compare solo con EMAIL_ATTIVA. */
-function bloccoEmail(salvaEmail) {
-  if (!EMAIL_ATTIVA) return null;
-  const email = el('input', {type: 'email', name: 'email', autocomplete: 'email', placeholder: 'nome@esempio.it', maxlength: 160});
-  const consenso = el('input', {type: 'checkbox', name: 'consenso'});
-  const stato = el('p', {class: 'bt-nota', role: 'status'});
-  const invia = el('button', {class: 'bt-pulsante bt-pulsante--secondario bt-pulsante--piccolo', type: 'button'}, 'Conferma');
-  invia.addEventListener('click', async () => {
-    if (!email.value.trim()) { stato.textContent = ''; return; }
-    if (!email.validity.valid) { stato.textContent = 'Controlla l’indirizzo email.'; return; }
-    if (!consenso.checked) { stato.textContent = 'Serve la spunta del genitore.'; return; }
-    try { await salvaEmail?.({email: email.value.trim(), consenso: true}); stato.textContent = 'Fatto. Grazie!'; } catch (e) { stato.textContent = e?.message || 'Non riesco a salvare.'; }
-  });
-  return el('div', {class: 'bt-email'},
-    el('label', {class: 'bt-campo'}, 'Email di un genitore: te lo mandiamo lì', email),
-    el('label', {class: 'bt-email__consenso'}, consenso, el('span', {}, 'Un genitore è d’accordo: la scuola userà questa email solo per mandare l’attestato.')),
-    invia, stato);
 }
 
 /**
@@ -98,9 +68,8 @@ function bloccoEmail(salvaEmail) {
  * @param {()=>any} [o.rivediLavoro]  apre il riepilogo del lavoro (link discreto «Rivedi il tuo lavoro»)
  * @param {string|(()=>string)} [o.token]  codice personale lungo (se manca: quello condiviso del dispositivo)
  * @param {()=>boolean|Promise<boolean>} [o.salvato]  vero se il lavoro è già salvato online (serve al QR)
- * @param {(dati:{email:string,consenso:boolean})=>any} [o.salvaEmail]  usata solo con EMAIL_ATTIVA
  */
-export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriAttestato, rivediLavoro, token, salvato, salvaEmail}) {
+export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriAttestato, rivediLavoro, token, salvato}) {
   const principale = contenitore.closest('main');
   principale?.classList.add('bt-scuro');
   const conclusi = aggiungiDistintivo(corso);            // il distintivo si ottiene a fine prova
@@ -145,7 +114,6 @@ export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriA
     const titolo = el('h1', {class: `bt-titolo bt-attestato__nome${mostrato.length > 14 ? ' bt-titolo--medio' : ''}`, id: 'finaleTitolo', tabindex: '-1'}, mostrato || 'Il tuo attestato');
     const zona = el('div', {class: 'bt-attestato__attendi'}, el('p', {class: 'bt-frase', role: 'status'}, 'Preparo il tuo attestato…'));
     sezione.append(el('p', {class: 'bt-occhiello bt-occhiello--corso'}, `Hai finito ${NOMI_BREVI[corso]}`), titolo);
-    const dopo = el('div', {class: 'bt-azioni'});
     const coda = el('div', {class: 'bt-attestato__azioni'});
     const corpo = el('div', {class: 'bt-attestato__corpo'}, zona, coda);
     sezione.append(corpo, piede());
@@ -174,13 +142,10 @@ export function mostraFinale({corso, contenitore, nome = '', treCose = [], apriA
       const foglio = el('figure', {class: 'bt-attestato__foglio'});
       if (r?.canvas) { r.canvas.setAttribute('role', 'img'); r.canvas.setAttribute('aria-label', `Attestato di ${nomeAtt}`); foglio.append(r.canvas); }
       zona.replaceChildren(foglio);
-      const scarica = el('a', {class: 'bt-pulsante', href: r.file.url, download: r.file.name, id: 'finaleScarica'}, 'Scarica');
-      const stampa = el('button', {class: 'bt-pulsante bt-pulsante--secondario', type: 'button', id: 'finaleStampa'}, 'Stampa');
-      stampa.addEventListener('click', () => stampaCanvas(r.canvas));
-      dopo.append(scarica, stampa);
       const tok = typeof token === 'function' ? token() : token || sharedParticipant();
       const bigl = tok ? biglietto({corso, token: tok, persona: nomeOspite(), conclusi, salvato}) : null;
-      coda.append(...[dopo, bigl, bloccoEmail(salvaEmail), avanti('Avanti', 'bt-pulsante bt-pulsante--secondario bt-pulsante--grande')].filter(Boolean));
+      // L'attestato si guarda a schermo: niente PDF da scaricare o stampare. Chi lo vuole lo chiede via email (blocco spento finché EMAIL_ATTIVA è falso).
+      coda.append(...[bigl, bloccoEmailAttestato({corso, nome: () => titolo.textContent, token: () => tok}), avanti('Avanti', 'bt-pulsante bt-pulsante--secondario bt-pulsante--grande')].filter(Boolean));
     }).catch(e => {
       attestatoPronto = null;
       if (!sezione.isConnected) return;

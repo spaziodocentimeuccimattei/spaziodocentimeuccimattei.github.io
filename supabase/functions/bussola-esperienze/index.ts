@@ -77,6 +77,19 @@ Deno.serve(async req=>{
      if(!creato.data)return reply(req,{error:'Il codice non è disponibile.'},404);
      return reply(req,{codice:creato.data});
    }
+   // Richiesta dell'attestato via email (supabase/sql/bussola-richieste-attestato.sql; interruttore lato browser: EMAIL_ATTIVA).
+   // Solo email di un genitore con consenso esplicito e versione dell'informativa; una richiesta per lavoro e indirizzo.
+   if(p.action==='attestato_email'){
+     const email=typeof p.email==='string'?p.email.trim().toLowerCase():'';
+     if(p.consenso!==true)return reply(req,{error:'Serve la spunta del genitore.'},400);
+     if(email.length<6||email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))return reply(req,{error:'Controlla l’indirizzo email.'},400);
+     const informativa=typeof p.informativa==='string'?p.informativa.trim().slice(0,40):'';
+     if(!informativa)return reply(req,{error:'Informativa non indicata.'},400);
+     const nome=typeof p.nome==='string'?p.nome.trim().normalize('NFC').slice(0,160):'';
+     const fatto=await admin.from('bussola_v2_richieste_attestato').upsert({partecipante_id:person.id,corso,nome,email,informativa,consenso_at:new Date().toISOString(),inviato_at:null},{onConflict:'partecipante_id,corso'});
+     if(fatto.error)throw fatto.error;
+     return reply(req,{ok:true});
+   }
    if(p.action==='start'||p.action==='load'){
      const [project,notes]=await Promise.all([
        admin.from('bussola_v2_progetti').select('payload,revision,updated_at').eq('partecipante_id',person.id).eq('corso',corso).maybeSingle(),

@@ -113,6 +113,20 @@ export async function monitorAction(admin,req,p){
   if(session.shared)q=q.eq('sessione_hash',session.hash);else if(!session.admin)q=q.eq('docente_id',session.id);
   return {segnalazioni:await data(q)};
  }
+ // Richieste dell'attestato via email (supabase/sql/bussola-richieste-attestato.sql): solo la Funzione Strumentale le vede e le gestisce.
+ if(p.action==='monitor_email_list'){
+  requireAdmin();
+  const rows=await all(()=>admin.from('bussola_v2_richieste_attestato').select('id,corso,nome,email,consenso_at,informativa,inviato_at,created_at').order('created_at',{ascending:false}));
+  return {richieste:rows};
+ }
+ if(p.action==='monitor_email_sent'||p.action==='monitor_email_delete'){
+  requireAdmin();
+  const ids=Array.isArray(p.ids)?p.ids.slice(0,500).map(uuid):[];
+  if(!ids.length)throw bad('Nessuna richiesta selezionata.');
+  if(p.action==='monitor_email_sent')await data(admin.from('bussola_v2_richieste_attestato').update({inviato_at:new Date().toISOString()}).in('id',ids).is('inviato_at',null));
+  else await data(admin.from('bussola_v2_richieste_attestato').delete().in('id',ids));
+  return {ok:true};
+ }
  const selected=p.classe_id||'';
  if(selected==='senza-classe'&&!session.admin)throw bad('Questa vista è riservata alla Funzione Strumentale.',403);
  if(selected&&selected!=='senza-classe'&&!classRows.some(c=>c.id===selected))throw bad('Classe non disponibile.',403);

@@ -9,13 +9,13 @@ mostraIngresso({ corso, contenitore, classe, onInizia, onIndietro })   // Promis
 // classe: il valore di setupClass(...) (con ctx.ingressoComune:true). onInizia(nome, cognome): può essere async.
 // onIndietro (facoltativa): se c'è compare «Indietro».
 
-mostraFinale({ corso, contenitore, nome, treCose, apriAttestato, rivediLavoro, token, salvato, salvaEmail })
+mostraFinale({ corso, contenitore, nome, treCose, apriAttestato, rivediLavoro, token, salvato })
 // treCose: tre stringhe brevi (se mancano il primo schermo si salta)
 // apriAttestato: () => Promise<{canvas, file:{url,name}, name}>  → di solito () => attestato.prepara()
 // rivediLavoro: () => apre il riepilogo del lavoro (link «Rivedi il tuo lavoro»)
 // token: codice personale lungo (default: quello condiviso del dispositivo, sharedParticipant())
 // salvato: () => bool|Promise<bool>  vero se il lavoro è già salvato online (serve al QR)
-// salvaEmail: usata solo con EMAIL_ATTIVA
+// email: il blocco «Vuoi riceverlo via email?» è in bussola-email-attestato.mjs (EMAIL_ATTIVA); niente Scarica né Stampa dal 18/11/2026
 ```
 
 `setupParticipantCertificate(ctx)` ora restituisce anche `prepara()`; se nella pagina non c'è `#certificateDialog` restituisce solo `prepara` (la finestra non serve più). `studio-remote` espone `saved()`.

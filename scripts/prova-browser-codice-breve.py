@@ -12,7 +12,7 @@ import re, sys, os, json, random, uuid
 from playwright.sync_api import sync_playwright
 BASE = 'http://127.0.0.1:8781'
 RADICE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-ANTEPRIME = os.environ.get('ANTEPRIME', '/home/claude/anteprime/a11')
+ANTEPRIME = os.environ.get('ANTEPRIME', '/tmp/anteprime/a11')
 os.makedirs(ANTEPRIME, exist_ok=True)
 CODICE = re.compile(r'^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{6}$')
 
@@ -116,7 +116,7 @@ def vai_all_attestato(pg):
 def senza_scorrimento(pg): return pg.evaluate('document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1')
 
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--no-sandbox'])
+    b = p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--no-sandbox']) if os.path.exists('/usr/bin/google-chrome') else p.chromium.launch(channel='chrome')
     errori = []
 
     # ---- 1. INTERRUTTORE SPENTO (il file vero del repository) ------------------------------------------------
@@ -174,11 +174,11 @@ with sync_playwright() as p:
     verifica('Come ti chiami' in pgB.inner_text('.bt-bentornato'), 'B: il nome non è sul server, quindi lo chiede')
     pgB.screenshot(path=f'{ANTEPRIME}/codice-B-nome-390.png')
     pgB.fill('.bt-bentornato input[name=nome]', 'Luca'); pgB.fill('.bt-bentornato input[name=cognome]', 'Fittizio'); pgB.click('.bt-bentornato button[type=submit]')
-    pgB.wait_for_selector('#bentornatoScarica', timeout=20000)
+    pgB.wait_for_selector('.bt-bentornato canvas', timeout=20000)
     testo = pgB.inner_text('.bt-bentornato')
     verifica('Bentornato, Luca' in testo, 'B: «Bentornato» con il nome scritto qui')
     verifica(pgB.locator('.bt-bentornato canvas').count() == 1, 'B: l\'attestato è disegnato')
-    verifica(pgB.get_attribute('#bentornatoScarica', 'download') not in (None, ''), 'B: c\'è «Scarica l\'attestato»')
+    verifica(pgB.locator('#bentornatoScarica').count() == 0, 'B: l\'attestato si guarda a schermo, senza «Scarica» (18/11/2026)')
     verifica(pgB.locator('.bt-bentornato .bt-distintivo[data-corso=afm]').count() == 1, 'B: il distintivo AFM è tra quelli ottenuti')
     verifica(pgB.get_attribute('#bentornatoAltro', 'href') == 'missioni.html' and 'famiglie.html#iscrizione' in pgB.get_attribute('#bentornatoIscrizione', 'href'), 'B: «Prova un altro indirizzo» e «Come ci si iscrive»')
     verifica('Open Day' in testo, 'B: le date dell\'Open Day')
@@ -186,10 +186,6 @@ with sync_playwright() as p:
     pgB.screenshot(path=f'{ANTEPRIME}/bentornato-B-390.png', full_page=True)
     pgB.set_viewport_size({'width': 1366, 'height': 768}); pgB.wait_for_timeout(300)
     verifica(senza_scorrimento(pgB), 'B 1366x768: nessuno scorrimento orizzontale'); pgB.screenshot(path=f'{ANTEPRIME}/bentornato-B-1366.png')
-    scaricato = None
-    with pgB.expect_download(timeout=10000) as d: pgB.click('#bentornatoScarica')
-    scaricato = d.value
-    verifica(scaricato.suggested_filename.lower().endswith(('.pdf', '.png', '.jpg')), f'B: il file si scarica ({scaricato.suggested_filename})')
 
     # ---- 4. Il nome non va mai al server --------------------------------------------------------------------------
     print('== 4. riservatezza e rete')
