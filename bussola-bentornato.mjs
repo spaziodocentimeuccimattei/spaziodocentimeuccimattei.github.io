@@ -81,7 +81,7 @@ async function risolvi(testo) {
     catch (e) { nonClasse = e; }
     // Con CODICE_BREVE_ATTIVO un codice che non è di una classe può essere un codice personale di ritorno (stesso formato, senza L).
     if (CODICE_BREVE_ATTIVO && nonClasse.stato === 404) {
-      const m = await import('./bussola-ritorno-codice.mjs?v=20261118-qr');
+      const m = await import('./bussola-ritorno-codice.mjs?v=20261120-chiudi');
       if (m.eCodicePersonale(classe)) return m.apriConCodice(classe, {el, mostra, nonTrovato});
     }
     throw nonClasse;
@@ -144,7 +144,7 @@ export async function apriBentornato(ritorno) {
     const giorni = OPEN_DAY.map(g => `${g.giorno.toLowerCase()} ${g.testo}, ${g.orario.charAt(0).toLowerCase()}${g.orario.slice(1)}`);
     const schermo = el('section', {class: 'bt-schermo'},
       el('h1', {class: 'bt-titolo', id: 'bentornatoTitolo', tabindex: '-1'}, 'Bentornato, ', el('em', {}, nomeFinale.split(' ')[0]), '!'),
-      el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_BREVI[corso]}.`),
+      el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_CORSI[corso]}.`),
       el('figure', {class: 'bt-attestato__foglio'}, canvas),
       el('div', {class: 'bt-bentornato__azioni'}, pulsanteAttestato(el, {canvas, corso, nome: nomeFinale, id: 'bentornatoAttestato'})),
       pulsanteImmagine(el, {corso, nome: nomeFinale, id: 'bentornatoScarica'}),

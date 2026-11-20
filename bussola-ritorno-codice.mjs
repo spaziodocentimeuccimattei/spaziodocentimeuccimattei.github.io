@@ -6,7 +6,7 @@
 // (o si scrive qui, senza salvarlo da nessuna parte) e il server non lo vede.
 import {pulsanteImmagine, pulsanteAttestato} from './bussola-scarica.mjs?v=20261118-qr';
 import {CODICE_BREVE_ATTIVO} from './bussola-interruttori.mjs?v=20261118-qr';
-import {CORSI, NOMI_BREVI, nomeOspite, nomeCompleto, pulisciNome} from './bussola-locale.mjs?v=20261115-riordino';
+import {CORSI, NOMI_BREVI, NOMI_CORSI, nomeOspite, nomeCompleto, pulisciNome} from './bussola-locale.mjs?v=20261115-riordino';
 import {OPEN_DAY, OPEN_DAY_LUOGO} from './bussola-prossimo-passo.mjs?v=20261115-riordino';
 
 const prova = ['localhost', '127.0.0.1'].includes(location.hostname) && new URLSearchParams(location.search).has('prova');
@@ -82,7 +82,7 @@ export async function apriConCodice(testo, ui) {
     });
     mostra(el('section', {class: 'bt-schermo'},
       el('h1', {class: 'bt-titolo', id: 'bentornatoTitolo', tabindex: '-1'}, 'Bentornato, ', el('em', {}, nome.split(' ')[0]), '!'),
-      el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_BREVI[progetto.corso]}.`),
+      el('p', {class: 'bt-frase'}, `Ecco il tuo attestato di ${NOMI_CORSI[progetto.corso]}.`),
       el('figure', {class: 'bt-attestato__foglio'}, canvas),
       el('div', {class: 'bt-bentornato__azioni'}, pulsanteAttestato(el, {canvas, corso: progetto.corso, nome, id: 'bentornatoAttestato'})),
       pulsanteImmagine(el, {corso: progetto.corso, nome, id: 'bentornatoScarica'}),

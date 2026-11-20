@@ -49,7 +49,7 @@ export function biglietto({corso, token, persona = null, conclusi = [], salvato 
     }
     qr.replaceChildren(qrElemento(link, 'Codice QR: inquadralo con il telefono per tornare qui da casa'));
     qr.dataset.link = link;
-    if (codice && codice.hidden) import('./bussola-ritorno-codice.mjs?v=20261118-qr').then(m => m.ottieniCodice(token)).then(c => { if (c) mostraCodice(c); }).catch(() => { /* il QR basta */ });
+    if (codice && codice.hidden) import('./bussola-ritorno-codice.mjs?v=20261120-chiudi').then(m => m.ottieniCodice(token)).then(c => { if (c) mostraCodice(c); }).catch(() => { /* il QR basta */ });
     copia.hidden = !navigator.clipboard?.writeText;
     copia.onclick = async () => { try { await navigator.clipboard.writeText(link); copia.textContent = 'Link copiato'; } catch { copia.textContent = 'Non riesco a copiare'; } };
   };

@@ -122,6 +122,8 @@ dialog.bt-bentornato {
 dialog.bt-bentornato::backdrop { background: var(--bt-palco-scuro); }
 .bt-bentornato__chiudi { position: absolute; top: 10px; right: 10px; z-index: 2; }
 .bt-bentornato .bt-schermo { min-height: 100dvh; }
+/* «Chiudi» sta in alto a destra: lo schermo parte più in basso, così non copre il titolo */
+.bt-bentornato > .bt-schermo, .bt-bentornato .bt-schermo:first-of-type { padding-top: 64px; }
 .bt-bentornato .bt-biglietto { text-align: left; }
 .bt-bentornato__azioni { display: grid; gap: 10px; width: min(100%, 420px); }
 .bt-bentornato__azioni .bt-pulsante { width: 100%; }
