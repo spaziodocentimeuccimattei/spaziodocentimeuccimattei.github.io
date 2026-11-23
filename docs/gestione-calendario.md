@@ -73,3 +73,7 @@ Decisione di Salvatore: «le scuole con date passate devono tutte passare a fatt
 - Quello che la Funzione Strumentale registra o corregge per una data passata è già confermato: dopo `register_activity`/`update_activity` la pagina chiama `confirm_activity`. Le segnalazioni dei docenti con il loro codice restano «Da confermare». Questa regola sostituisce quella «modificare non conferma» (prova aggiornata in `verifica-annullamento-attivita.mjs`).
 - Database: `orientamento_appuntamenti.alunni text[] not null default '{}'`, massimo 80 (`supabase/sql/orientamento-alunni-partecipanti.sql`, già applicato). Funzione `orientamento`: `save_appointment` accetta `alunni` (righe ripulite e senza doppioni, massimo 120 caratteri); se la richiesta non li porta, l'elenco salvato resta com'è. Gli alunni arrivano solo con `list_contributions` (password FS), mai in `overview`.
 - «Scarica Excel» → «Date e scuole»: colonna «Alunni partecipanti».
+
+## Ordine delle date (23 novembre 2026)
+
+Richiesta di Salvatore: le date da fare dalla più vicina alla più lontana, quelle concluse dalla più recente alla più vecchia. Vale nel cruscotto («In programma» e «Fatte»), nella scheda della scuola (prima le date da fare, poi le concluse) e negli elenchi «Prossime date in calendario» e «Modifica date passate».
