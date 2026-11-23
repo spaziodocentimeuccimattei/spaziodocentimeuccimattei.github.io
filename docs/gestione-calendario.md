@@ -63,3 +63,13 @@ Richiesta di Salvatore: la Funzione Strumentale deve poter correggere qualsiasi 
 - «Prossime date in calendario» sta subito sotto il cruscotto.
 - Funzione `orientamento`: nuova azione `save_school`, solo con la password FS. Aggiorna `comune`, `etichetta`, `area` e `attiva`, oppure inserisce una scuola nuova con id ricavato dal nome. Non cancella mai: date e visite restano legate allo stesso id. `list_contributions` restituisce anche `scuole_tolte`. Prova: `node scripts/verifica-correzione-scuole.mjs`.
 - Una visita confermata che viene modificata torna «Da confermare» (regola già in vigore): si riconferma con un clic.
+
+## Date passate = scuole fatte; docenti e alunni partecipanti (23 novembre 2026)
+
+Decisione di Salvatore: «le scuole con date passate devono tutte passare a fatte; poi da lì si registrano i docenti e gli alunni partecipanti».
+
+- Cruscotto: tre colonne (Fatte · In programma · Da fare). Una scuola con una data passata (oggi compreso), o con una visita registrata fino a oggi, è «fatta». Accanto c'è quanti docenti e alunni sono registrati; in rosso «registra docenti e alunni» se manca tutto.
+- Scheda della scuola, ogni data fatta: «Docenti» con «Aggiungi docente» e «Modifica»; «Alunni» in un riquadro, uno per riga (nome, cognome, classe), con «Salva alunni». Gli alunni sono quelli **dell'istituto** che partecipano all'incontro con i docenti, non quelli delle medie.
+- Quello che la Funzione Strumentale registra o corregge per una data passata è già confermato: dopo `register_activity`/`update_activity` la pagina chiama `confirm_activity`. Le segnalazioni dei docenti con il loro codice restano «Da confermare». Questa regola sostituisce quella «modificare non conferma» (prova aggiornata in `verifica-annullamento-attivita.mjs`).
+- Database: `orientamento_appuntamenti.alunni text[] not null default '{}'`, massimo 80 (`supabase/sql/orientamento-alunni-partecipanti.sql`, già applicato). Funzione `orientamento`: `save_appointment` accetta `alunni` (righe ripulite e senza doppioni, massimo 120 caratteri); se la richiesta non li porta, l'elenco salvato resta com'è. Gli alunni arrivano solo con `list_contributions` (password FS), mai in `overview`.
+- «Scarica Excel» → «Date e scuole»: colonna «Alunni partecipanti».

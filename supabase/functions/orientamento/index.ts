@@ -622,7 +622,7 @@ async function loadParticipationData() {
     admin.from("orientamento_disponibilita").select("id,nome,cognome,scuole,nota,stato,docente_id,appuntamento_id,created_at").order("created_at", { ascending: false }).limit(500),
     admin.from("orientamento_proposte").select("id,nome,cognome,titolo,area,tipologia,descrizione,durata_minuti,partecipanti,esigenze,nota,stato,created_at").order("created_at", { ascending: false }).limit(500),
     admin.from("orientamento_attivita").select("id,nome,cognome,tipo,scuola_id,titolo,data,nota,stato,docente_id,nota_precedente,modificata_dal_docente_at,created_at").eq("archiviata", false).order("data", { ascending: false }).limit(1000),
-    admin.from("orientamento_appuntamenti").select("id,scuola_id,tipo,data,ora_inizio,ora_fine,luogo,nota,stato,updated_at").eq("archiviata", false).order("data").order("ora_inizio", { nullsFirst: true }).limit(1000),
+    admin.from("orientamento_appuntamenti").select("id,scuola_id,tipo,data,ora_inizio,ora_fine,luogo,nota,stato,alunni,updated_at").eq("archiviata", false).order("data").order("ora_inizio", { nullsFirst: true }).limit(1000),
   ]);
   if (schools.error || supporter.error || proposals.error || activities.error || appointments.error) throw new PublicServiceError();
   // Solo le attività confermate dalla Funzione Strumentale entrano nella mappa e nel riepilogo.
@@ -824,10 +824,16 @@ async function saveAppointment(request: Request, payload: Record<string, unknown
     const stato = typeof payload.stato === "string" && APPOINTMENT_STATES.has(payload.stato) ? payload.stato : "prevista";
     const luogo = publicText(payload.luogo ?? "", 0, 160);
     const nota = publicText(payload.nota ?? "", 0, 600);
+    // Alunni dell'istituto che hanno partecipato all'incontro (decisione di Salvatore del 23/11/2026): nome, cognome e classe,
+    // uno per riga. Solo per la Funzione Strumentale: overview non li restituisce mai.
+    // Se la richiesta non porta l'elenco (pagine precedenti), quello salvato resta com'è.
+    const rawAlunni = payload.alunni;
+    if (rawAlunni !== undefined && (!Array.isArray(rawAlunni) || rawAlunni.length > 80)) throw new Error("Al massimo 80 alunni per incontro.");
+    const alunni = rawAlunni === undefined ? undefined : [...new Set((rawAlunni as unknown[]).map((item) => publicText(item, 0, 120)).filter(Boolean))];
     const { data: school, error: schoolError } = await admin.from("orientamento_scuole").select("id").eq("id", scuolaId).eq("attiva", true).maybeSingle();
     if (schoolError) throw new PublicServiceError();
     if (!school) throw new Error("Scuola non valida.");
-    const fields = { scuola_id: scuolaId, tipo, data, ora_inizio: oraInizio, ora_fine: oraFine, luogo, nota, stato, updated_at: new Date().toISOString() };
+    const fields = { scuola_id: scuolaId, tipo, data, ora_inizio: oraInizio, ora_fine: oraFine, luogo, nota, stato, ...(alunni === undefined ? {} : { alunni }), updated_at: new Date().toISOString() };
     const query = id === null
       ? admin.from("orientamento_appuntamenti").insert(fields)
       : admin.from("orientamento_appuntamenti").update(fields).eq("id", id).eq("archiviata", false);

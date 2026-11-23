@@ -835,10 +835,10 @@ function datesSheet() {
   const now = today();
   const schools = new Map(data.scuole.map((school) => [school.id, school]));
   return { name: 'Date', title: `Calendario dell’orientamento · aggiornato al ${shortDate(now)}`,
-    columns: [{ header: 'Data', type: 'date', width: 12 }, { header: 'Giorno', width: 11 }, { header: 'Dalle', width: 8 }, { header: 'Alle', width: 8 }, { header: 'Comune', width: 16 }, { header: 'Scuola', width: 24 }, { header: 'Tipo', width: 24 }, { header: 'Stato', width: 26 }, { header: 'Luogo', width: 24 }, { header: 'Nota interna', width: 40 }, { header: 'Docenti assegnati', width: 34 }, { header: 'Quando', width: 11 }],
+    columns: [{ header: 'Data', type: 'date', width: 12 }, { header: 'Giorno', width: 11 }, { header: 'Dalle', width: 8 }, { header: 'Alle', width: 8 }, { header: 'Comune', width: 16 }, { header: 'Scuola', width: 24 }, { header: 'Tipo', width: 24 }, { header: 'Stato', width: 26 }, { header: 'Luogo', width: 24 }, { header: 'Nota interna', width: 40 }, { header: 'Docenti assegnati', width: 34 }, { header: 'Alunni partecipanti', width: 40 }, { header: 'Quando', width: 11 }],
     rows: [...data.appuntamenti].sort(compareAppointments).map((item) => ({
       tone: item.data < now ? 'grey' : item.stato === 'confermata' ? 'green' : 'amber',
-      cells: [item.data, weekday(item.data), (item.ora_inizio || '').slice(0, 5), (item.ora_fine || '').slice(0, 5), schools.get(item.scuola_id)?.comune || '', schools.get(item.scuola_id)?.etichetta || item.scuola_id, APPOINTMENT_TYPES[item.tipo] || item.tipo, item.stato === 'confermata' ? 'Definita con la scuola' : 'Da confermare con la scuola', item.luogo || '', item.nota || '', assignedTeachers(item), item.data < now ? 'Passata' : 'In arrivo'],
+      cells: [item.data, weekday(item.data), (item.ora_inizio || '').slice(0, 5), (item.ora_fine || '').slice(0, 5), schools.get(item.scuola_id)?.comune || '', schools.get(item.scuola_id)?.etichetta || item.scuola_id, APPOINTMENT_TYPES[item.tipo] || item.tipo, item.stato === 'confermata' ? 'Definita con la scuola' : 'Da confermare con la scuola', item.luogo || '', item.nota || '', assignedTeachers(item), (item.alunni || []).join('; '), item.data <= now ? 'Fatta' : 'In arrivo'],
     })) };
 }
 
@@ -903,31 +903,39 @@ async function exportExcel(kind, target) {
   }
 }
 
-// Cruscotto (23/11/2026): a colpo d'occhio le scuole fatte, da verificare, in programma e ancora da fare.
+// Cruscotto (23/11/2026): a colpo d'occhio le scuole fatte, in programma e ancora da fare.
 // «Fatta» vale solo con una visita confermata dalla FS: una data passata non basta (vedi docs/gestione-calendario.md).
 const COCKPIT_GROUPS = [
-  ['fatta', 'Fatte', 'Visita svolta e confermata'],
-  ['verificare', 'Da verificare', 'Data passata o visita segnalata: conferma o aggiungi chi è andato'],
+  ['fatta', 'Fatte', 'Data passata: apri la scuola e registra docenti e alunni che sono andati'],
   ['programma', 'In programma', 'Data fissata, incontro ancora da fare'],
   ['dafare', 'Da fare', 'Nessuna data: apri la scuola e premi «Aggiungi una data»'],
 ];
 const shortDay = new Intl.DateTimeFormat('it-IT', {day:'numeric', month:'short', timeZone:'UTC'});
 const dayLabel = (value) => shortDay.format(new Date(`${value}T12:00:00Z`));
 
+// Regola di Salvatore del 23/11/2026: una scuola con una data passata (oggi compreso) è «fatta».
+// Dalla data fatta si registrano i docenti e gli alunni dell'istituto che hanno partecipato.
+function peopleAt(schoolId, day) {
+  const teachers = [...(data.attivita || []), ...(data.da_confermare || [])]
+    .filter((item) => item.tipo === 'visita' && item.scuola_id === schoolId && item.data === day);
+  const students = (data.appuntamenti || []).filter((item) => item.scuola_id === schoolId && item.data === day)
+    .flatMap((item) => item.alunni || []);
+  return {teachers, students};
+}
+
 function schoolStatus(school, now) {
-  const visits = (data.attivita || []).filter((item) => item.tipo === 'visita' && item.scuola_id === school.id);
-  const reported = (data.da_confermare || []).filter((item) => item.tipo === 'visita' && item.scuola_id === school.id);
+  const visits = [...(data.attivita || []), ...(data.da_confermare || [])].filter((item) => item.tipo === 'visita' && item.scuola_id === school.id);
   const dates = (data.appuntamenti || []).filter((item) => item.scuola_id === school.id);
-  const done = visits.filter((item) => item.data <= now).sort((a, b) => b.data.localeCompare(a.data));
-  const next = dates.filter((item) => item.data >= now).sort(compareAppointments)[0];
-  const pastDates = dates.filter((item) => item.data < now).sort((a, b) => b.data.localeCompare(a.data));
-  const pastReports = reported.filter((item) => item.data <= now).sort((a, b) => b.data.localeCompare(a.data));
-  if (done.length) return {key: 'fatta', note: `Svolta il ${dayLabel(done[0].data)}${next ? ` · prossima ${dayLabel(next.data)}` : ''}`, appointment: next};
-  if (pastReports.length || pastDates.length) {
-    const when = (pastReports[0] || pastDates[0]).data;
-    return {key: 'verificare', note: `Incontro del ${dayLabel(when)}${pastReports.length ? ' · segnalato da un docente' : ''}`};
+  const next = dates.filter((item) => item.data > now).sort(compareAppointments)[0];
+  const pastDays = [...new Set([...dates, ...visits].filter((item) => item.data <= now).map((item) => item.data))].sort().reverse();
+  if (pastDays.length) {
+    const {teachers, students} = peopleAt(school.id, pastDays[0]);
+    const people = teachers.length || students.length
+      ? `${teachers.length} ${teachers.length === 1 ? 'docente' : 'docenti'} · ${students.length} ${students.length === 1 ? 'alunno' : 'alunni'}`
+      : 'registra docenti e alunni';
+    return {key: 'fatta', note: `${dayLabel(pastDays[0])} · ${people}${next ? ` · prossima ${dayLabel(next.data)}` : ''}`, missing: !teachers.length && !students.length};
   }
-  if (next) return {key: 'programma', note: `${dayLabel(next.data)}${timeRange(next) ? ` · ${timeRange(next)}` : ''}${next.stato === 'confermata' ? '' : ' · da concordare'}`, appointment: next};
+  if (next) return {key: 'programma', note: `${dayLabel(next.data)}${timeRange(next) ? ` · ${timeRange(next)}` : ''}${next.stato === 'confermata' ? '' : ' · da concordare'}`};
   return {key: 'dafare', note: 'Nessuna data'};
 }
 
@@ -950,7 +958,7 @@ function renderCockpit() {
   }
   const total = data.scuole.length;
   const n = (key) => buckets.get(key).length;
-  count.textContent = `${n('fatta')} scuole fatte su ${total} · ${n('verificare')} da verificare · ${n('programma')} in programma · ${n('dafare')} ancora senza data`;
+  count.textContent = `${n('fatta')} scuole fatte su ${total} · ${n('programma')} in programma · ${n('dafare')} ancora senza data`;
   for (const [key, title, help] of COCKPIT_GROUPS) {
     if (n(key)) {
       const part = el('span', `cockpit-bar-part is-${key}`);
@@ -966,7 +974,7 @@ function renderCockpit() {
     for (const item of buckets.get(key)) {
       const button = el('button', 'cockpit-school');
       button.type = 'button';
-      button.append(el('strong', '', item.school.comune), el('span', 'cockpit-label', item.school.etichetta), el('span', 'cockpit-note', item.note));
+      button.append(el('strong', '', item.school.comune), el('span', 'cockpit-label', item.school.etichetta), el('span', item.missing ? 'cockpit-note is-missing' : 'cockpit-note', item.note));
       button.addEventListener('click', () => openSchoolSheet(item.school.id));
       button.setAttribute('aria-label', `${item.school.comune}, ${item.school.etichetta}: ${item.note}. Apri la scheda per correggere scuola, date e visite.`);
       const li = el('li');
@@ -1064,6 +1072,59 @@ function leaveSheet(next) {
   next();
 }
 
+function participantsBlock(school, appointment) {
+  const box = el('div', 'participants');
+  const {teachers} = peopleAt(school.id, appointment.data);
+  const teacherBox = el('div', 'participants-col');
+  teacherBox.append(el('h4', '', `Docenti (${teachers.length})`));
+  const list = el('ul');
+  for (const item of teachers) {
+    const row = el('li');
+    row.append(el('span', '', `${item.nome} ${item.cognome}`));
+    row.append(sheetButton('Modifica', 'neutral small', () => leaveSheet(() => editActivity(item))));
+    list.append(row);
+  }
+  if (!teachers.length) list.append(el('li', 'participants-empty', 'Nessun docente registrato'));
+  teacherBox.append(list, sheetButton('Aggiungi docente', 'ok', () => leaveSheet(() => {
+    const label = `${school.comune} – ${school.etichetta}`;
+    prepareVisitRegistration({...appointment, tipo: 'visita'}, label, [appointment]);
+  })));
+
+  const studentBox = el('div', 'participants-col');
+  studentBox.append(el('h4', '', `Alunni (${(appointment.alunni || []).length})`));
+  const field = el('label', 'participants-field');
+  field.append(el('span', '', 'Uno per riga: nome, cognome e classe'));
+  const area = document.createElement('textarea');
+  area.rows = Math.min(10, Math.max(3, (appointment.alunni || []).length + 1));
+  area.value = (appointment.alunni || []).join('\n');
+  area.placeholder = 'Es. Mario Rossi 4SA';
+  field.append(area);
+  const message = el('small', 'participants-message');
+  message.setAttribute('role', 'status');
+  const save = sheetButton('Salva alunni', 'ok', async (button) => {
+    const names = area.value.split('\n').map((value) => value.trim().replace(/\s+/g, ' ')).filter(Boolean);
+    if (names.length > 80) { message.textContent = 'Al massimo 80 alunni per incontro.'; return; }
+    if (names.some((value) => value.length > 120)) { message.textContent = 'Una riga è troppo lunga (massimo 120 caratteri).'; return; }
+    button.disabled = true;
+    message.textContent = 'Salvataggio…';
+    try {
+      await api('save_appointment', {
+        id: appointment.id, scuola_id: appointment.scuola_id, tipo: appointment.tipo, data: appointment.data, stato: appointment.stato,
+        ora_inizio: (appointment.ora_inizio || '').slice(0, 5), ora_fine: (appointment.ora_fine || '').slice(0, 5),
+        luogo: appointment.luogo || '', nota: appointment.nota || '', alunni: names,
+      });
+      schoolMessage.textContent = `Alunni salvati: ${names.length}.`;
+      await load();
+    } catch (error) {
+      button.disabled = false;
+      handleError(error, message);
+    }
+  });
+  studentBox.append(field, save, message);
+  box.append(teacherBox, studentBox);
+  return box;
+}
+
 function renderSchoolSheet() {
   const body = document.getElementById('schoolSheetBody');
   body.replaceChildren();
@@ -1100,12 +1161,13 @@ function renderSchoolSheet() {
   if (!dates.length) body.append(el('p', 'agenda-message', 'Nessuna data.'));
   const dateList = el('ul', 'school-sheet-list');
   for (const item of dates) {
-    const li = el('li');
+    const li = el('li', item.data <= now ? 'is-done' : '');
     const text = el('div');
-    text.append(el('strong', '', visitDate.format(new Date(`${item.data}T12:00:00Z`))));
-    text.append(el('small', '', [timeRange(item) || 'Orario non indicato', APPOINTMENT_TYPES[item.tipo] || item.tipo, item.stato === 'confermata' ? 'confermata dalla scuola' : 'da concordare', item.data < now ? 'passata' : ''].filter(Boolean).join(' · ')));
+    text.append(el('strong', '', `${item.data <= now ? 'Fatta · ' : ''}${visitDate.format(new Date(`${item.data}T12:00:00Z`))}`));
+    text.append(el('small', '', [timeRange(item) || 'Orario non indicato', APPOINTMENT_TYPES[item.tipo] || item.tipo, item.stato === 'confermata' ? 'confermata dalla scuola' : 'da concordare'].filter(Boolean).join(' · ')));
     if (item.luogo) text.append(el('small', '', item.luogo));
     li.append(text, sheetButton('Modifica o togli', 'neutral', () => leaveSheet(() => openCalendarForm(null, item))));
+    if (item.data <= now) li.append(participantsBlock(school, item));
     dateList.append(li);
   }
   body.append(dateList);
@@ -1116,7 +1178,7 @@ function renderSchoolSheet() {
   ].filter(({item}) => item.tipo === 'visita' && item.scuola_id === school.id)
     .sort((a, b) => b.item.data.localeCompare(a.item.data));
   body.append(el('h3', 'school-sheet-title', `Visite registrate (${visits.length})`));
-  body.append(el('p', 'panel-help', 'Con «Modifica» cambi docente, data o scuola, oppure annulli la registrazione. Una visita confermata e poi modificata torna «Da confermare»: la riconfermi con un clic.'));
+  body.append(el('p', 'panel-help', 'Con «Modifica» cambi docente, data o scuola, oppure annulli la registrazione. «Da confermare» compare solo per le segnalazioni inviate dai docenti con il loro codice.'));
   if (!visits.length) body.append(el('p', 'agenda-message', 'Nessuna visita registrata.'));
   const visitList = el('ul', 'school-sheet-list');
   for (const {item, confirmed} of visits) {
@@ -1331,10 +1393,12 @@ activityForm.addEventListener('submit', async (event) => {
   activityMessage.textContent = 'Registrazione in corso…';
   try {
     const result = await api(editing ? 'update_activity' : 'register_activity', payload);
+    // Regola di Salvatore del 23/11/2026: ciò che registra la Funzione Strumentale per una data passata è già fatto.
+    if (payload.data <= today()) await api('confirm_activity', {id: result.id || payload.id});
     resetActivityForm();
     activityEditor.close();
     globalMessage.textContent = payload.data <= today()
-      ? (payload.tipo==='visita'?'Docente salvato. Ora puoi confermare la visita.':'Attività salvata. Ora puoi confermarla.')
+      ? (payload.tipo==='visita'?'Docente registrato.':'Attività registrata.')
       : 'Docente aggiunto all’attività in programma.';
     await load();
     if (!workspacePanel.hidden) {
