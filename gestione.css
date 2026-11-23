@@ -403,3 +403,19 @@
 .school-sheet-list strong { color:#163e56; }
 .school-sheet-list small { color:#4b6170; font-size:.82rem; }
 .school-sheet-list .review-actions { margin-top:0; }
+
+/* Date fatte: docenti e alunni che hanno partecipato (23/11/2026). */
+.cockpit-note.is-missing { color:#9b1930; }
+.school-sheet-list li.is-done { border-color:#9fd3b1; background:#f1faf4; }
+.participants { flex:1 1 100%; display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; padding-top:10px; border-top:1px solid #cfe6d7; }
+.participants-col { display:grid; align-content:start; gap:8px; min-width:0; }
+.participants-col h4 { margin:0; color:#123c57; font-size:.95rem; }
+.participants-col ul { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
+.participants-col li { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 0; border:0; background:none; }
+.participants-col .act { justify-self:start; }
+.participants-col .act.small { padding:5px 9px; font-size:.75rem; }
+.participants-empty { color:#6b7c88; font-style:italic; font-size:.85rem; }
+.participants-field { display:grid; gap:4px; font-size:.82rem; color:#4b6170; }
+.participants-field textarea { width:100%; padding:8px 10px; border:1px solid #b9cbd1; border-radius:9px; font:inherit; font-size:.9rem; color:#163e56; resize:vertical; }
+.participants-message { color:#123c57; font-weight:700; }
+@media (max-width:650px) { .participants { grid-template-columns:1fr; } }

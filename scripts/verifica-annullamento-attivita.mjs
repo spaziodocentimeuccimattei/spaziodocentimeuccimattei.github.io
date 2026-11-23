@@ -93,13 +93,14 @@ try{
  form.elements.nome.value='Docente corretto';form.elements.data.value='2026-10-15';submit(form);
  await until(()=>recordById(ids.pending).nome==='Docente corretto'&&!form.elements.id.value,'salvataggio modifica');
  eq(recordById(ids.pending).id,ids.pending,'identificativo preservato');
- eq(recordById(ids.pending).stato,'da_confermare','modificare non conferma');
+ // Regola di Salvatore del 23/11/2026: ciò che la Funzione Strumentale registra o corregge per una data passata è già fatto.
+ eq(recordById(ids.pending).stato,'confermata','la correzione FS di una data passata conferma');
  button(row(ids.pending),'Modifica registrazione').click();$('activityDiscard').click();
  eq(form.querySelector('.appointment-buttons').hidden,true);
  button(form,'Mantieni la registrazione').click();eq(form.elements.id.value,ids.pending);
  $('activityDiscard').click();button(form,'Sì, annulla registrazione').click();
  await until(()=>recordById(ids.pending).archiviata&&!row(ids.pending),'annullamento dal modulo');
- eq(recordById(ids.pending).stato,'da_confermare','annullare non attesta svolgimento');
+ eq(recordById(ids.pending).stato,'confermata','annullare non cambia lo stato');
  eq(form.elements.id.value,'');eq($('activityDiscard').hidden,true);eq($('pendingList').querySelectorAll('[data-activity-id]').length,0);
  const confirmedBefore=JSON.stringify(recordById(ids.confirmed));
  button(row(ids.confirmed),'Modifica registrazione').click();form.elements.nota.value='Bozza da conservare';
@@ -113,7 +114,7 @@ try{
  button(row(ids.confirmed),'Annulla registrazione').click();button(row(ids.confirmed),'Sì, annulla registrazione').click();
  await until(()=>recordById(ids.confirmed).archiviata&&!row(ids.confirmed),'annullamento di una conferma esistente');
  eq(env.tables.get('orientamento_attivita').length,3,'nessuna cancellazione fisica');
- eq(calls.includes('confirm_activity'),false,'nessuna conferma implicita');eq(nativeDialogs,0);
+ eq(calls.filter(a=>a==='confirm_activity').length,1,'una sola conferma: quella della correzione FS di una data passata');eq(nativeDialogs,0);
  eq(errors,[],'nessun errore DOM');
- console.log(JSON.stringify({checks,status:'superato',scope:'FS, annullamento da scheda e modulo, errore e ripresa, date future, modifica senza conferma, conservazione e notifica',realDataUsed:false}));
+ console.log(JSON.stringify({checks,status:'superato',scope:'FS, annullamento da scheda e modulo, errore e ripresa, date future, correzione FS di una data passata già confermata, conservazione e notifica',realDataUsed:false}));
 }finally{w.close();}

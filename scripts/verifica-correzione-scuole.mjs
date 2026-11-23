@@ -51,3 +51,25 @@ assert.ok(list.scuole.some((row) => row.id === school.id));
 assert.equal(tables.get('orientamento_scuole').length, before + 1);
 
 console.log('Correzione scuole: solo FS, nome e comune corretti, nuova scuola, tolta e rimessa senza cancellare date e visite, input non validi respinti.');
+
+// Alunni dell'istituto partecipanti a un incontro: solo FS, mai nella pagina pubblica, conservati se la richiesta non li porta.
+{
+  const {call, tables} = await isolatedOrientation();
+  const fs = (await call('login', {password: 'ANTEPRIMA'})).body.token;
+  const commission = (await call('login', {password: 'ORIENTATORE'})).body.token;
+  const school = tables.get('orientamento_scuole')[0];
+  const base = {scuola_id: school.id, tipo: 'aule', data: '2026-10-10', stato: 'confermata'};
+  const saved = await call('save_appointment', {...base, alunni: ['  Mario Rossi 4SA ', 'Mario Rossi 4SA', '', 'Anna Bianchi 3SB']}, fs);
+  assert.equal(saved.status, 201);
+  const row = tables.get('orientamento_appuntamenti').find((item) => item.id === saved.body.id);
+  assert.deepEqual(row.alunni, ['Mario Rossi 4SA', 'Anna Bianchi 3SB']);
+  row.archiviata = false; // valore predefinito del database, che l'archivio in memoria non applica
+  assert.equal((await call('save_appointment', {...base, id: row.id, luogo: 'Aula magna'}, fs)).status, 200);
+  assert.deepEqual(row.alunni, ['Mario Rossi 4SA', 'Anna Bianchi 3SB']);
+  assert.equal((await call('save_appointment', {...base, id: row.id, alunni: Array(81).fill('X Y')}, fs)).status, 400);
+  assert.equal((await call('save_appointment', {...base, id: row.id, alunni: []}, commission)).status, 403);
+  assert.deepEqual(row.alunni, ['Mario Rossi 4SA', 'Anna Bianchi 3SB']);
+  assert.ok(!JSON.stringify((await call('overview')).body).includes('Mario Rossi'));
+  assert.deepEqual((await call('list_contributions', {}, fs)).body.appuntamenti.find((item) => item.id === row.id).alunni, ['Mario Rossi 4SA', 'Anna Bianchi 3SB']);
+  console.log('Alunni partecipanti: salvati e ripuliti, conservati se non inviati, limite 80, solo FS, mai nella pagina pubblica.');
+}
