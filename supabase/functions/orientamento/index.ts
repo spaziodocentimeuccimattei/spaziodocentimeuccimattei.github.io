@@ -684,11 +684,16 @@ async function overview(request: Request) {
 async function listContributions(request: Request) {
   try {
     const data = await loadParticipationData();
-    const teachers = await admin.from("orientamento_docenti").select("id,nome,cognome,codice").limit(1000);
-    if (teachers.error) throw new PublicServiceError();
+    const [teachers, hidden] = await Promise.all([
+      admin.from("orientamento_docenti").select("id,nome,cognome,codice").limit(1000),
+      // Le scuole tolte dall'elenco restano visibili alla Funzione Strumentale, che può rimetterle.
+      admin.from("orientamento_scuole").select("id,comune,etichetta,area,verificata").eq("attiva", false).order("ordine"),
+    ]);
+    if (teachers.error || hidden.error) throw new PublicServiceError();
     return json(request, {
       docenti: teachers.data ?? [],
       scuole: data.schools,
+      scuole_tolte: hidden.data ?? [],
       disponibilita: data.supporters,
       proposte: data.proposals,
       attivita: data.activities,
@@ -829,6 +834,47 @@ async function saveAppointment(request: Request, payload: Record<string, unknown
     const { data: row, error } = await query.select("id").maybeSingle();
     if (error || !row) throw new Error("Salvataggio non riuscito.");
     return json(request, { ok: true, id: row.id }, id === null ? 201 : 200);
+  } catch (error) {
+    return json(request, { error: error instanceof Error ? error.message : "Salvataggio non riuscito." }, error instanceof PublicServiceError ? 503 : 400);
+  }
+}
+
+// Correzione dell'elenco delle scuole dalla Gestione (decisione di Salvatore del 23/11/2026: la Funzione Strumentale
+// deve poter correggere tutto). Si cambiano comune, nome e area, si aggiunge una scuola o la si toglie/rimette
+// nell'elenco. Non si cancella mai: date e visite già registrate restano legate alla stessa scuola.
+function schoolSlug(comune: string, etichetta: string) {
+  const base = `${comune}-${etichetta}`.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 70);
+  return base.length >= 3 ? base : `scuola-${base}`.slice(0, 70);
+}
+
+async function saveSchool(request: Request, payload: Record<string, unknown>) {
+  try {
+    const id = payload.id === undefined || payload.id === null || payload.id === "" ? null : payload.id;
+    if (id !== null && (typeof id !== "string" || !/^[a-z0-9-]{3,80}$/.test(id))) throw new Error("Scuola non valida.");
+    const comune = publicText(payload.comune ?? "", 2, 80);
+    const etichetta = publicText(payload.etichetta ?? "", 2, 120);
+    const area = payload.area === "esterno" ? "esterno" : "bacino";
+    const attiva = payload.attiva === false || payload.attiva === "false" ? false : true;
+    if (id !== null) {
+      const { data: row, error } = await admin.from("orientamento_scuole")
+        .update({ comune, etichetta, area, attiva }).eq("id", id).select("id").maybeSingle();
+      if (error) throw new PublicServiceError();
+      if (!row) throw new Error("Scuola non trovata: aggiorna la pagina.");
+      return json(request, { ok: true, id: row.id });
+    }
+    const { data: last, error: lastError } = await admin.from("orientamento_scuole").select("ordine").order("ordine", { ascending: false }).limit(1).maybeSingle();
+    if (lastError) throw new PublicServiceError();
+    const base = schoolSlug(comune, etichetta);
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const candidate = attempt === 0 ? base : `${base}-${attempt + 1}`;
+      const { data: row, error } = await admin.from("orientamento_scuole")
+        .insert({ id: candidate, comune, etichetta, area, attiva: true, verificata: false, ordine: (last?.ordine ?? 0) + 1 })
+        .select("id").maybeSingle();
+      if (!error && row) return json(request, { ok: true, id: row.id }, 201);
+      if (error && error.code !== "23505") throw new PublicServiceError();
+    }
+    throw new Error("Esiste già una scuola con questo nome.");
   } catch (error) {
     return json(request, { error: error instanceof Error ? error.message : "Salvataggio non riuscito." }, error instanceof PublicServiceError ? 503 : 400);
   }
@@ -1143,7 +1189,7 @@ Deno.serve(async (request: Request) => {
   if (action === "list") return await listDocuments(request, session.accessLevel);
   if (action === "view_presentation") return await viewPresentation(request, payload, session.accessLevel);
   // La gestione di candidature, proposte, attività e calendario è riservata alla password personale della Funzione Strumentale.
-  if (["list_contributions", "update_contribution", "edit_supporter", "edit_proposal", "register_activity", "update_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment", "new_code"].includes(action) && session.accessLevel !== "funzione_strumentale") {
+  if (["list_contributions", "update_contribution", "edit_supporter", "edit_proposal", "register_activity", "update_activity", "archive_activity", "confirm_activity", "save_appointment", "archive_appointment", "save_school", "new_code"].includes(action) && session.accessLevel !== "funzione_strumentale") {
     return json(request, { error: "Accesso riservato alla Funzione Strumentale." }, 403);
   }
   if (action === "list_contributions") return await listContributions(request);
@@ -1156,6 +1202,7 @@ Deno.serve(async (request: Request) => {
   if (action === "confirm_activity") return await confirmActivity(request, payload);
   if (action === "save_appointment") return await saveAppointment(request, payload);
   if (action === "archive_appointment") return await archiveAppointment(request, payload);
+  if (action === "save_school") return await saveSchool(request, payload);
   if (action === "new_code") return await newCode(request, payload);
   if (["upload", "replace", "upload_presentation", "replace_presentation", "update", "archive"].includes(action) && session.accessLevel === "supporter") {
     return json(request, { error: "Questa password consente soltanto la consultazione." }, 403);

@@ -8,7 +8,7 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261009-home">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261123-modifica">
+  <link rel="stylesheet" href="gestione.css?v=20261123-schede">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261014-leggibilita">
 </head>
 <body class="gestione-page">
@@ -81,10 +81,16 @@
               <div class="cockpit-actions">
                 <button type="button" class="cockpit-btn primary" id="cockpitAddDate" disabled>Inserisci la data di un incontro</button>
                 <button type="button" class="cockpit-btn" id="cockpitAddActivity" disabled>Registra un’attività</button>
+                <button type="button" class="cockpit-btn" id="cockpitAddSchool" disabled>Aggiungi una scuola</button>
               </div>
             </div>
             <div class="cockpit-bar" id="cockpitBar" aria-hidden="true"></div>
+            <p class="cockpit-tip">Premi una scuola per aprire la sua scheda: lì correggi nome, date e visite, anche quelle già fatte.</p>
             <div class="cockpit-groups" id="cockpitGroups"></div>
+            <details class="manage-disclosure cockpit-hidden" id="hiddenSchools" hidden>
+              <summary>Scuole tolte dall’elenco</summary>
+              <ul class="cockpit-list" id="hiddenSchoolList"></ul>
+            </details>
           </section>
 
           <section class="upcoming-section" aria-labelledby="agendaTitle">
@@ -236,6 +242,26 @@
           </details>
         </section>
 
+        <dialog id="schoolSheet" class="visit-editor school-sheet" aria-labelledby="schoolSheetTitle">
+          <div class="school-sheet-head">
+            <h2 class="panel-title" id="schoolSheetTitle">Scheda della scuola</h2>
+            <button type="button" class="act neutral" id="schoolSheetClose">Chiudi</button>
+          </div>
+          <form id="schoolForm" class="activity-form appointment-form school-form">
+            <input type="hidden" name="id">
+            <label>Comune <input name="comune" maxlength="80" required></label>
+            <label>Nome della scuola <input name="etichetta" maxlength="120" required placeholder="Es. Scuola media «Pascoli»"></label>
+            <label>Zona
+              <select name="area"><option value="bacino">Nel nostro bacino</option><option value="esterno">Fuori bacino</option></select>
+            </label>
+            <div class="appointment-buttons">
+              <button type="submit" id="schoolSubmit">Salva la scuola</button>
+              <button type="button" class="act no" id="schoolToggle" hidden>Togli dall’elenco</button>
+            </div>
+          </form>
+          <p id="schoolMessage" class="global-message" role="status" aria-live="polite"></p>
+          <div id="schoolSheetBody"></div>
+        </dialog>
         <dialog id="activityEditor" class="visit-editor" aria-labelledby="activityEditorTitle">
           <h2 class="panel-title" id="activityEditorTitle">Aggiungi chi è andato</h2>
           <div class="visit-editor-context" id="activityEditorContext" hidden></div>
@@ -270,7 +296,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script type="module" src="gestione.js?v=20261123-modifica"></script>
+  <script type="module" src="gestione.js?v=20261123-schede"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261115-riordino"></script>
 </body>
 </html>

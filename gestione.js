@@ -152,6 +152,7 @@ function resetSession() {
   renderVisits(new Map());
   resetActivityForm();
   if (activityEditor.open) activityEditor.close();
+  if (schoolSheet.open) schoolSheet.close();
   sessionStorage.removeItem(SESSION_KEY);
   document.dispatchEvent(new CustomEvent('bussola-gestione-uscita'));
   workspacePanel.hidden = true;
@@ -908,7 +909,7 @@ const COCKPIT_GROUPS = [
   ['fatta', 'Fatte', 'Visita svolta e confermata'],
   ['verificare', 'Da verificare', 'Data passata o visita segnalata: conferma o aggiungi chi è andato'],
   ['programma', 'In programma', 'Data fissata, incontro ancora da fare'],
-  ['dafare', 'Da fare', 'Nessuna data: premi la scuola per inserirla'],
+  ['dafare', 'Da fare', 'Nessuna data: apri la scuola e premi «Aggiungi una data»'],
 ];
 const shortDay = new Intl.DateTimeFormat('it-IT', {day:'numeric', month:'short', timeZone:'UTC'});
 const dayLabel = (value) => shortDay.format(new Date(`${value}T12:00:00Z`));
@@ -936,6 +937,8 @@ function renderCockpit() {
   const count = document.getElementById('cockpitCount');
   document.getElementById('cockpitAddDate').disabled = !data;
   document.getElementById('cockpitAddActivity').disabled = !data;
+  document.getElementById('cockpitAddSchool').disabled = !data;
+  renderHiddenSchools();
   groups.replaceChildren();
   bar.replaceChildren();
   if (!data) { count.textContent = ''; return; }
@@ -964,15 +967,8 @@ function renderCockpit() {
       const button = el('button', 'cockpit-school');
       button.type = 'button';
       button.append(el('strong', '', item.school.comune), el('span', 'cockpit-label', item.school.etichetta), el('span', 'cockpit-note', item.note));
-      button.addEventListener('click', () => {
-        if (key === 'dafare') openCalendarForm(item.school);
-        else if (key === 'programma') openCalendarForm(null, item.appointment);
-        else if (item.appointment) openCalendarForm(null, item.appointment);
-        else if (key === 'verificare') showSection('confermare', {focus: true});
-        else showSection('scuole', {focus: true});
-      });
-      const action = key === 'dafare' ? 'inserisci la data' : item.appointment ? 'modifica la prossima data' : key === 'verificare' ? 'vai alle visite da verificare' : 'apri la scheda delle scuole';
-      button.setAttribute('aria-label', `${item.school.comune}, ${item.school.etichetta}: ${item.note}. Premi per ${action}.`);
+      button.addEventListener('click', () => openSchoolSheet(item.school.id));
+      button.setAttribute('aria-label', `${item.school.comune}, ${item.school.etichetta}: ${item.note}. Apri la scheda per correggere scuola, date e visite.`);
       const li = el('li');
       li.append(button);
       list.append(li);
@@ -1029,8 +1025,194 @@ function renderRegistry(schoolNames) {
   document.getElementById('registryEmpty').hidden = rows.length > 0;
 }
 
+// Scheda della scuola (23/11/2026): da qui la Funzione Strumentale corregge tutto ciò che riguarda una scuola,
+// anche se è già «fatta»: nome e comune, date passate e future, visite confermate o da confermare.
+const schoolSheet = document.getElementById('schoolSheet');
+const schoolForm = document.getElementById('schoolForm');
+const schoolMessage = document.getElementById('schoolMessage');
+const schoolToggle = document.getElementById('schoolToggle');
+let openSchoolId = null;
+
+function allSchools() {
+  return [...(data?.scuole || []), ...(data?.scuole_tolte || [])];
+}
+
+function renderHiddenSchools() {
+  const box = document.getElementById('hiddenSchools');
+  const list = document.getElementById('hiddenSchoolList');
+  list.replaceChildren();
+  const hidden = data?.scuole_tolte || [];
+  box.hidden = !hidden.length;
+  for (const school of hidden) {
+    const button = el('button', 'cockpit-school');
+    button.type = 'button';
+    button.append(el('strong', '', school.comune), el('span', 'cockpit-label', school.etichetta), el('span', 'cockpit-note', 'Tolta dall’elenco: apri per rimetterla'));
+    button.addEventListener('click', () => openSchoolSheet(school.id));
+    const li = el('li');
+    li.append(button);
+    list.append(li);
+  }
+}
+
+function sheetButton(label, className, handler) {
+  return actionButton(label, className, (button) => handler(button));
+}
+
+function leaveSheet(next) {
+  openSchoolId = null;
+  if (schoolSheet.open) schoolSheet.close();
+  next();
+}
+
+function renderSchoolSheet() {
+  const body = document.getElementById('schoolSheetBody');
+  body.replaceChildren();
+  const school = allSchools().find((item) => item.id === openSchoolId);
+  const isNew = openSchoolId === '';
+  if (!isNew && !school) { if (schoolSheet.open) schoolSheet.close(); openSchoolId = null; return; }
+  const active = isNew || (data.scuole || []).some((item) => item.id === openSchoolId);
+  document.getElementById('schoolSheetTitle').textContent = isNew ? 'Aggiungi una scuola' : `${school.comune} – ${school.etichetta}`;
+  document.getElementById('schoolSubmit').textContent = isNew ? 'Aggiungi la scuola' : 'Salva nome e comune';
+  schoolToggle.hidden = isNew;
+  schoolToggle.textContent = active ? 'Togli dall’elenco' : 'Rimetti nell’elenco';
+  schoolToggle.className = active ? 'act no' : 'act ok';
+  if (isNew) return;
+  if (!active) body.append(el('p', 'school-sheet-warning', 'Questa scuola è tolta dall’elenco: non compare nel calendario né nella pagina dei docenti. Date e visite restano salvate.'));
+
+  const now = today();
+  const actions = el('div', 'review-actions');
+  if (active) {
+    actions.append(
+      sheetButton('Aggiungi una data', 'ok', () => leaveSheet(() => openCalendarForm(school))),
+      sheetButton('Registra una visita', 'neutral', () => leaveSheet(() => {
+        resetActivityForm();
+        activityType.value = 'visita';
+        syncActivityType();
+        activitySchool.value = school.id;
+        openActivityEditor(`Registra una visita · ${school.comune}`);
+      })),
+    );
+  }
+  body.append(actions);
+
+  const dates = (data.appuntamenti || []).filter((item) => item.scuola_id === school.id).sort(compareAppointments);
+  body.append(el('h3', 'school-sheet-title', `Date in calendario (${dates.length})`));
+  if (!dates.length) body.append(el('p', 'agenda-message', 'Nessuna data.'));
+  const dateList = el('ul', 'school-sheet-list');
+  for (const item of dates) {
+    const li = el('li');
+    const text = el('div');
+    text.append(el('strong', '', visitDate.format(new Date(`${item.data}T12:00:00Z`))));
+    text.append(el('small', '', [timeRange(item) || 'Orario non indicato', APPOINTMENT_TYPES[item.tipo] || item.tipo, item.stato === 'confermata' ? 'confermata dalla scuola' : 'da concordare', item.data < now ? 'passata' : ''].filter(Boolean).join(' · ')));
+    if (item.luogo) text.append(el('small', '', item.luogo));
+    li.append(text, sheetButton('Modifica o togli', 'neutral', () => leaveSheet(() => openCalendarForm(null, item))));
+    dateList.append(li);
+  }
+  body.append(dateList);
+
+  const visits = [
+    ...(data.da_confermare || []).map((item) => ({item, confirmed: false})),
+    ...(data.attivita || []).map((item) => ({item, confirmed: true})),
+  ].filter(({item}) => item.tipo === 'visita' && item.scuola_id === school.id)
+    .sort((a, b) => b.item.data.localeCompare(a.item.data));
+  body.append(el('h3', 'school-sheet-title', `Visite registrate (${visits.length})`));
+  body.append(el('p', 'panel-help', 'Con «Modifica» cambi docente, data o scuola, oppure annulli la registrazione. Una visita confermata e poi modificata torna «Da confermare»: la riconfermi con un clic.'));
+  if (!visits.length) body.append(el('p', 'agenda-message', 'Nessuna visita registrata.'));
+  const visitList = el('ul', 'school-sheet-list');
+  for (const {item, confirmed} of visits) {
+    const li = el('li');
+    const text = el('div');
+    text.append(el('strong', '', `${item.nome} ${item.cognome}`));
+    text.append(el('small', '', `${item.data.split('-').reverse().join('/')} · ${confirmed ? 'Confermata' : 'Da confermare'}`));
+    if (item.nota) text.append(el('small', '', item.nota));
+    const buttons = el('div', 'review-actions');
+    if (!confirmed && item.data <= now) {
+      buttons.append(sheetButton('Conferma', 'ok', async (button) => {
+        button.disabled = true;
+        schoolMessage.textContent = 'Salvataggio…';
+        try {
+          await api('confirm_activity', {id: item.id});
+          schoolMessage.textContent = 'Visita confermata.';
+          await load();
+        } catch (error) {
+          button.disabled = false;
+          handleError(error, schoolMessage);
+        }
+      }));
+    }
+    buttons.append(sheetButton('Modifica', 'neutral', () => leaveSheet(() => editActivity(item))));
+    li.append(text, buttons);
+    visitList.append(li);
+  }
+  body.append(visitList);
+}
+
+function openSchoolSheet(id) {
+  openSchoolId = id || '';
+  const school = allSchools().find((item) => item.id === openSchoolId);
+  schoolForm.reset();
+  schoolForm.elements.id.value = school?.id || '';
+  schoolForm.elements.comune.value = school?.comune || '';
+  schoolForm.elements.etichetta.value = school?.etichetta || '';
+  schoolForm.elements.area.value = school?.area === 'esterno' ? 'esterno' : 'bacino';
+  schoolMessage.textContent = '';
+  renderSchoolSheet();
+  if (!schoolSheet.open) schoolSheet.showModal();
+  (openSchoolId ? document.getElementById('schoolSheetClose') : schoolForm.elements.comune).focus();
+}
+
+async function saveSchool(extra = {}) {
+  const payload = {
+    id: schoolForm.elements.id.value || undefined,
+    comune: schoolForm.elements.comune.value,
+    etichetta: schoolForm.elements.etichetta.value,
+    area: schoolForm.elements.area.value,
+    attiva: !openSchoolId || (data.scuole || []).some((item) => item.id === openSchoolId),
+    ...extra,
+  };
+  schoolMessage.textContent = 'Salvataggio…';
+  const result = await api('save_school', payload);
+  openSchoolId = result.id;
+  schoolForm.elements.id.value = result.id;
+  await load();
+  return result;
+}
+
+schoolForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!schoolForm.reportValidity()) return;
+  const button = document.getElementById('schoolSubmit');
+  const isNew = !schoolForm.elements.id.value;
+  button.disabled = true;
+  try {
+    await saveSchool();
+    schoolMessage.textContent = isNew ? 'Scuola aggiunta: ora puoi inserire una data.' : 'Scuola aggiornata.';
+  } catch (error) {
+    handleError(error, schoolMessage);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+schoolToggle.addEventListener('click', async () => {
+  const active = (data.scuole || []).some((item) => item.id === openSchoolId);
+  if (active && !window.confirm('Togliere questa scuola dall’elenco? Non comparirà più nel calendario né nella pagina dei docenti. Date e visite restano salvate e potrai rimetterla.')) return;
+  schoolToggle.disabled = true;
+  try {
+    await saveSchool({attiva: !active});
+    schoolMessage.textContent = active ? 'Scuola tolta dall’elenco.' : 'Scuola rimessa nell’elenco.';
+  } catch (error) {
+    handleError(error, schoolMessage);
+  } finally {
+    schoolToggle.disabled = false;
+  }
+});
+
+document.getElementById('schoolSheetClose').addEventListener('click', () => { openSchoolId = null; schoolSheet.close(); });
+schoolSheet.addEventListener('close', () => { openSchoolId = null; });
+
 function render() {
-  const schoolNames = new Map(data.scuole.map((school) => [school.id, `${school.comune} – ${school.etichetta}`]));
+  const schoolNames = new Map(allSchools().map((school) => [school.id, `${school.comune} – ${school.etichetta}`]));
   renderVisits(schoolNames);
   renderSupporters(schoolNames);
   renderTeacherCodes();
@@ -1041,13 +1223,14 @@ function render() {
   renderAgenda(schoolNames);
   renderCockpit();
   renderRegistry(schoolNames);
+  if (openSchoolId !== null && schoolSheet.open) renderSchoolSheet();
 }
 
 async function load() {
   refreshButton.disabled = true;
   try {
     const result = await api('list_contributions');
-    data = { ...result, attivita: result.attivita || [], da_confermare: result.da_confermare || [], appuntamenti: [...(result.appuntamenti || [])].sort(compareAppointments) };
+    data = { ...result, scuole_tolte: result.scuole_tolte || [], attivita: result.attivita || [], da_confermare: result.da_confermare || [], appuntamenti: [...(result.appuntamenti || [])].sort(compareAppointments) };
     render();
     document.getElementById('lastUpdate').textContent = `Dati aggiornati alle ${new Intl.DateTimeFormat('it-IT', { timeStyle: 'short' }).format(new Date())}`;
     if (globalMessage.textContent === 'Caricamento…') globalMessage.textContent = '';
@@ -1081,6 +1264,7 @@ for (const button of document.querySelectorAll('[data-tab]')) {
 }
 document.getElementById('addAppointment').addEventListener('click', () => openCalendarForm());
 document.getElementById('cockpitAddDate').addEventListener('click', () => openCalendarForm());
+document.getElementById('cockpitAddSchool').addEventListener('click', () => openSchoolSheet(''));
 document.getElementById('cockpitAddActivity').addEventListener('click', () => {
   resetActivityForm();
   openActivityEditor('Registra un’attività');
