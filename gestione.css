@@ -386,3 +386,20 @@
   .registry-table td { padding:4px 12px; border:0; }
   .registry-actions { justify-content:flex-start; }
 }
+
+/* Scheda della scuola (23/11/2026). */
+.cockpit-tip { margin:0 0 10px; color:#4b6170; font-size:.88rem; }
+.cockpit-hidden { margin-top:14px; }
+.cockpit-hidden .cockpit-list { margin-top:8px; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
+.school-sheet { width:min(760px,calc(100vw - 24px)); max-height:90vh; overflow:auto; }
+.school-sheet-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.school-sheet-head .panel-title { margin:0; }
+.school-form { margin-top:14px; }
+.school-sheet-warning { margin:12px 0 0; padding:10px 12px; border-radius:10px; color:#794500; background:#fff3e0; font-weight:700; }
+.school-sheet-title { margin:22px 0 8px; color:#123c57; font-size:1.05rem; }
+.school-sheet-list { display:grid; gap:6px; margin:0; padding:0; list-style:none; }
+.school-sheet-list li { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 14px; padding:10px 12px; border:1px solid #dbe5ea; border-radius:10px; background:#f9fbfc; }
+.school-sheet-list li > div:first-child { display:grid; gap:2px; min-width:0; }
+.school-sheet-list strong { color:#163e56; }
+.school-sheet-list small { color:#4b6170; font-size:.82rem; }
+.school-sheet-list .review-actions { margin-top:0; }

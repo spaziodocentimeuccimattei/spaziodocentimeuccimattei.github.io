@@ -53,3 +53,13 @@ Problema segnalato da Salvatore: entrando da `orientamento.html` («Commissione 
   - I pulsanti **Inserisci la data di un incontro** e **Registra un'attività**.
   - **Attività registrate dai docenti**: la tabella di tutte le attività (da confermare e confermate) con data, scuola o Mattinée, docente, stato e i pulsanti «Conferma» e «Modifica»; filtri Tutte / Da confermare / Confermate.
 - Nessun cambiamento alla funzione Supabase, allo schema o ai permessi: il cruscotto usa i dati di `list_contributions`.
+
+## Correggere tutto dalla scheda della scuola (23 novembre 2026)
+
+Richiesta di Salvatore: la Funzione Strumentale deve poter correggere qualsiasi cosa, anche una scuola già «fatta».
+
+- Nel cruscotto ogni scuola apre la **scheda della scuola** (`#schoolSheet`): comune, nome e zona modificabili; «Togli dall'elenco» e «Rimetti nell'elenco»; tutte le date, passate e future, con «Modifica o togli»; tutte le visite, confermate o da confermare, con «Conferma» e «Modifica» (dal modulo di modifica si annulla anche la registrazione); «Aggiungi una data» e «Registra una visita» con la scuola già scelta.
+- «Aggiungi una scuola» nel cruscotto; le scuole tolte stanno in «Scuole tolte dall'elenco», da cui si rimettono.
+- «Prossime date in calendario» sta subito sotto il cruscotto.
+- Funzione `orientamento`: nuova azione `save_school`, solo con la password FS. Aggiorna `comune`, `etichetta`, `area` e `attiva`, oppure inserisce una scuola nuova con id ricavato dal nome. Non cancella mai: date e visite restano legate allo stesso id. `list_contributions` restituisce anche `scuole_tolte`. Prova: `node scripts/verifica-correzione-scuole.mjs`.
+- Una visita confermata che viene modificata torna «Da confermare» (regola già in vigore): si riconferma con un clic.
