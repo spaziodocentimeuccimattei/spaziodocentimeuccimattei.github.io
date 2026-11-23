@@ -8,7 +8,7 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261009-home">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261117-codice">
+  <link rel="stylesheet" href="gestione.css?v=20261123-cruscotto">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261014-leggibilita">
 </head>
 <body class="gestione-page">
@@ -20,6 +20,7 @@
     <nav class="page-nav" aria-label="Navigazione principale">
       <a href="bussola-docenti.html">← Area docenti Bussola</a>
       <a href="una-scuola-da-vivere.html">Pagina dei docenti</a>
+      <a href="orientamento.html">Documenti della Commissione</a>
     </nav>
   </header>
 
@@ -71,6 +72,38 @@
         </nav>
 
         <section class="tab-panel" data-panel="panoramica" tabindex="-1">
+          <section class="cockpit" id="cockpit" aria-labelledby="cockpitTitle">
+            <div class="cockpit-head">
+              <div>
+                <h2 class="panel-title" id="cockpitTitle">Le scuole medie del territorio</h2>
+                <p class="cockpit-count" id="cockpitCount">Caricamento…</p>
+              </div>
+              <div class="cockpit-actions">
+                <button type="button" class="cockpit-btn primary" id="cockpitAddDate" disabled>Inserisci la data di un incontro</button>
+                <button type="button" class="cockpit-btn" id="cockpitAddActivity" disabled>Registra un’attività</button>
+              </div>
+            </div>
+            <div class="cockpit-bar" id="cockpitBar" aria-hidden="true"></div>
+            <div class="cockpit-groups" id="cockpitGroups"></div>
+          </section>
+
+          <section class="registry" id="registry" aria-labelledby="registryTitle">
+            <div class="panel-heading">
+              <h2 class="panel-title" id="registryTitle">Attività registrate dai docenti</h2>
+              <div class="filters registry-filters" id="registryFilters">
+                <button type="button" data-registry="tutte" aria-pressed="true">Tutte</button>
+                <button type="button" data-registry="da_confermare" aria-pressed="false">Da confermare</button>
+                <button type="button" data-registry="confermata" aria-pressed="false">Confermate</button>
+              </div>
+            </div>
+            <p class="panel-help">Le visite e le Mattinée segnalate dai docenti con il loro codice e quelle che registri tu. Una segnalazione resta «Da confermare» finché non premi «Conferma».</p>
+            <div class="registry-wrap"><table class="registry-table">
+              <thead><tr><th scope="col">Data</th><th scope="col">Scuola o attività</th><th scope="col">Docente</th><th scope="col">Stato</th><th scope="col"><span class="sr-only">Azioni</span></th></tr></thead>
+              <tbody id="registryBody"></tbody>
+            </table></div>
+            <p class="agenda-message" id="registryEmpty" hidden>Nessuna attività registrata.</p>
+          </section>
+
           <section id="pendingSection" aria-labelledby="pendingTitle" tabindex="-1">
             <h2 class="panel-title" id="pendingTitle">Visite da completare</h2>
             <p class="panel-help" id="visitHelp" hidden>Aggiungi chi è andato solo se la visita si è svolta.</p>
@@ -235,7 +268,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script type="module" src="gestione.js?v=20261117-codice"></script>
+  <script type="module" src="gestione.js?v=20261123-cruscotto"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261115-riordino"></script>
 </body>
 </html>

@@ -42,3 +42,14 @@ Nel calendario della Gestione ci sono anche i filtri «Date definite» (conferma
 Con la password della Commissione la Gestione resta chiusa e indica le pagine aperte alla Commissione: calendario delle date, territori e dati Istat, Area docenti Bussola, area della Commissione.
 
 Prova locale con dati finti: aprire `gestione.html?prova` su `localhost` o `127.0.0.1` con un server che risponda a `/__test/orientamento` e `/__test/bussola-gestione`.
+
+## Cruscotto a colpo d'occhio e ingresso unico (23 novembre 2026)
+
+Problema segnalato da Salvatore: entrando da `orientamento.html` («Commissione Orientamento») con la password della Funzione Strumentale si vedevano solo i documenti, senza un collegamento alla Gestione. Nella Gestione, poi, il conteggio delle scuole era chiuso dentro «Visite confermate» e «Aggiungi data» stava in fondo.
+
+- `orientamento.html`: con la password FS, dopo l'accesso si va dritti a `gestione.html`; la sessione passa in `sessionStorage` (`mattei-gestione-session`) e non si rifà l'accesso. Tornando ai documenti compare il pulsante «Gestione orientamento». Le altre password restano come prima.
+- `gestione.html`, in cima alla panoramica:
+  - **Le scuole medie del territorio**: «X scuole fatte su N», la barra e quattro colonne (Fatte · Da verificare · In programma · Da fare). «Fatta» richiede una visita confermata dalla FS; una data passata senza conferma va in «Da verificare» (stessa regola delle conferme). Ogni scuola è un pulsante: «Da fare» apre l'inserimento della data con la scuola già scelta, «In programma» apre la modifica della data, «Da verificare» porta alle visite da completare.
+  - I pulsanti **Inserisci la data di un incontro** e **Registra un'attività**.
+  - **Attività registrate dai docenti**: la tabella di tutte le attività (da confermare e confermate) con data, scuola o Mattinée, docente, stato e i pulsanti «Conferma» e «Modifica»; filtri Tutte / Da confermare / Confermate.
+- Nessun cambiamento alla funzione Supabase, allo schema o ai permessi: il cruscotto usa i dati di `list_contributions`.

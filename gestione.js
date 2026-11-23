@@ -147,6 +147,8 @@ function resetSession() {
   sessionToken = '';
   data = null;
   renderAgenda(new Map());
+  renderCockpit();
+  renderRegistry(new Map());
   renderVisits(new Map());
   resetActivityForm();
   if (activityEditor.open) activityEditor.close();
@@ -900,6 +902,132 @@ async function exportExcel(kind, target) {
   }
 }
 
+// Cruscotto (23/11/2026): a colpo d'occhio le scuole fatte, da verificare, in programma e ancora da fare.
+// «Fatta» vale solo con una visita confermata dalla FS: una data passata non basta (vedi docs/gestione-calendario.md).
+const COCKPIT_GROUPS = [
+  ['fatta', 'Fatte', 'Visita svolta e confermata'],
+  ['verificare', 'Da verificare', 'Data passata o visita segnalata: conferma o aggiungi chi è andato'],
+  ['programma', 'In programma', 'Data fissata, incontro ancora da fare'],
+  ['dafare', 'Da fare', 'Nessuna data: premi la scuola per inserirla'],
+];
+const shortDay = new Intl.DateTimeFormat('it-IT', {day:'numeric', month:'short', timeZone:'UTC'});
+const dayLabel = (value) => shortDay.format(new Date(`${value}T12:00:00Z`));
+
+function schoolStatus(school, now) {
+  const visits = (data.attivita || []).filter((item) => item.tipo === 'visita' && item.scuola_id === school.id);
+  const reported = (data.da_confermare || []).filter((item) => item.tipo === 'visita' && item.scuola_id === school.id);
+  const dates = (data.appuntamenti || []).filter((item) => item.scuola_id === school.id);
+  const done = visits.filter((item) => item.data <= now).sort((a, b) => b.data.localeCompare(a.data));
+  const next = dates.filter((item) => item.data >= now).sort(compareAppointments)[0];
+  const pastDates = dates.filter((item) => item.data < now).sort((a, b) => b.data.localeCompare(a.data));
+  const pastReports = reported.filter((item) => item.data <= now).sort((a, b) => b.data.localeCompare(a.data));
+  if (done.length) return {key: 'fatta', note: `Svolta il ${dayLabel(done[0].data)}${next ? ` · prossima ${dayLabel(next.data)}` : ''}`};
+  if (pastReports.length || pastDates.length) {
+    const when = (pastReports[0] || pastDates[0]).data;
+    return {key: 'verificare', note: `Incontro del ${dayLabel(when)}${pastReports.length ? ' · segnalato da un docente' : ''}`};
+  }
+  if (next) return {key: 'programma', note: `${dayLabel(next.data)}${timeRange(next) ? ` · ${timeRange(next)}` : ''}${next.stato === 'confermata' ? '' : ' · da concordare'}`, appointment: next};
+  return {key: 'dafare', note: 'Nessuna data'};
+}
+
+function renderCockpit() {
+  const groups = document.getElementById('cockpitGroups');
+  const bar = document.getElementById('cockpitBar');
+  const count = document.getElementById('cockpitCount');
+  document.getElementById('cockpitAddDate').disabled = !data;
+  document.getElementById('cockpitAddActivity').disabled = !data;
+  groups.replaceChildren();
+  bar.replaceChildren();
+  if (!data) { count.textContent = ''; return; }
+  const now = today();
+  const buckets = new Map(COCKPIT_GROUPS.map(([key]) => [key, []]));
+  for (const school of data.scuole) {
+    const status = schoolStatus(school, now);
+    buckets.get(status.key).push({school, ...status});
+  }
+  const total = data.scuole.length;
+  const n = (key) => buckets.get(key).length;
+  count.textContent = `${n('fatta')} scuole fatte su ${total} · ${n('verificare')} da verificare · ${n('programma')} in programma · ${n('dafare')} ancora senza data`;
+  for (const [key, title, help] of COCKPIT_GROUPS) {
+    if (n(key)) {
+      const part = el('span', `cockpit-bar-part is-${key}`);
+      part.style.flexGrow = String(n(key));
+      part.title = `${title}: ${n(key)}`;
+      bar.append(part);
+    }
+    const column = el('section', `cockpit-group is-${key}`);
+    const head = el('h3', '', title);
+    head.append(el('span', 'cockpit-number', String(n(key))));
+    column.append(head, el('p', 'cockpit-help', help));
+    const list = el('ul', 'cockpit-list');
+    for (const item of buckets.get(key)) {
+      const button = el('button', 'cockpit-school');
+      button.type = 'button';
+      button.append(el('strong', '', item.school.comune), el('span', 'cockpit-label', item.school.etichetta), el('span', 'cockpit-note', item.note));
+      button.addEventListener('click', () => {
+        if (key === 'dafare') openCalendarForm(item.school);
+        else if (key === 'programma') openCalendarForm(null, item.appointment);
+        else if (key === 'verificare') showSection('confermare', {focus: true});
+        else showSection('scuole', {focus: true});
+      });
+      const action = key === 'dafare' ? 'inserisci la data' : key === 'programma' ? 'modifica la data' : key === 'verificare' ? 'vai alle visite da verificare' : 'apri la scheda delle scuole';
+      button.setAttribute('aria-label', `${item.school.comune}, ${item.school.etichetta}: ${item.note}. Premi per ${action}.`);
+      const li = el('li');
+      li.append(button);
+      list.append(li);
+    }
+    if (!n(key)) list.append(el('li', 'cockpit-empty', 'Nessuna'));
+    column.append(list);
+    groups.append(column);
+  }
+}
+
+let registryFilter = 'tutte';
+function renderRegistry(schoolNames) {
+  const body = document.getElementById('registryBody');
+  body.replaceChildren();
+  if (!data) return;
+  const now = today();
+  const rows = [
+    ...data.da_confermare.map((item) => ({item, confirmed: false})),
+    ...data.attivita.map((item) => ({item, confirmed: true})),
+  ].filter(({confirmed}) => registryFilter === 'tutte' || (registryFilter === 'confermata') === confirmed)
+    .sort((a, b) => b.item.data.localeCompare(a.item.data) || Number(a.confirmed) - Number(b.confirmed));
+  for (const {item, confirmed} of rows) {
+    const tr = el('tr', confirmed ? 'is-confirmed' : 'is-pending');
+    const date = el('td', 'registry-date');
+    const time = el('time', '', item.data.split('-').reverse().join('/'));
+    time.dateTime = item.data;
+    date.append(time);
+    const what = el('td');
+    what.append(el('strong', '', item.tipo === 'mattinee' ? (item.titolo || 'Mattinée') : (schoolNames.get(item.scuola_id) || item.scuola_id)));
+    what.append(el('small', '', item.tipo === 'mattinee' ? 'Mattinée' : 'Visita nella scuola'));
+    if (item.nota) what.append(el('small', 'registry-note', item.nota));
+    const who = el('td', '', `${item.nome} ${item.cognome}`);
+    const state = el('td');
+    state.append(el('span', `state ${confirmed ? 'state-assegnata' : 'state-ricevuta'}`, confirmed ? 'Confermata' : item.data > now ? 'In programma' : 'Da confermare'));
+    const actions = el('td', 'registry-actions');
+    if (!confirmed && item.data <= now) {
+      actions.append(actionButton('Conferma', 'ok', async (button) => {
+        button.disabled = true;
+        globalMessage.textContent = 'Salvataggio…';
+        try {
+          await api('confirm_activity', {id: item.id});
+          globalMessage.textContent = item.tipo === 'visita' ? 'Visita confermata.' : 'Attività confermata.';
+          await load();
+        } catch (error) {
+          button.disabled = false;
+          handleError(error);
+        }
+      }));
+    }
+    actions.append(actionButton('Modifica', 'neutral', () => editActivity(item)));
+    tr.append(date, what, who, state, actions);
+    body.append(tr);
+  }
+  document.getElementById('registryEmpty').hidden = rows.length > 0;
+}
+
 function render() {
   const schoolNames = new Map(data.scuole.map((school) => [school.id, `${school.comune} – ${school.etichetta}`]));
   renderVisits(schoolNames);
@@ -910,6 +1038,8 @@ function render() {
   renderActivityFields();
   renderAppointmentSchools();
   renderAgenda(schoolNames);
+  renderCockpit();
+  renderRegistry(schoolNames);
 }
 
 async function load() {
@@ -949,6 +1079,18 @@ for (const button of document.querySelectorAll('[data-tab]')) {
   button.addEventListener('click', () => showSection(button.dataset.tab, {focus:true,scroll:false}));
 }
 document.getElementById('addAppointment').addEventListener('click', () => openCalendarForm());
+document.getElementById('cockpitAddDate').addEventListener('click', () => openCalendarForm());
+document.getElementById('cockpitAddActivity').addEventListener('click', () => {
+  resetActivityForm();
+  openActivityEditor('Registra un’attività');
+});
+document.getElementById('registryFilters').addEventListener('click', (event) => {
+  const button = event.target.closest('button[data-registry]');
+  if (!button) return;
+  registryFilter = button.dataset.registry;
+  for (const other of event.currentTarget.querySelectorAll('button')) other.setAttribute('aria-pressed', String(other === button));
+  if (data) renderRegistry(new Map(data.scuole.map((school) => [school.id, `${school.comune} – ${school.etichetta}`])));
+});
 document.getElementById('newActivity').addEventListener('click', () => {
   resetActivityForm();
   openActivityEditor('Aggiungi un’attività');
@@ -958,7 +1100,7 @@ document.getElementById('exportCalendarXlsx').addEventListener('click', () => ex
 document.getElementById('exportActivitiesXlsx').addEventListener('click', () => exportExcel('dirigente', excelMessage));
 document.getElementById('exportAllXlsx').addEventListener('click', () => exportExcel('tutto', excelMessage));
 
-for (const group of document.querySelectorAll('.filters')) {
+for (const group of document.querySelectorAll('.filters[data-filter-for]')) {
   group.addEventListener('click', (event) => {
     const button = event.target.closest('button');
     if (!button) return;
@@ -1088,6 +1230,8 @@ passwordForm.addEventListener('submit', async (event) => {
     const result = await api('login', { password: passwordInput.value });
     sessionToken = result.token;
     sessionStorage.setItem(SESSION_KEY, sessionToken);
+    // Stessa sessione per i documenti della Commissione (orientamento.html): niente secondo accesso.
+    if (result.access_level === 'funzione_strumentale') sessionStorage.setItem('mattei-orientamento-session', sessionToken);
     passwordInput.value = '';
     accessMessage.textContent = '';
     await enter();

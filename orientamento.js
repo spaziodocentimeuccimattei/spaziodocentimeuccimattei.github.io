@@ -1,5 +1,7 @@
 const API_URL = 'https://ruplzgcnheddmqqdephp.supabase.co/functions/v1/orientamento';
 const SESSION_KEY = 'mattei-orientamento-session';
+// La Gestione legge la sessione da questa chiave: la Funzione Strumentale non deve rifare l’accesso (23/11/2026).
+const MANAGEMENT_SESSION_KEY = 'mattei-gestione-session';
 
 const passwordForm = document.getElementById('passwordForm');
 const passwordInput = document.getElementById('orientationPassword');
@@ -46,6 +48,8 @@ function setAuthenticated(level) {
   workspacePanel.hidden = false;
   roleBadge.textContent = level === 'funzione_strumentale' ? 'Funzione Strumentale' : level === 'orientatore' ? 'Orientatore' : 'Componente';
   roleBadge.className = `role-badge ${level}`;
+  document.getElementById('managementLink').hidden = level !== 'funzione_strumentale';
+  if (level === 'funzione_strumentale') sessionStorage.setItem(MANAGEMENT_SESSION_KEY, sessionToken);
   document.getElementById('workspaceTitle').focus({ preventScroll: true });
 }
 
@@ -53,6 +57,7 @@ function resetSession() {
   sessionToken = '';
   accessLevel = '';
   sessionStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem(MANAGEMENT_SESSION_KEY);
   resourceGrid.replaceChildren();
   workspacePanel.hidden = true;
   loginPanel.hidden = false;
@@ -122,6 +127,11 @@ passwordForm.addEventListener('submit', async (event) => {
     passwordInput.value = '';
     accessMessage.textContent = '';
     setAuthenticated(result.access_level);
+    // Dopo l’accesso la Funzione Strumentale va dritta al cruscotto; i documenti restano raggiungibili dalla Gestione.
+    if (result.access_level === 'funzione_strumentale') {
+      location.assign('gestione.html');
+      return;
+    }
     await loadDocuments();
   } catch (error) {
     accessMessage.textContent = error.message;
