@@ -8,7 +8,7 @@
   <title>Gestione orientamento | IIS Meucci - Mattei | Decimomannu</title>
   <link rel="stylesheet" href="portal.css?v=20261009-home">
   <link rel="stylesheet" href="orientamento-modulo.css?v=20260925-1">
-  <link rel="stylesheet" href="gestione.css?v=20261123-cruscotto">
+  <link rel="stylesheet" href="gestione.css?v=20261123-modifica">
   <link rel="stylesheet" href="bussola-gestione.css?v=20261014-leggibilita">
 </head>
 <body class="gestione-page">
@@ -87,6 +87,20 @@
             <div class="cockpit-groups" id="cockpitGroups"></div>
           </section>
 
+          <section class="upcoming-section" aria-labelledby="agendaTitle">
+            <div class="panel-heading">
+              <h2 class="panel-title" id="agendaTitle">Prossime date in calendario</h2>
+              <button type="button" class="act neutral" id="addAppointment" disabled>Aggiungi data</button>
+            </div>
+            <p class="panel-help">Hai sbagliato scuola, giorno o orario? Premi «Modifica data» accanto all’incontro. Per togliere una data inserita per errore: «Modifica data», poi «Altre azioni» e «Togli dal calendario».</p>
+            <p id="agendaMessage" class="agenda-message" role="status"></p>
+            <ul class="agenda-list visit-list" id="upcomingAppointments"></ul>
+            <details class="manage-disclosure" id="futureActivities" hidden>
+              <summary>Docenti già assegnati</summary>
+              <ul class="agenda-list visit-list"></ul>
+            </details>
+          </section>
+
           <section class="registry" id="registry" aria-labelledby="registryTitle">
             <div class="panel-heading">
               <h2 class="panel-title" id="registryTitle">Attività registrate dai docenti</h2>
@@ -118,18 +132,6 @@
             <ul class="agenda-list visit-list" id="activityList"></ul>
           </details>
 
-          <section class="upcoming-section" aria-labelledby="agendaTitle">
-            <div class="panel-heading">
-              <h2 class="panel-title" id="agendaTitle">Prossime visite</h2>
-              <button type="button" class="act neutral" id="addAppointment" disabled>Aggiungi data</button>
-            </div>
-            <p id="agendaMessage" class="agenda-message" role="status"></p>
-            <ul class="agenda-list visit-list" id="upcomingAppointments"></ul>
-            <details class="manage-disclosure" id="futureActivities" hidden>
-              <summary>Docenti già assegnati</summary>
-              <ul class="agenda-list visit-list"></ul>
-            </details>
-          </section>
 
         </section>
 
@@ -230,7 +232,7 @@
           <p id="appointmentMessage" class="global-message" role="status" aria-live="polite"></p>
           <details class="manage-disclosure" id="appointmentOptions" hidden>
             <summary>Altre azioni</summary>
-            <button type="button" class="act no" id="archiveAppointment">Togli dal calendario</button>
+            <button type="button" class="act no" id="archiveAppointment">Togli dal calendario (data inserita per errore)</button>
           </details>
         </section>
 
@@ -268,7 +270,7 @@
     <p>IIS Meucci - Mattei | Decimomannu</p>
     <p>Area riservata alla Funzione Strumentale per l’orientamento.</p>
   </footer>
-  <script type="module" src="gestione.js?v=20261123-cruscotto"></script>
+  <script type="module" src="gestione.js?v=20261123-modifica"></script>
 <script type="module" src="bussola-gestione.mjs?v=20261115-riordino"></script>
 </body>
 </html>

@@ -921,7 +921,7 @@ function schoolStatus(school, now) {
   const next = dates.filter((item) => item.data >= now).sort(compareAppointments)[0];
   const pastDates = dates.filter((item) => item.data < now).sort((a, b) => b.data.localeCompare(a.data));
   const pastReports = reported.filter((item) => item.data <= now).sort((a, b) => b.data.localeCompare(a.data));
-  if (done.length) return {key: 'fatta', note: `Svolta il ${dayLabel(done[0].data)}${next ? ` · prossima ${dayLabel(next.data)}` : ''}`};
+  if (done.length) return {key: 'fatta', note: `Svolta il ${dayLabel(done[0].data)}${next ? ` · prossima ${dayLabel(next.data)}` : ''}`, appointment: next};
   if (pastReports.length || pastDates.length) {
     const when = (pastReports[0] || pastDates[0]).data;
     return {key: 'verificare', note: `Incontro del ${dayLabel(when)}${pastReports.length ? ' · segnalato da un docente' : ''}`};
@@ -967,10 +967,11 @@ function renderCockpit() {
       button.addEventListener('click', () => {
         if (key === 'dafare') openCalendarForm(item.school);
         else if (key === 'programma') openCalendarForm(null, item.appointment);
+        else if (item.appointment) openCalendarForm(null, item.appointment);
         else if (key === 'verificare') showSection('confermare', {focus: true});
         else showSection('scuole', {focus: true});
       });
-      const action = key === 'dafare' ? 'inserisci la data' : key === 'programma' ? 'modifica la data' : key === 'verificare' ? 'vai alle visite da verificare' : 'apri la scheda delle scuole';
+      const action = key === 'dafare' ? 'inserisci la data' : item.appointment ? 'modifica la prossima data' : key === 'verificare' ? 'vai alle visite da verificare' : 'apri la scheda delle scuole';
       button.setAttribute('aria-label', `${item.school.comune}, ${item.school.etichetta}: ${item.note}. Premi per ${action}.`);
       const li = el('li');
       li.append(button);
