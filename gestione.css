@@ -331,3 +331,58 @@
 .teacher-code-name { min-width:12rem; color:#123c57; font-weight:750; }
 .teacher-code code { padding:3px 8px; border-radius:6px; color:#17314a; background:#eef3f6; font-size:1rem; letter-spacing:.06em; }
 .visit-note-changed { display:block; margin-top:4px; padding:6px 9px; border-radius:8px; color:#5c3800; background:#fbf1de; font-size:.9rem; font-weight:700; }
+
+/* Cruscotto della panoramica (23/11/2026): scuole fatte e da fare, comandi principali, registro delle attività. */
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.cockpit { margin:8px 0 28px; padding:clamp(16px,2.4vw,24px); border:1px solid #c9d9df; border-radius:18px; background:#f7fafb; }
+.cockpit-head { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:14px 20px; }
+.cockpit-head .panel-title { margin:0; }
+.cockpit-count { margin:6px 0 0; color:#123c57; font-size:1.05rem; font-weight:750; line-height:1.45; }
+.cockpit-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.cockpit-btn { min-height:48px; padding:11px 18px; border:1px solid #123c57; border-radius:12px; color:#123c57; background:#fff; font:inherit; font-size:1rem; font-weight:800; cursor:pointer; }
+.cockpit-btn.primary { color:#fff; background:#123c57; }
+.cockpit-btn:hover { filter:brightness(1.08); }
+.cockpit-btn:disabled { opacity:.5; cursor:wait; }
+.cockpit-bar { display:flex; gap:3px; height:14px; margin:16px 0; overflow:hidden; border-radius:99px; background:#e3ebee; }
+.cockpit-bar-part { flex-basis:0; min-width:6px; }
+.cockpit-bar-part.is-fatta, .cockpit-group.is-fatta .cockpit-number { background:#1f7a4a; }
+.cockpit-bar-part.is-verificare, .cockpit-group.is-verificare .cockpit-number { background:#c26a00; }
+.cockpit-bar-part.is-programma, .cockpit-group.is-programma .cockpit-number { background:#2a6f97; }
+.cockpit-bar-part.is-dafare, .cockpit-group.is-dafare .cockpit-number { background:#8193a0; }
+.cockpit-groups { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.cockpit-group { min-width:0; padding:12px; border:1px solid #d5e1e6; border-radius:14px; background:#fff; }
+.cockpit-group.is-fatta { border-top:4px solid #1f7a4a; }
+.cockpit-group.is-verificare { border-top:4px solid #c26a00; }
+.cockpit-group.is-programma { border-top:4px solid #2a6f97; }
+.cockpit-group.is-dafare { border-top:4px solid #8193a0; }
+.cockpit-group h3 { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0; color:#123c57; font-size:1.05rem; }
+.cockpit-number { min-width:32px; padding:2px 9px; border-radius:99px; color:#fff; font-size:.95rem; text-align:center; }
+.cockpit-help { margin:4px 0 10px; color:#4b6170; font-size:.82rem; line-height:1.4; }
+.cockpit-list { display:grid; gap:6px; margin:0; padding:0; list-style:none; }
+.cockpit-school { display:grid; width:100%; gap:1px; padding:8px 10px; border:1px solid #dbe5ea; border-radius:10px; color:#163e56; background:#f9fbfc; font:inherit; text-align:left; cursor:pointer; overflow-wrap:anywhere; }
+.cockpit-school:hover { border-color:#8fb0c0; background:#eef4f7; }
+.cockpit-school strong { font-size:.95rem; }
+.cockpit-label { color:#375467; font-size:.8rem; }
+.cockpit-note { color:#123c57; font-size:.8rem; font-weight:700; }
+.cockpit-empty { color:#6b7c88; font-size:.85rem; font-style:italic; }
+.registry { margin:0 0 28px; }
+.registry-filters { margin:0; }
+.registry-wrap { overflow-x:auto; border:1px solid #d5e1e6; border-radius:14px; background:#fff; }
+.registry-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+.registry-table th { padding:10px 12px; color:#4b6170; background:#f1f5f6; font-size:.78rem; text-align:left; text-transform:uppercase; letter-spacing:.03em; }
+.registry-table td { padding:10px 12px; border-top:1px solid #e3ebee; color:#163e56; vertical-align:top; }
+.registry-table td small { display:block; color:#4b6170; font-size:.78rem; }
+.registry-table .registry-note { font-style:italic; }
+.registry-table tr.is-pending { background:#fff9f0; }
+.registry-date { white-space:nowrap; font-variant-numeric:tabular-nums; font-weight:750; }
+.registry-actions { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; }
+@media (max-width:1000px) { .cockpit-groups { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:650px) {
+  .cockpit-groups { grid-template-columns:1fr; }
+  .cockpit-actions, .cockpit-btn { width:100%; }
+  .registry-table thead { display:none; }
+  .registry-table, .registry-table tbody, .registry-table tr, .registry-table td { display:block; }
+  .registry-table tr { padding:8px 0; border-top:1px solid #e3ebee; }
+  .registry-table td { padding:4px 12px; border:0; }
+  .registry-actions { justify-content:flex-start; }
+}
