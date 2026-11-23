@@ -558,7 +558,8 @@ function renderAgenda(schoolNames) {
     const edit = actionButton('Modifica data', 'agenda-edit', () => openCalendarForm(null, item));
     edit.setAttribute('aria-label', `Modifica la data di ${label} del ${item.data.split('-').reverse().join('/')}`);
     row.append(edit);
-    (item.data >= now ? upcoming : past).append(row);
+    // Da fare: dalla più vicina alla più lontana. Concluse: dalla più recente alla più vecchia.
+    if (item.data >= now) upcoming.append(row); else past.prepend(row);
   }
   document.getElementById('agendaMessage').textContent = data && !upcoming.children.length ? 'Nessuna visita in programma.' : '';
 }
@@ -933,9 +934,9 @@ function schoolStatus(school, now) {
     const people = teachers.length || students.length
       ? `${teachers.length} ${teachers.length === 1 ? 'docente' : 'docenti'} · ${students.length} ${students.length === 1 ? 'alunno' : 'alunni'}`
       : 'registra docenti e alunni';
-    return {key: 'fatta', note: `${dayLabel(pastDays[0])} · ${people}${next ? ` · prossima ${dayLabel(next.data)}` : ''}`, missing: !teachers.length && !students.length};
+    return {key: 'fatta', note: `${dayLabel(pastDays[0])} · ${people}${next ? ` · prossima ${dayLabel(next.data)}` : ''}`, missing: !teachers.length && !students.length, day: pastDays[0]};
   }
-  if (next) return {key: 'programma', note: `${dayLabel(next.data)}${timeRange(next) ? ` · ${timeRange(next)}` : ''}${next.stato === 'confermata' ? '' : ' · da concordare'}`};
+  if (next) return {key: 'programma', note: `${dayLabel(next.data)}${timeRange(next) ? ` · ${timeRange(next)}` : ''}${next.stato === 'confermata' ? '' : ' · da concordare'}`, day: next.data};
   return {key: 'dafare', note: 'Nessuna data'};
 }
 
@@ -956,6 +957,9 @@ function renderCockpit() {
     const status = schoolStatus(school, now);
     buckets.get(status.key).push({school, ...status});
   }
+  // Ordine per data: «In programma» dalla più vicina alla più lontana, «Fatte» dalla più recente alla più vecchia.
+  buckets.get('programma').sort((a, b) => a.day.localeCompare(b.day));
+  buckets.get('fatta').sort((a, b) => b.day.localeCompare(a.day));
   const total = data.scuole.length;
   const n = (key) => buckets.get(key).length;
   count.textContent = `${n('fatta')} scuole fatte su ${total} · ${n('programma')} in programma · ${n('dafare')} ancora senza data`;
@@ -1156,7 +1160,9 @@ function renderSchoolSheet() {
   }
   body.append(actions);
 
-  const dates = (data.appuntamenti || []).filter((item) => item.scuola_id === school.id).sort(compareAppointments);
+  const schoolDates = (data.appuntamenti || []).filter((item) => item.scuola_id === school.id).sort(compareAppointments);
+  // Prima le date da fare (dalla più vicina), poi quelle concluse (dalla più recente).
+  const dates = [...schoolDates.filter((item) => item.data > now), ...schoolDates.filter((item) => item.data <= now).reverse()];
   body.append(el('h3', 'school-sheet-title', `Date in calendario (${dates.length})`));
   if (!dates.length) body.append(el('p', 'agenda-message', 'Nessuna data.'));
   const dateList = el('ul', 'school-sheet-list');
